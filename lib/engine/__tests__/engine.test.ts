@@ -3,6 +3,7 @@ import {
   decidePreset,
   computeScores,
   profileCostFactors,
+  costBand,
   recommend,
   PRESET_PROFILES,
   PRESETS,
@@ -127,5 +128,15 @@ describe("recommend", () => {
   it("est déterministe", () => {
     const p = baseProfile({ contentTypes: ["text", "audio"], voices: "multi" });
     expect(JSON.stringify(recommend(p))).toBe(JSON.stringify(recommend(p)));
+  });
+});
+
+describe("costBand", () => {
+  it("encadre le coût à ±30 % par défaut", () => {
+    expect(costBand(100)).toEqual({ low: 70, high: 130 });
+  });
+
+  it("accepte un spread personnalisé", () => {
+    expect(costBand(200, 0.5)).toEqual({ low: 100, high: 300 });
   });
 });

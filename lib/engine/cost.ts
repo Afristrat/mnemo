@@ -27,3 +27,11 @@ export function profileCostFactors(p: Profile): number {
   const users = p.users > 10 ? Math.round((p.users - 10) * 1.5) : 0;
   return volume + req + users;
 }
+
+/** Fourchette basse/haute autour d'un coût (disclaimer ±30 % assumé). */
+export function costBand(total: number, spread = 0.3): { low: number; high: number } {
+  return {
+    low: Math.round(total * (1 - spread)),
+    high: Math.round(total * (1 + spread)),
+  };
+}
