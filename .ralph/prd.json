@@ -48,7 +48,7 @@
     },
     {
       "id": "S-005", "title": "Wizard F1 (UI ~16 params, persistance, → preset)", "feature": "F1",
-      "passes": false, "deps": ["S-002", "S-003"],
+      "passes": true, "completedAt": "2026-05-24", "deps": ["S-002", "S-003"],
       "acceptance": [
         "wizard multi-étapes couvrant les ~16 paramètres du profil",
         "persistance localStorage + reprise",
