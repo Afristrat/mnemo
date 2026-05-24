@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mnémo - Votre configuration recommandée</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e2e7ff",
+                    "on-tertiary-fixed-variant": "#614000",
+                    "error": "#ba1a1a",
+                    "tertiary": "#7d5400",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#9d6a00",
+                    "surface-dim": "#d2d9f4",
+                    "secondary": "#0051d5",
+                    "tertiary-fixed": "#ffddb0",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-variant": "#dae2fd",
+                    "outline-variant": "#bcc9c6",
+                    "surface": "#faf8ff",
+                    "outline": "#6d7a77",
+                    "on-secondary-fixed": "#00174b",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#eef0ff",
+                    "primary-fixed": "#89f5e7",
+                    "surface-container-low": "#f2f3ff",
+                    "on-background": "#131b2e",
+                    "on-primary-container": "#f4fffc",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#fefcff",
+                    "primary-fixed-dim": "#6bd8cb",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "inverse-primary": "#6bd8cb",
+                    "on-surface": "#131b2e",
+                    "surface-tint": "#006a61",
+                    "surface-container-highest": "#dae2fd",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "background": "#faf8ff",
+                    "inverse-surface": "#283044",
+                    "surface-bright": "#faf8ff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#281800",
+                    "surface-container": "#eaedff",
+                    "primary": "#00685f",
+                    "secondary-fixed": "#dbe1ff",
+                    "primary-container": "#008378",
+                    "on-primary-fixed-variant": "#005049",
+                    "on-primary-fixed": "#00201d",
+                    "tertiary-fixed-dim": "#ffba46",
+                    "on-surface-variant": "#3d4947",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#316bf3",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "element-gap": "20px",
+                    "section-padding": "40px",
+                    "grid-gutter": "24px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "code-md": [
+                            "JetBrains Mono"
+                    ],
+                    "headline-lg": [
+                            "Space Grotesk"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Space Grotesk"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Space Grotesk"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "code-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.03em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .radar-chart-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* Aspect ratio 1:1 */
+        }
+        .radar-chart {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface docked full-width top-0 z-50 border-b border-outline-variant dark:border-outline shadow-sm">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">
+                Mnémo
+            </div>
+<nav class="hidden md:flex gap-8 items-center font-body-md text-body-md">
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-primary pb-1" href="#">Configurateur</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors" href="#">Gouvernance</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors" href="#">Tarifs</a>
+</nav>
+<button class="hidden md:inline-flex items-center justify-center px-4 py-2 bg-primary text-on-primary rounded-lg font-body-sm text-body-sm hover:bg-surface-container-low dark:hover:bg-surface-container-highest hover:text-primary transition-all duration-200">
+                Contacter un expert
+            </button>
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</div>
+</header>
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-6 py-section-padding gap-grid-gutter flex flex-col">
+<!-- ZONE A (Header) -->
+<section class="flex flex-col gap-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="flex flex-col gap-4">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Votre configuration recommandée : plan PME</h1>
+<!-- PLAN TIER SELECTOR -->
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Solo</button>
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Équipe</button>
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-body-sm text-body-sm shadow-sm">PME</button>
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">ETI</button>
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Grand groupe</button>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2 p-6 bg-surface-container-low rounded-lg border border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="font-code-md text-code-md text-on-surface text-2xl font-bold">3 236 €/mois HT</span>
+<span class="px-2 py-1 bg-surface-tint/10 text-primary rounded-full font-label-caps text-label-caps">±30 %</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">+ Setup 6 300 € one-shot</span>
+</div>
+</div>
+</section>
+<!-- ZONE B (Architecture) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-grid-gutter">
+<!-- LEFT "Stack recommandé" -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-[0_1px_3px_rgba(15,23,42,0.06)] flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Stack recommandé</h2>
+<div class="flex flex-col gap-4">
+<!-- Layer 1 -->
+<div class="flex flex-col gap-2 p-4 border border-outline-variant rounded-lg bg-surface relative overflow-hidden group hover:border-primary transition-colors">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">INTERFACE &amp; APPLICATION</span>
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,104,95,0.5)]"></div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">desktop_windows</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold">Next.js (votre marque)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Frontend React App</span>
+</div>
+</div>
+</div>
+<!-- Layer 2 -->
+<div class="flex flex-col gap-2 p-4 border border-outline-variant rounded-lg bg-surface relative overflow-hidden group hover:border-primary transition-colors">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">MODÈLES D'IA (SOUVERAINS)</span>
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,104,95,0.5)]"></div>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-sm">smart_toy</span>
+<span class="font-body-sm text-body-sm">LLM Mistral</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-sm">graphic_eq</span>
+<span class="font-body-sm text-body-sm">ASR Whisper</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-sm">data_object</span>
+<span class="font-body-sm text-body-sm">Embeddings BGE-M3</span>
+</div>
+</div>
+</div>
+<!-- Layer 3 -->
+<div class="flex flex-col gap-2 p-4 border border-outline-variant rounded-lg bg-surface relative overflow-hidden group hover:border-primary transition-colors">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">STORES DE DONNÉES</span>
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,104,95,0.5)]"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex items-center gap-3 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-lg">database</span>
+<span class="font-body-sm text-body-sm">Postgres+pgvector</span>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-tertiary-container text-lg">hub</span>
+<span class="font-body-sm text-body-sm">Neo4j Graphiti</span>
+</div>
+</div>
+</div>
+<!-- Layer 4 -->
+<div class="flex flex-col gap-2 p-4 border border-outline-variant rounded-lg bg-surface relative overflow-hidden group hover:border-primary transition-colors">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">INFRASTRUCTURE MATÉRIELLE &amp; RÉSEAU</span>
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,104,95,0.5)]"></div>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface text-sm">dns</span>
+<span class="font-body-sm text-body-sm">Serveur dédié</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface text-sm">router</span>
+<span class="font-body-sm text-body-sm">Tailscale mesh</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface text-sm">cloud_sync</span>
+<span class="font-body-sm text-body-sm">Backup Scaleway</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT "Profil de souveraineté" -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-[0_1px_3px_rgba(15,23,42,0.06)] flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Profil de souveraineté</h2>
+<div class="radar-chart-container bg-surface rounded-lg border border-outline-variant flex items-center justify-center p-8">
+<!-- Placeholder for actual Radar Chart library (e.g. Chart.js) -->
+<div class="relative w-full max-w-[300px] aspect-square">
+<!-- Simplified SVG Radar Chart Representation for visual structure -->
+<svg class="w-full h-full stroke-outline-variant fill-none" viewbox="0 0 100 100">
+<!-- Grid -->
+<polygon points="50,5 95,50 50,95 5,50" stroke-width="0.5"></polygon>
+<polygon points="50,20 80,50 50,80 20,50" stroke-width="0.5"></polygon>
+<polygon points="50,35 65,50 50,65 35,50" stroke-width="0.5"></polygon>
+<!-- Axes -->
+<line stroke-width="0.5" x1="50" x2="50" y1="5" y2="95"></line>
+<line stroke-width="0.5" x1="5" x2="95" y1="50" y2="50"></line>
+<line stroke-width="0.5" x1="18" x2="82" y1="18" y2="82"></line>
+<line stroke-width="0.5" x1="18" x2="82" y1="82" y2="18"></line>
+<!-- Data Polygon -->
+<polygon class="fill-primary/20 stroke-primary" points="50,15 85,35 90,50 75,85 50,90 25,75 15,50 30,25" stroke-width="1.5"></polygon>
+<!-- Data Points -->
+<circle class="fill-primary" cx="50" cy="15" r="1.5"></circle>
+<circle class="fill-primary" cx="85" cy="35" r="1.5"></circle>
+<circle class="fill-primary" cx="90" cy="50" r="1.5"></circle>
+<circle class="fill-primary" cx="75" cy="85" r="1.5"></circle>
+<circle class="fill-primary" cx="50" cy="90" r="1.5"></circle>
+<circle class="fill-primary" cx="25" cy="75" r="1.5"></circle>
+<circle class="fill-primary" cx="15" cy="50" r="1.5"></circle>
+<circle class="fill-primary" cx="30" cy="25" r="1.5"></circle>
+</svg>
+<!-- Labels (Absolute positioned for demo) -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pt-2">Conformité</div>
+<div class="absolute top-1/4 right-0 translate-x-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pl-2">Auditabilité</div>
+<div class="absolute top-1/2 right-0 translate-x-full translate-y-1/2 font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pl-2">Stress-testabilité</div>
+<div class="absolute bottom-1/4 right-0 translate-x-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pl-2">Souveraineté</div>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pb-2">Adaptativité</div>
+<div class="absolute bottom-1/4 left-0 -translate-x-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pr-2">Time-to-V1</div>
+<div class="absolute top-1/2 left-0 -translate-x-full translate-y-1/2 font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pr-2">Multimodalité</div>
+<div class="absolute top-1/4 left-0 -translate-x-full font-label-caps text-[10px] text-on-surface-variant whitespace-nowrap pr-2">Coût opérationnel</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ZONE C (Transparency) -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-[0_1px_3px_rgba(15,23,42,0.06)] flex flex-col gap-6 overflow-x-auto">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-md text-headline-md text-on-surface">Carte de coûts transparente</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">"On n'invente pas les prix : récupérés du web, marge à découvert."</p>
+</div>
+<table class="w-full text-left border-collapse min-w-[600px]">
+<thead>
+<tr class="border-b-2 border-outline-variant text-on-surface-variant font-label-caps text-label-caps">
+<th class="py-3 px-4">Poste</th>
+<th class="py-3 px-4 text-right">Coût producteur</th>
+<th class="py-3 px-4 text-right">Marge</th>
+<th class="py-3 px-4 text-right text-primary">Prix vente HT</th>
+</tr>
+</thead>
+<tbody class="font-code-md text-code-md">
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-body-md text-body-md">Hardware</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">800 €</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">20%</td>
+<td class="py-3 px-4 text-right">960 €</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-body-md text-body-md">Cloud souverain</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">400 €</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">15%</td>
+<td class="py-3 px-4 text-right">460 €</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-body-md text-body-md">LLM</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">500 €</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">10%</td>
+<td class="py-3 px-4 text-right">550 €</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 font-body-md text-body-md">Maintenance+support</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">1 000 €</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">26.6%</td>
+<td class="py-3 px-4 text-right">1 266 €</td>
+</tr>
+<tr class="border-t-2 border-outline-variant bg-surface-container-low font-bold">
+<td class="py-4 px-4 font-body-md text-body-md">Total mensuel</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">2 700 €</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">-</td>
+<td class="py-4 px-4 text-right text-primary text-lg">3 236 €</td>
+</tr>
+<tr class="text-sm">
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">Setup one-shot</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">-</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">-</td>
+<td class="py-3 px-4 text-right text-on-surface-variant">6 300 €</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- ZONE D (Actions) -->
+<section class="flex flex-col md:flex-row gap-4 items-center justify-center py-8">
+<button class="w-full md:w-auto px-6 py-4 bg-primary text-on-primary rounded-xl font-body-md text-body-md font-semibold hover:bg-primary-container transition-colors shadow-sm flex flex-col items-center justify-center gap-1 group">
+<span class="flex items-center gap-2">
+<span class="text-xl">🤖</span> Laisser l'agent tout configurer pour moi
+                </span>
+<span class="font-body-sm text-body-sm font-normal text-on-primary/80 group-hover:text-on-primary transition-colors">inscriptions + déploiement automatiques</span>
+</button>
+<button class="w-full md:w-auto px-6 py-4 border-2 border-outline-variant text-on-surface rounded-xl font-body-md text-body-md font-semibold hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
+<span>📄</span> Télécharger le devis PDF
+            </button>
+<button class="w-full md:w-auto px-6 py-4 bg-transparent text-on-surface-variant rounded-xl font-body-md text-body-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
+<span>📅</span> Prendre un appel de cadrage (30 min)
+            </button>
+<a class="w-full md:w-auto px-4 py-4 text-primary hover:underline decoration-primary underline-offset-4 font-body-md text-body-md flex items-center justify-center gap-2 transition-all" href="#">
+<span>✏️</span> Ajuster ma configuration
+            </a>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-low full-width border-t border-outline-variant mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 py-10 max-w-[1440px] mx-auto gap-grid-gutter">
+<div class="font-headline-md text-headline-md font-bold text-on-surface">
+                Mnémo
+            </div>
+<nav class="flex flex-wrap justify-center gap-6 font-body-sm text-body-sm text-on-surface-variant">
+<a class="hover:text-primary hover:underline decoration-primary underline-offset-4 transition-colors duration-200" href="#">Conformité RGPD</a>
+<a class="hover:text-primary hover:underline decoration-primary underline-offset-4 transition-colors duration-200" href="#">Cloud Souverain</a>
+<a class="hover:text-primary hover:underline decoration-primary underline-offset-4 transition-colors duration-200" href="#">Mentions Légales</a>
+<a class="hover:text-primary hover:underline decoration-primary underline-offset-4 transition-colors duration-200" href="#">Contact</a>
+</nav>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                © 2024 Mnémo. Infrastructure de Données IA Souveraine. Tous droits réservés.
+            </div>
+</div>
+</footer>
+</body></html>

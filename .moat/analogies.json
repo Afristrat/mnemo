@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Sovereignty Exit Escrow (bouton de sortie certifie)",
+    "industry_source": "Juridique/Logiciel — Source code escrow + IP Bankruptcy Protection Act 1989",
+    "mechanism": "Un tiers sequestre le code+conditions; release automatique et inattaquable si le vendor fait faillite ou cesse la maintenance. Conditions de release ecrites le plus clairement possible.",
+    "translation": "Bouton 'Exit Guarantee' : en 1 clic, Mnemo produit un bundle reproductible (Terraform/Docker Compose + dumps DB + vault markdown source-de-verite + embeddings rejouables + runbook) redeployable chez un autre vendor ou en self-host. Release automatique du bundle complet meme si Mnemo ferme. La sortie devient une feature certifiee, pas une promesse.",
+    "novelty": 5,
+    "feasibility": 4,
+    "moat_potential": 5
+  },
+  {
+    "name": "Fiduciary Broker Mode (mandataire transparent, jamais commissionne en douce)",
+    "industry_source": "Energie/Assurance — Courtier fiduciaire vs litiges 'secret commission'",
+    "mechanism": "Le courtier qui agit 'dans le meilleur interet du client' lui doit un devoir fiduciaire : divulgation totale de toute remuneration. La commission cachee du fournisseur = violation du mandat (litiges en hausse).",
+    "translation": "Mnemo s'engage contractuellement comme agent fiduciaire de l'utilisateur : recommande la stack la moins-disante POUR LUI, divulgue toute remuneration, n'est jamais paye en commission cachee par les vendors. Le mode payant = 'je negocie le tarif vendor en ton nom' (comme un courtier energie), remuneration affichee. Les concurrents commissionnes ne peuvent pas copier sans saborder leur modele.",
+    "novelty": 4,
+    "feasibility": 4,
+    "moat_potential": 5
+  },
+  {
+    "name": "Cost & Config Intelligence Network (effet reseau de donnees)",
+    "industry_source": "Cyber — ISAC / threat intelligence sharing collective defense",
+    "mechanism": "Organisation membre-driven : chaque membre partage ses incidents, tous beneficient de la defense collective. Plus de membres = meilleure protection pour tous. Incidents isoles -> connaissance collective.",
+    "translation": "Chaque deploiement monitore renvoie (anonymise, opt-in RGPD) le cout REEL par profil/vendor/region -> dataset de calibration collectif irreplicable qui tue le +-30%. Chaque nouveau client ameliore la precision pour tous. + alertes partagees facon ISAC : un vendor change son prix/CGU ou casse une API -> tous les membres alertes instantanement. C'est le moat Cloudflare : effet reseau de donnees.",
+    "novelty": 5,
+    "feasibility": 2,
+    "moat_potential": 5
+  },
+  {
+    "name": "Ensemble multi-config (divergence = incertitude affichee)",
+    "industry_source": "Meteo — Ensemble forecasting (spread entre modeles = incertitude)",
+    "mechanism": "Pas 1 modele mais 50 en parallele. La divergence entre membres = l'incertitude quantifiee et communiquee. Convergence = haute confiance. L'incertitude est explicite, pas cachee.",
+    "translation": "Au lieu d'UNE reco, Mnemo genere N configs candidates (le cross-check multi-config demande par Amine) et affiche leur DIVERGENCE de cout/score comme mesure d'incertitude. Convergence -> haute confiance; divergence -> l'utilisateur voit l'incertitude (coherent avec le disclaimer 'une IA peut se tromper' + sources liees).",
+    "novelty": 4,
+    "feasibility": 4,
+    "moat_potential": 3
+  },
+  {
+    "name": "Dispatch Deviation Guide (degradation operee pre-pensee)",
+    "industry_source": "Aviation — Minimum Equipment List (dispatch avec equipement inop)",
+    "mechanism": "Un avion peut decoller avec un equipement en panne SI une procedure alternative pre-approuvee existe + delai de reparation categorise (A=3j, B=10j, C=30j, D=120j). Documente AVANT l'incident, pas pendant.",
+    "translation": "Pour chaque composant (reranker, embeddings, cache, vector DB), une matrice pre-pensee : peut-on continuer en degrade ? quelle procedure de repli ? quel delai max de reparation categorise ? Mnemo bascule AUTO en mode degrade documente plutot que de tomber. Le monitoring opere (pas la base du client).",
+    "novelty": 4,
+    "feasibility": 4,
+    "moat_potential": 3
+  },
+  {
+    "name": "Infra Health Score (score composite + seuil = alerte auto)",
+    "industry_source": "Medecine — NEWS2 (National Early Warning Score)",
+    "mechanism": "6 parametres vitaux -> score composite -> seuil 5-6 = alerte automatique, pas de jugement subjectif. Detecte la deterioration 6-8h avant la crise. Limite connue : rate certains evenements -> a completer.",
+    "translation": "Score composite de sante d'infra (cout reel vs estime, derive vault<->projections, latence, taux d'erreur retrieval, saturation quota, expiration certs/cles) -> seuil = alerte auto + procedure. Detecte la derive AVANT la panne ou l'explosion de facture. Un chiffre, pas une intuition.",
+    "novelty": 4,
+    "feasibility": 3,
+    "moat_potential": 3
+  },
+  {
+    "name": "Guaranteed Migration / In-Switch (migration garantie + double-run)",
+    "industry_source": "Banque UK — Current Account Switch Service (CASS)",
+    "mechanism": "Changement de banque en 7j garanti, redirection AUTO des paiements vers le nouveau compte pendant 3 ans min, message auto aux emetteurs, garantie formelle qui couvre si ca foire.",
+    "translation": "Migration garantie depuis une stack existante (ou ChatGPT/Notion/concurrent) vers la stack souveraine en X jours, avec periode de 'redirection' (double-run / shadow ou ancien et nouveau coexistent) et GARANTIE formelle (rollback gratuit si ca casse). Detruit la peur du switch — frein n1 a l'adoption d'infra.",
+    "novelty": 4,
+    "feasibility": 2,
+    "moat_potential": 4
+  },
+  {
+    "name": "Continuous Re-optimization (re-deploiement quand economie > seuil)",
+    "industry_source": "Energie — Auto-switching (Flipper/Look After My Bills) — LECON NEGATIVE",
+    "mechanism": "Surveille le marche en continu, bascule auto quand economie > seuil (50 GBP). MAIS Flipper a ferme; LAMB ne bascule que vers les vendors qui le commissionnent (choix limite, conflit d'interet).",
+    "translation": "Mnemo monitore le cout reel et PROPOSE une migration quand une meilleure config existe (economie > seuil). Lecon Flipper : jamais limiter aux vendors qui commissionnent (couple obligatoire au Fiduciary Mode). Bascule sur validation humaine, pas auto-silencieuse.",
+    "novelty": 3,
+    "feasibility": 2,
+    "moat_potential": 3
+  }
+]
