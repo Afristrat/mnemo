@@ -20,7 +20,7 @@
     },
     {
       "id": "S-002", "title": "Design system (tokens DESIGN.md → Tailwind, polices, primitives UI)", "feature": "design",
-      "passes": false, "deps": ["S-001"],
+      "passes": true, "completedAt": "2026-05-24", "deps": ["S-001"],
       "acceptance": [
         "tailwind.config porte les couleurs/typo/rayons de DESIGN.md",
         "polices Space Grotesk / Inter / JetBrains Mono chargées",
