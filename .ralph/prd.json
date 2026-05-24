@@ -29,7 +29,7 @@
     },
     {
       "id": "S-003", "title": "Moteur de reco — lib TS (types + catalogue 7 couches + preset/buildLayers/computeCost/computeScores)", "feature": "F1-F3",
-      "passes": false, "deps": ["S-001"],
+      "passes": true, "completedAt": "2026-05-24", "deps": ["S-001"],
       "acceptance": [
         "logique portée depuis design-reference simulateur v2 en TS pur (lib/engine)",
         "fonctions pures sans dépendance UI",

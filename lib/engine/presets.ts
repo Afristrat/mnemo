@@ -1,0 +1,171 @@
+import { defaultModuleLevels } from "./modules";
+import type { Preset, Profile } from "./types";
+
+export type PresetProfile = {
+  name: string;
+  description: string;
+  expected: Preset;
+  users: number;
+  cost: number;
+  profile: Profile;
+};
+
+// Profils-types pré-remplis pour amorcer le wizard (cf. simulateur v2).
+export const PRESET_PROFILES: readonly PresetProfile[] = [
+  {
+    name: "Coach indépendant",
+    description:
+      "Freelance solo qui accompagne 10-50 clients. Audio + texte (transcripts coaching). Conformité RGPD/CNDP, audit souhaité.",
+    expected: "MEDIUM",
+    users: 1,
+    cost: 120,
+    profile: {
+      activity: "freelance",
+      zone: "ue",
+      users: 1,
+      contentTypes: ["text", "audio"],
+      volume: "1to10",
+      growth: "medium",
+      regulations: ["rgpd", "cndp"],
+      sensitivity: "confidential",
+      audit: "desired",
+      bitemporal: "desired",
+      techLevel: "hybrid",
+      budget: "50to200",
+      reqPerDay: "lt100",
+      latency: "fast",
+      voices: "multi",
+      modules: defaultModuleLevels(),
+    },
+  },
+  {
+    name: "Cabinet juridique régulé",
+    description:
+      "Cabinet avocat / CIF-CGP / médecin. Secret pro strict. RGPD + AI Act + secret métier. Audit et bitemporel obligatoires.",
+    expected: "HARD",
+    users: 10,
+    cost: 800,
+    profile: {
+      activity: "cabinet-regule",
+      zone: "ue",
+      users: 10,
+      contentTypes: ["text", "audio", "structured"],
+      volume: "10to100",
+      growth: "medium",
+      regulations: ["rgpd", "aiact", "secret-pro"],
+      sensitivity: "secret",
+      audit: "required",
+      bitemporal: "required",
+      techLevel: "hybrid",
+      budget: "500to2k",
+      reqPerDay: "lt1k",
+      latency: "fast",
+      voices: "multi",
+      modules: defaultModuleLevels(),
+    },
+  },
+  {
+    name: "Dictaphone DIY personnel",
+    description:
+      "Enregistreur audio + transcription Whisper + recherche sémantique sur l'audio. Usage personnel, peu de docs.",
+    expected: "LIGHT",
+    users: 1,
+    cost: 50,
+    profile: {
+      activity: "particulier",
+      zone: "ue",
+      users: 1,
+      contentTypes: ["audio"],
+      volume: "lt1",
+      growth: "low",
+      regulations: ["rgpd"],
+      sensitivity: "confidential",
+      audit: "no",
+      bitemporal: "no",
+      techLevel: "dev",
+      budget: "lt50",
+      reqPerDay: "lt100",
+      latency: "acceptable",
+      voices: "solo",
+      modules: defaultModuleLevels(),
+    },
+  },
+  {
+    name: "Agence accompagnement (80+ entrepreneurs)",
+    description:
+      "Programme type She Start. Multi-voix obligatoire (mentors / mentorés). Volume important. RGPD + CNDP.",
+    expected: "MEDIUM",
+    users: 100,
+    cost: 450,
+    profile: {
+      activity: "agence",
+      zone: "maroc",
+      users: 100,
+      contentTypes: ["text", "audio", "video"],
+      volume: "100to1000",
+      growth: "high",
+      regulations: ["rgpd", "cndp"],
+      sensitivity: "confidential",
+      audit: "required",
+      bitemporal: "desired",
+      techLevel: "dev",
+      budget: "200to500",
+      reqPerDay: "lt10k",
+      latency: "fast",
+      voices: "many",
+      modules: defaultModuleLevels(),
+    },
+  },
+  {
+    name: "PME / Startup tech",
+    description:
+      "Équipe produit 5-10 personnes. Docs internes + spec + code + tickets. Bitemporel pour ADR. Pas de régulation lourde.",
+    expected: "MEDIUM",
+    users: 8,
+    cost: 180,
+    profile: {
+      activity: "pme-startup",
+      zone: "ue",
+      users: 8,
+      contentTypes: ["text", "code", "structured"],
+      volume: "10to100",
+      growth: "high",
+      regulations: ["rgpd"],
+      sensitivity: "internal",
+      audit: "desired",
+      bitemporal: "desired",
+      techLevel: "devops",
+      budget: "50to200",
+      reqPerDay: "lt1k",
+      latency: "fast",
+      voices: "multi",
+      modules: defaultModuleLevels(),
+    },
+  },
+  {
+    name: "Chercheur / académique",
+    description:
+      "Doctorant ou enseignant-chercheur. Archive papers + transcripts d'interviews. Bitemporel utile pour traçabilité doctorale.",
+    expected: "MEDIUM",
+    users: 1,
+    cost: 90,
+    profile: {
+      activity: "recherche",
+      zone: "ue",
+      users: 1,
+      contentTypes: ["text", "structured"],
+      volume: "10to100",
+      growth: "medium",
+      regulations: ["rgpd"],
+      sensitivity: "internal",
+      audit: "desired",
+      bitemporal: "desired",
+      techLevel: "dev",
+      budget: "50to200",
+      reqPerDay: "lt100",
+      latency: "acceptable",
+      voices: "solo",
+      modules: defaultModuleLevels(),
+    },
+  },
+];
