@@ -1,0 +1,145 @@
+{
+  "project": "Mnémo",
+  "repo": "https://github.com/Afristrat/mnemo",
+  "lot": "Lot 1 — Conseil + moats (production-ready, vendable seul)",
+  "principe": "Production-ready, zéro dette. Pas de version mince. Chaque story : typecheck + tests + lint + build verts avant passes=true, puis commit + push.",
+  "stack": "Next.js 15 (App Router) + React 19 + TypeScript + Tailwind v3 + Supabase (RLS) + Vitest + Playwright. Héberg. cible Vercel.",
+  "spec": "PRD.md (racine) — features F1..F9.",
+  "design": "design-reference/mn_mo_brand_identity/DESIGN.md + maquettes Stitch dans design-reference/.",
+  "stories": [
+    {
+      "id": "S-001", "title": "Scaffold Next.js + TS + Tailwind + ESLint + structure", "feature": "infra",
+      "passes": true, "completedAt": "2026-05-24", "deps": [],
+      "acceptance": [
+        "npm run build passe",
+        "npm run typecheck 0 erreur",
+        "npm run lint 0 erreur",
+        "page d'accueil rend sans erreur",
+        ".gitignore exclut node_modules/.next/.env*"
+      ]
+    },
+    {
+      "id": "S-002", "title": "Design system (tokens DESIGN.md → Tailwind, polices, primitives UI)", "feature": "design",
+      "passes": false, "deps": ["S-001"],
+      "acceptance": [
+        "tailwind.config porte les couleurs/typo/rayons de DESIGN.md",
+        "polices Space Grotesk / Inter / JetBrains Mono chargées",
+        "primitives Button, Card, Chip, Input, StatusDot typées et testées"
+      ]
+    },
+    {
+      "id": "S-003", "title": "Moteur de reco — lib TS (types + catalogue 7 couches + preset/buildLayers/computeCost/computeScores)", "feature": "F1-F3",
+      "passes": false, "deps": ["S-001"],
+      "acceptance": [
+        "logique portée depuis design-reference simulateur v2 en TS pur (lib/engine)",
+        "fonctions pures sans dépendance UI",
+        "types stricts (zéro any non justifié)"
+      ]
+    },
+    {
+      "id": "S-004", "title": "Tests unitaires du moteur (Vitest)", "feature": "F1-F3",
+      "passes": false, "deps": ["S-003"],
+      "acceptance": [
+        "couverture preset decision (LIGHT/MEDIUM/HARD)",
+        "couverture computeCost (facteurs + modules)",
+        "couverture computeScores (8 dimensions + bonus modules)",
+        "npm test vert"
+      ]
+    },
+    {
+      "id": "S-005", "title": "Wizard F1 (UI ~16 params, persistance, → preset)", "feature": "F1",
+      "passes": false, "deps": ["S-002", "S-003"],
+      "acceptance": [
+        "wizard multi-étapes couvrant les ~16 paramètres du profil",
+        "persistance localStorage + reprise",
+        "validation, navigation, presets pré-remplis",
+        "UI fidèle aux maquettes configurateur_*"
+      ]
+    },
+    {
+      "id": "S-006", "title": "Résultats F2/F3 (stack 7 couches + radar 8 dim + carte coûts + slider projection + confiance sourcée)", "feature": "F2-F3",
+      "passes": false, "deps": ["S-005"],
+      "acceptance": [
+        "rendu des 7 couches C0..C6 avec choix/coût/alternatives",
+        "radar 8 dimensions",
+        "carte de coûts avec bandes basse/haute + pastilles 🟢🟡🟠 + URL source datée",
+        "slider de projection recalcule < 200 ms",
+        "UI fidèle aux maquettes recommandation/tableau de bord"
+      ]
+    },
+    {
+      "id": "S-007", "title": "Ensemble multi-config F5 (N configs + spread = incertitude)", "feature": "F5",
+      "passes": false, "deps": ["S-006"],
+      "acceptance": [
+        "≥ 3 configs candidates (souveraineté max / coût min / time-to-V1 min)",
+        "écart de coût/score affiché comme incertitude",
+        "libellé d'incertitude explicite"
+      ]
+    },
+    {
+      "id": "S-008", "title": "Price feed F4 (Firecrawl + cache + sources datées + seed fallback)", "feature": "F4",
+      "passes": false, "deps": ["S-003"],
+      "acceptance": [
+        "route serveur interroge Firecrawl (rendu JS) pour les prix vendor",
+        "cache + timestamp + niveau de confiance + URL source",
+        "fallback table seed si indispo",
+        "détection/flag des variations"
+      ]
+    },
+    {
+      "id": "S-009", "title": "Livrable export F6 (MD + PDF, sources, disclaimer)", "feature": "F6",
+      "passes": false, "deps": ["S-006"],
+      "acceptance": [
+        "export Markdown + PDF",
+        "toutes les sources cliquables",
+        "disclaimer « une IA peut se tromper » présent"
+      ]
+    },
+    {
+      "id": "S-010", "title": "Exit Escrow F7 (génération bundle reproductible + test redeploy)", "feature": "F7",
+      "passes": false, "deps": ["S-003", "S-006"],
+      "acceptance": [
+        "bundle = IaC (Terraform/Compose) paramétré + vault skeleton + runbook + script re-embedding",
+        "téléchargement zip",
+        "test d'intégration : le bundle décrit une stack cohérente avec la reco"
+      ]
+    },
+    {
+      "id": "S-011", "title": "Fiduciary Mode F8 (divulgation + charte zéro commission cachée)", "feature": "F8",
+      "passes": false, "deps": ["S-002"],
+      "acceptance": [
+        "page de divulgation accessible",
+        "charte fiduciaire affichée dans le livrable",
+        "aucune reco conditionnée à une commission vendor (test)"
+      ]
+    },
+    {
+      "id": "S-012", "title": "Supabase + RLS + auth + consentement réseau F9 (rails moat ③)", "feature": "F9",
+      "passes": false, "deps": ["S-001"],
+      "acceptance": [
+        "schéma tables avec tenant/circle pivot",
+        "RLS activé sur toutes les tables",
+        "opt-in consentement horodaté",
+        "schéma de données coût réel prêt à recevoir (collecte au Lot 2)"
+      ]
+    },
+    {
+      "id": "S-013", "title": "Playwright E2E parcours critiques", "feature": "tests",
+      "passes": false, "deps": ["S-005", "S-006", "S-009"],
+      "acceptance": [
+        "parcours wizard → résultats → livrable → export",
+        "responsive (mobile/desktop)",
+        "config CI prête"
+      ]
+    },
+    {
+      "id": "S-014", "title": "CLAUDE.md projet + README + CI GitHub Actions", "feature": "infra",
+      "passes": false, "deps": ["S-001"],
+      "acceptance": [
+        "CLAUDE.md décrit le projet réel (commandes, archi, conventions)",
+        "README d'onboarding",
+        "CI: lint + typecheck + test + build + playwright"
+      ]
+    }
+  ]
+}

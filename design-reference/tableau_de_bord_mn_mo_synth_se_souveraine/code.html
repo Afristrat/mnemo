@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mnémo - Tableau de bord</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected from Style Guidance -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffba46",
+                    "outline-variant": "#bcc9c6",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#614000",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#fefcff",
+                    "background": "#faf8ff",
+                    "primary": "#00685f",
+                    "on-surface-variant": "#3d4947",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#6bd8cb",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-fixed": "#00174b",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#ffddb0",
+                    "surface-container-low": "#f2f3ff",
+                    "surface": "#faf8ff",
+                    "on-primary-fixed-variant": "#005049",
+                    "on-primary-fixed": "#00201d",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#6bd8cb",
+                    "primary-container": "#008378",
+                    "surface-container-high": "#e2e7ff",
+                    "tertiary-container": "#9d6a00",
+                    "outline": "#6d7a77",
+                    "surface-tint": "#006a61",
+                    "surface-variant": "#dae2fd",
+                    "secondary-container": "#316bf3",
+                    "surface-dim": "#d2d9f4",
+                    "on-primary-container": "#f4fffc",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "tertiary": "#7d5400",
+                    "on-background": "#131b2e",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#dbe1ff",
+                    "surface-bright": "#faf8ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "surface-container-highest": "#dae2fd",
+                    "surface-container": "#eaedff",
+                    "on-tertiary-fixed": "#281800",
+                    "secondary": "#0051d5",
+                    "on-surface": "#131b2e",
+                    "primary-fixed": "#89f5e7",
+                    "inverse-surface": "#283044"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "14px", // Customised to match requirement while using theme token
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "element-gap": "20px",
+                    "container-margin": "24px",
+                    "section-padding": "40px",
+                    "grid-gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Space Grotesk", "sans-serif"],
+                    "headline-lg": ["Space Grotesk", "sans-serif"],
+                    "display-lg": ["Space Grotesk", "sans-serif"],
+                    "code-md": ["JetBrains Mono", "monospace"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "label-caps": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "code-md": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        }
+      }
+    </script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bcc9c6;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6d7a77;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md h-screen overflow-hidden flex">
+<!-- Left Sidebar (SideNavBar) -->
+<aside class="docked left-0 top-0 h-screen w-64 z-50 border-r border-outline-variant bg-surface-container-lowest flex flex-col py-6 space-y-2 overflow-y-auto">
+<!-- Header -->
+<div class="px-container-margin mb-8">
+<h1 class="font-headline-md text-headline-md font-black text-primary tracking-tighter uppercase">MnÉmo</h1>
+<p class="font-label-caps text-label-caps text-outline mt-1 uppercase">Infrastructure souveraine</p>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 space-y-1">
+<!-- Active Tab -->
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 mx-2 translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md text-body-md font-medium">Tableau de bord</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-body-md text-body-md">Chat mémoire</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">input</span>
+<span class="font-body-md text-body-md">Ingestion</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Souveraineté</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Coûts</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body-md text-body-md">Audit trail</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mx-2 hover:bg-surface-container-high transition-all duration-200 rounded-lg mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Paramètres</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- Top Nav (TopNavBar) -->
+<header class="docked full-width top-0 z-40 bg-surface shadow-sm border-b border-outline-variant h-16 w-full flex justify-between items-center px-container-margin">
+<!-- Left: Search (Moved here for better layout balance despite JSON saying on_left, usually logo is far left in sidebar) -->
+<div class="flex items-center w-1/3">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="Interrogez votre mémoire..." type="text"/>
+</div>
+</div>
+<!-- Right: Actions & Avatar -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container overflow-hidden border border-outline-variant ml-2 cursor-pointer">
+<img alt="Avatar de l'administrateur" class="h-full w-full object-cover" data-alt="A professional headshot of a corporate IT administrator, male, wearing a smart casual dark blue shirt, well-lit studio lighting with a neutral gray background, confident and approachable expression, high resolution photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8qw6Xv8f_6FZHjl2iYdCWcnNoSYYHrGWqM63V7SnQ8REZxCPFnRPwSRcUReg64g2yaWWZBN8PZzIpCuLePlJ-MOttAYd9i1GD_EhppIgnxj0fybC6J9mTe2rZ1ZYReflTKnvWareEp_KwhSuZ6-NHatMIfBt2d_6YJqXFoVTdiQAQi5WntmZR465Z8TJi7bhVr6R4IhVWY85JtgdThZx82QaYd7A2exmQQCyOR5OIxR9wINW_gHBXif7XapITlZCGiphw0EpbcOI"/>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Canvas -->
+<main class="flex-1 overflow-y-auto p-container-margin bg-background">
+<div class="max-w-[1440px] mx-auto space-y-grid-gutter pb-section-padding">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Vue d'ensemble</h2>
+</div>
+<!-- Overview Grid (4 Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-grid-gutter">
+<!-- Card 1: Santé -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">Santé de la stack</span>
+<span class="material-symbols-outlined text-outline">monitor_heart</span>
+</div>
+<div>
+<div class="font-code-md text-code-md text-on-surface text-2xl font-bold">11/12 services OK</div>
+<div class="flex items-center gap-2 mt-2">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">mode dégradé MEL</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Coût -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">Coût du mois</span>
+<span class="material-symbols-outlined text-outline">euro_symbol</span>
+</div>
+<div>
+<div class="font-code-md text-code-md text-on-surface text-2xl font-bold">3 180 €</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="font-body-sm text-body-sm text-outline">/ 3 236 € estimé</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps">±30%</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Volume -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">Volume mémorisé</span>
+<span class="material-symbols-outlined text-outline">database</span>
+</div>
+<div>
+<div class="font-code-md text-code-md text-on-surface text-2xl font-bold">142 Go</div>
+<div class="flex items-center gap-2 mt-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="font-body-sm text-body-sm font-medium">+4 % ce mois</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Souveraineté -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">Souveraineté</span>
+<span class="material-symbols-outlined text-outline">shield</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">Niveau 4</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-sm text-primary">lock</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hybride</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2: Stack Diagram & Coûts Chart -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-grid-gutter">
+<!-- État des services (Stack Diagram) - 2/3 width -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">État des services</h3>
+<div class="flex-1 flex flex-col justify-center space-y-3">
+<!-- Layer 1: Interface -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container border border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">devices</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Interface</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="font-code-md text-code-md text-outline text-xs uppercase">Opérationnel</span>
+</div>
+</div>
+<!-- Layer 2: Modèles IA -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container border border-tertiary-fixed-dim/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">psychology</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Modèles IA</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim"></div>
+<span class="font-code-md text-code-md text-tertiary text-xs uppercase">Dégradé</span>
+</div>
+</div>
+<!-- Layer 3: Stockage -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container border border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">hard_drive</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Stockage</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="font-code-md text-code-md text-outline text-xs uppercase">Opérationnel</span>
+</div>
+</div>
+<!-- Layer 4: Matériel -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container border border-outline-variant/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">dns</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Matériel</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="font-code-md text-code-md text-outline text-xs uppercase">Opérationnel</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coûts dans le temps - 1/3 width -->
+<div class="lg:col-span-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Coûts</h3>
+<!-- Timeframe Selectors -->
+<div class="flex bg-surface-container-low rounded-lg p-1 border border-outline-variant/50">
+<button class="px-2 py-1 text-xs font-medium rounded text-on-surface-variant hover:bg-surface-variant transition-colors">1S</button>
+<button class="px-2 py-1 text-xs font-medium rounded bg-surface-container-lowest shadow-sm text-primary">1M</button>
+<button class="px-2 py-1 text-xs font-medium rounded text-on-surface-variant hover:bg-surface-variant transition-colors">1A</button>
+<button class="px-2 py-1 text-xs font-medium rounded text-on-surface-variant hover:bg-surface-variant transition-colors">Tout</button>
+</div>
+</div>
+<!-- Mock Area Chart -->
+<div class="flex-1 relative mt-2 border-b border-l border-outline-variant/30 flex items-end min-h-[160px]">
+<!-- Y-axis labels -->
+<div class="absolute -left-2 top-0 -translate-x-full text-xs text-outline font-code-md">4k</div>
+<div class="absolute -left-2 top-1/2 -translate-y-1/2 -translate-x-full text-xs text-outline font-code-md">2k</div>
+<!-- SVG Placeholder for Area Chart -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<!-- Estimé (Gray band) -->
+<path d="M0,80 Q25,75 50,60 T100,40 L100,100 L0,100 Z" fill="#eaedff" opacity="0.6"></path>
+<path d="M0,80 Q25,75 50,60 T100,40" fill="none" stroke="#bcc9c6" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- Réel (Teal area) -->
+<path d="M0,85 Q20,80 45,70 T85,45 L85,100 L0,100 Z" fill="#008378" opacity="0.15"></path>
+<path d="M0,85 Q20,80 45,70 T85,45" fill="none" stroke="#00685f" stroke-width="2"></path>
+<!-- Current Point -->
+<circle cx="85" cy="45" fill="#00685f" r="3"></circle>
+</svg>
+<!-- X-axis labels -->
+<div class="absolute -bottom-6 w-full flex justify-between text-xs text-outline font-code-md">
+<span>01/10</span>
+<span>15/10</span>
+<span>30/10</span>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-center gap-4 text-xs">
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-primary"></div> Réel</div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-outline-variant"></div> Estimé</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Audit Trail & Chat -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-grid-gutter">
+<!-- Audit Trail -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<h3 class="font-headline-md text-headline-md text-on-surface">Audit trail</h3>
+<span class="px-2 py-1 rounded bg-primary-container text-on-primary-container font-label-caps text-label-caps flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                                    Registre inviolable
+                                </span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant text-outline font-label-caps text-label-caps uppercase">
+<th class="pb-3 pr-4 font-semibold">Horodatage</th>
+<th class="pb-3 pr-4 font-semibold">Acteur</th>
+<th class="pb-3 pr-4 font-semibold">Action</th>
+<th class="pb-3 font-semibold">Atome</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors">
+<td class="py-3 pr-4 font-code-md text-code-md text-on-surface-variant">2023-10-27 14:32:01</td>
+<td class="py-3 pr-4 text-on-surface">System_Agent_04</td>
+<td class="py-3 pr-4 text-on-surface">Read_Access</td>
+<td class="py-3 text-on-surface">Doc_ID_8472</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors">
+<td class="py-3 pr-4 font-code-md text-code-md text-on-surface-variant">2023-10-27 14:28:15</td>
+<td class="py-3 pr-4 text-on-surface">Admin_Muller</td>
+<td class="py-3 pr-4 text-on-surface">Config_Update</td>
+<td class="py-3 text-on-surface">Ingest_Pipeline_B</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors">
+<td class="py-3 pr-4 font-code-md text-code-md text-on-surface-variant">2023-10-27 14:15:44</td>
+<td class="py-3 pr-4 text-on-surface">API_Gateway</td>
+<td class="py-3 pr-4 text-on-surface">Query_Execution</td>
+<td class="py-3 text-on-surface">Semantic_Search</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 pr-4 font-code-md text-code-md text-on-surface-variant">2023-10-27 13:59:10</td>
+<td class="py-3 pr-4 text-on-surface">System_Agent_02</td>
+<td class="py-3 pr-4 text-on-surface">Data_Sync</td>
+<td class="py-3 text-on-surface">Vector_DB_Node_1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Chat avec votre mémoire -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col bg-gradient-to-br from-surface-container-lowest to-surface-container-low">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">forum</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Chat avec votre mémoire</h3>
+</div>
+<div class="flex-1 flex flex-col space-y-4">
+<!-- User Message -->
+<div class="self-end bg-surface-variant text-on-surface px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] border border-outline-variant/30">
+<p class="font-body-md text-body-md">Quelle est la politique de rétention pour les logs d'ingestion de l'infrastructure ?</p>
+</div>
+<!-- System Response -->
+<div class="self-start bg-primary-container text-on-primary-container px-4 py-3 rounded-2xl rounded-tl-sm max-w-[90%] shadow-sm">
+<p class="font-body-md text-body-md leading-relaxed">
+                                    D'après les documents de configuration actuels, la politique de rétention pour les logs d'ingestion est fixée à <strong>90 jours</strong> en stockage chaud (immédiatement accessible), suivie d'un archivage à froid pendant <strong>1 an</strong> pour des raisons de conformité légale.
+                                </p>
+<!-- Source Citations -->
+<div class="mt-3 pt-3 border-t border-on-primary-container/20">
+<span class="text-xs font-semibold uppercase tracking-wider mb-2 block opacity-80">Sources référencées :</span>
+<div class="flex flex-wrap gap-2">
+<a class="inline-flex items-center gap-1 text-xs px-2 py-1 bg-surface-container-lowest text-primary rounded border border-primary/30 hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]">description</span>
+                                            POL-RET-2023_v2.pdf
+                                        </a>
+<a class="inline-flex items-center gap-1 text-xs px-2 py-1 bg-surface-container-lowest text-primary rounded border border-primary/30 hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+                                            config_storage.yaml
+                                        </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Mockup -->
+<div class="mt-4 relative">
+<input class="w-full pl-4 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-outline opacity-70 cursor-not-allowed" disabled="" placeholder="Poser une nouvelle question..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline">send</span>
+</div>
+<!-- Footer Note -->
+<div class="mt-3 text-center">
+<span class="inline-flex items-center gap-1 text-xs font-code-md text-outline">
+<span class="material-symbols-outlined text-[12px]">info</span>
+                                Abstention si incertain
+                            </span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

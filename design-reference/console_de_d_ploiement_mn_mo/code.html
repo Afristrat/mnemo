@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mnémo - Déploiement</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f2f3ff",
+                        "on-surface": "#131b2e",
+                        "surface-container": "#eaedff",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary-fixed": "#00201d",
+                        "background": "#faf8ff",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "primary-fixed": "#89f5e7",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffddb0",
+                        "surface-container-high": "#e2e7ff",
+                        "inverse-surface": "#283044",
+                        "surface-tint": "#006a61",
+                        "surface-container-highest": "#dae2fd",
+                        "on-background": "#131b2e",
+                        "on-secondary-fixed": "#00174b",
+                        "on-primary-fixed-variant": "#005049",
+                        "on-primary-container": "#f4fffc",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf8ff",
+                        "tertiary-fixed-dim": "#ffba46",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#0051d5",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "outline": "#6d7a77",
+                        "inverse-on-surface": "#eef0ff",
+                        "primary-container": "#008378",
+                        "surface-bright": "#faf8ff",
+                        "tertiary": "#7d5400",
+                        "secondary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed-variant": "#614000",
+                        "inverse-primary": "#6bd8cb",
+                        "primary": "#00685f",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "on-tertiary-fixed": "#281800",
+                        "outline-variant": "#bcc9c6",
+                        "on-secondary-container": "#fefcff",
+                        "on-surface-variant": "#3d4947",
+                        "surface-variant": "#dae2fd",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-container": "#316bf3",
+                        "tertiary-container": "#9d6a00",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "grid-gutter": "24px",
+                        "element-gap": "20px",
+                        "section-padding": "40px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "code-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "code-md": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-hidden">
+<!-- TopAppBar from JSON -->
+<header class="bg-surface docked full-width top-0 z-50 border-b border-outline-variant shadow-sm">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-6">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Mnémo</div>
+<div class="w-px h-6 bg-outline-variant"></div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Déploiement de votre base mémorielle</h1>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-primary pulse-dot"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Déploiement en cours — 58%</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<nav class="hidden lg:flex items-center gap-6 mr-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Configurateur</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Gouvernance</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Tarifs</a>
+</nav>
+<button class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+                    Mettre en pause l'agent
+                </button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm hover:opacity-90 transition-opacity">
+                    Tout valider
+                </button>
+<button class="px-4 py-2 rounded-lg bg-secondary text-on-secondary font-body-sm text-body-sm hover:opacity-90 transition-opacity">
+                    Contacter un expert
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col lg:flex-row w-full max-w-[1440px] mx-auto p-6 gap-grid-gutter overflow-hidden h-[calc(100vh-140px)]">
+<!-- Left Column: Plan de déploiement (30%) -->
+<section class="w-full lg:w-[30%] flex flex-col gap-4 overflow-y-auto pr-2">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface text-[20px]">Plan de déploiement</h2>
+<div class="flex items-center gap-3">
+<div class="relative w-10 h-10 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="58, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="absolute font-label-caps text-label-caps text-primary">58%</span>
+</div>
+<div class="text-right">
+<div class="font-label-caps text-label-caps text-on-surface-variant">PROGRESSION</div>
+<div class="font-body-sm text-body-sm text-on-surface">7 / 12 tâches</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<!-- Row 1: Completed -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">database</span>
+<div>
+<div class="font-body-sm text-body-sm font-medium text-on-surface">Provisionner Postgres</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">Supabase</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-label-caps text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">smart_toy</span> Agent</span>
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+</div>
+</div>
+<!-- Row 2: Completed -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">router</span>
+<div>
+<div class="font-body-sm text-body-sm font-medium text-on-surface">Configurer réseau</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">Cloudflare</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-label-caps text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">smart_toy</span> Agent</span>
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+</div>
+</div>
+<!-- Row 3: In Progress -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-primary bg-primary/5 shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px] pulse-dot">sync</span>
+<div>
+<div class="font-body-sm text-body-sm font-medium text-on-surface">Déployer LLM (Mistral)</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">RunPod</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-label-caps text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">smart_toy</span> Agent</span>
+<span class="px-2 py-1 bg-secondary/10 text-secondary rounded font-label-caps text-[10px] pulse-dot">En cours</span>
+</div>
+</div>
+<!-- Row 4: Action Required -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-tertiary-fixed-dim bg-tertiary-fixed/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px]">dns</span>
+<div>
+<div class="font-body-sm text-body-sm font-medium text-on-surface">Instance Compute</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">Scaleway</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-tertiary-fixed-dim/20 text-tertiary rounded-full font-label-caps text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">person</span> Vous</span>
+<span class="px-2 py-1 bg-tertiary-fixed-dim/20 text-tertiary rounded font-label-caps text-[10px]">Action requise</span>
+</div>
+</div>
+<!-- Row 5: To Do -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface opacity-60">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline text-[20px]">hub</span>
+<div>
+<div class="font-body-sm text-body-sm font-medium text-on-surface">Initialiser Graphe</div>
+<div class="font-label-caps text-label-caps text-outline mt-0.5">Neo4j</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-[10px] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">smart_toy</span> Agent</span>
+<span class="font-label-caps text-[10px] text-outline">À faire</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Center Column: Agent Terminal (40%) -->
+<section class="w-full lg:w-[40%] flex flex-col gap-4 h-full">
+<div class="bg-[#0F172A] rounded-xl flex flex-col h-full overflow-hidden shadow-sm border border-outline-variant">
+<div class="bg-[#1E293B] px-4 py-3 flex items-center justify-between border-b border-[#334155]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">terminal</span>
+<span class="font-body-sm text-body-sm font-medium text-white">Activité de l'agent</span>
+</div>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#EAB308]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22C55E]"></div>
+</div>
+</div>
+<div class="flex-1 p-4 overflow-y-auto font-code-md text-code-md text-gray-300 space-y-2">
+<div class="flex gap-3"><span class="text-gray-500">[10:42:01]</span><span class="text-primary">[INFO]</span><span>Initialisation du déploiement de la base mémorielle...</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:42:05]</span><span class="text-primary">[INFO]</span><span>Connexion à l'API Supabase établie.</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:42:18]</span><span class="text-[#22C55E]">[SUCCESS]</span><span>Cluster Postgres provisionné avec succès (eu-west-3).</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:42:20]</span><span class="text-primary">[INFO]</span><span>Configuration des règles WAF Cloudflare...</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:42:35]</span><span class="text-[#22C55E]">[SUCCESS]</span><span>Règles WAF appliquées. Mode strict activé.</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:42:40]</span><span class="text-primary">[INFO]</span><span>Demande d'allocation GPU sur RunPod pour Mistral-7B-Instruct.</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:43:12]</span><span class="text-[#3B82F6]">[WAIT]</span><span class="pulse-dot">En attente de l'instance GPU (id: rp-9382x)...</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:43:15]</span><span class="text-[#EAB308]">[WARN]</span><span>L'API Scaleway requiert une validation manuelle pour la création de l'instance compute.</span></div>
+<div class="flex gap-3"><span class="text-gray-500">[10:43:16]</span><span class="text-primary">[ACTION]</span><span>Mise en pause de la tâche Scaleway. Envoi d'une notification à l'utilisateur.</span></div>
+</div>
+<div class="p-3 bg-[#1E293B] border-t border-[#334155]">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">smart_toy</span>
+<input class="w-full bg-[#0F172A] border border-[#334155] rounded-lg py-2 pl-10 pr-4 text-white font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-gray-500" placeholder="Demandez quelque chose à l'agent..." type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Secrets & Actions (30%) -->
+<section class="w-full lg:w-[30%] flex flex-col gap-4 h-full overflow-y-auto pr-2">
+<!-- Coffre de secrets -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">lock</span>
+<h2 class="font-headline-md text-headline-md text-on-surface text-[20px]">Coffre de secrets</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Vos clés sont chiffrées de bout en bout et gérées par l'agent de déploiement.</p>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2 rounded bg-surface border border-outline-variant">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SUPABASE_DB_URL</span>
+<span class="font-code-md text-code-md text-on-surface mt-1">postgres://•••:••••••••@aws-0-eu...</span>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-[#22C55E]/10 text-[#22C55E] rounded text-[10px] font-bold">Chiffré</span>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[16px]">content_copy</span></button>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-surface border border-outline-variant">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">RUNPOD_API_KEY</span>
+<span class="font-code-md text-code-md text-on-surface mt-1">sk-••••••••4f2a</span>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-[#22C55E]/10 text-[#22C55E] rounded text-[10px] font-bold">Chiffré</span>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[16px]">content_copy</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions requises -->
+<div class="bg-surface-container-lowest rounded-xl border border-tertiary-fixed-dim p-5 shadow-sm bg-gradient-to-b from-white to-tertiary-fixed/5">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px]">warning</span>
+<h2 class="font-headline-md text-headline-md text-on-surface text-[20px]">Actions requises</h2>
+<span class="ml-auto bg-tertiary-fixed-dim text-white rounded-full w-5 h-5 flex items-center justify-center font-bold text-[12px]">2</span>
+</div>
+<div class="space-y-3">
+<div class="p-3 rounded-lg border border-tertiary-fixed-dim bg-white shadow-sm">
+<div class="font-body-sm text-body-sm font-medium text-on-surface mb-1">Valider paiement Scaleway</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px] mb-3">La création de l'instance nécessite une autorisation de paiement de 0.00€ pour vérifier le moyen de paiement.</p>
+<button class="w-full py-1.5 bg-tertiary-fixed-dim text-white rounded font-body-sm text-body-sm font-medium hover:bg-tertiary transition-colors">Ouvrir portail Scaleway</button>
+</div>
+<div class="p-3 rounded-lg border border-tertiary-fixed-dim bg-white shadow-sm">
+<div class="font-body-sm text-body-sm font-medium text-on-surface mb-1">Saisir code OTP Cloudflare</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px] mb-3">Veuillez saisir le code d'authentification à deux facteurs pour autoriser la modification des DNS.</p>
+<div class="flex gap-2">
+<input class="w-20 border border-outline-variant rounded px-2 py-1 font-code-md text-center text-sm focus:border-tertiary-fixed-dim focus:ring-1 focus:ring-tertiary-fixed-dim" placeholder="000000" type="text"/>
+<button class="flex-1 py-1.5 bg-surface-container-high text-on-surface rounded font-body-sm text-body-sm font-medium hover:bg-surface-variant transition-colors">Valider le code</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Collapsible Bar -->
+<div class="bg-surface-container-lowest border-t border-outline-variant px-6 py-3 mt-auto shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CONFIGURATION APPLIQUÉE</span>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 bg-surface-container-high rounded-md border border-outline-variant font-code-md text-[11px] text-on-surface">Souveraineté Niveau 4</span>
+<span class="px-2.5 py-1 bg-surface-container-high rounded-md border border-outline-variant font-code-md text-[11px] text-on-surface">Hybride</span>
+<span class="px-2.5 py-1 bg-surface-container-high rounded-md border border-outline-variant font-code-md text-[11px] text-on-surface">Multimodal</span>
+<span class="px-2.5 py-1 bg-surface-container-high rounded-md border border-outline-variant font-code-md text-[11px] text-on-surface">+Audit</span>
+<span class="px-2.5 py-1 bg-surface-container-high rounded-md border border-outline-variant font-code-md text-[11px] text-on-surface">Managé</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center">
+<span class="font-label-caps text-[10px] mr-1">VOIR TOUT</span>
+<span class="material-symbols-outlined text-[18px]">expand_less</span>
+</button>
+</div>
+</div>
+</body></html>
