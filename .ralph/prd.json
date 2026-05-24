@@ -58,7 +58,7 @@
     },
     {
       "id": "S-006", "title": "Résultats F2/F3 (stack 7 couches + radar 8 dim + carte coûts + slider projection + confiance sourcée)", "feature": "F2-F3",
-      "passes": false, "deps": ["S-005"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-005"],
       "acceptance": [
         "rendu des 7 couches C0..C6 avec choix/coût/alternatives",
         "radar 8 dimensions",
