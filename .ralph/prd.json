@@ -38,7 +38,7 @@
     },
     {
       "id": "S-004", "title": "Tests unitaires du moteur (Vitest)", "feature": "F1-F3",
-      "passes": false, "deps": ["S-003"],
+      "passes": true, "completedAt": "2026-05-24", "deps": ["S-003"],
       "acceptance": [
         "couverture preset decision (LIGHT/MEDIUM/HARD)",
         "couverture computeCost (facteurs + modules)",
