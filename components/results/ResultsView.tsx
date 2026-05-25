@@ -7,6 +7,7 @@ import { Chip } from "@/components/ui/Chip";
 import { CostMap } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { LayerStack } from "@/components/results/LayerStack";
+import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import {
@@ -162,6 +163,9 @@ export function ResultsView(): ReactElement {
         activeModules={result.activeModules}
         totalCost={result.totalCost}
       />
+
+      {/* Fraîcheur des prix (price feed Firecrawl) */}
+      <PriceFreshness />
 
       {/* Conformité & risques */}
       <div className="grid gap-6 lg:grid-cols-2">
