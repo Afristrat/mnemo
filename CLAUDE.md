@@ -1,51 +1,77 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidage pour Claude Code (claude.ai/code) sur ce dépôt.
 
 ## Nature du dépôt
 
-Collection de **maquettes HTML autonomes** pour **Mnémo**, un produit B2B d'infrastructure de données IA souveraine (positionné comme la « base mémorielle » d'une organisation). Ce n'est **pas** une application : aucun build, aucun bundler, aucun test, aucun `package.json`, pas de dépôt git. Chaque maquette est un fichier HTML autonome qui se rend directement dans le navigateur.
+Application **Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind v3 +
+Supabase (RLS)** — **Mnémo**, configurateur d'infrastructure de base mémorielle IA
+souveraine (positionnement : « base mémorielle » d'une organisation). **Lot 1 = conseil
++ moats** : le configurateur recommande une stack 7 couches, chiffre les coûts (sourcés,
+±30 %), explore l'incertitude (ensemble), exporte un livrable, génère un bundle de
+redéploiement reproductible (Exit Escrow), affiche une charte fiduciaire, et pose les
+rails multi-tenant (RLS) du réseau d'intelligence.
 
-Les maquettes sont générées via **Google Stitch** (cf. le dossier vide `stitch_mn_mo_sovereign_ai_configurator/` et la skill `stitch-design`). Il s'agit d'écrans de prototypage destinés à valider parcours et design avant toute implémentation.
+> Le dépôt a démarré comme une collection de maquettes Stitch ; celles-ci sont conservées
+> dans `design-reference/` (dont `mn_mo_brand_identity/DESIGN.md`, la source de vérité du
+> design). L'application réelle a été portée depuis ces maquettes.
 
-## Structure
+## Commandes
 
-Chaque écran = un dossier contenant deux fichiers de même nom de base :
-- `code.html` — le prototype (source de vérité éditable)
-- `screen.png` — capture de rendu de référence
+```bash
+npm run dev          # serveur de dev (http://localhost:3000)
+npm run build        # build de production
+npm run start        # serveur de production (après build)
+npm run typecheck    # tsc --noEmit (0 erreur exigée)
+npm run lint         # ESLint CLI (flat config, 0 erreur / 0 warning exigés)
+npm test             # Vitest (tests unitaires)
+npm run test:e2e     # Playwright (parcours critiques, desktop + mobile)
 
-| Dossier | Écran (`<title>`) |
-|---|---|
-| `configurateur_mn_mo_parcours_guid/` | Configurator — parcours guidé |
-| `configurateur_mn_mo_recommandation_pme_v1/` | Configuration recommandée (PME, v1) |
-| `configurateur_mn_mo_recommandation_pme_v2/` | Configuration recommandée (PME, v2) |
-| `configurateur_mn_mo_stack_souveraine/` | Configurateur — stack souveraine |
-| `console_de_d_ploiement_mn_mo/` | Déploiement |
-| `tableau_de_bord_mn_mo_synth_se_souveraine/` | Tableau de bord — synthèse souveraine |
-| `mn_mo_brand_identity/DESIGN.md` | Système de design partagé (pas une maquette) |
-
-`_v1` / `_v2` sont des variantes alternatives du **même** écran — comparer avant de modifier, ne pas fusionner sans intention explicite.
-
-## Voir / itérer sur une maquette
-
-Aucune commande de build. Ouvrir un `code.html` dans le navigateur :
-
-```powershell
-Start-Process ".\tableau_de_bord_mn_mo_synth_se_souveraine\code.html"
+npx supabase start   # stack Supabase locale (Docker) — pour S-012 / rails F9
+npx supabase status  # URLs + clés locales
+npx supabase db reset # ré-applique les migrations
 ```
 
-Tailwind est chargé via CDN (`cdn.tailwindcss.com`), les polices via Google Fonts. Une connexion réseau est donc requise pour un rendu fidèle. Après modification, comparer le rendu au `screen.png` du dossier.
+## Architecture
 
-## Système de design — source de vérité
+- `app/` — routes : `/` (accueil), `/configurateur` (wizard), `/resultats` (reco),
+  `/fiduciaire` (charte), `/api/pricing` (price feed serveur).
+- `components/` — `ui/` (primitives : Button, Card, Chip, Input, StatusDot),
+  `wizard/`, `results/`.
+- `lib/` — cœur métier, **fonctions pures et testées** :
+  - `engine/` — moteur de reco : `recommend(profile) → Recommendation` (preset, 7 couches,
+    8 scores, coûts, modules, diagnostics) + `buildEnsemble` (incertitude multi-config).
+  - `pricing/` — price feed Firecrawl (extraction, empreinte, cache, repli seed).
+  - `export/` — livrable MD + PDF (modèle pur partagé).
+  - `exit/` — bundle Exit Escrow (IaC + runbook + scripts) zippé via fflate.
+  - `fiduciary/` — charte (donnée pure).
+  - `supabase/` — clients `@supabase/ssr` (browser/serveur) + types.
+  - `network/` — consentement réseau horodaté.
+  - `wizard/`, `charts/`, `utils/`.
+- `hooks/` — `useWizardProfile` (état + persistance localStorage).
+- `supabase/migrations/` — schéma + RLS (pivot `circle`, consentement, coût réel).
+- `e2e/` — specs Playwright. `.github/workflows/ci.yml` — CI (qualité + e2e).
+- `.ralph/` — pilotage (PRD `prd.json`, journal `progress.md`). `docs/DECISIONS.md` — ADR.
 
-`mn_mo_brand_identity/DESIGN.md` définit le système de design Mnémo (couleurs, typographie, formes, espacement, composants). **Le lire avant toute modification visuelle** et s'y conformer.
+## Conventions (non négociables)
 
-Points structurants à respecter :
-- **Tokens dupliqués** : chaque `code.html` réinjecte les couleurs/espacements dans un bloc `tailwind.config` inline (`<script id="tailwind-config">`). En cas de changement de token, mettre à jour `DESIGN.md` (référence) **et** chaque `code.html` concerné pour éviter toute dérive.
-- **Trois polices, usages stricts** : Space Grotesk (titres), Inter (corps/UI), JetBrains Mono (**obligatoire** pour toute donnée numérique, clés API, logs, chemins d'infra).
-- **Formes** : cartes `14px`, champs de saisie `10px`, boutons en pilule pleine (`9999px`).
-- **Accent primaire teal** = actions cœur / statut « souverain » ; **bleu** = réseau/cloud/IA ; **or** = features d'intelligence avancée.
+1. **Zéro dette** : avant de marquer une story faite → typecheck 0, lint 0, tests verts,
+   build OK (+ e2e/live si pertinent). « Non bloquant » n'existe pas.
+2. **TypeScript** : `strict`, pas de `any`/`as`/`!` (cf. `~/.claude/rules/typescript.md`) ;
+   `type` plutôt qu'`enum` (unions `as const`) ; return types sur fonctions exportées.
+3. **Moteur pur** : toute la logique de reco dans `lib/engine/`, sans dépendance UI, testée.
+4. **Français irréprochable** : UI et contenu en français, **accents sur les majuscules
+   obligatoires** (É À È Ç…), ponctuation française.
+5. **Design** : tokens de `design-reference/mn_mo_brand_identity/DESIGN.md` portés dans
+   `tailwind.config.ts`. Space Grotesk (titres), Inter (corps), JetBrains Mono (données).
+6. **Sources** : tout coût affiché → URL + date + pastille de confiance + disclaimer.
+7. **Sécurité** : jamais de secret hardcodé (env uniquement) ; **RLS activée sur toutes
+   les tables Supabase** ; clé secrète serveur uniquement, jamais dans le bundle client.
 
-## Français irréprochable (impératif produit)
+## Pointeurs
 
-Tout le contenu est en français et `lang="fr"`. Les **accents sur les majuscules sont obligatoires** (É, À, È, Ç…) — c'est une exigence explicite du système de design (« uphold professional standards »), pas une préférence. Vérifier notamment les titres d'écrans et libellés en capitales. La ponctuation française (espace avant `: ; ! ?`) s'applique.
+- `PRD.md` — spec (features F1→F9, archi, threat model, modèle éco).
+- `docs/DECISIONS.md` — ADR (arbitrages d'architecture).
+- `docs/MOAT-HUNT.md` — les 3 moats.
+- `.ralph/prd.json` + `.ralph/progress.md` — stories + patterns + log.
+- `design-reference/mn_mo_brand_identity/DESIGN.md` — système de design.
