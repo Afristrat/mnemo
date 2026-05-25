@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.github
+.env
+.env*.local
+npm-debug.log*
+coverage
+playwright-report
+test-results
+e2e
+design-reference
+presentation
+supabase/.temp
+*.tsbuildinfo
+.DS_Store
