@@ -5,10 +5,12 @@ import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { CostMap } from "@/components/results/CostMap";
+import { EnsembleView } from "@/components/results/EnsembleView";
 import { LayerStack } from "@/components/results/LayerStack";
 import { RadarChart } from "@/components/results/RadarChart";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import {
+  buildEnsemble,
   profileCostFactors,
   recommend,
   type Profile,
@@ -62,8 +64,9 @@ export function ResultsView(): ReactElement {
   }, [base, volIndex, users]);
 
   const result = useMemo(() => (projected === null ? null : recommend(projected)), [projected]);
+  const ensemble = useMemo(() => (projected === null ? null : buildEnsemble(projected)), [projected]);
 
-  if (projected === null || result === null) {
+  if (projected === null || result === null || ensemble === null) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
   }
 
@@ -116,6 +119,9 @@ export function ResultsView(): ReactElement {
           </p>
         ) : null}
       </Card>
+
+      {/* Ensemble multi-configuration (incertitude) */}
+      <EnsembleView ensemble={ensemble} />
 
       {/* Radar + scores */}
       <div className="grid gap-6 lg:grid-cols-2">
