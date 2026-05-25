@@ -1,0 +1,57 @@
+"use client";
+
+import { useState, type ReactElement } from "react";
+import { Button } from "@/components/ui/Button";
+import type { Ensemble, Profile, Recommendation } from "@/lib/engine";
+import { buildDeliverable } from "@/lib/export/model";
+import { renderMarkdown } from "@/lib/export/markdown";
+
+type ExportButtonsProps = {
+  profile: Profile;
+  recommendation: Recommendation;
+  ensemble: Ensemble;
+};
+
+function triggerDownload(filename: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+export function ExportButtons({ profile, recommendation, ensemble }: ExportButtonsProps): ReactElement {
+  const [busy, setBusy] = useState(false);
+
+  const exportMarkdown = (): void => {
+    const deliverable = buildDeliverable(profile, recommendation, ensemble);
+    const blob = new Blob([renderMarkdown(deliverable)], { type: "text/markdown;charset=utf-8" });
+    triggerDownload(`mnemo-plan-${deliverable.generatedAt}.md`, blob);
+  };
+
+  const exportPdf = async (): Promise<void> => {
+    setBusy(true);
+    try {
+      // Import dynamique : jsPDF (~135 ko) reste hors du bundle initial de /resultats.
+      const { pdfBlob } = await import("@/lib/export/pdf");
+      const deliverable = buildDeliverable(profile, recommendation, ensemble);
+      triggerDownload(`mnemo-plan-${deliverable.generatedAt}.pdf`, pdfBlob(deliverable));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button variant="primary" onClick={exportMarkdown}>
+        Télécharger le plan (Markdown)
+      </Button>
+      <Button variant="secondary" onClick={() => void exportPdf()} disabled={busy}>
+        {busy ? "Génération…" : "Télécharger le plan (PDF)"}
+      </Button>
+    </div>
+  );
+}

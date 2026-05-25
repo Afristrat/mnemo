@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { CostMap } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
+import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
@@ -195,6 +196,18 @@ export function ResultsView(): ReactElement {
         Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper —
         vérifiez chaque source avant décision.
       </p>
+
+      {/* Livrable exportable (F6) */}
+      <Card>
+        <h2 className="font-display text-headline-md text-on-surface">Emporter ce plan</h2>
+        <p className="mt-1 text-body-sm text-on-surface-variant">
+          Export complet — profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown
+          se relit partout ; le PDF garde les sources cliquables.
+        </p>
+        <div className="mt-4">
+          <ExportButtons profile={projected} recommendation={result} ensemble={ensemble} />
+        </div>
+      </Card>
 
       <Link
         href="/configurateur"
