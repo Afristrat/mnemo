@@ -70,3 +70,21 @@ Format : décision · contexte · options · choix · conséquences.
   un BlobPart valide sans `as`. Import dynamique (hors bundle initial). Le redeploy réel
   end-to-end (docker compose up) sera exercé hors-app ; ici on garantit la cohérence
   descriptive, conformément à l'acceptance.
+
+## ADR-006 — Rails Supabase (S-012) : RLS partout, helpers SECURITY DEFINER, test d'intégration gated
+
+- **Contexte** : F9 exige schéma multi-tenant (`circle` pivot), RLS sur TOUTES les
+  tables, consentement opt-in horodaté, schéma de coût réel prêt. Plus : prouver
+  l'isolation sans casser un CI sans base.
+- **Choix (le plus exhaustif)** : migration SQL avec 5 tables + RLS activée partout +
+  policies `to authenticated` (anon = zéro accès) + helpers `is_circle_member` /
+  `is_circle_owner` en **SECURITY DEFINER** (cassent la récursion des policies) +
+  trigger `handle_new_user` créant un cercle personnel à l'inscription. Clients
+  `@supabase/ssr` (browser + serveur cookies, `getUser()` côté serveur). Consentement
+  via builder pur horodaté. **Test d'intégration live** (création d'utilisateurs,
+  isolation cross-tenant, consentement, anon bloqué) **gated** par `SUPABASE_TEST_*` :
+  exécuté en local, **skip** automatique en CI sans base (reste vert).
+- **Conséquence** : clés secrètes serveur uniquement (jamais le bundle client). L'UI
+  d'auth (pages login) n'est PAS dans l'acceptance F9 → reportée au Lot 2 ; les rails et
+  la couche d'accès typée sont prêts. CI à venir (S-013) : option de provisionner
+  Supabase pour activer le test d'intégration.

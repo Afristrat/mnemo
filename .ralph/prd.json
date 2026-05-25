@@ -115,7 +115,7 @@
     },
     {
       "id": "S-012", "title": "Supabase + RLS + auth + consentement réseau F9 (rails moat ③)", "feature": "F9",
-      "passes": false, "deps": ["S-001"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-001"],
       "acceptance": [
         "schéma tables avec tenant/circle pivot",
         "RLS activé sur toutes les tables",
