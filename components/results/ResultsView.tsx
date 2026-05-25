@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { CostMap } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
+import { ExitEscrow } from "@/components/results/ExitEscrow";
 import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
@@ -208,6 +209,9 @@ export function ResultsView(): ReactElement {
           <ExportButtons profile={projected} recommendation={result} ensemble={ensemble} />
         </div>
       </Card>
+
+      {/* Exit Escrow — bundle reproductible (F7, moat ①) */}
+      <ExitEscrow profile={projected} recommendation={result} />
 
       <Link
         href="/configurateur"

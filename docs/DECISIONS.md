@@ -55,3 +55,18 @@ Format : décision · contexte · options · choix · conséquences.
 - **Conséquence** : risque accepté et tracé. À résorber proprement quand Next/vitest
   publieront des versions corrigées non cassantes (à revoir en S-014, avec la
   migration ESLint CLI). Surveillance : `npm audit` au CI.
+
+## ADR-005 — Exit Escrow (S-010) : bundle complet, ZIP client via fflate, manifeste = ancre de cohérence
+
+- **Contexte** : F7 (moat ①) exige un bundle reproductible téléchargeable + un test
+  d'intégration prouvant sa cohérence avec la reco. Choix du périmètre et du zippeur.
+- **Choix (le plus exhaustif)** : bundle riche — `manifest.json` (machine), `README`,
+  `docker-compose.yml` paramétré, `terraform/` (main + tfvars), `vault/` (squelette de
+  secrets, **jamais** de valeur), `runbook.md` (déploiement + backup 3-2-1 + MEL +
+  incident), `scripts/re-embed.sh` + `backup.sh`. Génération **pure** (`lib/exit/bundle.ts`)
+  → ZIP **côté client** via `fflate` (zéro dépendance transitive, vs jszip). Le test
+  d'intégration vérifie `manifest == reco` (couches/coût/preset) + round-trip zip/unzip.
+- **Conséquence** : `fflate` ajouté (0 vuln). `new Blob([Uint8Array.from(bytes)])` pour
+  un BlobPart valide sans `as`. Import dynamique (hors bundle initial). Le redeploy réel
+  end-to-end (docker compose up) sera exercé hors-app ; ici on garantit la cohérence
+  descriptive, conformément à l'acceptance.
