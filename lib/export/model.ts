@@ -2,6 +2,7 @@
 // les rendus Markdown et PDF. Aucune dépendance UI ni I/O → entièrement testable.
 
 import { costBand, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
+import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 import {
   ACTIVITY_OPTIONS,
@@ -134,6 +135,14 @@ export function buildDeliverable(
     ensembleSection,
     { heading: "Actions de conformité", rows: [], bullets: reco.compliance },
     { heading: "Risques détectés", rows: [], bullets: reco.risks },
+    {
+      heading: "Charte fiduciaire",
+      rows: [],
+      bullets: [
+        FIDUCIARY_CHARTER.revenueModel,
+        ...FIDUCIARY_CHARTER.commitments.map((c) => `${c.title} — ${c.detail}`),
+      ],
+    },
   ];
 
   return {

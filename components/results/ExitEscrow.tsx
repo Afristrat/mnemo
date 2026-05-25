@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -48,10 +49,13 @@ export function ExitEscrow({ profile, recommendation }: ExitEscrowProps): ReactE
         scripts de ré-embedding et de backup. La recette est ouverte — vous pouvez tout redéployer
         ailleurs, sans Mnémo. Zéro vendor lock-in, par construction.
       </p>
-      <div className="mt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-4">
         <Button variant="primary" onClick={() => void download()} disabled={busy}>
           {busy ? "Génération du bundle…" : "Télécharger le bundle (.zip)"}
         </Button>
+        <Link href="/fiduciaire" className="text-body-sm text-secondary underline decoration-dotted">
+          Charte fiduciaire — zéro commission cachée
+        </Link>
       </div>
     </Card>
   );
