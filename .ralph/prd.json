@@ -69,7 +69,7 @@
     },
     {
       "id": "S-007", "title": "Ensemble multi-config F5 (N configs + spread = incertitude)", "feature": "F5",
-      "passes": false, "deps": ["S-006"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-006"],
       "acceptance": [
         "≥ 3 configs candidates (souveraineté max / coût min / time-to-V1 min)",
         "écart de coût/score affiché comme incertitude",

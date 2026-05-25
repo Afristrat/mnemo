@@ -8,3 +8,12 @@ export { layersBaseCost, profileCostFactors, costBand } from "./cost";
 export { computeScores } from "./scores";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
+export {
+  buildEnsemble,
+  ENSEMBLE_VARIANT_IDS,
+  type Ensemble,
+  type EnsembleVariant,
+  type EnsembleVariantId,
+  type EnsembleSpread,
+  type EnsembleAgreement,
+} from "./ensemble";

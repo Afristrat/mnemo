@@ -3,14 +3,14 @@
 > Passation de quart (protocole nucléaire). Le quart suivant doit pouvoir reprendre **sans relire d'autre fichier que celui-ci** — les pointeurs vers les docs détaillées sont en bas.
 
 ```
-== PASSATION MNEMO 2026-05-25T00:30 ==
-[ETAT]    Lot 1 (conseil+moats) en cours | 6/14 stories ✓ | branche main propre | build ✓ | t 30/30 ✓
-[ENCOURS] > S-007 ensemble multi-config (next, pas commencé)
-[FAIT]    S-001 scaffold | S-002 design system | S-003 moteur | S-004 t moteur | S-005 wizard | S-006 résultats
-[ALERTE]  !! secrets à venir (S-008 Firecrawl, S-012 Supabase) → .env.local jamais commité | RLS obligatoire S-012
+== PASSATION MNEMO 2026-05-25T01:05 ==
+[ETAT]    Lot 1 (conseil+moats) en cours | 7/14 stories ✓ | branche main propre | build ✓ | t 44/44 ✓
+[ENCOURS] > S-008 price feed Firecrawl (next, pas commencé)
+[FAIT]    S-001→S-006 (cf. tableau) + S-007 ensemble multi-config | Supabase local Docker démarré + .env.local rempli
+[ALERTE]  !! FIRECRAWL_API_KEY encore vide dans .env.local (à coller) | Supabase = nouvelles clés sb_publishable/sb_secret (≠ JWT anon/service_role) → adapter .env.example en S-012 | RLS obligatoire S-012
 [BLOQUE]  RAS
-[NEXT]    S-007 → S-008 → S-009 → S-010 → S-011 → S-012 → S-013 → S-014
-[CTX]     session 2026-05-24→25 | ~42% ctx | 6 commits | OneDrive ⚠ I/O lents possibles
+[NEXT]    S-008 → S-009 → S-010 → S-011 → S-012 → S-013 → S-014
+[CTX]     session 2026-05-24→25 | 7 commits | OneDrive en pause ~2h (I/O OK) | Supabase Studio http://127.0.0.1:54323
 [MEMO]    "reprends en Ralph" relit .ralph/prd.json + progress.md + AGENTS.md AVANT toute action
 ```
 
@@ -24,7 +24,7 @@
 4. Lire **`AGENTS.md`** → règles absolues (zéro dette, RLS, français accents majuscules, sources, etc.).
 5. Travailler **une seule story**, valider (typecheck+lint+test+build), puis `passes:true` + log + commit `[S-XXX] …` + `git push origin main`.
 
-**Vérif rapide d'entrée** : `git log --oneline -1` doit montrer `08e020f [S-006] …` (dernier commit de code). `npm test` doit donner 30/30.
+**Vérif rapide d'entrée** : `git log --oneline -1` doit montrer le commit `[S-007] …` (dernier commit de code). `npm test` doit donner 44/44. Pour S-008/S-012 : Supabase local déjà démarré (`npx supabase status` pour les URLs/clés ; sinon `npx supabase start`).
 
 ---
 
