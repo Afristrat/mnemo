@@ -88,7 +88,7 @@
     },
     {
       "id": "S-009", "title": "Livrable export F6 (MD + PDF, sources, disclaimer)", "feature": "F6",
-      "passes": false, "deps": ["S-006"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-006"],
       "acceptance": [
         "export Markdown + PDF",
         "toutes les sources cliquables",

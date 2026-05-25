@@ -3,10 +3,10 @@
 > Passation de quart (protocole nucléaire). Le quart suivant doit pouvoir reprendre **sans relire d'autre fichier que celui-ci** — les pointeurs vers les docs détaillées sont en bas.
 
 ```
-== PASSATION MNEMO 2026-05-25T01:30 ==
-[ETAT]    Lot 1 (conseil+moats) en cours | 8/14 stories ✓ | branche main propre | build ✓ | t 60/60 ✓
-[ENCOURS] > S-009 livrable export MD+PDF (next, pas commencé)
-[FAIT]    S-001→S-007 + S-008 price feed Firecrawl (route /api/pricing validée LIVE) | Supabase local Docker démarré + .env.local rempli (clé Firecrawl OK)
+== PASSATION MNEMO 2026-05-25T02:00 ==
+[ETAT]    Lot 1 (conseil+moats) en cours | 9/14 stories ✓ | branche main propre | build ✓ | t 64/64 ✓
+[ENCOURS] > S-010 Exit Escrow bundle (next, pas commencé) — RUN AUTONOME en cours
+[FAIT]    S-001→S-008 + S-009 export MD+PDF (jsPDF lazy) | Supabase local Docker démarré + .env.local rempli (clé Firecrawl OK) | docs/DECISIONS.md (ADR)
 [ALERTE]  !! Supabase = nouvelles clés sb_publishable/sb_secret (≠ JWT anon/service_role) → adapter .env.example en S-012 | RLS obligatoire S-012 | scaffold supabase/ untracked (intégrer en S-012) | baseline prix datée 2026-05-25 (régénérer via scripts/capture-baseline.mts)
 [BLOQUE]  RAS
 [NEXT]    S-009 → S-010 → S-011 → S-012 → S-013 → S-014
