@@ -3,14 +3,14 @@
 > Passation de quart (protocole nucléaire). Le quart suivant doit pouvoir reprendre **sans relire d'autre fichier que celui-ci** — les pointeurs vers les docs détaillées sont en bas.
 
 ```
-== PASSATION MNEMO 2026-05-25T01:05 ==
-[ETAT]    Lot 1 (conseil+moats) en cours | 7/14 stories ✓ | branche main propre | build ✓ | t 44/44 ✓
-[ENCOURS] > S-008 price feed Firecrawl (next, pas commencé)
-[FAIT]    S-001→S-006 (cf. tableau) + S-007 ensemble multi-config | Supabase local Docker démarré + .env.local rempli
-[ALERTE]  !! FIRECRAWL_API_KEY encore vide dans .env.local (à coller) | Supabase = nouvelles clés sb_publishable/sb_secret (≠ JWT anon/service_role) → adapter .env.example en S-012 | RLS obligatoire S-012
+== PASSATION MNEMO 2026-05-25T01:30 ==
+[ETAT]    Lot 1 (conseil+moats) en cours | 8/14 stories ✓ | branche main propre | build ✓ | t 60/60 ✓
+[ENCOURS] > S-009 livrable export MD+PDF (next, pas commencé)
+[FAIT]    S-001→S-007 + S-008 price feed Firecrawl (route /api/pricing validée LIVE) | Supabase local Docker démarré + .env.local rempli (clé Firecrawl OK)
+[ALERTE]  !! Supabase = nouvelles clés sb_publishable/sb_secret (≠ JWT anon/service_role) → adapter .env.example en S-012 | RLS obligatoire S-012 | scaffold supabase/ untracked (intégrer en S-012) | baseline prix datée 2026-05-25 (régénérer via scripts/capture-baseline.mts)
 [BLOQUE]  RAS
-[NEXT]    S-008 → S-009 → S-010 → S-011 → S-012 → S-013 → S-014
-[CTX]     session 2026-05-24→25 | 7 commits | OneDrive en pause ~2h (I/O OK) | Supabase Studio http://127.0.0.1:54323
+[NEXT]    S-009 → S-010 → S-011 → S-012 → S-013 → S-014
+[CTX]     session 2026-05-24→25 | 8 commits | OneDrive en pause ~2h (I/O OK) | Supabase Studio http://127.0.0.1:54323
 [MEMO]    "reprends en Ralph" relit .ralph/prd.json + progress.md + AGENTS.md AVANT toute action
 ```
 
@@ -24,7 +24,7 @@
 4. Lire **`AGENTS.md`** → règles absolues (zéro dette, RLS, français accents majuscules, sources, etc.).
 5. Travailler **une seule story**, valider (typecheck+lint+test+build), puis `passes:true` + log + commit `[S-XXX] …` + `git push origin main`.
 
-**Vérif rapide d'entrée** : `git log --oneline -1` doit montrer le commit `[S-007] …` (dernier commit de code). `npm test` doit donner 44/44. Pour S-008/S-012 : Supabase local déjà démarré (`npx supabase status` pour les URLs/clés ; sinon `npx supabase start`).
+**Vérif rapide d'entrée** : `git log --oneline -1` doit montrer le commit `[S-008] …` (dernier commit de code). `npm test` doit donner 60/60. Pour S-012 : Supabase local déjà démarré (`npx supabase status` pour les URLs/clés ; sinon `npx supabase start`). Price feed live : `npm start` puis `GET /api/pricing`.
 
 ---
 

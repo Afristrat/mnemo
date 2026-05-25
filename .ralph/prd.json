@@ -78,7 +78,7 @@
     },
     {
       "id": "S-008", "title": "Price feed F4 (Firecrawl + cache + sources datées + seed fallback)", "feature": "F4",
-      "passes": false, "deps": ["S-003"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-003"],
       "acceptance": [
         "route serveur interroge Firecrawl (rendu JS) pour les prix vendor",
         "cache + timestamp + niveau de confiance + URL source",
