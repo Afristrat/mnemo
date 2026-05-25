@@ -125,7 +125,7 @@
     },
     {
       "id": "S-013", "title": "Playwright E2E parcours critiques", "feature": "tests",
-      "passes": false, "deps": ["S-005", "S-006", "S-009"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-005", "S-006", "S-009"],
       "acceptance": [
         "parcours wizard → résultats → livrable → export",
         "responsive (mobile/desktop)",
