@@ -102,3 +102,17 @@ Format : décision · contexte · options · choix · conséquences.
   le port 3000 — un `next start` résiduel d'une version antérieure provoque des 404
   trompeurs. **Toujours libérer le port 3000 avant un run local.** Téléchargements
   mobiles non testés (`test.skip` sur projet mobile) : vérifiés sur desktop.
+
+## ADR-008 — Migration `next lint` → ESLint CLI flat config (S-014, dette résorbée)
+
+- **Contexte** : `next lint` est déprécié (retrait Next 16). Migrer sans changer le
+  comportement ni introduire de nouvelles erreurs.
+- **Choix (le plus exhaustif et pérenne)** : ESLint **9** + flat config
+  (`eslint.config.mjs` via `@eslint/eslintrc` `FlatCompat`) extension **stricte** de
+  `next/core-web-vitals` (ruleset identique → 0 régression). Script `lint` → `eslint .`.
+  `.eslintrc.json` supprimé. `next.config.mjs` : `eslint.ignoreDuringBuilds: true` (le
+  lint est explicite via la CLI + CI, pas pendant `next build`).
+- **Conséquence** : ESLint 9 lint désormais aussi les fichiers de config racine →
+  2 warnings `no-anonymous-default-export` (eslint.config.mjs, postcss.config.mjs)
+  corrigés par export nommé. eslint-config-next 15.1 accepte ESLint 9 (pas d'ERESOLVE).
+  Lint final : 0 erreur, 0 warning.

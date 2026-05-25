@@ -134,7 +134,7 @@
     },
     {
       "id": "S-014", "title": "CLAUDE.md projet + README + CI GitHub Actions", "feature": "infra",
-      "passes": false, "deps": ["S-001"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-001"],
       "acceptance": [
         "CLAUDE.md décrit le projet réel (commandes, archi, conventions)",
         "README d'onboarding",
