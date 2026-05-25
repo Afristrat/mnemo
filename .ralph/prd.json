@@ -97,7 +97,7 @@
     },
     {
       "id": "S-010", "title": "Exit Escrow F7 (génération bundle reproductible + test redeploy)", "feature": "F7",
-      "passes": false, "deps": ["S-003", "S-006"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-003", "S-006"],
       "acceptance": [
         "bundle = IaC (Terraform/Compose) paramétré + vault skeleton + runbook + script re-embedding",
         "téléchargement zip",
