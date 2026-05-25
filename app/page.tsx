@@ -17,6 +17,9 @@ export default function Home() {
       >
         Configurer mon infrastructure
       </Link>
+      <Link href="/fiduciaire" className="text-body-sm text-secondary underline decoration-dotted">
+        Lire la charte fiduciaire — zéro commission cachée
+      </Link>
     </main>
   );
 }

@@ -106,7 +106,7 @@
     },
     {
       "id": "S-011", "title": "Fiduciary Mode F8 (divulgation + charte zéro commission cachée)", "feature": "F8",
-      "passes": false, "deps": ["S-002"],
+      "passes": true, "completedAt": "2026-05-25", "deps": ["S-002"],
       "acceptance": [
         "page de divulgation accessible",
         "charte fiduciaire affichée dans le livrable",
