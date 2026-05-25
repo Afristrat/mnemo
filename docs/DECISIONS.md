@@ -88,3 +88,17 @@ Format : décision · contexte · options · choix · conséquences.
   d'auth (pages login) n'est PAS dans l'acceptance F9 → reportée au Lot 2 ; les rails et
   la couche d'accès typée sont prêts. CI à venir (S-013) : option de provisionner
   Supabase pour activer le test d'intégration.
+
+## ADR-007 — E2E Playwright (S-013) : serveur de prod, 2 projets, CI à 2 jobs
+
+- **Contexte** : F-tests exige le parcours wizard → résultats → livrable → export, en
+  responsive, avec CI prête.
+- **Choix (le plus exhaustif)** : Playwright, `webServer` = `npm run build && npm run
+  start` (prod, fidèle), 2 projets `desktop-chromium` + `mobile-chrome`. Spec couvrant
+  le parcours complet + les 3 exports (MD/PDF/zip via `waitForEvent('download')`) +
+  la charte. CI GitHub Actions à 2 jobs : `quality` (typecheck/lint/test/build +
+  `npm audit --audit-level=high`) et `e2e` (playwright + artefact rapport).
+- **Conséquence / piège** : `reuseExistingServer: !CI` réutilise un serveur déjà sur
+  le port 3000 — un `next start` résiduel d'une version antérieure provoque des 404
+  trompeurs. **Toujours libérer le port 3000 avant un run local.** Téléchargements
+  mobiles non testés (`test.skip` sur projet mobile) : vérifiés sur desktop.
