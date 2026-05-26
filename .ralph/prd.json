@@ -206,7 +206,7 @@
     },
     {
       "id": "S-021", "title": "Chemin 90 s (QuickProfileForm + profile-mappers + mode verdict) + entrée accueil", "feature": "refonte",
-      "passes": false, "deps": ["S-018", "S-019"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-018", "S-019"],
       "acceptance": [
         "formulaire 3-4 questions qualitatives → Profile complet (défauts documentés, tests mappers)",
         "chemin 90 s = entrée par défaut sur l'accueil → /resultats en mode verdict",

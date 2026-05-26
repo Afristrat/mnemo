@@ -294,3 +294,19 @@ Format : décision · contexte · options · choix · conséquences.
 - **Conséquence** : tests = budget 7 (statuts + cause/levier) + media-block 6 (aperçu live, propagation
   `mediaNeeds`, budget-mètre rouge). typecheck 0, lint 0/0, **150 + 8 skip**, build OK
   (/configurateur 8,23 kB). Cause/levier restent **neutres** (présentent un fait + une option, cf. principe avis non orienté).
+
+## ADR-016 — Chemin 90 s (S-021) : mappers purs, entrée d'accueil, source de vérité unique
+
+- **`lib/quick/profile-mappers.ts`** : 4 réponses qualitatives (`who`/`data`/`priority`/`media`) →
+  `Profile` complet par **défauts documentés et prudents** (jamais sous-dimensionné sur conformité/
+  sécurité : régulé/secret ⇒ audit+bitemporel ; RGPD par défaut). Pur, déterministe, testé (8).
+- **`QuickProfileForm`** (`components/quick-profile/`) : 4 questions (RadioCards), écrit le `Profile`
+  mappé dans la **même source de vérité** que le wizard (`localStorage`, `STORAGE_KEY`) puis navigue
+  vers `/resultats?mode=verdict`. « Affiner » → `/configurateur` (pré-rempli). Écriture localStorage
+  **synchrone** avant navigation (évite la course avec l'effet de persistance du hook).
+- **`app/page.tsx`** : l'accueil devient le **chemin 90 s par défaut** (hero + formulaire). Nom
+  « Mnémo » conservé (le renommage Strate est une story dédiée, spec §15).
+- **Conséquence** : le **mode verdict** de `/resultats` (rendu réel) est S-022 ; ici on établit le
+  chemin + le paramètre `?mode=verdict`. Tests : mappers 8 + form 3 (persistance + navigation,
+  `useRouter` mocké via `vi.hoisted`). Vérifié au **navigateur** (accueil 90 s). typecheck 0, lint
+  0/0, **161 + 8 skip**, build OK. Script générique `scripts/shoot-page.mjs` ajouté.
