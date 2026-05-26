@@ -1,4 +1,5 @@
-import type { Layer, Profile, ReqPerDay, Volume } from "./types";
+import type { MultimodalPriceTable } from "./sizing";
+import type { Layer, Profile, ReqPerDay, Sizing, Volume } from "./types";
 
 const VOLUME_FACTOR: Record<Volume, number> = {
   lt1: 0,
@@ -34,4 +35,33 @@ export function costBand(total: number, spread = 0.3): { low: number; high: numb
     low: Math.round(total * (1 - spread)),
     high: Math.round(total * (1 + spread)),
   };
+}
+
+/**
+ * Injecte les coûts multimédias **dans** les couches (jamais en ligne séparée, spec §5) : pure,
+ * renvoie de nouvelles couches.
+ * - C4 (Embeddings) ← forfait embeddings multimodaux si requis.
+ * - C5 (Stockage) ← Go indexés × €/Go/mois.
+ * - C6 (Infra/inférence) ← pool GPU souverain (compté UNE FOIS) + coût à l'usage des charges API.
+ * Les prix doivent être normalisés en € (cf. `normalizeMediaPricesToEur`).
+ */
+export function applyMultimodalSizing(layers: Layer[], sizing: Sizing, prices: MultimodalPriceTable): Layer[] {
+  const embeddings = sizing.embeddingsMultimodal ? Math.round(prices.multimodalEmbeddings.amount) : 0;
+  const storage = Math.round(sizing.storageGb * prices.storagePerGbMonth.amount);
+  const apiUsage = sizing.workloads.reduce((sum, w) => sum + w.monthlyCost, 0);
+  const compute = sizing.gpu.monthlyCost + apiUsage;
+
+  return layers.map((layer) => {
+    if (layer.id === 4 && embeddings > 0) {
+      return { ...layer, cost: layer.cost + embeddings, note: `${layer.note} · +${embeddings} €/mois embeddings multimodaux` };
+    }
+    if (layer.id === 5 && storage > 0) {
+      return { ...layer, cost: layer.cost + storage, note: `${layer.note} · +${storage} €/mois (${sizing.storageGb} Go médias)` };
+    }
+    if (layer.id === 6 && compute > 0) {
+      const detail = sizing.gpu.tier === "none" ? `${apiUsage} €/mois API` : `GPU ${sizing.gpu.tier} ${sizing.gpu.monthlyCost} €/mois + ${apiUsage} €/mois API`;
+      return { ...layer, cost: layer.cost + compute, note: `${layer.note} · +${compute} €/mois (${detail})` };
+    }
+    return layer;
+  });
 }

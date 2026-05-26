@@ -8,9 +8,14 @@ export { layersBaseCost, profileCostFactors, costBand } from "./cost";
 export { computeScores } from "./scores";
 export {
   costMultimodalSizing,
+  computeSetupCost,
+  mediaCostSources,
+  NEUTRAL_MEDIA_PRICES,
+  type Currency,
   type MultimodalPriceTable,
   type MultimodalPriceEntry,
 } from "./sizing";
+export { applyMultimodalSizing } from "./cost";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
 export {

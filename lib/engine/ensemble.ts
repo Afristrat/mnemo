@@ -7,6 +7,7 @@
 
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
+import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
 import {
   PRESETS,
   type ModuleId,
@@ -138,7 +139,7 @@ function applyVariant(
   }
 }
 
-function buildVariant(id: EnsembleVariantId, base: Profile): EnsembleVariant {
+function buildVariant(id: EnsembleVariantId, base: Profile, prices: MultimodalPriceTable): EnsembleVariant {
   const meta = VARIANT_META[id];
   const { profile, assumptions } = applyVariant(id, base);
   return {
@@ -147,7 +148,7 @@ function buildVariant(id: EnsembleVariantId, base: Profile): EnsembleVariant {
     intent: meta.intent,
     assumptions,
     profile,
-    recommendation: recommend(profile),
+    recommendation: recommend(profile, prices),
   };
 }
 
@@ -225,9 +226,9 @@ function computeSpread(recommendations: Recommendation[]): EnsembleSpread {
  * membre par priorité (souveraineté / coût / délai), et la dispersion résultante
  * (le « spread » = l'incertitude). Fonction pure et déterministe.
  */
-export function buildEnsemble(profile: Profile): Ensemble {
-  const baseline = recommend(profile);
-  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile));
+export function buildEnsemble(profile: Profile, prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES): Ensemble {
+  const baseline = recommend(profile, prices);
+  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices));
   const spread = computeSpread([baseline, ...variants.map((v) => v.recommendation)]);
   return { baseline, variants, spread };
 }

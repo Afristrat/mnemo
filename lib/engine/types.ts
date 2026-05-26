@@ -50,6 +50,12 @@ export type MediaNeed = {
   mode: MMMode;
   ingest: { tier: MMTier; volume?: number }; // volet « mémoriser »
   generate: { tier: MMTier; volume?: number }; // volet « créer » (tier "none" = pas de génération)
+  /**
+   * Volume du **backlog existant** à ingérer une seule fois (corpus déjà là), en unité native de la
+   * modalité (min pour audio/vidéo, nb pour images). Alimente le `setupCost` one-time (≠ récurrent).
+   * Saisi par le bloc Médias du wizard (UI en S-020) ; consommé dès S-018 par `computeSetupCost`.
+   */
+  backlog?: number;
 };
 /**
  * Palier du pool GPU souverain (C6), dimensionné par la charge TOTALE (ingest + generate).
@@ -90,6 +96,9 @@ export type Verdict = {
   nextStep: string;
 };
 export type BlockId = "profil" | "infra" | "memoire" | "medias";
+
+/** Source d'un coût (URL + date) — structurellement compatible avec `PriceSource` (`lib/pricing`). */
+export type CostSource = { label: string; url: string; checkedAt: string };
 
 /** Clés des 8 dimensions de scoring (ordre stable). */
 export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost"] as const;
@@ -184,4 +193,12 @@ export type Recommendation = {
   compliance: string[];
   risks: string[];
   kmChecks: KMCheck[];
+  /** Dimensionnement multimédia déduit des besoins (refonte Strate, S-018). */
+  sizing: Sizing;
+  /** Coût ponctuel de mise en route (ingestion du backlog existant), distinct du récurrent. */
+  setupCost: number;
+  /** Sources des coûts multimédias effectivement utilisés (URL + date), dédupliquées (DÉFCON 1). */
+  costSources: CostSource[];
+  /** Synthèse « verdict » pour le chemin 90 s (douleur/risque/gain/prix ferme/coûts/next step). */
+  verdict: Verdict;
 };

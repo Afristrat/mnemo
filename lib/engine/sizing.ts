@@ -12,7 +12,7 @@
 // — ce ne sont PAS des prix (cf. ADR-010).
 
 import type { Confidence } from "@/components/ui/StatusDot";
-import type { GpuTier, MediaNeed, MMTier, Modality, Profile, Sizing, WorkloadLine } from "./types";
+import type { CostSource, GpuTier, MediaNeed, MMTier, Modality, Profile, Sizing, WorkloadLine } from "./types";
 
 // --- Contrat de prix médias (implémenté, sourcé, en S-017 : `getMediaPrices`) ----------------
 
@@ -171,4 +171,63 @@ export function costMultimodalSizing(profile: Profile, prices: MultimodalPriceTa
     embeddingsMultimodal: true,
     workloads,
   };
+}
+
+/**
+ * Table de prix **neutre** (tous montants à 0 €, sans source) — défaut du moteur pour rester PUR
+ * (zéro import `lib/pricing`). Donne un dimensionnement structurellement valide mais à coût nul :
+ * les appelants réels (UI, S-022) injectent `getMediaPricesEur()` pour un chiffrage effectif.
+ */
+export const NEUTRAL_MEDIA_PRICES: MultimodalPriceTable = (() => {
+  const zero: MultimodalPriceEntry = { amount: 0, currency: "EUR", unit: "—", confidence: "low", source: null };
+  return {
+    gpuMonthly: { none: zero, shared: zero, "dedicated-small": zero, "dedicated-large": zero },
+    storagePerGbMonth: zero,
+    multimodalEmbeddings: zero,
+    api: {
+      audio: { ingest: zero, generate: zero },
+      video: { ingest: zero, generate: zero },
+      images: { ingest: zero, generate: zero },
+    },
+  };
+})();
+
+/**
+ * Coût ponctuel de mise en route = ingestion du **backlog existant** déclaré par modalité
+ * (`MediaNeed.backlog`). Pure, prix injectés. Le corpus initial est traité une fois ; on le chiffre
+ * au tarif d'ingestion à l'usage de la modalité (`api.<modality>.ingest`) — borne haute conservatrice,
+ * valable que la modalité soit ensuite exploitée en souverain ou en API (cf. ADR-012). Hors backlog → 0.
+ */
+export function computeSetupCost(profile: Profile, prices: MultimodalPriceTable): number {
+  let setup = 0;
+  for (const need of profile.mediaNeeds ?? []) {
+    const backlog = need.backlog ?? 0;
+    if (backlog > 0) setup += backlog * prices.api[need.modality].ingest.amount;
+  }
+  return Math.round(setup);
+}
+
+/**
+ * Sources des prix effectivement mobilisés pour ce profil/dimensionnement (DÉFCON 1 : traçabilité).
+ * Dédupliquées par URL, sources nulles écartées. Pure.
+ */
+export function mediaCostSources(profile: Profile, sizing: Sizing, prices: MultimodalPriceTable): CostSource[] {
+  const seen = new Set<string>();
+  const out: CostSource[] = [];
+  const add = (s: MultimodalPriceEntry["source"]): void => {
+    if (s !== null && !seen.has(s.url)) {
+      seen.add(s.url);
+      out.push({ label: s.label, url: s.url, checkedAt: s.checkedAt });
+    }
+  };
+  if (sizing.gpu.monthlyCost > 0) add(prices.gpuMonthly[sizing.gpu.tier].source);
+  if (sizing.storageGb > 0) add(prices.storagePerGbMonth.source);
+  if (sizing.embeddingsMultimodal) add(prices.multimodalEmbeddings.source);
+  for (const w of sizing.workloads) {
+    if (w.mode === "api") add(prices.api[w.modality][w.source].source);
+  }
+  for (const need of profile.mediaNeeds ?? []) {
+    if ((need.backlog ?? 0) > 0) add(prices.api[need.modality].ingest.source);
+  }
+  return out;
 }
