@@ -224,7 +224,7 @@
     },
     {
       "id": "S-023", "title": "Conversion/data — log des simulations + capture e-mail exit-intent (Supabase RLS)", "feature": "refonte",
-      "passes": false, "deps": ["S-012", "S-018"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-012", "S-018"],
       "acceptance": [
         "migrations tables simulation_log + lead_capture avec RLS activé",
         "log des simulations (moat data) + capture e-mail exit-intent + rapport partageable (lien)",
