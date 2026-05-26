@@ -17,8 +17,8 @@ function baseProfile(overrides: Partial<Profile> = {}): Profile {
     growth: "medium",
     regulations: ["rgpd"],
     sensitivity: "internal",
-    audit: "desired",
-    bitemporal: "desired",
+    audit: false,
+    bitemporal: false,
     techLevel: "hybrid",
     budget: "50to200",
     reqPerDay: "lt100",
@@ -111,7 +111,7 @@ describe("buildEnsemble — spread (= incertitude)", () => {
   it("converge (accord fort) quand la sensibilité force le lourd partout", () => {
     // En « secret » + cabinet régulé, tous les membres tombent en HARD → faible dispersion.
     const { spread } = buildEnsemble(
-      baseProfile({ activity: "cabinet-regule", sensitivity: "secret", audit: "required", bitemporal: "required" }),
+      baseProfile({ activity: "cabinet-regule", sensitivity: "secret", audit: true, bitemporal: true }),
     );
     expect(spread.presetsSpan).toEqual(["HARD"]);
   });

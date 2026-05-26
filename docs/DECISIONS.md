@@ -116,3 +116,22 @@ Format : décision · contexte · options · choix · conséquences.
   2 warnings `no-anonymous-default-export` (eslint.config.mjs, postcss.config.mjs)
   corrigés par export nommé. eslint-config-next 15.1 accepte ESLint 9 (pas d'ERESOLVE).
   Lint final : 0 erreur, 0 warning.
+
+## ADR-009 — `audit`/`bitemporal` : `Requirement` (3 états) → `boolean` (S-015, refonte Strate)
+
+- **Contexte** : la refonte Strate (décision 4, « fin du souhaité ») impose des binaires Oui/Non
+  dans le wizard. `Profile.audit` et `Profile.bitemporal` étaient des `Requirement` à 3 états
+  (`no` / `desired` / `required`).
+- **Choix** : migration vers `boolean`, mapping `required → true`, **`desired → false`**, `no → false`.
+  L'état « souhaité » disparaît : assimilé à « Non » (pas un besoin ferme). Conséquence **assumée**
+  sur le scoring : l'ancien palier intermédiaire de `scores.ts` (auditabilité ≈ 8 si `bitemporal`
+  « desired ») n'existe plus → un profil ex-« desired » obtient le score de base (5) sur la dimension
+  `audit`. Type `Requirement` supprimé. UI : composant `YesNo` (binaire) remplace
+  `RadioCards` + `REQUIREMENT_OPTIONS`.
+- **Conséquence / pièges** : (a) profils-types ex-« souhaité » (Coach, PME, Chercheur) remis à `false`
+  et **descriptions reformulées** pour ne plus mentir (DÉFCON 1). (b) clé localStorage `mnemo:profile:v1`
+  → `v2` pour invalider les profils sérialisés en chaînes (`"required"` truthy ≠ `true`) et éviter une
+  hydratation corrompue. (c) types `MediaNeed`/`Sizing`/`WorkloadLine`/`Verdict`/`GpuTier`/`BlockId`
+  définis ici (consommés S-016/S-018) ; `GpuTier` provisoire → granularité à valider en S-016 avant tout
+  consommateur en aval. (d) à décider en S-018 : `p.audit` devrait-il contribuer à la dimension `audit`
+  (aujourd'hui pilotée uniquement par `bitemporal`).

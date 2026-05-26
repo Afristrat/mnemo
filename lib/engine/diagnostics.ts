@@ -41,10 +41,10 @@ export function computeRisks(preset: Preset, p: Profile, totalCost: number): str
   if (p.techLevel === "none" && preset === "HARD") {
     risks.push("⚠️ Preset HARD avec compétences non-techniques : nécessite un partenaire DevOps, ou redimensionner en MEDIUM managé.");
   }
-  if (p.audit === "required" && preset === "LIGHT") {
+  if (p.audit && preset === "LIGHT") {
     risks.push("🚨 Audit obligatoire incompatible avec LIGHT (pas d'audit trail signé). Passer en MEDIUM minimum.");
   }
-  if (p.bitemporal === "required" && preset === "LIGHT") {
+  if (p.bitemporal && preset === "LIGHT") {
     risks.push("🚨 Bitemporalité obligatoire impossible en LIGHT. Basculer en MEDIUM (Postgres+AGE ou Graphiti).");
   }
   if (p.volume === "gt1000" && preset === "LIGHT") {
@@ -82,7 +82,7 @@ export function computeRisks(preset: Preset, p: Profile, totalCost: number): str
 
 /** Vérification des 7 causes d'échec d'une base mémorielle (KM checks). Fonction pure. */
 export function computeKMChecks(preset: Preset, p: Profile): KMCheck[] {
-  const wantsBitemp = p.bitemporal !== "no";
+  const wantsBitemp = p.bitemporal;
   return [
     {
       cause: "1. Fausse prémisse « stocker = savoir »",

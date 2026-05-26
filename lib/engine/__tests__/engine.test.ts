@@ -21,8 +21,8 @@ function baseProfile(overrides: Partial<Profile> = {}): Profile {
     growth: "medium",
     regulations: ["rgpd"],
     sensitivity: "internal",
-    audit: "desired",
-    bitemporal: "desired",
+    audit: false,
+    bitemporal: false,
     techLevel: "hybrid",
     budget: "50to200",
     reqPerDay: "lt100",
@@ -49,7 +49,7 @@ describe("decidePreset", () => {
   });
 
   it("HARD si audit ET bitemporel obligatoires", () => {
-    expect(decidePreset(baseProfile({ audit: "required", bitemporal: "required" })).preset).toBe("HARD");
+    expect(decidePreset(baseProfile({ audit: true, bitemporal: true })).preset).toBe("HARD");
   });
 
   it("LIGHT si solo confidentiel, petit budget, faible volume, sans audit", () => {
@@ -58,8 +58,8 @@ describe("decidePreset", () => {
       users: 1,
       budget: "lt50",
       volume: "lt1",
-      audit: "no",
-      bitemporal: "no",
+      audit: false,
+      bitemporal: false,
     });
     expect(decidePreset(p).preset).toBe("LIGHT");
   });
@@ -76,13 +76,13 @@ describe("computeScores", () => {
   });
 
   it("conformité dégradée si audit requis en LIGHT", () => {
-    const dims = computeScores("LIGHT", baseProfile({ audit: "required" }), 50);
+    const dims = computeScores("LIGHT", baseProfile({ audit: true }), 50);
     // base 6 +1 (rgpd) = 7 ; LIGHT + audit requis => max(3, 7-3) = 4
     expect(dims.find((d) => d.key === "conf")?.score).toBe(4);
   });
 
   it("auditabilité = 10 si bitemporel requis hors LIGHT", () => {
-    const dims = computeScores("MEDIUM", baseProfile({ bitemporal: "required" }), 100);
+    const dims = computeScores("MEDIUM", baseProfile({ bitemporal: true }), 100);
     expect(dims.find((d) => d.key === "audit")?.score).toBe(10);
   });
 

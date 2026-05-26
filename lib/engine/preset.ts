@@ -9,13 +9,13 @@ export function decidePreset(p: Profile): PresetDecision {
     p.activity === "cabinet-regule" ||
     p.regulations.includes("hipaa") ||
     p.regulations.includes("secret-pro") ||
-    (p.audit === "required" && p.bitemporal === "required");
+    (p.audit && p.bitemporal);
 
   const fitsLight =
     !needsHard &&
     (p.sensitivity === "public" || (p.sensitivity === "confidential" && p.users <= 1)) &&
-    p.audit !== "required" &&
-    p.bitemporal !== "required" &&
+    !p.audit &&
+    !p.bitemporal &&
     (p.budget === "lt50" || (p.budget === "50to200" && p.users <= 1)) &&
     (p.volume === "lt1" || p.volume === "1to10");
 

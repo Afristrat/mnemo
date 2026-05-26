@@ -13,8 +13,8 @@ const PROFILE: Profile = {
   growth: "high",
   regulations: ["rgpd"],
   sensitivity: "confidential",
-  audit: "required",
-  bitemporal: "required",
+  audit: true,
+  bitemporal: true,
   techLevel: "devops",
   budget: "200to500",
   reqPerDay: "lt1k",
@@ -65,7 +65,7 @@ describe("buildExitBundle", () => {
   });
 
   it("ne lève pas selon le preset (LIGHT inclus, sans orchestrateur conteneurisé)", () => {
-    const light: Profile = { ...PROFILE, sensitivity: "public", audit: "no", bitemporal: "no", budget: "lt50", volume: "lt1" };
+    const light: Profile = { ...PROFILE, sensitivity: "public", audit: false, bitemporal: false, budget: "lt50", volume: "lt1" };
     const reco = recommend(light);
     expect(reco.preset).toBe("LIGHT");
     const compose = buildExitBundle(light, reco).files["docker-compose.yml"];

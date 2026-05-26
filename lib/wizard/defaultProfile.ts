@@ -1,6 +1,8 @@
 import { defaultModuleLevels, type Profile } from "@/lib/engine";
 
-export const STORAGE_KEY = "mnemo:profile:v1";
+// v2 (S-015) : audit/bitemporal sont passés de chaîne (Requirement) à booléen → bump de version
+// pour invalider les profils v1 sérialisés en chaînes ("required" truthy ≠ true) et éviter une hydratation corrompue.
+export const STORAGE_KEY = "mnemo:profile:v2";
 
 export const DEFAULT_PROFILE: Profile = {
   activity: "freelance",
@@ -11,8 +13,8 @@ export const DEFAULT_PROFILE: Profile = {
   growth: "medium",
   regulations: ["rgpd"],
   sensitivity: "confidential",
-  audit: "desired",
-  bitemporal: "desired",
+  audit: false,
+  bitemporal: false,
   techLevel: "hybrid",
   budget: "50to200",
   reqPerDay: "lt100",

@@ -92,8 +92,8 @@ function applyVariant(
           ...base,
           zone: base.zone === "maroc" ? "maroc" : "ue",
           sensitivity: "secret",
-          audit: "required",
-          bitemporal: "required",
+          audit: true,
+          bitemporal: true,
           modules: modulesAt("max"),
         },
         assumptions: [
@@ -108,8 +108,8 @@ function applyVariant(
         profile: {
           ...base,
           budget: "lt50",
-          audit: "no",
-          bitemporal: "no",
+          audit: false,
+          bitemporal: false,
           modules: modulesAt("off"),
         },
         assumptions: [
@@ -123,8 +123,8 @@ function applyVariant(
         profile: {
           ...base,
           techLevel: "devops",
-          audit: "no",
-          bitemporal: "no",
+          audit: false,
+          bitemporal: false,
           budget: "lt50",
           modules: modulesAt("off"),
         },

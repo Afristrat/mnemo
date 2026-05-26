@@ -143,11 +143,11 @@
     },
     {
       "id": "S-015", "title": "Migration des types Strate (audit/bitemporal booléens, MediaNeed/Sizing/Verdict, mediaNeeds/freeNotes)", "feature": "refonte",
-      "passes": false, "deps": ["S-003"],
+      "passes": true, "completedAt": "2026-05-26", "deps": ["S-003"],
       "acceptance": [
         "audit et bitemporal passent de Requirement à boolean ; scores.ts et defaultProfile.ts adaptés",
-        "types MediaNeed, Sizing, WorkloadLine, Verdict ajoutés (cf. spec §4)",
-        "Profile gagne mediaNeeds? et freeNotes? ; Recommendation gagne sizing/setupCost/costSources/verdict",
+        "types MediaNeed, Sizing, WorkloadLine, Verdict définis (consommés en S-016/S-018)",
+        "Profile gagne mediaNeeds? et freeNotes? (optionnels) ; Recommendation étendu en S-018 (pas ici, pour garder le build vert)",
         "type Requirement supprimé si inutilisé (zéro code mort)",
         "typecheck 0 + tests verts"
       ]
@@ -178,6 +178,7 @@
       "id": "S-018", "title": "Intégration sizing → couches dans recommend (coûts dans C4/C5/C6, setupCost, verdict)", "feature": "refonte",
       "passes": false, "deps": ["S-016", "S-017"],
       "acceptance": [
+        "Recommendation étendu (sizing/setupCost/costSources/verdict) requis et rempli",
         "recommend appelle sizing et dimensionne C4/C5/C6 (coûts multimodaux DANS les couches, pas en ligne séparée)",
         "setupCost reflète le backlog initial ; verdict rempli (risque/gain/prix ferme [PLACEHOLDER]/coût ±30 %/setup)",
         "totalCost cohérent (baseCost + moduleCost + couches dimensionnées)",
