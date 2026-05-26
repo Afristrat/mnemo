@@ -197,7 +197,7 @@
     },
     {
       "id": "S-020", "title": "Bloc Médias (mémoriser + créer, souverain/API, backlog) + budget-mètre flottant", "feature": "refonte",
-      "passes": false, "deps": ["S-016", "S-019"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-016", "S-019"],
       "acceptance": [
         "MediaNeedsBlock : par modalité, volet mémoriser ET volet créer/générer (palier ou volume) + toggle 🟢 souverain / 💳 API + backlog initial",
         "live preview du dimensionnement (~X €/mois d'infra, dont GPU)",

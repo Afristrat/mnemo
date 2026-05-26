@@ -277,3 +277,20 @@ Format : décision · contexte · options · choix · conséquences.
   e2e parcours mis à jour (3 « Suivant » au lieu de 5) — **vérifié LIVE 3/3 (desktop)**. Hydratation
   localStorage **round-trip testée** (renderHook, profil chargé hors composant). typecheck 0, lint 0/0,
   tests 137 + 8 skip, build OK.
+
+## ADR-015 — Bloc Médias + budget-mètre (S-020)
+
+- **`MediaNeedsBlock`** : par modalité (audio/vidéo/images), volet **mémoriser** + volet **créer**
+  (paliers `MMTier` via `ContinuousSlider`), toggle **🟢 souverain / 💳 API**, **backlog initial**
+  (→ `setupCost`). **Aperçu live** du dimensionnement : `costMultimodalSizing` + `computeSetupCost`
+  (prix € **injectés**, défaut `getMediaPricesEur()`) → « ces besoins ajoutent ≈ X €/mois d'infra,
+  dont GPU… » + stockage + mise en route + disclaimer ±30 %.
+- **`BudgetMeter`** : logique **pure** `evaluateBudget` (`lib/wizard/budget.ts`) — vert (≤ 80 % du
+  plafond) / jaune (≤ 100 %) / rouge (> 100 %) ; en tension : **cause dominante** (GPU de génération /
+  API médias / stack de base) + **un levier** concret. **Jamais** le prix de vente (spec §8). Visible
+  (sticky) dans le wizard.
+- **Wizard** : prix réels **injectés** (`getMediaPricesEur()`) → l'en-tête (coût) et le budget-mètre
+  reflètent désormais le dimensionnement multimédia.
+- **Conséquence** : tests = budget 7 (statuts + cause/levier) + media-block 6 (aperçu live, propagation
+  `mediaNeeds`, budget-mètre rouge). typecheck 0, lint 0/0, **150 + 8 skip**, build OK
+  (/configurateur 8,23 kB). Cause/levier restent **neutres** (présentent un fait + une option, cf. principe avis non orienté).
