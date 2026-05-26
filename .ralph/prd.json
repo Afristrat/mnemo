@@ -154,7 +154,7 @@
     },
     {
       "id": "S-016", "title": "Module sizing.ts — besoins → ressources (GPU mutualisé, stockage indexé, setup)", "feature": "refonte",
-      "passes": false, "deps": ["S-015"],
+      "passes": true, "completedAt": "2026-05-26", "deps": ["S-015"],
       "acceptance": [
         "fonction pure costMultimodalSizing(profile, prices) → Sizing, prix injectés (testabilité)",
         "GPU compté UNE SEULE FOIS (anti double-comptage C4/C6), dimensionné sur la charge totale",

@@ -135,3 +135,34 @@ Format : décision · contexte · options · choix · conséquences.
   définis ici (consommés S-016/S-018) ; `GpuTier` provisoire → granularité à valider en S-016 avant tout
   consommateur en aval. (d) à décider en S-018 : `p.audit` devrait-il contribuer à la dimension `audit`
   (aujourd'hui pilotée uniquement par `bitemporal`).
+
+## ADR-010 — Dimensionnement multimédia (S-016) : GPU mutualisé compté une fois, prix injectés, `WorkloadLine.monthlyCost`
+
+- **Contexte** : S-016 implémente `lib/engine/sizing.ts` (`costMultimodalSizing(profile, prices) →
+  Sizing`, spec §5). Trois arbitrages à trancher : (1) granularité du `GpuTier` (laissée provisoire
+  en S-015, ADR-009) ; (2) où porter le coût **à l'usage** du mode `api` (§5.1 : « porté par la
+  couche concernée », imputé en S-018) sans dupliquer la dérivation des quantités ni parser la
+  chaîne `estimate` ; (3) comment garantir l'anti double-comptage GPU C4/C6.
+- **Choix (le plus exhaustif, zéro dette)** :
+  - **GPU compté UNE SEULE FOIS** : toutes les charges `sovereign` (ingest + generate, toutes
+    modalités) alimentent **une** charge cumulée → **un seul** palier `Sizing.gpu` (prix du palier,
+    pas la somme de N pools). Le mode `api` n'alimente **pas** ce GPU.
+  - **`GpuTier` validé à 4 paliers** (`none`/`shared`/`dedicated-small`/`dedicated-large`) — suffisant
+    pour le conseil ±30 %. Granularité figée (commentaire de type mis à jour).
+  - **Extension additive de la spec §4.3** : `WorkloadLine` gagne `monthlyCost: number` (récurrent
+    €/mois de la ligne) — **0** pour `sovereign` (absorbé par le pool GPU unique), **> 0** pour `api`
+    (coût à l'usage). Évite, en S-018, soit le parsing de la chaîne `estimate` (fragile, anti-DÉFCON 1),
+    soit la **duplication** de la logique de quantités → **une seule source de vérité** (`sizing.ts`),
+    et alimente la décomposition CostMap (S-022).
+  - **Prix INJECTÉS** : contrat `MultimodalPriceTable` / `MultimodalPriceEntry` (`{amount, unit,
+    confidence, source}`) défini par le moteur (le consommateur) ; **implémenté et sourcé en S-017**
+    (`getMediaPrices()`). Aucune valeur monétaire codée en dur dans `sizing.ts` (DÉFCON 1).
+  - **Facteurs de modélisation** (`TIER_QUANTITY`, `STORAGE_GB_PER_UNIT`, `GPU_LOAD_PER_UNIT`, seuils)
+    = **hypothèses de dimensionnement ±30 %**, au même rang que `VOLUME_FACTOR`/`REQ_FACTOR` de
+    `cost.ts` — explicitement **pas** des prix, documentées comme « à raffiner ».
+- **Conséquence** : `setupCost` (one-time, §5.4) reste S-018 (dépend du champ « backlog initial »
+  ajouté au bloc ④, S-020) — hors scope S-016. `import type { Confidence }` depuis
+  `@/components/ui/StatusDot` (type-only, erasé au build — aucune dépendance UI runtime, précédent
+  `lib/pricing/sources`). Tests table-driven (27) : monotonie, anti double-comptage GPU, `api` hors
+  GPU souverain, générer > mémoriser, stockage croissant, neutre sur vide, source présente sur chaque
+  prix. **À reporter dans la spec §4.3** : `WorkloadLine.monthlyCost`.
