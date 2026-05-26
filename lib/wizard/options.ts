@@ -6,7 +6,6 @@ import type {
   Latency,
   Regulation,
   ReqPerDay,
-  Requirement,
   Sensitivity,
   TechLevel,
   Voices,
@@ -70,12 +69,6 @@ export const SENSITIVITY_OPTIONS: Option<Sensitivity>[] = [
   { value: "internal", label: "Interne" },
   { value: "confidential", label: "Confidentiel" },
   { value: "secret", label: "Secret / ultra-sensible" },
-];
-
-export const REQUIREMENT_OPTIONS: Option<Requirement>[] = [
-  { value: "no", label: "Non" },
-  { value: "desired", label: "Souhaité" },
-  { value: "required", label: "Obligatoire" },
 ];
 
 export const TECH_LEVEL_OPTIONS: Option<TechLevel>[] = [

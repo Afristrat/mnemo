@@ -9,7 +9,7 @@ function hasMultimodal(profile: Profile): boolean {
 /** Construit la stack 7 couches (C0→C6) selon le preset et le profil. */
 export function buildLayers(preset: Preset, profile: Profile): Layer[] {
   const wantsMultimodal = hasMultimodal(profile);
-  const wantsBitemporal = profile.bitemporal !== "no";
+  const wantsBitemporal = profile.bitemporal;
 
   const c0: Layer = {
     id: 0,
@@ -129,7 +129,7 @@ export function buildLayers(preset: Preset, profile: Profile): Layer[] {
           ? "Postgres 16 + pgvector + colonnes valid_from/recorded_at"
           : "Postgres 16 + pgvector (Supabase free tier)"
         : preset === "MEDIUM"
-          ? profile.bitemporal === "required"
+          ? profile.bitemporal
             ? "Postgres + Apache AGE (option Amine ADR-011) OU Graphiti+Neo4j"
             : "Postgres + pgvector + Graphiti (option Meydeey)"
           : "XTDB + Graphiti hybride (option C Chris) OU Postgres+AGE on-prem",

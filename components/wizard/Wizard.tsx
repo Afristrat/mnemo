@@ -9,6 +9,7 @@ import { CheckboxCards } from "@/components/wizard/CheckboxCards";
 import { ModuleSlider } from "@/components/wizard/ModuleSlider";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
+import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, recommend } from "@/lib/engine";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
@@ -19,7 +20,6 @@ import {
   GROWTH_OPTIONS,
   LATENCY_OPTIONS,
   REGULATION_OPTIONS,
-  REQUIREMENT_OPTIONS,
   REQ_PER_DAY_OPTIONS,
   SENSITIVITY_OPTIONS,
   TECH_LEVEL_OPTIONS,
@@ -159,14 +159,10 @@ export function Wizard(): ReactElement {
                 />
               </Field>
               <Field label="Audit (traçabilité signée)">
-                <RadioCards value={profile.audit} options={REQUIREMENT_OPTIONS} onChange={(v) => setField("audit", v)} />
+                <YesNo value={profile.audit} onChange={(v) => setField("audit", v)} />
               </Field>
               <Field label="Bitemporalité (qui savait quoi quand)">
-                <RadioCards
-                  value={profile.bitemporal}
-                  options={REQUIREMENT_OPTIONS}
-                  onChange={(v) => setField("bitemporal", v)}
-                />
+                <YesNo value={profile.bitemporal} onChange={(v) => setField("bitemporal", v)} />
               </Field>
             </>
           ) : null}

@@ -17,13 +17,11 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
   if (p.regulations.includes("aiact")) conf += 1;
   if (preset === "HARD") conf = 10;
   else if (preset === "MEDIUM") conf = Math.min(9, conf + 1);
-  if (p.audit === "required" && preset === "LIGHT") conf = Math.max(3, conf - 3);
+  if (p.audit && preset === "LIGHT") conf = Math.max(3, conf - 3);
 
-  // 2. Auditabilité bitemporelle
+  // 2. Auditabilité bitemporelle (binaire Oui/Non depuis S-015)
   let audit = 5;
-  if (p.bitemporal === "required" && preset !== "LIGHT") audit = 10;
-  else if (p.bitemporal === "desired") audit = preset === "LIGHT" ? 6 : 8;
-  else audit = 5;
+  if (p.bitemporal && preset !== "LIGHT") audit = 10;
 
   // 3. Stress-testabilité
   const stress = preset === "LIGHT" ? 7 : 9;
@@ -59,13 +57,13 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
       key: "conf",
       label: "Conformité juridique (RGPD/CNDP/AI Act)",
       score: conf,
-      why: `Couvre les ${regCount} régimes cochés. ${preset === "LIGHT" && p.audit === "required" ? "⚠ Audit obligatoire mal couvert en LIGHT." : ""}`.trim(),
+      why: `Couvre les ${regCount} régimes cochés. ${preset === "LIGHT" && p.audit ? "⚠️ Audit obligatoire mal couvert en LIGHT." : ""}`.trim(),
     },
     {
       key: "audit",
       label: "Auditabilité bitemporelle (qui savait quoi quand)",
       score: audit,
-      why: `Choix bitemporel : ${p.bitemporal}. ${preset === "LIGHT" && p.bitemporal === "required" ? "Incompatible — passer en MEDIUM." : "OK"}`,
+      why: `Choix bitemporel : ${p.bitemporal ? "Oui" : "Non"}. ${preset === "LIGHT" && p.bitemporal ? "Incompatible — passer en MEDIUM." : "OK"}`,
     },
     {
       key: "stress",
