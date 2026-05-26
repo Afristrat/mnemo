@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mnémo — Refonte du simulateur : propositions</title>
+<style>
+  :root{--teal:#0d9488;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,Segoe UI,Roboto,Inter,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 18px 60px}
+  header.deck{background:var(--ink);color:#fff;border-radius:16px;padding:24px;margin-bottom:8px}
+  header.deck h1{margin:0 0 6px;font-size:24px}
+  header.deck p{margin:0;color:#94a3b8;font-size:13.5px}
+  .toc{font-size:13px;color:var(--muted);margin:14px 0 26px;line-height:1.9}
+  section.blk{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 4px 16px rgba(15,23,42,.05)}
+  section.blk>h2{margin:0 0 2px;font-size:19px;color:#0f766e}
+  .num{display:inline-block;background:#f0fdfa;color:#0f766e;border:1px solid #99f6e4;border-radius:8px;font-size:12px;padding:2px 8px;margin-bottom:8px;font-weight:700}
+  .subtitle{color:var(--muted);font-size:13.5px;margin:4px 0 14px}
+  .split{display:flex;gap:14px}.split>*{flex:1}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .option{display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .option .letter{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;text-align:center;line-height:26px;font-weight:700;flex:none}
+  .option h3{margin:0 0 3px;font-size:14.5px}.option p{margin:0;font-size:13px;color:#475569}
+  .mockup{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .mockup-header{background:#f8fafc;border-bottom:1px solid var(--line);padding:8px 12px;font-size:12px;color:var(--muted);font-weight:600}
+  .mockup-body{padding:14px}
+  .label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  code{background:#f1f5f9;border-radius:5px;padding:1px 5px;font-size:12.5px}
+  @media(max-width:640px){.split{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="deck">
+    <h1>Mnémo — Refonte du simulateur</h1>
+    <p>Synthèse visuelle des propositions validées en sparring (+ conseil). À valider avant d'écrire le spec. Aucune ligne de code tant que ce n'est pas approuvé.</p>
+  </header>
+  <div class="toc">
+    1. Chemin 90 secondes (le recadrage) · 2. Questionnaire en 4 blocs · 3. Pattern d'étape (slider + infobulle + voix + binaire + note libre) · 4. Slider continu + carte budget-mètre · 5. Honnêteté brutale · 6. Modules → Phase 2 · 7. Multi-tenant · 8. Modèle de pricing · 9. Recherche de prix (Van Westendorp + conjoint)
+  </div>
+
+  <section class="blk">
+    <div class="num">DÉCISION — Paradigme d'entrée</div>
+    <h2>B — Structuré + expression libre (validé)</h2>
+    <p class="subtitle">Wizard structuré (sliders, infobulles, mode expert façon Stitch) + champ « décrivez votre besoin » (saisie/dictée) + note libre par étape. Données propres ET voix de l'utilisateur.</p>
+  </section>
+
+  <section class="blk">
+    <div class="num">1 — Le recadrage clé (conseil)</div>
+    <h2>Le chemin 90 secondes</h2>
+    <p class="subtitle">Entrée par la douleur (zéro jargon, « souverain » disparaît du copy) → verdict « risque / gain / prix ferme par palier / next step ». Le configurateur 16 paramètres devient « mode expert ».</p>
+    <div class="mockup"><div class="mockup-body"><div class="split">
+      <div>
+        <div class="label">1 — Pourquoi êtes-vous là ?</div>
+        <div style="font-weight:700;margin:4px 0 10px">Qu'est-ce qui coince, concrètement ?</div>
+        <div class="options" style="gap:7px">
+          <div class="option" style="border-color:var(--teal);background:#f0fdfa;padding:10px"><div>Mes données sensibles ne doivent pas finir chez des géants étrangers</div></div>
+          <div class="option" style="padding:10px"><div>Je perds un temps fou à retrouver mes infos &amp; décisions</div></div>
+          <div class="option" style="padding:10px"><div>Je crains un contrôle (CNDP / RGPD) — je veux être en règle</div></div>
+          <div class="option" style="padding:10px"><div>Je veux exploiter l'IA sans dépendre d'un fournisseur qui me tient</div></div>
+        </div>
+        <div style="border:1px dashed #cbd5e1;border-radius:10px;padding:9px;color:#94a3b8;font-size:13px;margin-top:8px">…ou dites-le en vos mots 🎤</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:14px">
+        <div class="label">2 — Votre verdict en 90 s</div>
+        <div style="font-size:13px;margin-top:8px"><span style="color:#b91c1c;font-weight:700">⚠ Risque</span> — données hors UE → Cloud Act + non-conformité CNDP probable.</div>
+        <div style="font-size:13px;margin-top:6px"><span style="color:#0f766e;font-weight:700">✓ Gain</span> — mémoire interrogeable hébergée chez vous/UE + ~6 h/mois récupérées.</div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px">
+          <div class="label">Prix ferme — périmètre cadré</div>
+          <div style="display:flex;gap:6px;margin-top:6px;font-family:monospace;font-size:12px">
+            <div style="flex:1;border:1px solid var(--line);border-radius:8px;padding:7px;text-align:center">Essentiel</div>
+            <div style="flex:1;border:2px solid var(--teal);border-radius:8px;padding:7px;text-align:center;background:#f0fdfa;color:#0f766e">Pro</div>
+            <div style="flex:1;border:1px solid var(--line);border-radius:8px;padding:7px;text-align:center">Souverain+</div>
+          </div>
+        </div>
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:9px;margin-top:8px;font-size:12.5px"><b style="color:#047857">−risques, prouvé</b> — Exit Escrow : repartez avec toute votre stack en 1 clic.</div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <section class="blk">
+    <div class="num">2 — Structure</div>
+    <h2>Le questionnaire en 4 blocs</h2>
+    <p class="subtitle">Distinguer l'infra pure de l'usage. Les modules redeviennent des options costables (usage) ; multivoix = usage ; création de contenu = bloc à part.</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="border-left:4px solid #64748b;background:#f8fafc;border-radius:8px;padding:11px"><b style="color:#475569">① Profil &amp; contraintes</b> — activité, zone, taille, régulations, sensibilité, budget, niveau technique</div>
+      <div style="border-left:4px solid var(--teal);background:#f0fdfa;border-radius:8px;padding:11px"><b style="color:#0f766e">② Infra pure</b> — volume, débit, latence, croissance, niveau de souveraineté</div>
+      <div style="border-left:4px solid #2563eb;background:#eff6ff;border-radius:8px;padding:11px"><b style="color:#1d4ed8">③ Usage — Mémoire</b> — base interrogeable ? · à qui sert (ex-multivoix) · contenu à mémoriser · capacités costables (mémoire infalsifiable, décisions horodatées, traçage des revirements, plan de panne, détecteur de conflits) · rétention/audit</div>
+      <div style="border-left:4px solid #b45309;background:#fffbeb;border-radius:8px;padding:11px"><b style="color:#92400e">④ Usage — Création de contenu</b> (nouveau) — audio/vidéo/images/formations · souverain (GPU) vs API → ajoute des couches au chiffrage</div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="num">3 — UX d'une étape</div>
+    <h2>Pattern : label + vraie infobulle (pourquoi + conséquence)</h2>
+    <p class="subtitle">Slider continu · infobulle qui explique le pourquoi · « voix » reformulée en « À qui sert cette mémoire ? » · binaire Oui/Non (fin du « souhaité ») · note libre/dictée.</p>
+    <div class="mockup"><div class="mockup-body" style="font-size:13px">
+      <b>Requêtes par jour</b> <span style="background:var(--teal);color:#fff;border-radius:50%;font-size:10px;padding:1px 5px">i</span>
+      <div style="height:6px;background:#e2e8f0;border-radius:9999px;margin:8px 0"><div style="width:42%;height:100%;background:var(--teal);border-radius:9999px"></div></div>
+      <div style="color:var(--teal);font-family:monospace;font-size:12.5px">≈ 2 400 requêtes/jour — charge soutenue</div>
+      <div style="background:#0f172a;color:#e2e8f0;border-radius:8px;padding:9px 11px;margin-top:12px;font-size:12.5px"><b>À qui sert cette mémoire ?</b> Combien de profils/métiers l'interrogeront ? Un juriste et un commercial n'attendent pas la même chose.</div>
+      <div style="margin-top:8px"><b>Traçabilité signée</b> <span style="color:var(--muted);font-size:12px">— preuve infalsifiable de « qui a su quoi, quand ». Oui = +coût, +conformité.</span> &nbsp; <span style="border:1px solid var(--line);border-radius:9999px;padding:3px 12px;font-size:12px">Non</span> <span style="background:var(--teal);color:#fff;border-radius:9999px;padding:3px 12px;font-size:12px">Oui</span></div>
+    </div></div>
+  </section>
+
+  <section class="blk">
+    <div class="num">4 — La carte flottante</div>
+    <h2>Slider continu + « budget-mètre » vert → rouge</h2>
+    <p class="subtitle">La bordure passe du vert au rouge selon coût/budget ; au-dessus, elle explique POURQUOI + un levier (règle aussi « hors budget sans justification »).</p>
+    <div class="split">
+      <div style="background:#fff;border:2px solid #16a34a;border-radius:12px;padding:13px"><div class="label">Coût estimé</div><div style="font-size:22px;font-weight:700;color:#16a34a;font-family:monospace">≈ 180 €</div><div style="font-size:12px;color:#16a34a">● Confortable — 36 % du budget</div></div>
+      <div style="background:#fff;border:2px solid #f59e0b;border-radius:12px;padding:13px"><div class="label">Coût estimé</div><div style="font-size:22px;font-weight:700;color:#d97706;font-family:monospace">≈ 470 €</div><div style="font-size:12px;color:#d97706">● Proche — 94 % du budget</div></div>
+      <div style="background:#fff;border:2px solid #dc2626;border-radius:12px;padding:13px"><div class="label">Coût estimé</div><div style="font-size:22px;font-weight:700;color:#dc2626;font-family:monospace">≈ 760 €</div><div style="font-size:12px;color:#dc2626">● Au-dessus — 152 %</div><div style="font-size:11px;color:#7f1d1d;background:#fef2f2;border-radius:7px;padding:6px;margin-top:6px"><b>Pourquoi ?</b> Traçabilité + UE imposent du self-host. Levier → ≈ 430 €.</div></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="num">5 — Principe transversal</div>
+    <h2>Honnêteté brutale — rien n'est masqué</h2>
+    <p class="subtitle">On pointe les incohérences, on étiquette franchement 🟢 open-source / 💳 payant (seule option viable), on n'enterre aucune option.</p>
+    <div style="border-left:4px solid #dc2626;background:#fef2f2;border-radius:8px;padding:12px;font-size:13px"><b style="color:#b91c1c">⚠ Tension</b> — Budget &lt; 50 €/mois + souveraineté max : incohérent. Deux issues honnêtes : relâcher la souveraineté (API UE) ou assumer un budget plus élevé. <i>On ne vend pas l'impossible.</i></div>
+  </section>
+
+  <section class="blk">
+    <div class="num">6 — Périmètre</div>
+    <h2>Modules avancés → option « base mémorielle » (costable)</h2>
+    <p class="subtitle">Ils ne dimensionnent pas l'infra : rangés dans l'usage, costables, présentés en option claire. Renommés du jargon au clair.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px">
+      <div style="border:1px solid var(--line);border-radius:10px;padding:9px"><b>Traçage des revirements</b><br><span style="color:var(--muted)">depuis quand a-t-on changé d'avis ?</span></div>
+      <div style="border:1px solid var(--line);border-radius:10px;padding:9px"><b>Mémoire infalsifiable</b><br><span style="color:var(--muted)">on corrige en traçant</span></div>
+      <div style="border:1px solid var(--line);border-radius:10px;padding:9px"><b>Décisions horodatées</b><br><span style="color:var(--muted)">anti-réécriture de l'histoire</span></div>
+      <div style="border:1px solid var(--line);border-radius:10px;padding:9px"><b>Plan de panne</b><br><span style="color:var(--muted)">mode dégradé pré-pensé</span></div>
+      <div style="border:1px solid var(--line);border-radius:10px;padding:9px"><b>Détecteur de conflits d'intérêts</b><br><span style="color:var(--muted)">jamais de conseil contradictoire</span></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="num">7 — Multi-tenant</div>
+    <h2>Super-admin (toi) → Membres · LLM au niveau plateforme</h2>
+    <p class="subtitle">S'aligne sur la RLS déjà déployée. Pas d'écran admin-d'org pour l'instant (rôles gardés en base). LLM configuré plateforme (ton LiteLLM).</p>
+  </section>
+
+  <section class="blk">
+    <div class="num">8 — Monétisation</div>
+    <h2>« Recette ouverte, cuisine payante »</h2>
+    <p class="subtitle">On sépare le prix FERME (service Mnémo) du coût VARIABLE (infra transparente). Diagnostic gratuit = aimant ; on facture la cuisine.</p>
+    <div class="split">
+      <div style="border:1px solid var(--line);border-radius:12px;padding:13px"><b>Diagnostic</b><div style="font-size:20px;font-weight:800;color:#0f766e;font-family:monospace">Gratuit</div><div style="font-size:12px;color:var(--muted)">configurateur · livrable · bundle Exit Escrow</div></div>
+      <div style="border:2px solid var(--teal);border-radius:12px;padding:13px;background:#f0fdfa"><b style="color:#0f766e">Pro (recommandé)</b><div style="font-size:17px;font-weight:800;color:#0f766e;font-family:monospace">≈ 790 €/mois</div><div style="font-size:11px;color:var(--muted)">UE · Maroc ≈ 4 900 MAD/mois · + infra en pass-through</div><div style="font-size:12px;color:var(--muted);margin-top:4px">déploiement + monitoring + recalibration</div></div>
+      <div style="border:1px solid var(--line);border-radius:12px;padding:13px"><b>Souverain+</b><div style="font-size:18px;font-weight:800;font-family:monospace">sur devis</div><div style="font-size:12px;color:var(--muted)">on-prem + négo vendor + SLA</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:12px;border-top:1px solid var(--line);padding-top:10px">Ancrage = VALEUR (coût humain évité), PAS notre TJM : Mnémo livre par <b>agents</b> → zéro jour-homme vendu. Une PME en self-host éviterait <b>750-3 000 $/mois d'ops humain</b> ; le « Pro » se cale nettement en dessous, avec une <b>marge logicielle</b> (COGS ≈ compute) qui finance le diagnostic gratuit + l'effet réseau. Métrique = forfait par organisation (pas par siège, ni par jour).</div>
+  </section>
+
+  <section class="blk">
+    <div class="num">9 — Recherche de prix (en cours)</div>
+    <h2>Van Westendorp + Conjoint + veille concurrentielle</h2>
+    <p class="subtitle">Mini-test 4 questions (10–15 prospects) + conjoint (30–50 répondants, 6 attributs dont le prix) pour sortir le prix optimal par palier. Veille concurrentielle WebSearch en cours (RAG SaaS, cloud IA souverain, TJM conseil IA UE/Maroc) pour caler les niveaux. Doc : <code>docs/pricing/wtp-research.md</code>.</p>
+  </section>
+
+  <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:24px">Prochaine étape : grille de prix finale (post-veille) → homepage de vente → consolidation dans le spec de design (validation avant code).</p>
+</div>
+</body>
+</html>

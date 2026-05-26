@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mnémo — la mémoire souveraine de votre organisation</title>
+<style>
+  :root{--teal:#0d9488;--teal-d:#0f766e;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--gold:#b45309}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:16px/1.6 -apple-system,Segoe UI,Roboto,Inter,sans-serif;color:var(--ink);background:#fff}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{font-family:"Space Grotesk",Segoe UI,sans-serif;line-height:1.15;letter-spacing:-.01em}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+  .ph{background:#fef3c7;color:#92400e;border-radius:6px;padding:1px 7px;font-size:.8em;font-weight:700}
+  /* nav */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;max-width:1080px;margin:0 auto}
+  nav .logo{font-family:"Space Grotesk";font-weight:700;font-size:22px;color:var(--ink)}
+  nav .logo span{color:var(--teal)}
+  nav .links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+  .btn{display:inline-block;background:var(--teal);color:#fff;border-radius:9999px;padding:12px 22px;font-weight:600;text-decoration:none;font-size:15px}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  /* hero */
+  .hero{padding:54px 0 40px;text-align:center}
+  .hero h1{font-size:46px;max-width:880px;margin:14px auto 0}
+  .hero h1 .hl{color:var(--teal)}
+  .hero p.lead{font-size:19px;color:#334155;max-width:680px;margin:18px auto 0}
+  .hero .cta{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .trust{margin-top:18px;font-size:13px;color:var(--muted)}
+  /* sections */
+  section{padding:46px 0}
+  .sec-head{text-align:center;max-width:680px;margin:0 auto 30px}
+  .sec-head h2{font-size:32px}
+  .sec-head p{color:var(--muted);margin-top:8px}
+  /* promesses */
+  .promises{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .promise{border:1px solid var(--line);border-radius:16px;padding:22px;position:relative}
+  .promise h3{font-size:20px;color:var(--teal-d)}
+  .promise p{color:#334155;margin-top:6px;font-size:14.5px}
+  .proof{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;border-radius:8px;padding:4px 10px}
+  .proof.hard{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+  .proof.soft{background:#f1f5f9;color:#475569;border:1px solid var(--line)}
+  /* wedge */
+  .wedge{background:var(--ink);color:#e2e8f0;border-radius:20px;padding:38px;text-align:center}
+  .wedge h2{color:#fff;font-size:30px}
+  .wedge p{color:#94a3b8;max-width:680px;margin:10px auto 0}
+  .tags{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;font-size:13px}
+  .tags span{background:#1e293b;border-radius:9999px;padding:7px 14px}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .step{text-align:center;padding:18px}
+  .step .n{width:42px;height:42px;border-radius:50%;background:#f0fdfa;color:var(--teal-d);font-weight:700;line-height:42px;margin:0 auto 10px;font-size:18px}
+  .step h3{font-size:17px}.step p{color:var(--muted);font-size:14px;margin-top:4px}
+  /* pricing */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .tier{border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+  .tier.feat{border:2px solid var(--teal);box-shadow:0 12px 30px rgba(13,148,136,.12)}
+  .tier h3{font-size:20px}
+  .tier .price{font-family:"Space Grotesk";font-size:30px;font-weight:700;color:var(--teal-d);margin:8px 0}
+  .tier ul{list-style:none;text-align:left;margin-top:14px;font-size:14px;color:#334155}
+  .tier li{padding:5px 0;padding-left:22px;position:relative}
+  .tier li:before{content:"✓";position:absolute;left:0;color:var(--teal)}
+  /* final */
+  .final{background:#f0fdfa;border-radius:20px;padding:46px;text-align:center}
+  footer{padding:30px 0;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line);margin-top:40px}
+  @media(max-width:760px){.promises,.steps,.tiers{grid-template-columns:1fr}.hero h1{font-size:34px}.nav .links{display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Mné<span>mo</span></div>
+  <div class="links"><span>Pourquoi</span><span>Comment</span><span>Tarifs</span><span>Garanties</span></div>
+  <a href="#" class="btn">Diagnostic gratuit</a>
+</nav>
+
+<header class="hero wrap">
+  <div class="eyebrow">Infrastructure de mémoire IA souveraine</div>
+  <h1>Le savoir de votre organisation ne devrait <span class="hl">jamais</span> quitter vos murs.</h1>
+  <p class="lead">Mnémo transforme vos documents, décisions et échanges en une <b>mémoire interrogeable</b> — hébergée chez vous ou en UE, jamais chez des géants étrangers. Vous gardez tout. Vous ne dépendez de personne.</p>
+  <div class="cta">
+    <a href="#" class="btn">Faire mon diagnostic — 90 s, gratuit</a>
+    <a href="#" class="btn ghost">Voir comment ça marche</a>
+  </div>
+  <div class="trust">Hébergé UE / Maroc · Conforme CNDP &amp; RGPD · Zéro verrouillage — repartez avec tout, quand vous voulez</div>
+</header>
+
+<section class="wrap">
+  <div class="sec-head">
+    <div class="eyebrow">Pourquoi Mnémo</div>
+    <h2>Quatre promesses. Une seule déjà prouvée — les autres, mesurées chez vous.</h2>
+    <p>On ne vous promet pas la lune sans preuve. Voici ce qu'on défend, et avec quelle honnêteté.</p>
+  </div>
+  <div class="promises">
+    <div class="promise">
+      <h3>↑ Plus de profits</h3>
+      <p>De meilleures décisions, plus vite : votre mémoire répond au lieu de dormir dans des dossiers. Le bon savoir, au bon moment, au bon rôle.</p>
+      <span class="proof soft">À mesurer chez vous (avant / après)</span>
+    </div>
+    <div class="promise">
+      <h3>↑ Plus efficient</h3>
+      <p>Fini les heures perdues à chercher « où est ce document / qui a décidé quoi ». On vous rend ce temps.</p>
+      <span class="proof soft">À mesurer chez vous (temps de recherche)</span>
+    </div>
+    <div class="promise">
+      <h3>↓ Moins de coûts</h3>
+      <p>Le juste dimensionnement, des prix <b>sourcés et datés</b>, et la traque des surcoûts cachés. Jamais de facture surprise.</p>
+      <span class="proof soft">Carte de coûts sourcée + veille prix continue</span>
+    </div>
+    <div class="promise">
+      <h3>↓ Moins de risques</h3>
+      <p>Zéro verrouillage (repartez avec toute votre stack en 1 clic), conformité par conception, et l'expertise qui vous évite l'erreur qui coûte cher.</p>
+      <span class="proof hard">★ Prouvé — Exit Escrow + mode fiduciaire</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="wedge">
+    <div class="eyebrow" style="color:#5eead4">Notre différence</div>
+    <h2>On vous dit la vérité — même quand elle dérange.</h2>
+    <p>Si une solution open-source suffit, on vous le dit. Si seul un outil payant tient la route, on vous le dit aussi. Si vos contraintes se contredisent (petit budget + souveraineté maximale), on le pointe — on ne vous vend pas l'impossible. Et on ne touche <b>aucune commission cachée</b> des fournisseurs qu'on recommande.</p>
+    <div class="tags"><span>🟢 Open-source quand c'est mieux</span><span>💳 Payant quand c'est nécessaire</span><span>⚖️ Zéro commission cachée</span><span>🔓 Zéro lock-in</span></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><div class="eyebrow">Comment ça marche</div><h2>De la douleur à la décision, en 90 secondes.</h2></div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Diagnostic gratuit</h3><p>Dites ce qui coince (en vos mots ou guidé). On vous donne votre risque, votre gain et un prix ferme.</p></div>
+    <div class="step"><div class="n">2</div><h3>Plan sourcé &amp; partageable</h3><p>Une reco claire, chaque coût lié à sa source, exportable et partageable à votre board.</p></div>
+    <div class="step"><div class="n">3</div><h3>Déploiement par agents</h3><p>Nos agents déploient et opèrent — sans que vous ayez à recruter ni à tout réapprendre.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="sec-head"><div class="eyebrow">Tarifs</div><h2>Le diagnostic est gratuit. Vous ne payez que la cuisine.</h2><p>Le coût de l'infra reste transparent, payé à vos fournisseurs — on ne marge pas dessus.</p></div>
+  <div class="tiers">
+    <div class="tier">
+      <h3>Diagnostic</h3>
+      <div class="price">Gratuit</div>
+      <ul><li>Configurateur 90 s</li><li>Plan &amp; coûts sourcés</li><li>Livrable partageable</li><li>Bundle de sortie (Exit Escrow)</li></ul>
+    </div>
+    <div class="tier feat">
+      <h3>Pro <span class="ph">PRIX — sondage en cours</span></h3>
+      <div class="price">[__ /mois]</div>
+      <ul><li>Déploiement assisté</li><li>Supervision continue</li><li>Optimisation des coûts</li><li>Expertise &amp; évitement d'erreurs</li></ul>
+      <a href="#" class="btn" style="margin-top:16px">Parler à un expert</a>
+    </div>
+    <div class="tier">
+      <h3>Souverain+</h3>
+      <div class="price">Sur devis</div>
+      <ul><li>On-prem / air-gapped</li><li>Négociation fournisseurs (fiduciaire)</li><li>Support dédié + SLA</li></ul>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:14px"><span class="ph">DETTE</span> &nbsp;Les montants seront calés par le sondage de prix (Van Westendorp + conjoint) en cours — pas de chiffre au doigt mouillé.</p>
+</section>
+
+<section class="wrap">
+  <div class="final">
+    <h2>Votre mémoire vous appartient. Reprenez-la.</h2>
+    <p style="color:#334155;max-width:600px;margin:10px auto 0">Commencez par le diagnostic gratuit. En 90 secondes, vous saurez votre risque, votre gain, et la marche à suivre.</p>
+    <a href="#" class="btn" style="margin-top:20px">Faire mon diagnostic gratuit</a>
+  </div>
+</section>
+
+<footer class="wrap">© 2026 Mnémo — Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme CNDP &amp; RGPD</footer>
+
+</body>
+</html>
