@@ -159,7 +159,8 @@ export function Wizard(): ReactElement {
   const result = recommend(profile, prices);
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-5xl lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
+      <div className="min-w-0">
       {/* Indicateur de blocs */}
       <ol className="mb-6 flex flex-wrap gap-2">
         {BLOCKS.map((b, i) => (
@@ -284,14 +285,6 @@ export function Wizard(): ReactElement {
         </div>
       </Card>
 
-      {/* Budget-mètre — visible tout au long du wizard (sticky). Coût d'infra, jamais prix de vente. */}
-      <BudgetMeter
-        className="mt-6 sticky bottom-4 z-10"
-        totalCost={result.totalCost}
-        budget={profile.budget}
-        sizing={result.sizing}
-      />
-
       {/* Navigation */}
       <div className="mt-6 flex items-center justify-between gap-3">
         <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
@@ -331,6 +324,12 @@ export function Wizard(): ReactElement {
           ))}
         </div>
       </div>
+      </div>
+
+      {/* Budget-mètre — colonne de droite, sticky (ne mange pas la hauteur du contenu). Coût d'infra, jamais prix de vente. */}
+      <aside className="mt-6 lg:mt-0 lg:sticky lg:top-6">
+        <BudgetMeter totalCost={result.totalCost} budget={profile.budget} sizing={result.sizing} />
+      </aside>
     </div>
   );
 }
