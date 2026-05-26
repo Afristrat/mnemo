@@ -197,6 +197,11 @@ Format : décision · contexte · options · choix · conséquences.
   (Scaleway € publié, stockage), `medium` (conversion de devise d'un prix exact), `low` (forfait
   embeddings + dérivations d'unité). **NON TROUVÉ** assumé (Pika, Kling, Cohere Embed unitaire,
   DALL·E 3 retiré) — non inventés. À re-sourcer périodiquement (pages + taux BCE).
+- **Revue Amine (2026-05-26)** : référent embeddings multimodaux Voyage (forfait 30 €/mois, low) →
+  **Qwen3-VL-Embedding** (open Apache 2.0, **#1 MMEB-V2 77,8**, self-host) — [arXiv 2601.04720] / HF.
+  Conséquence : pour une base **souveraine**, l'embedding tourne sur le **GPU déjà compté (C6)** →
+  forfait C4 = **0 €** (corrige aussi un double-comptage latent). Alternatives API documentées (Jina v4
+  ~0,05 $/1M tokens, Cohere Embed v4, Gemini Embedding 2). Voyage relégué en repère.
 
 ## ADR-012 — Intégration sizing → couches dans `recommend` (S-018) : prix injectés, setupCost backlog, GPU une fois
 
