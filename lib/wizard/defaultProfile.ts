@@ -21,4 +21,5 @@ export const DEFAULT_PROFILE: Profile = {
   latency: "fast",
   voices: "solo",
   modules: defaultModuleLevels(),
+  freeNotes: {},
 };

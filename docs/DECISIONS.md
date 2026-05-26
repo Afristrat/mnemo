@@ -255,3 +255,25 @@ Format : décision · contexte · options · choix · conséquences.
   `supabase db reset` peut laisser `auth.uid()` non résolu pour les requêtes authentifiées (casse même
   les tests RLS pré-existants) → **restaurer via `supabase stop && supabase start`** (rebuild propre)
   avant toute vérification RLS live.
+
+## ADR-014 — Wizard 4 blocs (S-019) : infobulles neutres, sliders continus, notes libres, usages renommés
+
+- **Contexte** : configurateur refondu de 6 étapes → 4 blocs (spec §6) + `InfoBubble`, `ContinuousSlider`,
+  note libre par bloc, usages costables renommés (§9), a11y `YesNo`.
+- **Choix** :
+  - **4 blocs** (Profil & contraintes / Infra pure / Usage-Mémoire / Médias). Le bloc ④ **Médias est
+    STRUCTUREL ici** (intro + note) ; son contenu détaillé (`MediaNeedsBlock` + budget-mètre) = S-020.
+  - **`InfoBubble`** : disclosure accessible (`aria-expanded` + région reliée) présentant une info
+    **FACTUELLE et NON ORIENTÉE** (« pourquoi + conséquence ») — jamais une reco (cf. principe « avis
+    critique non orienté », retour Amine). Contenu dans une table `INFO` côté Wizard.
+  - **`ContinuousSlider`** : `input range` glissant sur des paliers discrets ordonnés (volume, débit),
+    `aria-valuetext` = palier courant.
+  - **`freeNotes`** : `Profile.freeNotes` (typé S-015) + `setNote(block)` au hook ; `DEFAULT_PROFILE.freeNotes={}` ;
+    **additif** (pas de bump de version localStorage — merge sûr).
+  - **Usages renommés** (`modules.ts` `name`) : Traçage des revirements / Mémoire infalsifiable /
+    Décisions horodatées / Plan de panne / Détecteur de conflits (structure `Profile.modules` inchangée).
+  - **`YesNo`** : `role="group"` + `aria-label` (dette a11y S-015 levée) ; `aria-pressed` conservé.
+- **Conséquence** : aperçu live (preset + coût) factuel en en-tête (budget-mètre détaillé = S-020).
+  e2e parcours mis à jour (3 « Suivant » au lieu de 5) — **vérifié LIVE 3/3 (desktop)**. Hydratation
+  localStorage **round-trip testée** (renderHook, profil chargé hors composant). typecheck 0, lint 0/0,
+  tests 137 + 8 skip, build OK.

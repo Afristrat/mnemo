@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ContentType, ModuleId, Profile, Regulation } from "@/lib/engine";
+import type { BlockId, ContentType, ModuleId, Profile, Regulation } from "@/lib/engine";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 
 type UseWizardProfile = {
@@ -11,6 +11,7 @@ type UseWizardProfile = {
   toggleContentType: (value: ContentType) => void;
   toggleRegulation: (value: Regulation) => void;
   setModuleLevel: (id: ModuleId, level: number) => void;
+  setNote: (block: BlockId, value: string) => void;
   loadProfile: (next: Profile) => void;
 };
 
@@ -67,6 +68,10 @@ export function useWizardProfile(): UseWizardProfile {
     setProfile((prev) => ({ ...prev, modules: { ...prev.modules, [id]: level } }));
   }, []);
 
+  const setNote = useCallback((block: BlockId, value: string) => {
+    setProfile((prev) => ({ ...prev, freeNotes: { ...prev.freeNotes, [block]: value } }));
+  }, []);
+
   const loadProfile = useCallback((next: Profile) => setProfile(next), []);
 
   return {
@@ -76,6 +81,7 @@ export function useWizardProfile(): UseWizardProfile {
     toggleContentType,
     toggleRegulation,
     setModuleLevel,
+    setNote,
     loadProfile,
   };
 }
