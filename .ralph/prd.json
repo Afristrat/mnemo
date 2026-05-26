@@ -1,7 +1,7 @@
 {
-  "project": "Mnémo",
+  "project": "Strate (ex-Mnémo)",
   "repo": "https://github.com/Afristrat/mnemo",
-  "lot": "Lot 1 — Conseil + moats (production-ready, vendable seul)",
+  "lot": "Lot 1 — Conseil + moats (S-001→S-014, ✅) · Refonte Strate (S-015→S-024)",
   "principe": "Production-ready, zéro dette. Pas de version mince. Chaque story : typecheck + tests + lint + build verts avant passes=true, puis commit + push.",
   "stack": "Next.js 15 (App Router) + React 19 + TypeScript + Tailwind v3 + Supabase (RLS) + Vitest + Playwright. Héberg. cible Vercel.",
   "spec": "PRD.md (racine) — features F1..F9.",
@@ -139,6 +139,104 @@
         "CLAUDE.md décrit le projet réel (commandes, archi, conventions)",
         "README d'onboarding",
         "CI: lint + typecheck + test + build + playwright"
+      ]
+    },
+    {
+      "id": "S-015", "title": "Migration des types Strate (audit/bitemporal booléens, MediaNeed/Sizing/Verdict, mediaNeeds/freeNotes)", "feature": "refonte",
+      "passes": false, "deps": ["S-003"],
+      "acceptance": [
+        "audit et bitemporal passent de Requirement à boolean ; scores.ts et defaultProfile.ts adaptés",
+        "types MediaNeed, Sizing, WorkloadLine, Verdict ajoutés (cf. spec §4)",
+        "Profile gagne mediaNeeds? et freeNotes? ; Recommendation gagne sizing/setupCost/costSources/verdict",
+        "type Requirement supprimé si inutilisé (zéro code mort)",
+        "typecheck 0 + tests verts"
+      ]
+    },
+    {
+      "id": "S-016", "title": "Module sizing.ts — besoins → ressources (GPU mutualisé, stockage indexé, setup)", "feature": "refonte",
+      "passes": false, "deps": ["S-015"],
+      "acceptance": [
+        "fonction pure costMultimodalSizing(profile, prices) → Sizing, prix injectés (testabilité)",
+        "GPU compté UNE SEULE FOIS (anti double-comptage C4/C6), dimensionné sur la charge totale",
+        "mode api ne consomme pas le GPU souverain ; volet créer pèse plus que mémoriser",
+        "stockage croissant avec le volume ; mediaNeeds=[] → sizing neutre",
+        "tests table-driven (modalités × ingest/generate × api/sovereign × paliers), monotonie vérifiée"
+      ]
+    },
+    {
+      "id": "S-017", "title": "Pricing médias sourcé (seed URL+date+confiance + feed Firecrawl, repli seed)", "feature": "refonte",
+      "passes": false, "deps": ["S-015", "S-008"],
+      "acceptance": [
+        "tarifs (transcription, OCR, embeddings multimodaux, GPU souverain, génération) sourcés : URL + date + pastille de confiance, consignés dans docs/pricing/",
+        "getMediaPrices() renvoie une table ; chaque entrée a {url,date,confidence} ; ±30 %",
+        "intégration au feed Firecrawl existant + repli seed si indispo",
+        "source incertaine → confidence low + libellé « estimation, à confirmer par devis »",
+        "AUCUN prix non sourcé (DÉFCON 1)"
+      ]
+    },
+    {
+      "id": "S-018", "title": "Intégration sizing → couches dans recommend (coûts dans C4/C5/C6, setupCost, verdict)", "feature": "refonte",
+      "passes": false, "deps": ["S-016", "S-017"],
+      "acceptance": [
+        "recommend appelle sizing et dimensionne C4/C5/C6 (coûts multimodaux DANS les couches, pas en ligne séparée)",
+        "setupCost reflète le backlog initial ; verdict rempli (risque/gain/prix ferme [PLACEHOLDER]/coût ±30 %/setup)",
+        "totalCost cohérent (baseCost + moduleCost + couches dimensionnées)",
+        "tests recommend étendus verts"
+      ]
+    },
+    {
+      "id": "S-019", "title": "Wizard 4 blocs + InfoBubble + ContinuousSlider + notes libres + usages renommés", "feature": "refonte",
+      "passes": false, "deps": ["S-015", "S-005"],
+      "acceptance": [
+        "wizard restructuré en 4 blocs (Profil&contraintes / Infra pure / Usage-Mémoire / Médias)",
+        "InfoBubble (pourquoi + conséquence), sliders continus volume/débit, binaires Oui/Non, note libre par bloc",
+        "usages costables renommés en clair (Traçage des revirements, Mémoire infalsifiable, etc.)",
+        "hydration localStorage testée (profil chargé hors composant), round-trip OK"
+      ]
+    },
+    {
+      "id": "S-020", "title": "Bloc Médias (mémoriser + créer, souverain/API, backlog) + budget-mètre flottant", "feature": "refonte",
+      "passes": false, "deps": ["S-016", "S-019"],
+      "acceptance": [
+        "MediaNeedsBlock : par modalité, volet mémoriser ET volet créer/générer (palier ou volume) + toggle 🟢 souverain / 💳 API + backlog initial",
+        "live preview du dimensionnement (~X €/mois d'infra, dont GPU)",
+        "BudgetMeter vert/jaune/rouge ; dépassement → cause dominante + 1 levier"
+      ]
+    },
+    {
+      "id": "S-021", "title": "Chemin 90 s (QuickProfileForm + profile-mappers + mode verdict) + entrée accueil", "feature": "refonte",
+      "passes": false, "deps": ["S-018", "S-019"],
+      "acceptance": [
+        "formulaire 3-4 questions qualitatives → Profile complet (défauts documentés, tests mappers)",
+        "chemin 90 s = entrée par défaut sur l'accueil → /resultats en mode verdict",
+        "lien « Affiner » → /configurateur pré-rempli (source de vérité useWizardProfile)"
+      ]
+    },
+    {
+      "id": "S-022", "title": "Résultats : mode verdict + CostMap étendu (décomposition multimodale dans les couches + setup)", "feature": "refonte",
+      "passes": false, "deps": ["S-018", "S-021", "S-006"],
+      "acceptance": [
+        "mode verdict (douleur/risque/gain/prix ferme/coût ±30 %/setup/next step)",
+        "mode expert : CostMap décompose l'apport multimodal DANS les couches + ligne setup, pastilles 🟢/💳, sources cliquables",
+        "disclaimer multimodal « coûts variables, devis avant go »"
+      ]
+    },
+    {
+      "id": "S-023", "title": "Conversion/data — log des simulations + capture e-mail exit-intent (Supabase RLS)", "feature": "refonte",
+      "passes": false, "deps": ["S-012", "S-018"],
+      "acceptance": [
+        "migrations tables simulation_log + lead_capture avec RLS activé",
+        "log des simulations (moat data) + capture e-mail exit-intent + rapport partageable (lien)",
+        "test RLS : un tenant ne lit pas les données d'un autre"
+      ]
+    },
+    {
+      "id": "S-024", "title": "E2E parcours Strate + nettoyage code mort", "feature": "refonte",
+      "passes": false, "deps": ["S-020", "S-021", "S-022", "S-023", "S-013"],
+      "acceptance": [
+        "e2e (desktop + mobile) : 90 s → verdict ; wizard 4 blocs → expert ; bloc Médias génération vidéo souveraine → budget rouge + levier",
+        "round-trip /configurateur ↔ /resultats (cohérence localStorage)",
+        "code mort du wizard 6-steps supprimé ; typecheck 0 / lint 0/0 / build OK"
       ]
     }
   ]
