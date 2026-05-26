@@ -55,6 +55,46 @@ export type NetworkConsentInsert = {
   revoked_at: string | null;
 };
 
+// Conversion & data (S-023) — log des simulations + capture e-mail.
+export type LeadContext = "exit_intent" | "report" | "other";
+
+export type SimulationLogRow = {
+  id: string;
+  share_token: string;
+  circle_id: string | null;
+  created_by: string | null;
+  preset: string | null;
+  profile: unknown;
+  verdict: unknown;
+  total_cost: number | null;
+  setup_cost: number | null;
+  created_at: string;
+};
+export type SimulationLogInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  preset: string | null;
+  profile: unknown;
+  verdict: unknown;
+  total_cost: number | null;
+  setup_cost: number | null;
+};
+
+export type LeadCaptureRow = {
+  id: string;
+  email: string;
+  simulation_id: string | null;
+  circle_id: string | null;
+  context: LeadContext;
+  created_at: string;
+};
+export type LeadCaptureInsert = {
+  email: string;
+  simulation_id: string | null;
+  circle_id: string | null;
+  context: LeadContext;
+};
+
 type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert> };
 
 export type Database = {
@@ -65,8 +105,12 @@ export type Database = {
       network_consents: TableShape<NetworkConsentRow, NetworkConsentInsert>;
       configurations: TableShape<ConfigurationRow, Omit<ConfigurationRow, "id" | "created_at">>;
       cost_observations: TableShape<CostObservationRow, Omit<CostObservationRow, "id" | "observed_at">>;
+      simulation_log: TableShape<SimulationLogRow, SimulationLogInsert>;
+      lead_capture: TableShape<LeadCaptureRow, LeadCaptureInsert>;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      get_simulation_by_token: { Args: { token: string }; Returns: SimulationLogRow[] };
+    };
   };
 };

@@ -232,3 +232,26 @@ Format : décision · contexte · options · choix · conséquences.
   **Décision ADR-009 (d) tranchée** : la dimension `mm` (scores) reste pilotée par `contentTypes` ;
   son raffinement par `mediaNeeds` n'est PAS requis par l'acceptance S-018 → laissé tel quel (pas de
   scope creep), à revoir si besoin avec le bloc Médias (S-020).
+
+## ADR-013 — Conversion & data (S-023) : simulations anonymes loggables, rapport par jeton, leads PII-restreints
+
+- **Contexte** : S-023 = log des simulations (moat data) + capture e-mail exit-intent + rapport
+  partageable, RLS partout, test cross-tenant. Réutilise les patterns S-012 (ADR-006 : helpers
+  SECURITY DEFINER, test gated).
+- **Choix** :
+  - **`simulation_log`** : insert ouvert `anon` + `authenticated` (le configurateur est **public** → la
+    plupart des simulations sont ANONYMES, `circle_id` null) ; select direct réservé aux membres du
+    cercle. Le **rapport partageable** passe par une RPC **SECURITY DEFINER** `get_simulation_by_token`
+    (lecture par jeton, sans exposer la table en masse).
+  - **`lead_capture`** : e-mail = **PII** → insert ouvert (capture), select réservé au **propriétaire**
+    du cercle ; les leads anonymes ne sont lisibles que par le service role. Collecte minimale
+    (e-mail + contexte), opt-in côté UI (RGPD/CNDP).
+  - **Builders PURS** (`lib/conversion/log.ts`) — payloads testés unitairement ; l'insertion (et le
+    respect RLS) est à l'appelant.
+  - **Routes HTTP + composant capture exit-intent : DÉFÉRÉS à S-024** (e2e) — le mécanisme (tables +
+    RLS + RPC + builders) est complet et **prouvé** ici ; éviter du wiring non testé en isolation.
+- **Conséquence / preuve** : **RLS VÉRIFIÉE LIVE (8/8** : isolation simulations + leads cross-tenant,
+  rapport par jeton anonyme, anon bloqué en masse) contre la stack Supabase locale. **Learning env** :
+  `supabase db reset` peut laisser `auth.uid()` non résolu pour les requêtes authentifiées (casse même
+  les tests RLS pré-existants) → **restaurer via `supabase stop && supabase start`** (rebuild propre)
+  avant toute vérification RLS live.
