@@ -1,108 +1,101 @@
 # PASSATION — Mnémo (repo Infra)
 
-> Passation de quart (protocole nucléaire). Le quart suivant doit pouvoir reprendre **sans relire d'autre fichier que celui-ci** — les pointeurs vers les docs détaillées sont en bas.
+> Passation de quart (protocole nucléaire). Le quart suivant reprend **sans relire d'autre fichier que celui-ci** ; pointeurs détaillés en bas.
 
 ```
-== PASSATION MNEMO 2026-05-25T03:15 ==
-[ETAT]    Lot 1 (conseil+moats) ✅ COMPLET | 14/14 stories ✓ | branche main propre | build ✓ | typecheck 0 | lint 0/0 | unit 76+4skip | e2e 5+1skip
-[ENCOURS] RAS — Lot 1 terminé. Suite = Lot 2 (agent provisioning human-in-the-loop).
-[FAIT]    S-001→S-014 (toutes). Migration ESLint CLI (dette résorbée). CLAUDE.md+README à jour. docs/DECISIONS.md ADR-001..008
-[ALERTE]  !! Supabase = nouvelles clés sb_publishable/sb_secret (≠ JWT anon/service_role) → adapter .env.example en S-012 | RLS obligatoire S-012 | scaffold supabase/ untracked (intégrer en S-012) | baseline prix datée 2026-05-25 (régénérer via scripts/capture-baseline.mts)
+== PASSATION MNEMO 2026-05-26T13:30 ==
+[ETAT]    Lot 1 (conseil+moats) ✅ COMPLET 14/14 + DÉPLOYÉ en prod (https://infra.ai-mpower.com via Coolify) | branche main propre (artefacts non commités présents) | unit 76+4skip · e2e 5+1skip · typecheck 0 · lint 0/0
+[ENCOURS] REFONTE du simulateur (traité comme un tout) — en BRAINSTORMING, design validé écran par écran, PAS encore spec-é ni codé. + Sondage de prix en COLLECTE.
+[FAIT]    Lot 1 (S-001→S-014) | déploiement Coolify | refonte design (compagnon visuel + conseil 5 voix + pricing) | veille concurrentielle | sondage /sondage live | Supabase SERVEUR relancé + rails RLS Mnémo appliqués | fichier credentials
+[ALERTE]  !! NE PAS CODER la refonte avant spec écrite+validée (HARD GATE brainstorming) | secrets → coffre chiffré DPAPI (load-secrets.ps1) ; token Coolify rotaté ✅ | Supabase serveur NON exposé (localhost:8200) | prix = [PLACEHOLDER] tant que le sondage n'a pas de réponses | costing multimodal (création de contenu) N'EXISTE PAS encore | webhook GitHub→Coolify non configuré → redeploy manuel
 [BLOQUE]  RAS
-[NEXT]    S-009 → S-010 → S-011 → S-012 → S-013 → S-014
-[CTX]     session 2026-05-24→25 | 8 commits | OneDrive en pause ~2h (I/O OK) | Supabase Studio http://127.0.0.1:54323
-[MEMO]    "reprends en Ralph" relit .ralph/prd.json + progress.md + AGENTS.md AVANT toute action
+[NEXT]    Décision: (a) exposer Supabase serveur + brancher l'app dessus, OU (b) consolider le SPEC de la refonte (docs/superpowers/specs/) → writing-plans → implémenter. Puis: collecter sondage → figer pricing → finir homepage.
+[MEMO]    Tous les accès/secrets : coffre GLOBAL ~/.claude/secrets/secrets.env.dpapi (chiffré DPAPI, charger via ~/.claude/secrets/load-secrets.ps1 — cf. mémoire secrets-handling-protocol + CLAUDE.md global). Design refonte : design-proposals.html + décisions ci-dessous. "reprends en Ralph" relit .ralph/ + AGENTS.md.
 ```
 
 ---
 
-## COMMENT REPRENDRE (étape par étape)
+## COMMENT REPRENDRE
+1. Session dans `C:\Users\amans\OneDrive\Projets\Infra`.
+2. Charger les accès (PowerShell, coffre **GLOBAL chiffré DPAPI**, tous projets) : `. "C:\Users\amans\.claude\secrets\load-secrets.ps1"` → peuple `$env:*` (SSH, Coolify, Firecrawl, Supabase local+serveur, sondage). L'état du shell ne persiste pas entre commandes → dot-sourcer dans chaque commande qui utilise un secret. Déchiffrable uniquement sous le compte/machine d'Amine. Doc : CLAUDE.md global, section « Coffre de secrets global ».
+3. Lire les **mémoires** (MEMORY.md) : cadrage produit, déploiement Coolify, Supabase serveur, protocole run autonome, « Amine veut le big picture » (pas de menus fragmentés).
+4. Selon la tâche : refonte simulateur → reprendre les **décisions design ci-dessous** + `design-proposals.html`, et **écrire le spec AVANT de coder**. Infra → cf. credentials + mémoires.
 
-1. Ouvrir une session dans `C:\Users\amans\OneDrive\Projets\Infra` et écrire **« reprends en Ralph »**.
-2. Lire **`.ralph/prd.json`** → la story prioritaire est la première `passes:false` dont les `deps` sont tous `passes:true` = **S-007**.
-3. Lire **`.ralph/progress.md`** → section « Codebase Patterns » (conventions) + « Dette identifiée » + le log par story.
-4. Lire **`AGENTS.md`** → règles absolues (zéro dette, RLS, français accents majuscules, sources, etc.).
-5. Travailler **une seule story**, valider (typecheck+lint+test+build), puis `passes:true` + log + commit `[S-XXX] …` + `git push origin main`.
-
-**Vérif rapide d'entrée** : `git log --oneline -1` doit montrer le commit `[S-008] …` (dernier commit de code). `npm test` doit donner 60/60. Pour S-012 : Supabase local déjà démarré (`npx supabase status` pour les URLs/clés ; sinon `npx supabase start`). Price feed live : `npm start` puis `GET /api/pricing`.
+**Vérifs d'entrée** : `git log --oneline -3` (dernier commit code ≈ `8eb30b4 feat(sondage)`). App live : `curl -s -o /dev/null -w "%{http_code}" https://infra.ai-mpower.com/` → 200. Sondage : `https://infra.ai-mpower.com/sondage`.
 
 ---
 
-## [ETAT] — détaillé
+## [ÉTAT] détaillé
+- **Repo** : `github.com/Afristrat/mnemo`, branche `main`. Working tree : **artefacts non commités** (design-proposals.html, homepage-draft.html, scripts/shoot-*.mjs, docs/pricing/, presentation/, .gitignore +.superpowers) — pas du code produit, à committer ou ignorer au choix.
+- **Stack** : Next.js 15 (App Router) · React 19 · TS strict · Tailwind v3 · Vitest · Playwright · jspdf · fflate · pg · @supabase/ssr+supabase-js. Lint = ESLint 9 flat config (`eslint .`).
+- **Routes prod** : `/` `/configurateur` `/resultats` `/fiduciaire` `/api/pricing` (Firecrawl) `/sondage` + `/api/sondage` `/health`.
+- **Déploiement** : Coolify app `mnemo` uuid `by7kdehyeieujf6oxzzt1r0m` (projet Ventures), Dockerfile standalone, domaine `https://infra.ai-mpower.com` (tunnel Cloudflare nahda → Traefik). Redeploy : `POST $COOLIFY_URL/api/v1/deploy?uuid=$MNEMO_APP_UUID&force=true` (webhook auto NON configuré).
 
-- **Repo** : `https://github.com/Afristrat/mnemo` (compte gh `Afristrat`, déjà authentifié). Branche `main`, suivie de `origin/main`. Working tree propre (hors ce fichier de passation).
-- **Dernier commit code** : `08e020f [S-006] Page resultats (stack + radar + carte de couts sourcee)`.
-- **Stack installée** : Next.js 15.5 (App Router) · React 19 · TypeScript strict · Tailwind v3 · Vitest 2 + jsdom + @testing-library/react + jest-dom · `@vitejs/plugin-react@^4` (épinglé). **Pas encore installés** : Playwright (S-013), Supabase client (S-012), Firecrawl/SDK (S-008).
-- **Commandes** : `npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm test` · `npm run test:e2e` (Playwright, à venir).
-- **Tests** : 30/30 verts (6 fichiers : smoke, engine 16, ui 5, wizard 2, results 1, radar 5).
-- **Routes** : `/` (accueil), `/configurateur` (wizard), `/resultats` (reco). Toutes statiques.
+## [FAIT] depuis la fin du Lot 1
+1. **Déploiement prod** : Dockerfile + /health, image testée, déployée sur Coolify, domaine infra.ai-mpower.com (tunnel). cf. mémoire `mnemo-deploiement-coolify`.
+2. **Refonte du simulateur — brainstorming** (compagnon visuel `.superpowers/brainstorm/`, conseil 5 voix, skill pricing). Récap visuel : **`design-proposals.html`** + **`homepage-draft.html`** (homepage de vente brouillon). Décisions validées → section dédiée ci-dessous.
+3. **Veille concurrentielle pricing** (sourcée) + instruments **Van Westendorp + conjoint** : `docs/pricing/wtp-research.md`.
+4. **Sondage de prix LIVE** : page `/sondage` (VW + mini-conjoint) → `/api/sondage` → **Postgres Coolify `mnemo-survey-db`** (uuid `l2x4swo8…`). Export : `GET /api/sondage?token=$SURVEY_EXPORT_TOKEN`. (Choix : page same-origin plutôt qu'artefact Claude.ai, car CSP bloque le POST sortant.)
+5. **Supabase SERVEUR self-hosted** (≠ local dev) : était cassé (mots de passe rôles ≠ .env) → réparé (réalignement via trust loopback), 13/13 healthy. **Rails RLS Mnémo (S-012) rejoués dessus** (5 tables + RLS). cf. mémoire `supabase-serveur-selfhosted`. Compose : `/home/serveurai/stacks/supabase/docker`. Kong sur `localhost:8200`, **non exposé**.
+6. **Credentials** consolidés : `mnemo-infra-credentials.env` (cf. mémoire `mnemo-infra-credentials`).
 
-## [FAIT] cette session — 6 stories (toutes validées + poussées)
+## DÉCISIONS DE REFONTE DU SIMULATEUR (validées en sparring — base du spec à écrire)
+1. **Entrée = paradigme B** : structuré **+ expression libre/dictée** (« décrivez votre besoin » + note libre par étape).
+2. **Chemin 90 s** (reco n°1 du conseil) : entrée par la **douleur** (zéro jargon « souverain ») → verdict **risque / gain / prix ferme par palier / next step**. Le configurateur 16 params devient **« mode expert »**.
+3. **Questionnaire en 4 blocs** : ① Profil & contraintes · ② **Infra pure** (volume, débit, latence, croissance, souveraineté) · ③ **Usage-Mémoire** (base interrogeable ? · « À qui sert cette mémoire » = ex-multivoix · contenu à mémoriser · **capacités costables** = ex-modules) · ④ **Usage-Création de contenu** (audio/vidéo/images/formations, souverain vs API — **NOUVEAU**).
+4. **Pattern d'étape** : label + **vraie infobulle (pourquoi + conséquence)** · **sliders continus** (volume/requêtes) · « voix/perspectives » → **« À qui sert cette mémoire ? »** · **binaire Oui/Non** (fin du « souhaité ») · note libre.
+5. **Carte flottante « budget-mètre »** vert→rouge selon coût/budget ; au-dessus → **explique pourquoi + un levier**.
+6. **Honnêteté brutale partout** : rien masqué, incohérences pointées (petit budget + souveraineté max), étiquettes 🟢 open-source / 💳 payant.
+7. **Modules avancés** = **options d'usage costables** (renommées clair : Traçage des revirements · Mémoire infalsifiable · Décisions horodatées · Plan de panne · Détecteur de conflits) — PAS de l'infra pure ; activées via opt-in « en faire une base mémorielle ».
+8. **Multi-tenant** : Super-admin (Amine) + Membres ; rôles RLS owner/admin/member déjà en base ; **pas d'écran admin-d'org** pour l'instant. **LLM configuré au niveau plateforme** (super-admin, via LiteLLM `proxy.ai-mpower.com`), pas par org.
+9. **Moteur de coût DÉTERMINISTE** (±30 % sourcé) ; le **LLM ne touche JAMAIS le calcul** — il sert : interpréter l'intake libre/dictée, réécrire infobulles/cas d'usage selon le profil, narration du rapport.
+10. **Thème clair par défaut** + sombre.
+11. **Homepage de vente** (`homepage-draft.html`) : 4 promesses — **« −risques » = PREUVE DURE (Exit Escrow + Fiduciary, déjà livrés)** ; les 3 autres (+profits/+efficience/−coûts) = « voici comment on le mesure » (PAS de stat inventée → DÉFCON 1).
+12. **Rapport partageable** + encadrés valeur ; **capture email exit-intent** + **log des simulations** (= moat data, recos du conseil).
+13. **Pricing** : « **recette ouverte (diagnostic gratuit), cuisine payante** ». **SPLIT** : prix FERME (service Mnémo) vs coût VARIABLE (infra, pass-through transparent ±30 %). Valeur-based = **coût humain évité**, **PAS un TJM** (livré par agents → marge logicielle). Montant = **[PLACEHOLDER]** jusqu'aux réponses du sondage (VW + conjoint).
 
-| Story | Livré | Commit |
-|---|---|---|
-| S-001 | Scaffold Next/TS/Tailwind/ESLint/Vitest | `3660f74` |
-| S-002 | Design system (tokens DESIGN.md → tailwind.config + primitives Button/Card/Chip/Input/StatusDot + `cn()`) | `d2a7e48` |
-| S-003 | Moteur de reco pur en TS (`lib/engine/*` : types, modules, presets, preset, layers, cost, scores, diagnostics, recommend, index) | `a5c0138` |
-| S-004 | 14 tests moteur | `f7bcc78` |
-| S-005 | Wizard 6 étapes (16 params + modules + récap), `hooks/useWizardProfile`, `lib/wizard/*`, composants `components/wizard/*` | `f9d89ec` |
-| S-006 | Page résultats : radar SVG (`lib/charts/radar`), LayerStack, CostMap (bandes ±30 % + sources `lib/pricing/sources`), slider projection | `08e020f` |
+### Angles morts soulevés par le conseil (à respecter dans le spec)
+- « Souverain » = jargon d'initié → copy acheteur par **peur/conformité (CNDP/Cloud Act/RGPD)**.
+- Le **±30 % nu** fait fuir le décideur → **prix ferme par palier + leviers**.
+- Le configurateur 16 params **effraie** le non-technique → chemin 90 s d'abord, expert derrière.
+- « Prouvé » sans cas client = mensonge (DÉFCON 1) → preuve dure uniquement pour « −risques ».
 
-En amont (avant le build) : cadrage produit, stress-test, **Moat Hunt** (`docs/MOAT-HUNT.md`), **PRD** (`PRD.md`), maquettes Stitch rangées dans `design-reference/`.
+## [ALERTE] pièges & risques
+- **HARD GATE brainstorming** : ne PAS coder la refonte avant d'avoir écrit le spec (`docs/superpowers/specs/AAAA-MM-JJ-refonte-simulateur-mnemo-design.md`) ET obtenu validation d'Amine. Ensuite invoquer `writing-plans`.
+- **Token Coolify** : ✅ **rotaté le 2026-05-26** — ancien token (leaké en chat) remplacé dans le coffre DPAPI puis révoqué au dashboard. Coffre = `mnemo-infra-credentials.env.dpapi`, chargé via `load-secrets.ps1` (cf. mémoire `secrets-handling-protocol`).
+- **Supabase serveur** : non exposé (localhost:8200). Pour brancher l'app prod dessus → router via tunnel (`supabase.ai-mpower.com → localhost:8200`) puis fixer `NEXT_PUBLIC_SUPABASE_*` côté app. **Supabase LOCAL = dev jetable**, ne pas l'utiliser en prod.
+- **sondage.ai-mpower.com** ajouté au tunnel + domaine app, mais son routage Traefik renvoyait 404 au dernier test → **à vérifier** (le sondage marche sûrement via `infra.ai-mpower.com/sondage`).
+- **Costing multimodal** (bloc Création de contenu) = vrai chantier neuf (le moteur ignore audio/vidéo/images aujourd'hui : `profileCostFactors` = volume/req/users seulement).
+- **Modules** sont encore costés dans le moteur actuel ; la refonte les déplace en « usage costable » — à recâbler proprement.
+- OneDrive : I/O parfois lents (non bloquant).
 
-## [NEXT] — S-007 et la suite
-
-**S-007 — Ensemble multi-config (F5)** — *prochaine story*. Acceptance (cf. `.ralph/prd.json`) : ≥ 3 configs candidates (ex. « souveraineté max », « coût min », « time-to-V1 min »), écart de coût/score affiché comme **incertitude**, libellé d'incertitude explicite. Analogie : ensemble forecasting météo (le spread = l'incertitude). **Approche suggérée** : une fonction pure `lib/engine` qui prend le profil et génère N variantes (via overrides ciblés du profil : forcer zone UE + modules sécurité pour « souveraineté max » ; budget bas + LIGHT-friendly pour « coût min » ; techLevel haut + LIGHT pour « time-to-V1 »), appelle `recommend()` sur chacune, et renvoie la divergence (min/max/écart de `totalCost` et `scoreAvg`). UI : nouvelle section dans `/resultats` ou onglet. Tester la fonction de génération + le calcul d'écart.
-
-Stories restantes (ordre par dépendances, cf. `plan.md`) :
-- **S-008** Price feed Firecrawl (rafraîchit `lib/pricing/sources.ts` ; clé `FIRECRAWL_API_KEY` en `.env.local`).
-- **S-009** Export livrable (MD + PDF, sources cliquables, disclaimer « une IA peut se tromper »).
-- **S-010** Exit Escrow F7 (génération bundle reproductible : IaC + vault + runbook ; **moat ①**).
-- **S-011** Fiduciary Mode F8 (page divulgation, zéro commission cachée ; **moat ②**).
-- **S-012** Supabase + **RLS sur TOUTES les tables** + auth + consentement réseau opt-in horodaté (**moat ③ = rails**).
-- **S-013** Playwright e2e (wizard→résultats→export) + responsive + CI.
-- **S-014** CLAUDE.md projet + README + CI GitHub Actions + **migration `next lint` → ESLint CLI** (dette).
-
-## [ALERTE] — pièges & risques
-
-- **Secrets** : S-008 (`FIRECRAWL_API_KEY`) et S-012 (clés Supabase) → uniquement dans `.env.local` (déjà couvert par `.gitignore` via `.env*`). `.env.example` documente les noms. **Jamais de clé en clair / commitée.**
-- **RLS** : à S-012, RLS activé sur **toutes** les tables (champ tenant/`circle` pivot), sans exception. Threat model dans `PRD.md §8`.
-- **OneDrive** : le repo est dans OneDrive → I/O `node_modules`/`.next` parfois lents (sync). Non bloquant.
-- **next lint déprécié** (retrait Next 16) : lint passe (0 erreur) mais migrer vers ESLint CLI en **S-014**.
-
-## [MEMO] — conventions & learnings (ne pas réapprendre)
-
-1. **Validation par story obligatoire avant `passes:true`** : `typecheck` 0 → `test` vert → `lint` 0 → `build` OK. Puis commit + push.
-2. **`decidePreset()` renvoie `reason`** ; c'est `recommend()` qui expose `presetReason`. Ne pas confondre.
-3. **Pas de générique sur union de tableaux** (erreur TS « méthode non appelable ») → togglers dédiés (cf. `useWizardProfile`).
-4. **`afterEach(cleanup)`** dans `test/setup.ts` est requis (sinon DOM jsdom s'accumule → faux `findByText` multiples).
-5. **Apostrophes dans le texte JSX** → utiliser « ’ » typographique (corrige `react/no-unescaped-entities` + bonne typo FR).
-6. **Le champ `expected` des `PRESET_PROFILES` est une étiquette d'auteur, PAS le résultat calculé** (« Coach » → LIGHT par les règles). Ne jamais tester contre `expected`.
-7. **`@vitejs/plugin-react` épinglé `^4`** (v6 exige vite 8, incompatible vitest 2/vite 5). Pas de `--force`.
-8. **`noUncheckedIndexedAccess` n'est pas dans `strict`** → indexation tableau renvoie `T` (pas `T|undefined`).
-9. **Français** : accents sur majuscules obligatoires partout dans l'UI/contenu.
-10. **Règles TS du poste** (`~/.claude/rules/typescript.md`) : pas de `any`/`as`/`!`, return types sur fonctions exportées, `const` objects au lieu d'enums, `unknown` plutôt qu'`any`.
+## [MEMO] conventions & learnings (ne pas réapprendre)
+1. Validation par story : typecheck 0 → test vert → lint 0/0 → build OK → commit+push.
+2. TS du poste (`~/.claude/rules/typescript.md`) : pas de `any`/`as`/`!`, return types exportés, `const`+`as const` au lieu d'enum.
+3. **Apostrophes JSX = ’ typographique** (sinon `react/no-unescaped-entities`).
+4. `pg`/Coolify Postgres : l'app Coolify atteint une DB Coolify du même projet par son hostname interne (uuid) — réseau OK d'office.
+5. **Supabase self-hosted** : `local`/loopback en `trust` (interne), réseau en `scram` → les tests `-h 127.0.0.1` ne valident PAS le mot de passe (trust). Tester via `-h db`. Réparer mots de passe = ALTER rôles via trust loopback en `supabase_admin` (superuser).
+6. SSH sortie tronquée sur longs scripts si un `psql` attend un mot de passe (prompt) → toujours `PGPASSWORD=` ou trust.
+7. Cloudflare tunnel : éditer config-nahda.yml avec backup + `ingress validate` + `kill -HUP`, règle AVANT le `http_status:404`.
+8. Claude.ai artefact publié ne peut PAS POST vers l'extérieur (CSP) → pour collecter, page same-origin sur l'app.
+9. Préférence Amine : **vision d'ensemble synthétisée, pas de menus d'options fragmentés** (cf. mémoire `amine-veut-big-picture`).
 
 ## DÉCISIONS PRODUIT VERROUILLÉES (ne pas re-litiger)
-
-- **Cœur = conseil puis déploiement, séquencés** ; modèle **« recette ouverte, cuisine payante »**.
-- **Production-ready, zéro dette, PAS de MVP** ; lots tous au niveau prod, ordre dicté seulement par la dépendance causale (moat ③ Network n'a pas de données tant qu'aucun déploiement monitoré → démarre en rails).
-- **±30 % assumé** : c'est un simulateur, le slider de projection est la réponse honnête. Prix via price feed Firecrawl, pas de table figée.
-- **Agent (Lot 2) = provisioning hybride human-in-the-loop** : l'utilisateur crée le compte (lien+procédure, sa carte), l'agent optimise après via OAuth/MCP. **L'agent ne crée jamais de compte ni ne saisit de carte** (lève CGU + responsabilité).
-- **Trio de moats** (cf. `docs/MOAT-HUNT.md`) : ① Exit Escrow (S-010), ② Fiduciary Mode (S-011), ③ Intelligence Network (rails S-012). **Jamais de commission vendor cachée** (leçon Flipper).
-- **Cible MVP = P1 (communauté d'Amine) + P2 (PME tech)** ; ETI/grand groupe hors périmètre.
+- Cœur = conseil → déploiement séquencés ; modèle « recette ouverte, cuisine payante ».
+- Production-ready, zéro dette, PAS de MVP.
+- ±30 % assumé (simulateur) ; prix infra via price feed Firecrawl, pas de table figée.
+- Agent (Lot 2) = provisioning hybride human-in-the-loop (jamais de compte/carte à la place de l'user).
+- Trio de moats : ① Exit Escrow ② Fiduciary ③ Intelligence Network. Jamais de commission vendor cachée.
+- Cible = P1 (communauté Amine) + P2 (PME tech).
 
 ## POINTEURS
-
-- `PRD.md` — spec complète (features F1→F15, archi, sécurité/threat model, modèle éco, métriques, risques).
-- `docs/MOAT-HUNT.md` — les 3 moats + 8 analogies sourcées.
-- `.ralph/prd.json` — les 14 stories + acceptance + dépendances.
-- `.ralph/progress.md` — patterns + dette + log détaillé par story.
-- `AGENTS.md` — règles opératoires pour l'agent.
-- `plan.md` — vue d'ensemble + séquençage.
-- `design-reference/mn_mo_brand_identity/DESIGN.md` — système de design (tokens).
-- `design-reference/.../simulator-archi-base-memorielle-v2.html` — simulateur source (déjà porté en `lib/engine`, à reconsulter seulement pour `computeV1vsV1plus`/`computeRoadmap`/`computeCriticalDecisions` non encore portés).
-- Mémoire projet : `~/.claude/projects/C--Users-amans-OneDrive-Projets-Infra/memory/mnemo-cadrage-produit.md`.
+- **Credentials** : coffre GLOBAL `C:\Users\amans\.claude\secrets\secrets.env.dpapi` (chiffré DPAPI, chargeur `C:\Users\amans\.claude\secrets\load-secrets.ps1`, hors git + hors OneDrive, partagé tous projets).
+- **Design refonte** : `design-proposals.html` · `homepage-draft.html` · `.superpowers/brainstorm/.../content/*.html`.
+- **Pricing** : `docs/pricing/wtp-research.md`.
+- **Spec & règles** : `PRD.md` (F1→F15, threat model §8) · `docs/MOAT-HUNT.md` · `docs/DECISIONS.md` (ADR-001..008) · `AGENTS.md` · `plan.md` · `CLAUDE.md`.
+- **Ralph** : `.ralph/prd.json` (14/14 ✓) · `.ralph/progress.md`.
+- **Design system** : `design-reference/mn_mo_brand_identity/DESIGN.md`.
+- **Mémoires** : `~/.claude/projects/C--Users-amans-OneDrive-Projets-Infra/memory/MEMORY.md` (cadrage, déploiement, Supabase serveur, credentials, protocoles).
 ```
 == FIN PASSATION ==
 ```

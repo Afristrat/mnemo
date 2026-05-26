@@ -30,3 +30,6 @@ npm-debug.log*
 
 # typescript
 *.tsbuildinfo
+
+# brainstorm visual companion
+.superpowers/
