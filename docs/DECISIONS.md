@@ -197,3 +197,33 @@ Format : décision · contexte · options · choix · conséquences.
   (Scaleway € publié, stockage), `medium` (conversion de devise d'un prix exact), `low` (forfait
   embeddings + dérivations d'unité). **NON TROUVÉ** assumé (Pika, Kling, Cohere Embed unitaire,
   DALL·E 3 retiré) — non inventés. À re-sourcer périodiquement (pages + taux BCE).
+
+## ADR-012 — Intégration sizing → couches dans `recommend` (S-018) : prix injectés, setupCost backlog, GPU une fois
+
+- **Contexte** : S-018 branche `sizing.ts` dans `recommend()` — coûts multimédias **dans** C4/C5/C6
+  (jamais en ligne séparée, spec §5), `setupCost` (one-time), `verdict`, `costSources`. Trois
+  arbitrages.
+- **Choix** :
+  - **Prix INJECTÉS, défaut neutre** : `recommend(profile, prices = NEUTRAL_MEDIA_PRICES)`. Le moteur
+    reste **pur** (zéro import `lib/pricing`) ; les appelants réels injectent `getMediaPricesEur()`.
+    Conséquence : `recommend(profile)` (tests existants, ensemble) garde un coût multimédia **nul** →
+    invariant `totalCost = baseCost + moduleCost` préservé, **aucune régression** (les profils sans
+    `mediaNeeds` donnent un sizing neutre). Le câblage UI (injection des vrais prix dans `ResultsView`)
+    est **S-022**. Footgun documenté (défaut neutre = 0 si on oublie d'injecter).
+  - **setupCost via champ backlog avancé en S-018** (décision Amine) : `MediaNeed.backlog?` (corpus
+    existant, unité native) ajouté **maintenant** ; `computeSetupCost` chiffre l'ingestion one-time au
+    tarif `api.<modality>.ingest` (borne haute conservatrice, quel que soit le mode souverain/api —
+    une passe de backlog se sous-traite souvent en batch). La **saisie UI** du backlog reste S-020 ;
+    la donnée + le calcul sont prêts dès S-018 → acceptance « setupCost reflète le backlog initial »
+    satisfaite sans placeholder.
+  - **GPU compté UNE FOIS dans C6** : `applyMultimodalSizing` impute le pool GPU souverain +
+    l'usage API à **C6** seulement ; C4 ne reçoit que le forfait embeddings, C5 que le stockage —
+    test dédié (`recommend-sizing`) vérifie que C4 ne ré-impute pas le GPU.
+- **Conséquence** : `Recommendation` étendu (`sizing`/`setupCost`/`costSources`/`verdict`) — les
+  consommateurs (UI, export, ensemble) **lisent** seulement → typecheck 0 sans modif. `buildEnsemble`
+  threade `prices` (optionnel, défaut neutre). `costSources` = sources des prix réellement mobilisés
+  (dédupliquées) ; vide en neutre. `verdict.firmPriceTier = [PLACEHOLDER]` centralisé (spec §11), gain
+  formulé « prouvé » seulement pour −risques (Exit Escrow + Fiduciary), jamais de stat inventée.
+  **Décision ADR-009 (d) tranchée** : la dimension `mm` (scores) reste pilotée par `contentTypes` ;
+  son raffinement par `mediaNeeds` n'est PAS requis par l'acceptance S-018 → laissé tel quel (pas de
+  scope creep), à revoir si besoin avec le bloc Médias (S-020).

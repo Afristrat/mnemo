@@ -176,7 +176,7 @@
     },
     {
       "id": "S-018", "title": "Intégration sizing → couches dans recommend (coûts dans C4/C5/C6, setupCost, verdict)", "feature": "refonte",
-      "passes": false, "deps": ["S-016", "S-017"],
+      "passes": true, "completedAt": "2026-05-26", "deps": ["S-016", "S-017"],
       "acceptance": [
         "Recommendation étendu (sizing/setupCost/costSources/verdict) requis et rempli",
         "recommend appelle sizing et dimensionne C4/C5/C6 (coûts multimodaux DANS les couches, pas en ligne séparée)",
