@@ -5,14 +5,17 @@ import { useState, type ReactElement, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
+import { BudgetMeter } from "@/components/wizard/BudgetMeter";
 import { CheckboxCards } from "@/components/wizard/CheckboxCards";
 import { ContinuousSlider } from "@/components/wizard/ContinuousSlider";
 import { InfoBubble } from "@/components/wizard/InfoBubble";
+import { MediaNeedsBlock } from "@/components/wizard/MediaNeedsBlock";
 import { ModuleSlider } from "@/components/wizard/ModuleSlider";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId } from "@/lib/engine";
+import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -150,8 +153,10 @@ export function Wizard(): ReactElement {
       : true;
 
   const isLast = step === BLOCKS.length - 1;
+  // Prix médias réels injectés → le coût et le budget-mètre reflètent le dimensionnement multimédia.
+  const prices = getMediaPricesEur();
   const decision = decidePreset(profile);
-  const result = recommend(profile);
+  const result = recommend(profile, prices);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -268,21 +273,24 @@ export function Wizard(): ReactElement {
 
           {block.id === "medias" ? (
             <>
-              <div className="rounded-card bg-surface-container p-4 text-body-md text-on-surface-variant">
-                <p>
-                  Le détail des besoins multimédias — par modalité (audio / vidéo / images), à <strong>mémoriser</strong> et/ou à
-                  <strong> créer</strong>, en souverain 🟢 ou via API 💳, plus le volume de backlog initial — est saisi ici, avec un
-                  budget-mètre qui chiffre l’infra correspondante (dont le GPU).
-                </p>
-                <p className="mt-2">
-                  Si vous n’avez pas de besoin audio/vidéo/images spécifique, vous pouvez passer directement à la recommandation.
-                </p>
-              </div>
+              <p className="text-body-md text-on-surface-variant">
+                Par modalité : ce que vous devez <strong>mémoriser</strong> (traiter l’existant) et ce que votre infra doit
+                <strong> créer</strong>, en souverain 🟢 ou via API 💳. Sans besoin audio/vidéo/images, laissez tout sur « Aucun ».
+              </p>
+              <MediaNeedsBlock profile={profile} prices={prices} onChange={(mn) => setField("mediaNeeds", mn)} />
               <NoteField value={profile.freeNotes?.medias ?? ""} onChange={(v) => setNote("medias", v)} />
             </>
           ) : null}
         </div>
       </Card>
+
+      {/* Budget-mètre — visible tout au long du wizard (sticky). Coût d'infra, jamais prix de vente. */}
+      <BudgetMeter
+        className="mt-6 sticky bottom-4 z-10"
+        totalCost={result.totalCost}
+        budget={profile.budget}
+        sizing={result.sizing}
+      />
 
       {/* Navigation */}
       <div className="mt-6 flex items-center justify-between gap-3">
