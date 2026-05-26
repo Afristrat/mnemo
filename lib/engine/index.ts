@@ -6,6 +6,11 @@ export { decidePreset, type PresetDecision } from "./preset";
 export { buildLayers } from "./layers";
 export { layersBaseCost, profileCostFactors, costBand } from "./cost";
 export { computeScores } from "./scores";
+export {
+  costMultimodalSizing,
+  type MultimodalPriceTable,
+  type MultimodalPriceEntry,
+} from "./sizing";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
 export {

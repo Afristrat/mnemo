@@ -51,13 +51,27 @@ export type MediaNeed = {
   ingest: { tier: MMTier; volume?: number }; // volet « mémoriser »
   generate: { tier: MMTier; volume?: number }; // volet « créer » (tier "none" = pas de génération)
 };
-/** Palier du pool GPU souverain (C6), dimensionné par la charge TOTALE (ingest + generate). Granularité provisoire — à valider/affiner en S-016 avant tout consommateur en aval (cf. ADR-009). */
+/**
+ * Palier du pool GPU souverain (C6), dimensionné par la charge TOTALE (ingest + generate).
+ * Granularité **validée en S-016** (4 paliers suffisants pour le conseil ±30 %, cf. ADR-010) :
+ * `none` (pas de GPU), `shared` (mutualisé, petites charges), `dedicated-small` (1 GPU dédié),
+ * `dedicated-large` (multi-GPU, génération vidéo intensive).
+ */
 export type GpuTier = "none" | "shared" | "dedicated-small" | "dedicated-large";
+/**
+ * Ligne de charge multimédia produite par le dimensionnement (`sizing.ts`, S-016) — traçabilité.
+ * `monthlyCost` (€/mois) : coût récurrent propre de la ligne — **0** pour `sovereign` (la charge est
+ * absorbée par le pool GPU mutualisé `Sizing.gpu`, compté UNE SEULE FOIS → anti double-comptage C4/C6),
+ * **> 0** pour `api` (coût à l'usage du service tiers). `contributesTo` : couches alimentées par cette
+ * charge (C4 embeddings · C5 stockage · C6 inférence/GPU) — exploité par la décomposition de coûts
+ * S-018/S-022. (Extension additive de la spec §4.3, cf. ADR-010.)
+ */
 export type WorkloadLine = {
   source: "ingest" | "generate";
   modality: Modality;
   mode: MMMode;
   estimate: string;
+  monthlyCost: number;
   contributesTo: ("C4" | "C5" | "C6")[];
 };
 export type Sizing = {
