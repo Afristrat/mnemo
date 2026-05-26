@@ -69,17 +69,20 @@ Coûts mensuels retenus (table) :
 
 ---
 
-## 3. Embeddings multimodaux (couche C4) — forfait €/mois
+## 3. Embeddings multimodaux (couche C4) — €/mois
 
-C4 utilise un modèle d'embedding multimodal (coût supérieur au texte seul). Aucun fournisseur ne
-publie un « forfait mensuel » : la tarification est à l'usage (tokens + pixels). La valeur est
-donc une **estimation forfaitaire** du surcoût multimodal mensuel typique.
+Pour une base mémorielle **souveraine**, le référent d'embedding multimodal en tête début 2026 est
+**open et self-hostable**, donc exécuté **sur le pool GPU souverain déjà compté en C6** : il n'y a
+**pas de surcoût C4 séparé** (sinon double-comptage de la charge GPU). Le forfait C4 = **0 €/mois**,
+le coût réel du modèle vivant dans le GPU (C6) et le stockage des vecteurs (C5).
 
-| Base sourcée | Forfait retenu | Confiance | Note |
-|---|---|---|---|
-| Voyage `voyage-multimodal-3` : 0,12 $/1M tokens (texte) + 0,60 $/1Md pixels — [docs.voyageai.com/docs/pricing](https://docs.voyageai.com/docs/pricing) (ex. image 1000×1000 px ≈ 0,0006 $) | **30 €/mois** | low | Estimation, à confirmer par devis (surcoût multimodal vs texte). |
+| Référent retenu | Standing | Licence / mode | C4 €/mois | Confiance | Source |
+|---|---|---|---|---|---|
+| **Qwen3-VL-Embedding** (2B / 8B) | **#1 MMEB-V2 (77,8)**, devance les API commerciales | **Apache 2.0**, self-host (vLLM/SGLang) sur le GPU souverain | **0** (déjà dans C6) | high | [arXiv 2601.04720](https://arxiv.org/abs/2601.04720) · [HF Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B) |
 
-> Repères : Jina embeddings 0,050 $/1M tokens (jina.ai/embeddings) ; Cohere Embed v4 — **aucun tarif unitaire public** (Model Vault par instance uniquement, cohere.com/pricing) → écarté.
+Cohérent avec la couche C4 de la stack (`layers.ts` recommande déjà Qwen3-Embed / BGE-M3 en souverain).
+
+> **Alternatives API** (si pas de GPU souverain) : Jina v4 (open weights, ~0,050 $/1M tokens — [jina.ai/embeddings](https://jina.ai/embeddings)) ; Cohere Embed v4 (128K ctx, top multilingue — **pas de tarif unitaire public**, Model Vault par instance) ; Gemini Embedding 2 (all-modality). **Voyage multimodal-3.5** : correct mais **plus en tête** → relégué en repère (revue Amine 2026-05-26).
 
 ---
 

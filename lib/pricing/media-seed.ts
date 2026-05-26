@@ -50,7 +50,7 @@ function priced(args: SrcArgs): MultimodalPriceEntry {
 const SCALEWAY_GPU = "https://www.scaleway.com/en/pricing/gpu/";
 const SCALEWAY_H100 = "https://www.scaleway.com/en/h100/";
 const SCALEWAY_STORAGE = "https://www.scaleway.com/en/pricing/storage/";
-const VOYAGE = "https://docs.voyageai.com/docs/pricing";
+const QWEN_VL_EMBED = "https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B";
 const OPENAI_WHISPER = "https://developers.openai.com/api/docs/models/whisper-1";
 const OPENAI_TTS = "https://developers.openai.com/api/docs/models/tts-1";
 const OPENAI_IMAGE = "https://developers.openai.com/api/docs/guides/image-generation";
@@ -115,15 +115,16 @@ export const MEDIA_PRICE_SEED: MultimodalPriceTable = {
     url: SCALEWAY_STORAGE,
   }),
 
-  // Embeddings multimodaux (C4) — forfait estimé du surcoût multimodal (pas de forfait publié).
+  // Embeddings multimodaux (C4) — pour une base souveraine, le référent #1 est OPEN et self-hosté
+  // sur le GPU déjà compté en C6 → aucun surcoût C4 séparé (anti double-comptage). Cf. §3 du doc.
   multimodalEmbeddings: priced({
-    amount: 30,
+    amount: 0,
     currency: "EUR",
     unit: "mois",
-    confidence: "low",
-    label: "Voyage AI — voyage-multimodal-3 (0,12 $/1M tokens + 0,60 $/1Md px)",
-    url: VOYAGE,
-    note: `surcoût multimodal vs texte — ${ESTIMATE_NOTE}`,
+    confidence: "high",
+    label: "Qwen3-VL-Embedding (open, Apache 2.0, #1 MMEB-V2 77,8) — self-hosté sur le GPU souverain",
+    url: QWEN_VL_EMBED,
+    note: "modèle open #1 self-hosté sur le GPU déjà compté (C6) → pas de surcoût C4 séparé (anti double-comptage). Alternatives API : Jina v4 (~0,05 $/1M tokens), Cohere Embed v4",
   }),
 
   // API à l'usage (mode `api`), devises natives. Cf. media-cost-sources.md §4.
