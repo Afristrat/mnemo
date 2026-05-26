@@ -16,25 +16,37 @@ import type { GpuTier, MediaNeed, MMTier, Modality, Profile, Sizing, WorkloadLin
 
 // --- Contrat de prix médias (implémenté, sourcé, en S-017 : `getMediaPrices`) ----------------
 
+/** Devise d'un prix vendor — stockée **native** (fidèle à la source), convertie en € à l'étage FX. */
+export type Currency = "EUR" | "USD";
+
 /**
- * Entrée de prix médias sourcée. `source` est structurellement compatible avec `PriceSource`
- * (`lib/pricing/sources`) : S-017 y injecte des sources réelles (URL + date + confiance, DÉFCON 1).
+ * Entrée de prix médias sourcée, dans sa **devise native** (DÉFCON 1 : aucune conversion figée
+ * dans le seed — le montant est celui réellement publié). `unit` est le dénominateur (« min »,
+ * « image », « Go·mois », « mois ») ; le numérateur est donné par `currency`. `source` est
+ * structurellement compatible avec `PriceSource` (`lib/pricing/sources`) : S-017 y injecte des
+ * sources réelles (URL + date + confiance). La normalisation en € (via un taux de change sourcé)
+ * se fait en aval — cf. `normalizeMediaPricesToEur` (`lib/pricing/media-feed`).
  */
 export type MultimodalPriceEntry = {
-  amount: number; // montant en € (par unité native, cf. `unit`)
-  unit: string; // ex. « €/min », « €/image », « €/mois », « €/Go/mois »
+  amount: number; // montant dans `currency`, par `unit`
+  currency: Currency;
+  unit: string; // dénominateur : « min », « image », « Go·mois », « mois »
   confidence: Confidence;
   source: { label: string; url: string; checkedAt: string } | null;
   note?: string;
 };
 
-/** Table des prix médias injectée dans le dimensionnement (implémentée et sourcée en S-017). */
+/**
+ * Table des prix médias injectée dans le dimensionnement (implémentée et sourcée en S-017).
+ * Le seed la fournit en **devises natives** ; `costMultimodalSizing` attend une table **normalisée
+ * en €** (devise unique) — la conversion est faite en amont par l'étage FX (`media-feed`).
+ */
 export type MultimodalPriceTable = {
   /** Coût mensuel du pool GPU souverain (C6) par palier — `none` = 0. */
   gpuMonthly: Record<GpuTier, MultimodalPriceEntry>;
-  /** Stockage objet/index — €/Go/mois (appliqué à C5 en S-018). */
+  /** Stockage objet/index — par Go·mois (appliqué à C5 en S-018). */
   storagePerGbMonth: MultimodalPriceEntry;
-  /** Forfait embeddings multimodaux — €/mois (appliqué à C4 en S-018 si requis). */
+  /** Forfait embeddings multimodaux — par mois (appliqué à C4 en S-018 si requis). */
   multimodalEmbeddings: MultimodalPriceEntry;
   /** Prix à l'usage des services API tiers (mode `api`), par modalité × volet (par unité native). */
   api: Record<Modality, { ingest: MultimodalPriceEntry; generate: MultimodalPriceEntry }>;
@@ -103,6 +115,9 @@ function selectGpuTier(load: number): GpuTier {
  *   est porté par la ligne (`monthlyCost`), à imputer à la couche en S-018.
  * - La génération (`generate`) pèse plus lourd sur le GPU que la mémorisation (`ingest`).
  * - `mediaNeeds` absent / vide / sans besoin actif → dimensionnement neutre.
+ *
+ * Précondition : `prices` doit être **normalisée dans une devise unique** (€) — les montants sont
+ * sommés tels quels. Le seed natif (devises mixtes) passe d'abord par `normalizeMediaPricesToEur`.
  */
 export function costMultimodalSizing(profile: Profile, prices: MultimodalPriceTable): Sizing {
   const needs = (profile.mediaNeeds ?? []).filter(isActive);

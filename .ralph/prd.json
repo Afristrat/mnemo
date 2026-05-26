@@ -165,7 +165,7 @@
     },
     {
       "id": "S-017", "title": "Pricing médias sourcé (seed URL+date+confiance + feed Firecrawl, repli seed)", "feature": "refonte",
-      "passes": false, "deps": ["S-015", "S-008"],
+      "passes": true, "completedAt": "2026-05-26", "deps": ["S-015", "S-008"],
       "acceptance": [
         "tarifs (transcription, OCR, embeddings multimodaux, GPU souverain, génération) sourcés : URL + date + pastille de confiance, consignés dans docs/pricing/",
         "getMediaPrices() renvoie une table ; chaque entrée a {url,date,confidence} ; ±30 %",
