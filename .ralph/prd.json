@@ -187,7 +187,7 @@
     },
     {
       "id": "S-019", "title": "Wizard 4 blocs + InfoBubble + ContinuousSlider + notes libres + usages renommés", "feature": "refonte",
-      "passes": false, "deps": ["S-015", "S-005"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015", "S-005"],
       "acceptance": [
         "wizard restructuré en 4 blocs (Profil&contraintes / Infra pure / Usage-Mémoire / Médias)",
         "InfoBubble (pourquoi + conséquence), sliders continus volume/débit, binaires Oui/Non, note libre par bloc",

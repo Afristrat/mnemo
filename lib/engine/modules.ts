@@ -6,7 +6,7 @@ import type { EngineModule, ModuleId } from "./types";
 export const MODULES: readonly EngineModule[] = [
   {
     id: "bisect",
-    name: "Bisect épistémique",
+    name: "Traçage des revirements",
     why: "Recherche binaire dans l'historique tri-temporel : « à partir de quand ma doctrine sur X a-t-elle changé ? ». Outil de méta-réflexion épistémique.",
     layers: "C5 + UI",
     effort: "M",
@@ -24,7 +24,7 @@ export const MODULES: readonly EngineModule[] = [
   },
   {
     id: "reversal",
-    name: "Reversal entries (intégrité par construction)",
+    name: "Mémoire infalsifiable",
     why: "Jamais d'UPDATE in-place : pour corriger un atome, on crée un atome `reversal` qui inverse explicitement + un atome corrigé. Intégrité garantie par construction, pas par contrôle.",
     layers: "C0 + C5 + C2",
     effort: "S",
@@ -42,7 +42,7 @@ export const MODULES: readonly EngineModule[] = [
   },
   {
     id: "prereg",
-    name: "Pre-registration horodatée",
+    name: "Décisions horodatées",
     why: "Annoncer hypothèse + critère de succès AVANT décision. Le postmortem référence obligatoirement le pre-reg. Anti-confirmation-bias structurel.",
     layers: "C0 + C2",
     effort: "S",
@@ -59,7 +59,7 @@ export const MODULES: readonly EngineModule[] = [
   },
   {
     id: "mel",
-    name: "MEL — Minimum Equipment List & dégradation",
+    name: "Plan de panne",
     why: "Doctrine pré-pensée : « ce qui peut être en panne et l'agent fonctionne quand même, avec délai de réparation et procédure alternative ». Pas improvisé en incident.",
     layers: "C6 + runbook + monitoring",
     effort: "M",
@@ -77,7 +77,7 @@ export const MODULES: readonly EngineModule[] = [
   },
   {
     id: "conflict",
-    name: "Conflict checking automatique",
+    name: "Détecteur de conflits",
     why: "Avant qu'un atome touche un client/projet/entité, cross-référence automatique : « cette entité est-elle adversaire / concurrente / cible d'une autre décision ? ». Empêche conseil contradictoire.",
     layers: "C0 + C2 + C5",
     effort: "M",

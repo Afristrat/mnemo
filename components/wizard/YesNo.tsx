@@ -8,6 +8,8 @@ type YesNoProps = {
   onChange: (value: boolean) => void;
   yesLabel?: string;
   noLabel?: string;
+  /** Nom accessible du groupe binaire (relie le choix à la question pour les lecteurs d'écran). */
+  ariaLabel?: string;
 };
 
 /** Choix binaire Oui / Non sous forme de cartes cliquables (remplace l'ancien Requirement à 3 états). */
@@ -16,13 +18,14 @@ export function YesNo({
   onChange,
   yesLabel = "Oui",
   noLabel = "Non",
+  ariaLabel,
 }: YesNoProps): ReactElement {
   const options: { v: boolean; label: string }[] = [
     { v: true, label: yesLabel },
     { v: false, label: noLabel },
   ];
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div role="group" aria-label={ariaLabel} className="grid gap-3 sm:grid-cols-2">
       {options.map((opt) => {
         const selected = opt.v === value;
         return (

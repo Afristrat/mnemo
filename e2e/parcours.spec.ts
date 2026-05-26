@@ -4,8 +4,8 @@ import { test, expect } from "@playwright/test";
 test("wizard → résultats : la recommandation détaillée s'affiche", async ({ page }) => {
   await page.goto("/configurateur");
 
-  // Profil par défaut pré-rempli : on traverse les 5 étapes jusqu'au récapitulatif.
-  for (let i = 0; i < 5; i += 1) {
+  // Profil par défaut pré-rempli : on traverse les 4 blocs (3 « Suivant ») jusqu'au bloc Médias.
+  for (let i = 0; i < 3; i += 1) {
     await page.getByRole("button", { name: "Suivant" }).click();
   }
   await page.getByRole("link", { name: "Voir ma recommandation détaillée" }).click();
