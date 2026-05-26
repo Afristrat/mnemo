@@ -11,9 +11,11 @@ import type { MediaNeed, MMMode, MMTier, Modality, Profile, Sizing } from "@/lib
 // générer > mémoriser sur le GPU, monotonie (intensive ≥ medium ≥ light), stockage croissant,
 // mediaNeeds vide → neutre, présence d'une source sur chaque prix utilisé. Prix INJECTÉS (DÉFCON 1).
 
+// Table de TEST déjà normalisée en € (devise unique) — la conversion native→€ est testée en S-017.
 function entry(amount: number, unit: string): MultimodalPriceEntry {
   return {
     amount,
+    currency: "EUR",
     unit,
     confidence: "medium",
     source: { label: "fixture de test", url: "https://example.test/pricing", checkedAt: "2026-05-26" },

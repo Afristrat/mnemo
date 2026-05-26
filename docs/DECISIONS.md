@@ -166,3 +166,34 @@ Format : décision · contexte · options · choix · conséquences.
   `lib/pricing/sources`). Tests table-driven (27) : monotonie, anti double-comptage GPU, `api` hors
   GPU souverain, générer > mémoriser, stockage croissant, neutre sur vide, source présente sur chaque
   prix. **À reporter dans la spec §4.3** : `WorkloadLine.monthlyCost`.
+
+## ADR-011 — Pricing médias (S-017) : devises natives + étage FX sourcé, seed = source de vérité
+
+- **Contexte** : S-017 fournit `getMediaPrices()` (table `MultimodalPriceTable` consommée par
+  `sizing.ts`), DÉFCON 1 **bloquant** : aucun prix non sourcé. Sourcing web réel effectué
+  (transcription, OCR/vision, embeddings multimodaux, GPU souverain, génération image/vidéo) →
+  `docs/pricing/media-cost-sources.md` (figure exacte + unité + URL + date + confiance par fournisseur).
+- **Question soulevée par Amine en cours de route** : ne pas figer des montants déjà convertis en €
+  (perte de fidélité + taux baké) ; stocker les prix dans leur **devise native** et utiliser une
+  **solution de taux de change**.
+- **Choix (retenu, plus rigoureux)** :
+  - **Devise native dans le seed** : `MultimodalPriceEntry` gagne `currency: "EUR" | "USD"` ; le seed
+    stocke le montant **réellement publié** (Scaleway €, OpenAI/Google/Runway $) — zéro conversion
+    figée (fidélité DÉFCON 1, et affichage natif+converti possible en UI S-022). `unit` devient le
+    **dénominateur** seul (`min`/`image`/`Go·mois`/`mois`), le numérateur = `currency`.
+  - **Étage FX dédié** (`media-feed.ts › normalizeMediaPricesToEur`) : conversion en € au **runtime**,
+    taux **live** via **Frankfurter** (adossé BCE, gratuit, sans clé), **repli** sur le taux BCE daté
+    seedé (`SEED_USD_TO_EUR = 0,85955 = 1/1,1634`, BCE 2026-05-26). `fetchUsdToEur` ne lève jamais
+    (repli systématique) ; le moteur consomme `getMediaPricesEur(rate)` (devise unique, précondition
+    de `costMultimodalSizing`).
+  - **Conversions d'unité** (par caractère/image → par minute pour TTS/analyse vidéo) **bakées dans le
+    seed** avec confiance dégradée + note « estimation, à confirmer par devis » (hypothèses d'usage,
+    distinctes de la conversion de devise).
+  - **Feed Firecrawl** : `refreshMediaPriceFreshness` réutilise le client `scrapePricingMarkdown`
+    existant pour signaler la **fraîcheur/disponibilité** des pages source (verified/unavailable,
+    repli seed) — il ne **réécrit jamais** un prix dérivé (revue manuelle).
+- **Conséquence** : amendement **additif** du contrat S-016 (`MultimodalPriceEntry.currency`) — fixture
+  S-016 mise à jour (table de test = € pré-normalisée), tout reste vert. Confiances honnêtes : `high`
+  (Scaleway € publié, stockage), `medium` (conversion de devise d'un prix exact), `low` (forfait
+  embeddings + dérivations d'unité). **NON TROUVÉ** assumé (Pika, Kling, Cohere Embed unitaire,
+  DALL·E 3 retiré) — non inventés. À re-sourcer périodiquement (pages + taux BCE).
