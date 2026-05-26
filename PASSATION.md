@@ -5,11 +5,11 @@
 ```
 == PASSATION MNEMO 2026-05-26T13:30 ==
 [ETAT]    Lot 1 (conseil+moats) ✅ COMPLET 14/14 + DÉPLOYÉ en prod (https://infra.ai-mpower.com via Coolify) | branche main propre (artefacts non commités présents) | unit 76+4skip · e2e 5+1skip · typecheck 0 · lint 0/0
-[ENCOURS] REFONTE du simulateur (traité comme un tout) — en BRAINSTORMING, design validé écran par écran, PAS encore spec-é ni codé. + Sondage de prix en COLLECTE.
+[ENCOURS] REFONTE → renommée **Strate** (ex-Mnémo, nom acté 2026-05-26). Spec de design **VALIDÉ** (`docs/superpowers/specs/2026-05-26-refonte-simulateur-strate-design.md`) + plan (`docs/superpowers/plans/2026-05-26-strate-refonte.md`) + **10 stories S-015→S-024** dans `.ralph/prd.json`. **S-015 ✅ faite** (migration des types, ADR-009, unit 80+4skip). Reste S-016→S-024. + Sondage de prix en COLLECTE.
 [FAIT]    Lot 1 (S-001→S-014) | déploiement Coolify | refonte design (compagnon visuel + conseil 5 voix + pricing) | veille concurrentielle | sondage /sondage live | Supabase SERVEUR relancé + rails RLS Mnémo appliqués | fichier credentials
 [ALERTE]  !! NE PAS CODER la refonte avant spec écrite+validée (HARD GATE brainstorming) | secrets → coffre chiffré DPAPI (load-secrets.ps1) ; token Coolify rotaté ✅ | Supabase serveur NON exposé (localhost:8200) | prix = [PLACEHOLDER] tant que le sondage n'a pas de réponses | costing multimodal (création de contenu) N'EXISTE PAS encore | webhook GitHub→Coolify non configuré → redeploy manuel
 [BLOQUE]  RAS
-[NEXT]    Décision: (a) exposer Supabase serveur + brancher l'app dessus, OU (b) consolider le SPEC de la refonte (docs/superpowers/specs/) → writing-plans → implémenter. Puis: collecter sondage → figer pricing → finir homepage.
+[NEXT]    Reprendre le run Ralph en **S-016** (`lib/engine/sizing.ts` — GPU mutualisé compté UNE fois, stockage indexé, anti double-comptage ; valider granularité GpuTier ; cf. ADR-009). Mode d'exécution validé par Amine : **worker subagent par story + double revue Sparring Partner + Avocat du Diable** avant passes=true. Puis S-017 (pricing médias SOURCÉ, DÉFCON 1)→S-024. Parallèle possible : exposer Supabase serveur (prérequis S-023). Ensuite : sondage→figer prix de vente→homepage.
 [MEMO]    Tous les accès/secrets : coffre GLOBAL ~/.claude/secrets/secrets.env.dpapi (chiffré DPAPI, charger via ~/.claude/secrets/load-secrets.ps1 — cf. mémoire secrets-handling-protocol + CLAUDE.md global). Design refonte : design-proposals.html + décisions ci-dessous. "reprends en Ralph" relit .ralph/ + AGENTS.md.
 ```
 
