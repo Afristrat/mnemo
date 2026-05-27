@@ -364,7 +364,7 @@
     },
     {
       "id": "S-037", "title": "Snapshot reproductible + provenance catalogue (UI + export + Exit Escrow)", "feature": "llm",
-      "passes": false, "deps": ["S-035", "S-036"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-035", "S-036"],
       "acceptance": [
         "ResultsView rend d'abord avec le seed (repli immédiat) → fetch /api/catalog/live → recommend(profile, prices, liveCatalog) recalcule",
         "CatalogProvenance.tsx (jumeau LivePriceStatus) : provenance live/seed/flagged + source + fraîcheur + confiance",

@@ -4,18 +4,21 @@ import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import type { Catalog } from "@/lib/catalog";
 import type { Profile, Recommendation } from "@/lib/engine";
 
 type ExitEscrowProps = {
   profile: Profile;
   recommendation: Recommendation;
+  /** Catalogue retenu, figé dans manifest.catalog + catalog.json (rejouable) — S-037. */
+  catalog?: Catalog;
 };
 
 /**
  * Exit Escrow (F7, moat ①) : télécharge un bundle de redéploiement reproductible.
  * fflate + le générateur sont importés dynamiquement (hors bundle initial).
  */
-export function ExitEscrow({ profile, recommendation }: ExitEscrowProps): ReactElement {
+export function ExitEscrow({ profile, recommendation, catalog }: ExitEscrowProps): ReactElement {
   const [busy, setBusy] = useState(false);
 
   const download = async (): Promise<void> => {
@@ -25,7 +28,7 @@ export function ExitEscrow({ profile, recommendation }: ExitEscrowProps): ReactE
         import("@/lib/exit/bundle"),
         import("@/lib/exit/zip"),
       ]);
-      const bundle = buildExitBundle(profile, recommendation);
+      const bundle = buildExitBundle(profile, recommendation, undefined, catalog);
       // Uint8Array.from → vue adossée à un ArrayBuffer concret (BlobPart valide, sans `as`).
       const blob = new Blob([Uint8Array.from(zipBundle(bundle))], { type: "application/zip" });
       const url = URL.createObjectURL(blob);

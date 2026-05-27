@@ -2,6 +2,7 @@
 // les rendus Markdown et PDF. Aucune dépendance UI ni I/O → entièrement testable.
 
 import { costBand, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
+import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 import {
@@ -82,12 +83,59 @@ function collectSources(reco: Recommendation): DeliverableSource[] {
   return out;
 }
 
-/** Construit le livrable structuré à partir de la recommandation et de l'ensemble. */
+const SLOT_ORDER: SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
+
+const PROVENANCE_LABEL: Record<Provenance, string> = {
+  live: "vérifié en direct",
+  seed: "calibration datée",
+  flagged: "à revérifier (repli)",
+};
+
+/**
+ * Fige le catalogue retenu (S-037) : un candidat par couche, sa provenance (live/seed/flagged), sa
+ * confiance et sa source. Rend le livrable rejouable — on sait exactement quels composants ont été
+ * recommandés, d'où vient l'information, et à quelle date le catalogue a été assemblé.
+ */
+function catalogSection(catalog: Catalog): DeliverableSection {
+  return {
+    heading: "Catalogue retenu (provenance des choix)",
+    bullets: [
+      `Catalogue assemblé le ${catalog.assembledAt} (origine : ${catalog.source}). ` +
+        "Chaque composant porte sa provenance et sa source : le plan est rejouable à l'identique.",
+    ],
+    rows: SLOT_ORDER.map((slot) => {
+      const rec = catalog.slots[slot].recommended;
+      return {
+        left: `${slot.toUpperCase()} · ${rec.name}`,
+        right: `${PROVENANCE_LABEL[rec.provenance]} · confiance ${rec.confidence}`,
+      };
+    }),
+  };
+}
+
+/** Sources web du catalogue retenu (candidat recommandé de chaque couche), dédupliquées par URL. */
+function catalogSources(catalog: Catalog): DeliverableSource[] {
+  const out: DeliverableSource[] = [];
+  const seen = new Set<string>();
+  for (const slot of SLOT_ORDER) {
+    const src = catalog.slots[slot].recommended.source;
+    if (seen.has(src.url)) continue;
+    seen.add(src.url);
+    out.push({ label: src.label, url: src.url, checkedAt: src.checkedAt });
+  }
+  return out;
+}
+
+/**
+ * Construit le livrable structuré à partir de la recommandation et de l'ensemble.
+ * `catalog` (optionnel) fige les choix de composants retenus + leur provenance (S-037, rejouable).
+ */
 export function buildDeliverable(
   profile: Profile,
   reco: Recommendation,
   ensemble: Ensemble,
   now: Date = new Date(),
+  catalog?: Catalog,
 ): Deliverable {
   const band = costBand(reco.totalCost);
   const generatedAt = now.toISOString().slice(0, 10);
@@ -129,6 +177,7 @@ export function buildDeliverable(
     profileSection(profile),
     { heading: "Pourquoi ce preset", rows: [], bullets: [reco.presetReason] },
     stack,
+    ...(catalog !== undefined ? [catalogSection(catalog)] : []),
     scores,
     { heading: "Carte de coûts", rows: costRows, bullets: [] },
     ensembleSection,
@@ -155,7 +204,22 @@ export function buildDeliverable(
       { left: "Accord de l'ensemble", right: ensemble.spread.agreement },
     ],
     sections,
-    sources: collectSources(reco),
+    sources: dedupeSources([
+      ...collectSources(reco),
+      ...(catalog !== undefined ? catalogSources(catalog) : []),
+    ]),
     disclaimer: DISCLAIMER,
   };
+}
+
+/** Dédoublonne des sources par URL (préserve l'ordre d'apparition). */
+function dedupeSources(sources: DeliverableSource[]): DeliverableSource[] {
+  const seen = new Set<string>();
+  const out: DeliverableSource[] = [];
+  for (const s of sources) {
+    if (seen.has(s.url)) continue;
+    seen.add(s.url);
+    out.push(s);
+  }
+  return out;
 }
