@@ -73,6 +73,48 @@ describe("buildExitBundle", () => {
   });
 });
 
+describe("Exit Escrow piloté par le BackupPlan (S-029)", () => {
+  const CRITICAL: Profile = {
+    ...PROFILE,
+    sensitivity: "secret",
+    regulations: ["rgpd", "secret-pro"],
+    backup: { criticality: "critical" },
+  };
+
+  it("le manifeste porte le plan de sauvegarde réel (cohérence manifest↔plan)", () => {
+    const reco = recommend(CRITICAL);
+    const { manifest } = buildExitBundle(CRITICAL, reco);
+    expect(manifest.backup.criticality).toBe(reco.backup.criticality);
+    expect(manifest.backup.erasurePolicy).toBe(reco.backup.erasurePolicy);
+    expect(manifest.backup.retentionDays).toBe(reco.backup.retentionDays);
+  });
+
+  it("le runbook reflète le plan critique + régulé (crypto-shred, WORM, PITR, rétention)", () => {
+    const runbook = buildExitBundle(CRITICAL, recommend(CRITICAL)).files["runbook.md"];
+    expect(runbook).toContain("plan « critical »");
+    expect(runbook).toContain("crypto-shred");
+    expect(runbook).toContain("WORM");
+    expect(runbook).toContain("WAL/PITR");
+    expect(runbook).toContain("365 jours");
+  });
+
+  it("backup.sh dérive sa politique du plan (rétention, tag, immutabilité, WAL)", () => {
+    const script = buildExitBundle(CRITICAL, recommend(CRITICAL)).files["scripts/backup.sh"];
+    expect(script).toContain("--keep-within 365d");
+    expect(script).toContain("--tag critical");
+    expect(script).toContain("object-lock");
+    expect(script).toContain("WAL");
+  });
+
+  it("criticité « aucune » : runbook et backup.sh signalent l'absence de sauvegarde", () => {
+    const reco = recommend(PROFILE); // pas de backup → none
+    expect(reco.backup.criticality).toBe("none");
+    const bundle = buildExitBundle(PROFILE, reco);
+    expect(bundle.files["runbook.md"]).toContain("aucune politique de sauvegarde dimensionnée");
+    expect(bundle.files["scripts/backup.sh"]).toContain("aucune sauvegarde planifiée");
+  });
+});
+
 describe("zipBundle", () => {
   it("produit un ZIP qui se dézippe en restituant les fichiers à l'identique", () => {
     const bundle = buildExitBundle(PROFILE, recommend(PROFILE), new Date("2026-05-25T00:00:00Z"));
