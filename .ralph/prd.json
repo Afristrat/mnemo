@@ -421,6 +421,36 @@
         "U12 : EnsembleView clarifie que les variantes sont des scénarios « et si », pas des choix imposés (label « Scénario » + note)",
         "tests existants verts + 1 test dépassement budget ; typecheck 0 / lint 0/0 / build OK. Reste backlog (U5/U7/U8/U10/U11) = stories dédiées"
       ]
+    },
+    {
+      "id": "S-043", "title": "Pricing egress inter-région + table conformité transferts (sourcés)", "feature": "residence",
+      "passes": false, "deps": ["S-025"],
+      "acceptance": ["spec n°2 §5/§6 : egress inter-région sourcé (Scaleway/OVH/AWS, URL+date+confiance) + table bases légales de transfert (UE/Maroc/US, RGPD chap.V/CNDP/Cloud Act) ; disclaimer « ingénierie, pas juridique » ; DÉFCON 1"]
+    },
+    {
+      "id": "S-044", "title": "Moteur résidence/DR pur (deriveResidencyPlan + costResidency + conflit)", "feature": "residence",
+      "passes": false, "deps": ["S-043", "S-041"],
+      "acceptance": ["spec n°2 §3/§4/§5/§6 : types Residency/ResidencyPlan/Region/TransferFlag ; dérivation profil→plan ; conformité transferts ; conflit résidence×DR exposé + leviers (jamais résolu en douce) ; monotonie coût (none<warm<hot<actif-actif) ; régions repli via computeSovereignCompute ; prix injectés ; tests table-driven"]
+    },
+    {
+      "id": "S-045", "title": "Scoring 9→10 : geosov (neuf) + resilience étendu DR + sov recadré", "feature": "residence",
+      "passes": false, "deps": ["S-027"],
+      "acceptance": ["spec n°2 §7 : SCORE_KEYS +geosov (10) ; computeScores retourne 10 ; geosov (résidence conforme), resilience intègre le DR, sov recadré « zéro lock-in » ; TOUS les toHaveLength(9)→10 + RadarChart 10 axes ; typecheck 0 / lint 0/0 / tests verts"]
+    },
+    {
+      "id": "S-046", "title": "Intégration résidence/DR dans recommend (+ ensemble)", "feature": "residence",
+      "passes": false, "deps": ["S-044", "S-045"],
+      "acceptance": ["spec n°2 §6 : Recommendation.residency rempli ; coût réplication + régions repli dans les couches ; none+mono-région → neutre (invariant totalCost) ; ensemble threade ; tests recommend étendus verts"]
+    },
+    {
+      "id": "S-047", "title": "Exit Escrow DR (runbook bascule + IaC multi-région)", "feature": "residence",
+      "passes": false, "deps": ["S-046"],
+      "acceptance": ["spec n°2 §8 : buildExitBundle lit recommendation.residency → runbook DR (bascule régionale, ordre régions, RTO) + terraform multi-région ; cohérence manifest↔plan ; tests bundle étendus"]
+    },
+    {
+      "id": "S-048", "title": "UI Bloc ② Résidence & continuité + Résultats (radar 10 + transferts) + e2e", "feature": "residence",
+      "passes": false, "deps": ["S-046", "S-045", "S-047", "S-031"],
+      "acceptance": ["spec n°2 §9 : section Bloc ② (criticité DR + expert régions/noTransfer/actif-actif) + zone multi-région (finding C4) + alerte conflit ; Résultats : ligne réplication + transferts (pastilles ok/restricted/forbidden + base légale) + radar 10 axes ; e2e profil régulé multi-région ; zéro toHaveLength(9) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"]
     }
   ]
 }
