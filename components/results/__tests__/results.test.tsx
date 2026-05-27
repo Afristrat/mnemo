@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { ResultsView } from "@/components/results/ResultsView";
 import { VerdictView } from "@/components/results/VerdictView";
 import type { Verdict } from "@/lib/engine";
@@ -23,6 +23,28 @@ describe("ResultsView", () => {
     render(<ResultsView />);
     expect(await screen.findByText("Votre verdict")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Voir le détail (expert)" })).toBeInTheDocument();
+  });
+
+  it("basculer sur un scénario recalcule la page et affiche le bandeau de retour", async () => {
+    render(<ResultsView />);
+    // La référence est affichée tant qu'aucun scénario n'est choisi.
+    expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
+    expect(screen.queryByText("Revenir à ma recommandation")).not.toBeInTheDocument();
+
+    // Bascule sur le scénario « Coût minimal ».
+    const ensemble = screen.getByRole("region", { name: "Ensemble de configurations" });
+    fireEvent.click(within(ensemble).getByRole("button", { name: /Coût minimal/ }));
+
+    // Le bandeau de retour apparaît et le scénario est marqué actif.
+    expect(screen.getByText("Revenir à ma recommandation")).toBeInTheDocument();
+    expect(within(ensemble).getByRole("button", { name: /Coût minimal/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    // Retour à la recommandation de référence.
+    fireEvent.click(screen.getByText("Revenir à ma recommandation"));
+    expect(screen.queryByText("Revenir à ma recommandation")).not.toBeInTheDocument();
   });
 });
 

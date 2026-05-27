@@ -502,6 +502,27 @@
         "greffe dynamique : le prompt compose le profil + les notes libres au runtime (placeholders validés) ; jamais de secret dans le prompt ; séparation stricte system/user (pas d'exécution d'instruction utilisateur arbitraire)",
         "garde-fous : repli sur le prompt par défaut si store indispo ; audit des changements ; tests (store + composition + repli) ; typecheck 0 / lint 0/0 / build OK"
       ]
+    },
+    {
+      "id": "S-054", "title": "Correctif PDF : neutraliser les émojis hors WinAnsi (assainissement CP1252)", "feature": "refonte",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-009"],
+      "acceptance": [
+        "BUG remonté par Amine : le PDF affichait « Ø=ÜÄ … » pour les actions de conformité — émojis (📄 U+1F4C4) réémis octet par octet en CP1252 car jsPDF police standard = WinAnsi (cf. ADR-003)",
+        "RACINE corrigée dans la couche PDF (lib/export/pdf.ts) : toWinAnsi() retire tout caractère hors CP1252 (ASCII + Latin-1 + 27 spéciaux € « » — ’ …) et compacte les espaces ; appliqué à writeWrapped/writeRow/sources",
+        "typo française intacte (é è à ç, ’ « » —, €, espace insécable) ; émojis conservés en UI/Markdown (UTF-8) — seul le PDF est contraint",
+        "tests toWinAnsi (cas exacts remontés + préservation FR) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-055", "title": "Bascule entre solutions dans l'ensemble (switch scénario → recalcul page)", "feature": "refonte",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-007", "S-042"],
+      "acceptance": [
+        "DEMANDE Amine : « Ensemble de configurations » doit permettre de switcher entre les solutions proposées",
+        "EnsembleView interactif : 4 cartes-boutons (Votre recommandation + 3 scénarios), aria-pressed + badge « Affichée » sur l'active ; onSelect remonte le choix",
+        "ResultsView : état activeVariant ; la solution active (référence ou scénario) pilote TOUTE la vue experte (en-tête, radar, scores, stack, CostMap, conformité/risques, export, Exit Escrow)",
+        "honnêteté U12 préservée : bandeau « vous explorez le scénario X — profil non modifié » + bouton « Revenir à ma recommandation » ; profil localStorage jamais modifié",
+        "tests EnsembleView (sélection, aria-pressed) + ResultsView (bascule + bandeau + retour) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
     }
   ]
 }

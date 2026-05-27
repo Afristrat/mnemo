@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { buildEnsemble, type Profile } from "@/lib/engine";
 
@@ -23,14 +23,38 @@ const PROFILE: Profile = {
 };
 
 describe("EnsembleView", () => {
-  it("affiche les 3 membres et le libellé d'incertitude", () => {
+  it("affiche la référence + les 3 scénarios et le libellé d'incertitude", () => {
     const ensemble = buildEnsemble(PROFILE);
-    render(<EnsembleView ensemble={ensemble} />);
+    render(<EnsembleView ensemble={ensemble} activeId={null} onSelect={() => {}} />);
 
+    expect(screen.getByText("Votre recommandation")).toBeInTheDocument();
     expect(screen.getByText("Souveraineté maximale")).toBeInTheDocument();
     expect(screen.getByText("Coût minimal")).toBeInTheDocument();
     expect(screen.getByText("Time-to-V1 minimal")).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`Accord ${ensemble.spread.agreement}`))).toBeInTheDocument();
     expect(screen.getByText(ensemble.spread.uncertaintyLabel)).toBeInTheDocument();
+  });
+
+  it("cliquer un scénario appelle onSelect avec son id", () => {
+    const onSelect = vi.fn();
+    const ensemble = buildEnsemble(PROFILE);
+    render(<EnsembleView ensemble={ensemble} activeId={null} onSelect={onSelect} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Coût minimal/ }));
+    expect(onSelect).toHaveBeenCalledWith("cost");
+  });
+
+  it("la solution active porte aria-pressed et un badge « Affichée »", () => {
+    const ensemble = buildEnsemble(PROFILE);
+    render(<EnsembleView ensemble={ensemble} activeId="sovereignty" onSelect={() => {}} />);
+
+    const active = screen.getByRole("button", { name: /Souveraineté maximale/ });
+    expect(active).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("Affichée")).toBeInTheDocument();
+    // La référence n'est pas active.
+    expect(screen.getByRole("button", { name: /Votre recommandation/ })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
   });
 });
