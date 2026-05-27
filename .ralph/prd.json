@@ -253,7 +253,7 @@
     },
     {
       "id": "S-026", "title": "Module backup.ts — plan dérivé + coût agrégé + arbitrage vecteurs", "feature": "backup",
-      "passes": false, "deps": ["S-015", "S-025"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015", "S-025"],
       "acceptance": [
         "types Backup/BackupPlan/VectorDecision/ThreeTwoOne (spec §3) ; Profile.backup?",
         "deriveBackupPlan(profile, prices) pur : criticité → params (table §4) ; surcharge conformité (régulé/secret → crypto-shred + immutable + legalRetentionYears = max(régimes)) ; none → neutre",

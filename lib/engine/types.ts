@@ -100,7 +100,76 @@ export type BlockId = "profil" | "infra" | "memoire" | "medias";
 /** Source d'un coût (URL + date) — structurellement compatible avec `PriceSource` (`lib/pricing`). */
 export type CostSource = { label: string; url: string; checkedAt: string };
 
-/** Clés des 8 dimensions de scoring (ordre stable). */
+// --- Sauvegarde & résilience (backup, spec n°1 §3 — types S-026, consommés S-028→S-031) ---
+
+export type BackupCriticality = "none" | "standard" | "high" | "critical";
+export type BackupStorageTier = "hot" | "cold"; // chaud (objet) / froid (archive)
+export type ErasurePolicy = "crypto-shred" | "expiration";
+/** Arbitrage vecteurs : `auto` = le moteur tranche au moindre coût ; sinon forcé. */
+export type VectorBackupStrategy = "auto" | "backup" | "reembed";
+
+/**
+ * Entrée de sauvegarde (hybride palier + expert). `criticality` (chemin 90 s) dérive tout le reste ;
+ * les champs optionnels permettent l'affinage expert (sinon dérivés du palier, cf. backup.ts §4).
+ */
+export type Backup = {
+  criticality: BackupCriticality;
+  rpoMinutes?: number; // perte de données max tolérée
+  rtoMinutes?: number; // temps de reprise max
+  retentionDays?: number; // rétention récurrente (GFS simplifié)
+  copies?: number; // 3-2-1 : nombre de copies
+  offsite?: boolean; // 1 copie hors-site
+  airgap?: boolean; // +1 copie hors-ligne / air-gap (ransomware)
+  immutable?: boolean; // WORM / object-lock
+  tier?: BackupStorageTier;
+  byok?: boolean; // clés de chiffrement gérées par le client
+  restoreTestsPerYear?: number; // « 0 erreur » = restaurations testées
+  vectorStrategy?: VectorBackupStrategy;
+  erasurePolicy?: ErasurePolicy;
+};
+
+/** Complétude 3-2-1-1-0 (3 copies, 2 supports, 1 hors-site, 1 air-gap, 0 erreur testée). */
+export type ThreeTwoOne = {
+  copies: number;
+  mediaTypes: number;
+  offsite: boolean;
+  airgap: boolean;
+  tested: boolean;
+};
+
+/** Arbitrage « sauvegarder vs ré-embed » les vecteurs (reconstructibles depuis la source). */
+export type VectorDecision = {
+  strategy: "backup" | "reembed";
+  backupMonthlyCost: number; // coût récurrent si on sauvegarde les vecteurs
+  reembedCost: number; // coût one-time (à la restauration) si on ré-embed
+  reason: string;
+};
+
+/** Plan de sauvegarde déduit (ajouté à `Recommendation`). `criticality "none"` → plan neutre, coûts 0. */
+export type BackupPlan = {
+  criticality: BackupCriticality;
+  rpoMinutes: number;
+  rtoMinutes: number;
+  retentionDays: number;
+  legalRetentionYears: number; // = max(régimes), §6 — plancher légal
+  copies: number;
+  offsite: boolean;
+  airgap: boolean;
+  immutable: boolean;
+  tier: BackupStorageTier;
+  byok: boolean;
+  pitr: boolean; // WAL/PITR Postgres (criticité ≥ high)
+  erasurePolicy: ErasurePolicy;
+  restoreTestsPerYear: number;
+  backupStorageGb: number; // volume de sauvegarde dimensionné
+  vector: VectorDecision;
+  threeTwoOne: ThreeTwoOne;
+  monthlyCost: number; // récurrent €/mois
+  setupCost: number; // one-time : premier full du corpus existant
+  costSources: CostSource[]; // DÉFCON 1
+};
+
+/** Clés des 8 dimensions de scoring (ordre stable). `resilience` (9ᵉ) arrive en S-027 (refonte 8→9). */
 export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost"] as const;
 export type ScoreKey = (typeof SCORE_KEYS)[number];
 
@@ -124,6 +193,8 @@ export type Profile = {
   modules: Record<ModuleId, number>;
   /** Besoins multimédias détaillés (refonte Strate, consommés en S-016). */
   mediaNeeds?: MediaNeed[];
+  /** Sauvegarde & résilience (spec n°1, consommé en S-026/S-028). Absent ⇒ criticité `none`. */
+  backup?: Backup;
   /** Notes libres par bloc du wizard (refonte 4-blocs, S-019). */
   freeNotes?: Partial<Record<BlockId, string>>;
 };

@@ -16,6 +16,15 @@ export {
   type MultimodalPriceEntry,
 } from "./sizing";
 export { applyMultimodalSizing } from "./cost";
+export {
+  deriveBackupPlan,
+  costBackup,
+  buildBackupPlan,
+  baseBackupGb,
+  legalRetentionYears,
+  type BackupPriceTable,
+  type BackupCore,
+} from "./backup";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
 export {

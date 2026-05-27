@@ -27,3 +27,21 @@
 
 Ré-exécuter le sourcing (pages officielles) à chaque révision. Si un référent **USD** est introduit
 (ex. AWS/B2), appliquer l'étage FX (`media-feed`, taux BCE/Frankfurter) — ici inutile (tout EUR).
+
+## Conformité — rétention légale minimale par régime (S-026, DÉFCON 1)
+
+> ⚠ **Orientation d'ingénierie, PAS un avis juridique** — à valider par votre conseil. Plancher de
+> conservation (`legalRetentionYears` = max des régimes cochés). RGPD/CNDP imposent une **limitation**
+> (plafond), pas un minimum → 0. Relevé le 2026-05-27 (sources officielles, sous-agent + vérification).
+
+| Régime | Années | Confiance | Source | Citation |
+|---|---|---|---|---|
+| `hipaa` (USA santé) | **6** | high | [45 CFR §164.316(b)(2)(i)](https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.316) | « Retain the documentation […] for **6 years** from the date of its creation or the date when it last was in effect » |
+| `aiact` (UE, IA à haut risque) | **10** | high | [Règl. UE 2024/1689, art. 18](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng) | Documentation technique tenue à disposition « **for a period ending 10 years after** the […] system has been placed on the market ». (Logs art. 19 = « **at least six months** » = plancher distinct, plus court → le max du régime = 10 ans.) |
+| `secret-pro` (avocat, France) | **5** | **medium** | [CNB — Guide RGPD avocats 2023, Fiche n°2](https://cnb.avocat.fr/medias/cnb20230524guide-rgpd-2023a-k-68f745c8857b37.12035772.pdf) | « archiver le dossier pendant **cinq ans** » — **recommandation** CNB adossée à la prescription civile (art. 2224 C. civ.), PAS une durée chiffrée du RIN. À traiter comme plancher pragmatique. |
+| `rgpd` (UE) | **0** | high | [RGPD art. 5(1)(e)](https://gdpr-info.eu/art-5-gdpr/) | « kept […] **for no longer than is necessary** » — plafond, pas de minimum. |
+| `cndp` (Maroc, loi 09-08) | **0** | high | [CNDP — loi 09-08](https://www.cndp.ma/conditions/) | limitation à la finalité puis destruction — pas de plancher imposé par la 09-08. |
+| `none` | 0 | — | — | — |
+
+**Repères comptables (non mappés à un régime du `Profile`, mais cohérents pour un plancher fiscal)** :
+France — documents comptables **10 ans** ([C. com. art. L123-22](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006219327/)) ; Maroc — **10 ans** ([loi 9-88 art. 22](https://www.monexpert.ma/), renvoi C. com. art. 19/26). À considérer si un régime « comptable/fiscal » est ajouté au modèle.

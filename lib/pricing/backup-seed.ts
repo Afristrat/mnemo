@@ -11,22 +11,13 @@
 // Le feed live (`backup-feed.ts`) ré-extrait et réconcilie ces valeurs ; ce seed est le repli daté
 // ET la baseline de validation (garde-fou).
 
-import type { MultimodalPriceEntry } from "@/lib/engine";
+import type { BackupPriceTable } from "@/lib/engine";
+
+// Le contrat `BackupPriceTable` est défini côté moteur (lib/engine/backup) — prix injectés (DÉFCON 1).
+export type { BackupPriceTable } from "@/lib/engine";
 
 const CHECKED_AT = "2026-05-27";
 const SCALEWAY_STORAGE = "https://www.scaleway.com/en/pricing/storage/";
-
-/** Table des prix backup, en € (référent Scaleway souverain). Réutilise `MultimodalPriceEntry`. */
-export type BackupPriceTable = {
-  /** Sortie réseau / restauration, par Go (au-delà du palier gratuit). */
-  egressPerGb: MultimodalPriceEntry;
-  /** Stockage froid/archive (classe Glacier/Cold), par Go·mois. */
-  archiveStoragePerGbMonth: MultimodalPriceEntry;
-  /** Retrait/restore d'une archive froide, par Go. */
-  archiveRetrievalPerGb: MultimodalPriceEntry;
-  /** Transfert d'une copie hors-site, par Go (proxy = egress). */
-  offsiteBandwidthPerGb: MultimodalPriceEntry;
-};
 
 export const BACKUP_PRICE_SEED: BackupPriceTable = {
   egressPerGb: {
