@@ -61,6 +61,13 @@ function dedupeSources(sources: (CostSource | null)[]): CostSource[] {
  * - LIGHT : services managés → 1 petite instance (glue/vault).
  * - MEDIUM : nœud self-host mutualisé, + 1 si gros volume / beaucoup d'users / fort débit.
  * - HARD : 2 nœuds (séparation + redondance), + 1 si gros volume.
+ *
+ * Modificateurs de capacité (S-049, options jadis collectées mais non calculées) :
+ * - `growth === "high"` → +1 nœud de **réserve de capacité** (provisionner la montée en charge
+ *   anticipée plutôt que migrer en catastrophe).
+ * - `latency === "fast"` SOUS CHARGE (gros volume ou fort débit) → +1 nœud : tenir une latence basse
+ *   à forte sollicitation exige de la marge. Gating sur la charge ⇒ pas d'inflation des petits profils.
+ * Les deux ne s'appliquent qu'en self-host (hors LIGHT managé, qui scale de façon élastique).
  */
 export function computeSovereignCompute(
   profile: Profile,
@@ -70,6 +77,8 @@ export function computeSovereignCompute(
   const bigVolume = profile.volume === "100to1000" || profile.volume === "gt1000";
   const manyUsers = profile.users > 50;
   const highReq = profile.reqPerDay === "gt10k";
+  const highGrowth = profile.growth === "high";
+  const lowLatencyUnderLoad = profile.latency === "fast" && (bigVolume || highReq);
   const lines: ComputeInstanceLine[] = [];
 
   if (preset === "LIGHT") {
@@ -82,7 +91,13 @@ export function computeSovereignCompute(
     });
   } else {
     const base = preset === "HARD" ? 2 : 1;
-    const count = base + (bigVolume ? 1 : 0) + (manyUsers ? 1 : 0) + (highReq ? 1 : 0);
+    const count =
+      base +
+      (bigVolume ? 1 : 0) +
+      (manyUsers ? 1 : 0) +
+      (highReq ? 1 : 0) +
+      (highGrowth ? 1 : 0) +
+      (lowLatencyUnderLoad ? 1 : 0);
     lines.push({
       role:
         preset === "HARD"

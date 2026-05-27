@@ -451,6 +451,57 @@
       "id": "S-048", "title": "UI Bloc ② Résidence & continuité + Résultats (radar 10 + transferts) + e2e", "feature": "residence",
       "passes": false, "deps": ["S-046", "S-045", "S-047", "S-031"],
       "acceptance": ["spec n°2 §9 : section Bloc ② (criticité DR + expert régions/noTransfer/actif-actif) + zone multi-région (finding C4) + alerte conflit ; Résultats : ligne réplication + transferts (pastilles ok/restricted/forbidden + base légale) + radar 10 axes ; e2e profil régulé multi-région ; zéro toHaveLength(9) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"]
+    },
+    {
+      "id": "S-049", "title": "Intégrer growth + latency dans le moteur (options collectées mais non calculées)", "feature": "refonte",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-016", "S-041"],
+      "acceptance": [
+        "AUDIT confirmé (retour Amine 2026-05-27) : growth et latency sont collectés (Wizard.tsx) + affichés (export/model.ts) mais 0 usage moteur (coût/scores/couches/sizing/preset) — dette DÉFCON 1 à résorber (à NE PAS confondre avec reqPerDay, lui calculé)",
+        "growth pilote la projection de montée en charge : facteur de croissance documenté (±30 %) appliqué au dimensionnement (sizing/compute) ou projection explicite ; jamais un prix en dur",
+        "latency (débit attendu / temps réel) pousse le palier compute/GPU (temps réel → instances/pool plus grands) + diagnostic si incohérent avec le preset ; monotonie testée",
+        "test de garde anti-dette : aucun champ Profile collecté ne reste sans effet sur recommend (sauf justification explicite documentée)",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-050", "title": "Récap des choix sous le budget-mètre (toutes les options + valeur effective)", "feature": "refonte",
+      "passes": false, "deps": ["S-019", "S-020"],
+      "acceptance": [
+        "panneau récap (déterministe, pur) sous le BudgetMeter : tous les champs du profil avec leur valeur EFFECTIVE (libellés FR, valeur dérivée pour backup/preset, modules actifs, médias)",
+        "indique explicitement les options sans impact sur le coût (transparence DÉFCON 1) ; pas d'invention",
+        "réactif aux changements du wizard ; accessible (liste sémantique)",
+        "tests composant ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-051", "title": "Refonte taxonomie presets : preset scoré/explicable + réconciliation étiquettes + ADR", "feature": "refonte",
+      "passes": false, "deps": ["S-003", "S-004"],
+      "acceptance": [
+        "DÉCISION Amine (option 2+1) : remplacer la cascade binaire decidePreset par un score de besoin explicite (souveraineté/criticité/charge/conformité) → palier LIGHT/MEDIUM/HARD dérivé + justification chiffrée (pourquoi ce palier)",
+        "réconcilier les étiquettes expected des PRESET_PROFILES avec le résultat réel des règles (ex. Coach indépendant labellisé MEDIUM mais classé LIGHT par les règles) — zéro divergence étiquette↔calcul",
+        "ADR docs/DECISIONS.md : base de décision documentée et défendable (seuils explicités, hypothèses sourcées) ; preset « expliqué » exposé dans la reco/verdict",
+        "tous les tests asservis au preset mis à jour ; déterminisme préservé ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-052", "title": "Champ texte libre par bloc/option → intake LLM (ajuste le Profile, borné) + narration", "feature": "llm",
+      "passes": false, "deps": ["S-038", "S-039", "S-019"],
+      "acceptance": [
+        "chaque bloc (et options clés) du configurateur expose un champ texte libre « dites ce que vous voulez » (additif, jamais bloquant ; saisie manuelle toujours dispo)",
+        "le texte est INTÉGRÉ via l'intake LLM (S-038) : mappé en ajustements de Profile VALIDÉS/BORNÉS (hors-bornes rejeté → défaut prudent documenté) ; le LLM ne calcule jamais un coût",
+        "narration LLM (S-039) reprend les notes pour expliquer la reco/le livrable ; repli = textes statiques si LLM KO ; disclaimer IA",
+        "freeNotes par bloc réellement consommé (lève la dette « stocké mais jamais lu ») ; tests intake + narration ; e2e texte libre → reco ajustée ; typecheck 0 / lint 0/0 / build OK / e2e verts"
+      ]
+    },
+    {
+      "id": "S-053", "title": "Console admin super-admin (prompts système versionnés : reco / livrable / agent déploiement)", "feature": "llm",
+      "passes": false, "deps": ["S-034", "S-039"],
+      "acceptance": [
+        "DÉCISION Amine : super-admin GLOBAL (hors tenant) — un admin plateforme édite les prompts pour tous ; auth super-admin (pas la RLS de cercle) ; route /admin protégée serveur",
+        "prompts système sortis du code dur (veille catalogue, intake, narration, livrable, agent de déploiement Lot 2) → store versionné (table prompts, RLS admin/service-role only, historique de versions)",
+        "greffe dynamique : le prompt compose le profil + les notes libres au runtime (placeholders validés) ; jamais de secret dans le prompt ; séparation stricte system/user (pas d'exécution d'instruction utilisateur arbitraire)",
+        "garde-fous : repli sur le prompt par défaut si store indispo ; audit des changements ; tests (store + composition + repli) ; typecheck 0 / lint 0/0 / build OK"
+      ]
     }
   ]
 }

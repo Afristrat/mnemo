@@ -46,6 +46,23 @@ describe("computeSovereignCompute, dimensionnement serveurs self-hosted", () => 
     expect(req).toBeGreaterThan(base);
   });
 
+  it("croissance forte ajoute un nœud de réserve de capacité (S-049)", () => {
+    const base = computeSovereignCompute(profile({ growth: "medium" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    const high = computeSovereignCompute(profile({ growth: "high" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    expect(high).toBeGreaterThan(base);
+  });
+
+  it("latence faible SOUS CHARGE ajoute un nœud, mais pas sur un petit profil (S-049)", () => {
+    // Petit profil (volume/débit par défaut) : la latence ne change pas le compte (pas d'inflation).
+    const smallFast = computeSovereignCompute(profile({ latency: "fast" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    const smallRelaxed = computeSovereignCompute(profile({ latency: "relaxed" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    expect(smallFast).toBe(smallRelaxed);
+    // Sous charge (gros volume) : latence faible exige de la marge → +1 vs relâchée.
+    const loadFast = computeSovereignCompute(profile({ volume: "gt1000", latency: "fast" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    const loadRelaxed = computeSovereignCompute(profile({ volume: "gt1000", latency: "relaxed" }), "MEDIUM", P).instances[0]?.count ?? 0;
+    expect(loadFast).toBeGreaterThan(loadRelaxed);
+  });
+
   it("monotonie : à charge égale, HARD ≥ MEDIUM ≥ LIGHT", () => {
     const light = computeSovereignCompute(profile(), "LIGHT", P).monthlyCost;
     const medium = computeSovereignCompute(profile(), "MEDIUM", P).monthlyCost;

@@ -74,6 +74,12 @@ export function computeRisks(preset: Preset, p: Profile, totalCost: number): str
   if (p.reqPerDay === "gt10k" && preset === "LIGHT") {
     risks.push("📈 > 10k requêtes/jour : LIGHT API direct coûte cher. Self-host vLLM (MEDIUM/HARD) rentabilise.");
   }
+  if (p.latency === "fast" && preset === "LIGHT") {
+    risks.push("⚡ Latence faible attendue mais preset LIGHT (API managé tierce, aucune garantie de latence) : passer en MEDIUM (self-host pour maîtriser la latence).");
+  }
+  if (p.growth === "high" && preset === "LIGHT") {
+    risks.push("🌱 Croissance forte anticipée mais LIGHT : provisionner MEDIUM dès le départ pour absorber la montée en charge sans migration en urgence.");
+  }
   if (p.regulations.length === 1 && p.regulations[0] === "none" && p.sensitivity !== "public") {
     risks.push("⚖️ Aucun régime juridique coché mais sensibilité non publique : presque toujours une erreur (RGPD s'applique dès qu'il y a des données personnelles).");
   }
