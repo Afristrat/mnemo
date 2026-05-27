@@ -5,6 +5,7 @@
 // priorité différente (souveraineté / coût / délai). On passe chaque membre dans
 // le moteur déterministe `recommend()` et on quantifie l'écart résultant.
 
+import type { Catalog } from "@/lib/catalog/types";
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
 import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
@@ -226,8 +227,14 @@ function computeSpread(recommendations: Recommendation[]): EnsembleSpread {
  * membre par priorité (souveraineté / coût / délai), et la dispersion résultante
  * (le « spread » = l'incertitude). Fonction pure et déterministe.
  */
-export function buildEnsemble(profile: Profile, prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES): Ensemble {
-  const baseline = recommend(profile, prices);
+export function buildEnsemble(
+  profile: Profile,
+  prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES,
+  catalog?: Catalog,
+): Ensemble {
+  // Le catalogue (live ou seed) s'applique à la baseline ; les variants explorent sur leur propre
+  // seed (le spread coût/score n'en dépend pas — les coûts sont indépendants du choix de composant).
+  const baseline = recommend(profile, prices, catalog);
   const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices));
   const spread = computeSpread([baseline, ...variants.map((v) => v.recommendation)]);
   return { baseline, variants, spread };

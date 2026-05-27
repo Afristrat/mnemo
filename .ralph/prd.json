@@ -342,7 +342,7 @@
     },
     {
       "id": "S-035", "title": "Catalogue injecté (seed = layers.ts) + garde-fou + recommend(catalog)", "feature": "llm",
-      "passes": false, "deps": [],
+      "passes": true, "completedAt": "2026-05-27", "deps": [],
       "acceptance": [
         "lib/catalog/types.ts : Catalog, ComponentCandidate (name/role/license/sovereignty/benchmarkRank/sourceUrl/checkedAt/confidence/provenance), CatalogSlot, Provenance",
         "catalog-seed.ts : seedCatalog(preset, profile) transpose À L'IDENTIQUE les littéraux conditionnels de layers.ts (LIGHT/MEDIUM/HARD × multimodal × bitemporel) ; chaque candidat porte sourceUrl + checkedAt (DÉFCON 1)",
