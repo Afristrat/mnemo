@@ -7,6 +7,7 @@
 // Anti vendor lock-in par construction (cf. docs/MOAT-HUNT.md).
 
 import type { BackupPlan, Layer, Preset, Profile, Recommendation, Zone } from "@/lib/engine";
+import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 
 export type BundleManifestLayer = {
@@ -16,6 +17,13 @@ export type BundleManifestLayer = {
   cost: number;
   note: string;
   alternatives: string;
+};
+
+/** Catalogue retenu, figé pour la reproductibilité (S-037) : un candidat sourcé par couche. */
+export type BundleManifestCatalog = {
+  assembledAt: string;
+  source: "live" | "seed" | "mixed";
+  slots: { slot: SlotId; component: string; provenance: Provenance; confidence: string; sourceUrl: string }[];
 };
 
 export type BundleManifest = {
@@ -29,9 +37,31 @@ export type BundleManifest = {
   modules: { id: string; name: string; level: number; maxLevel: number }[];
   /** Plan de sauvegarde réel (source de vérité du runbook + backup.sh ; cohérence manifest↔plan). */
   backup: BackupPlan;
+  /** Catalogue retenu (provenance + sources + assembledAt) — présent si la veille a été branchée. */
+  catalog?: BundleManifestCatalog;
   sources: { label: string; url: string; checkedAt: string }[];
   disclaimer: string;
 };
+
+const CATALOG_SLOT_ORDER: SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
+
+/** Transpose le catalogue retenu en empreinte machine figée (rejouable). */
+function catalogManifest(catalog: Catalog): BundleManifestCatalog {
+  return {
+    assembledAt: catalog.assembledAt,
+    source: catalog.source,
+    slots: CATALOG_SLOT_ORDER.map((slot) => {
+      const rec = catalog.slots[slot].recommended;
+      return {
+        slot,
+        component: rec.name,
+        provenance: rec.provenance,
+        confidence: rec.confidence,
+        sourceUrl: rec.source.url,
+      };
+    }),
+  };
+}
 
 export type ExitBundle = {
   /** Chemin relatif → contenu texte. */
@@ -60,7 +90,12 @@ function collectSources(reco: Recommendation): BundleManifest["sources"] {
   return out;
 }
 
-function manifestOf(profile: Profile, reco: Recommendation, generatedAt: string): BundleManifest {
+function manifestOf(
+  profile: Profile,
+  reco: Recommendation,
+  generatedAt: string,
+  catalog?: Catalog,
+): BundleManifest {
   return {
     product: "Strate, base mémorielle IA souveraine",
     generatedAt,
@@ -83,6 +118,7 @@ function manifestOf(profile: Profile, reco: Recommendation, generatedAt: string)
       maxLevel: m.maxLevel,
     })),
     backup: reco.backup,
+    ...(catalog !== undefined ? { catalog: catalogManifest(catalog) } : {}),
     sources: collectSources(reco),
     disclaimer: DISCLAIMER,
   };
@@ -377,9 +413,17 @@ echo "Backup OK (plan ${b.criticality}). Testez une restauration ${b.restoreTest
 `;
 }
 
-/** Construit le bundle Exit Escrow complet. Fonction pure. */
-export function buildExitBundle(profile: Profile, reco: Recommendation, now: Date = new Date()): ExitBundle {
-  const manifest = manifestOf(profile, reco, now.toISOString().slice(0, 10));
+/**
+ * Construit le bundle Exit Escrow complet. Fonction pure.
+ * `catalog` (optionnel) fige le catalogue retenu dans `manifest.catalog` + `catalog.json` (S-037).
+ */
+export function buildExitBundle(
+  profile: Profile,
+  reco: Recommendation,
+  now: Date = new Date(),
+  catalog?: Catalog,
+): ExitBundle {
+  const manifest = manifestOf(profile, reco, now.toISOString().slice(0, 10), catalog);
   const files: Record<string, string> = {
     "manifest.json": JSON.stringify(manifest, null, 2) + "\n",
     "README.md": readme(manifest, reco),
@@ -392,5 +436,9 @@ export function buildExitBundle(profile: Profile, reco: Recommendation, now: Dat
     "scripts/re-embed.sh": reEmbedScript(reco),
     "scripts/backup.sh": backupScript(reco),
   };
+  // Catalogue retenu figé à part (rejouable) : composants + provenance + sources + date d'assemblage.
+  if (manifest.catalog !== undefined) {
+    files["catalog.json"] = JSON.stringify(manifest.catalog, null, 2) + "\n";
+  }
   return { files, manifest };
 }

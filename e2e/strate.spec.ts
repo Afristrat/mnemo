@@ -46,6 +46,25 @@ test("profil critique régulé → ligne backup + radar 9 axes + érasure crypto
   await expect(page.getByRole("img", { name: /Radar des 9 dimensions/ })).toBeVisible();
 });
 
+test("reco vivante : la provenance des choix techniques est affichée (repli seed immédiat)", async ({ page }) => {
+  await page.goto("/resultats");
+  await expect(page.getByText("Provenance des choix techniques")).toBeVisible();
+  // Repli seed immédiat (ou live si la veille répond) : chaque couche porte une provenance.
+  await expect(page.getByText(/Calibration datée|Vérifié en direct|À revérifier/).first()).toBeVisible();
+});
+
+test("ensemble : basculer sur un scénario recalcule la page puis revenir à la recommandation", async ({ page }) => {
+  await page.goto("/resultats");
+  const ensemble = page.getByRole("region", { name: "Ensemble de configurations" });
+  await expect(ensemble).toBeVisible();
+
+  await ensemble.getByRole("button", { name: /Coût minimal/ }).click();
+  await expect(page.getByRole("button", { name: "Revenir à ma recommandation" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Revenir à ma recommandation" }).click();
+  await expect(page.getByRole("button", { name: "Revenir à ma recommandation" })).toHaveCount(0);
+});
+
 test("round-trip /configurateur → /resultats : la génération souveraine se retrouve dans les coûts", async ({ page }) => {
   await page.goto("/configurateur");
   for (let i = 0; i < 3; i += 1) {

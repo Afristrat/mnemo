@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
+import { CatalogProvenance } from "@/components/results/CatalogProvenance";
 import { CostMap, type MediaBreakdown } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
@@ -15,8 +16,10 @@ import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
+import { seedCatalog, type Catalog } from "@/lib/catalog";
 import {
   buildEnsemble,
+  decidePreset,
   profileCostFactors,
   recommend,
   type EnsembleVariantId,
@@ -71,6 +74,11 @@ export function ResultsView(): ReactElement {
   // Rendu initial avec le seed sourcé (repli immédiat), puis bascule sur les prix LIVE extraits
   // et réconciliés (S-025) dès que la route serveur répond. Échec/indispo → on reste sur le seed.
   const [prices, setPrices] = useState<MultimodalPriceTable>(() => getMediaPricesEur());
+  // Catalogue de composants vivant (S-037) : la veille (Firecrawl + LLM) côté serveur propose des
+  // candidats sourcés, validés par garde-fou. Rendu initial = seed (repli immédiat), puis recalcul
+  // sur le catalogue live dès que /api/catalog/live répond. Indispo → on reste sur le seed.
+  const [liveCatalog, setLiveCatalog] = useState<Catalog | undefined>(undefined);
+  const [catalogPending, setCatalogPending] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,6 +96,34 @@ export function ResultsView(): ReactElement {
       cancelled = true;
     };
   }, []);
+
+  // Veille catalogue : POST du profil de base → Catalog (un candidat sourcé par couche). La clé
+  // Firecrawl + la clé LLM ne quittent jamais le serveur ; le navigateur ne parle qu'à notre route.
+  useEffect(() => {
+    if (base === null) return;
+    let cancelled = false;
+    setCatalogPending(true);
+    void (async () => {
+      try {
+        const response = await fetch("/api/catalog/live", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(base),
+          cache: "no-store",
+        });
+        if (!response.ok) return;
+        const cat: Catalog = await response.json();
+        if (!cancelled) setLiveCatalog(cat);
+      } catch {
+        /* repli : le seed (catalogue effectif ci-dessous) est déjà en place. */
+      } finally {
+        if (!cancelled) setCatalogPending(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [base]);
 
   useEffect(() => {
     const profile = loadProfile();
@@ -107,17 +143,31 @@ export function ResultsView(): ReactElement {
     return { ...base, volume: VOLUME_ORDER[volIndex], users };
   }, [base, volIndex, users]);
 
+  // Catalogue effectif : le live dès qu'il a répondu, sinon le seed (repli immédiat, sortie identique).
+  const effectiveCatalog = useMemo<Catalog | undefined>(() => {
+    if (liveCatalog !== undefined) return liveCatalog;
+    if (projected === null) return undefined;
+    return seedCatalog(decidePreset(projected).preset, projected);
+  }, [liveCatalog, projected]);
+
   // Prix backup + compute injectés (seed sourcé) → coûts de sauvegarde ET serveurs visibles (CostMap).
+  // Catalogue effectif injecté → la stack reflète la veille (live) ou le repli (seed).
   const result = useMemo(
-    () => (projected === null ? null : recommend(projected, prices, undefined, getBackupPrices(), getComputePrices())),
-    [projected, prices],
+    () =>
+      projected === null
+        ? null
+        : recommend(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices()),
+    [projected, prices, effectiveCatalog],
   );
   const ensemble = useMemo(
-    () => (projected === null ? null : buildEnsemble(projected, prices, undefined, getBackupPrices(), getComputePrices())),
-    [projected, prices],
+    () =>
+      projected === null
+        ? null
+        : buildEnsemble(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices()),
+    [projected, prices, effectiveCatalog],
   );
 
-  if (projected === null || result === null || ensemble === null) {
+  if (projected === null || result === null || ensemble === null || effectiveCatalog === undefined) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
   }
 
@@ -136,6 +186,9 @@ export function ResultsView(): ReactElement {
     activeVariant === null ? null : (ensemble.variants.find((v) => v.id === activeVariant) ?? null);
   const activeProfile = activeVariantData?.profile ?? projected;
   const activeResult = activeVariantData?.recommendation ?? result;
+  // Catalogue figé dans l'export : celui de la recommandation de référence. Les scénarios de
+  // l'ensemble explorent sur leur propre seed → on ne leur attache pas le catalogue vivant.
+  const exportCatalog = activeVariant === null ? effectiveCatalog : undefined;
 
   const factorsCost = profileCostFactors(activeProfile);
   const radarData = activeResult.scores.map((s) => ({ label: SHORT_LABELS[s.key], score: s.score }));
@@ -252,6 +305,9 @@ export function ResultsView(): ReactElement {
         <LayerStack layers={activeResult.layers} />
       </section>
 
+      {/* Provenance des choix de composants (reco vivante : veille Firecrawl + LLM, repli seed) */}
+      <CatalogProvenance catalog={effectiveCatalog} pending={catalogPending && liveCatalog === undefined} />
+
       {/* Coûts */}
       <CostMap
         layers={activeResult.layers}
@@ -306,12 +362,17 @@ export function ResultsView(): ReactElement {
           se relit partout ; le PDF garde les sources cliquables.
         </p>
         <div className="mt-4">
-          <ExportButtons profile={activeProfile} recommendation={activeResult} ensemble={ensemble} />
+          <ExportButtons
+            profile={activeProfile}
+            recommendation={activeResult}
+            ensemble={ensemble}
+            catalog={exportCatalog}
+          />
         </div>
       </Card>
 
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
-      <ExitEscrow profile={activeProfile} recommendation={activeResult} />
+      <ExitEscrow profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
 
       <Link
         href="/configurateur"

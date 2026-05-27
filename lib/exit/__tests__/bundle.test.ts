@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { strFromU8, unzipSync } from "fflate";
-import { recommend, type Profile } from "@/lib/engine";
+import { decidePreset, recommend, type Profile } from "@/lib/engine";
+import { seedCatalog } from "@/lib/catalog";
 import { buildExitBundle } from "@/lib/exit/bundle";
 import { zipBundle } from "@/lib/exit/zip";
 
@@ -125,6 +126,30 @@ describe("Exit Escrow piloté par le BackupPlan (S-029)", () => {
     const bundle = buildExitBundle(PROFILE, reco);
     expect(bundle.files["runbook.md"]).toContain("aucune politique de sauvegarde dimensionnée");
     expect(bundle.files["scripts/backup.sh"]).toContain("aucune sauvegarde planifiée");
+  });
+});
+
+describe("Catalogue retenu figé (S-037)", () => {
+  it("manifest.catalog + catalog.json gèlent composants, provenance et source (rejouable)", () => {
+    const reco = recommend(PROFILE);
+    const catalog = seedCatalog(decidePreset(PROFILE).preset, PROFILE);
+    const bundle = buildExitBundle(PROFILE, reco, new Date("2026-05-25T00:00:00Z"), catalog);
+    expect(Object.keys(bundle.files)).toContain("catalog.json");
+    const m = bundle.manifest.catalog;
+    expect(m).toBeDefined();
+    if (m === undefined) return;
+    expect(m.assembledAt).toBe(catalog.assembledAt);
+    expect(m.source).toBe(catalog.source);
+    expect(m.slots).toHaveLength(7);
+    expect(m.slots[0].component).toBe(catalog.slots.c0.recommended.name);
+    expect(m.slots.every((s) => s.sourceUrl.length > 0)).toBe(true);
+    expect(bundle.files["catalog.json"]).toContain(catalog.slots.c0.recommended.name);
+  });
+
+  it("sans catalogue : pas de catalog.json ni manifest.catalog (rétro-compat)", () => {
+    const bundle = buildExitBundle(PROFILE, recommend(PROFILE));
+    expect(Object.keys(bundle.files)).not.toContain("catalog.json");
+    expect(bundle.manifest.catalog).toBeUndefined();
   });
 });
 

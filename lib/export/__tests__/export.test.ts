@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildEnsemble, recommend, type Profile } from "@/lib/engine";
+import { buildEnsemble, decidePreset, recommend, type Profile } from "@/lib/engine";
+import { seedCatalog } from "@/lib/catalog";
 import { buildDeliverable, DISCLAIMER } from "@/lib/export/model";
 import { renderMarkdown } from "@/lib/export/markdown";
 import { renderPdf, toWinAnsi } from "@/lib/export/pdf";
@@ -51,6 +52,24 @@ describe("buildDeliverable", () => {
     expect(d.sources.length).toBeGreaterThan(0);
     expect(d.sources.every((s) => s.url.startsWith("http"))).toBe(true);
     expect(new Set(d.sources.map((s) => s.url)).size).toBe(d.sources.length);
+  });
+});
+
+describe("buildDeliverable avec catalogue figé (S-037)", () => {
+  it("ajoute la section provenance (7 couches) + les sources du catalogue", () => {
+    const reco = recommend(PROFILE);
+    const catalog = seedCatalog(decidePreset(PROFILE).preset, PROFILE);
+    const d = buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), new Date("2026-05-25T08:00:00Z"), catalog);
+    const section = d.sections.find((s) => s.heading.startsWith("Catalogue retenu"));
+    expect(section).toBeDefined();
+    expect(section?.rows).toHaveLength(7);
+    expect(section?.rows[0].left).toContain(catalog.slots.c0.recommended.name);
+    // La source du catalogue est jointe aux sources cliquables (rejouable).
+    expect(d.sources.some((s) => s.url === catalog.slots.c0.recommended.source.url)).toBe(true);
+  });
+
+  it("sans catalogue : aucune section catalogue (rétro-compat)", () => {
+    expect(deliverable().sections.find((s) => s.heading.startsWith("Catalogue retenu"))).toBeUndefined();
   });
 });
 
