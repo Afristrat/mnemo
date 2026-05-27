@@ -10,6 +10,7 @@ import { EnsembleView } from "@/components/results/EnsembleView";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
 import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
+import { LivePriceStatus } from "@/components/results/LivePriceStatus";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { VerdictView } from "@/components/results/VerdictView";
@@ -18,6 +19,7 @@ import {
   buildEnsemble,
   profileCostFactors,
   recommend,
+  type MultimodalPriceTable,
   type Profile,
   type ScoreKey,
   type Volume,
@@ -59,7 +61,26 @@ export function ResultsView(): ReactElement {
   const [mode, setMode] = useState<"verdict" | "expert">("expert");
 
   // Prix médias réels (€) injectés → coûts multimodaux dans les couches + verdict chiffré.
-  const prices = useMemo(() => getMediaPricesEur(), []);
+  // Rendu initial avec le seed sourcé (repli immédiat), puis bascule sur les prix LIVE extraits
+  // et réconciliés (S-025) dès que la route serveur répond. Échec/indispo → on reste sur le seed.
+  const [prices, setPrices] = useState<MultimodalPriceTable>(() => getMediaPricesEur());
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch("/api/pricing/live", { cache: "no-store" });
+        if (!response.ok) return;
+        const feed: { media?: MultimodalPriceTable } = await response.json();
+        if (!cancelled && feed.media !== undefined) setPrices(feed.media);
+      } catch {
+        /* repli : le seed est déjà en place. */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const profile = loadProfile();
@@ -206,6 +227,9 @@ export function ResultsView(): ReactElement {
         setupCost={result.setupCost}
         media={media}
       />
+
+      {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
+      <LivePriceStatus />
 
       {/* Fraîcheur des prix (price feed Firecrawl) */}
       <PriceFreshness />
