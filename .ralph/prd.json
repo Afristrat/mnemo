@@ -331,7 +331,7 @@
     },
     {
       "id": "S-034", "title": "Fondation LLM plateforme (client proxy LiteLLM + route serveur)", "feature": "llm",
-      "passes": false, "deps": [],
+      "passes": true, "completedAt": "2026-05-27", "deps": [],
       "acceptance": [
         "lib/llm/{types,client}.ts : callLLM(messages, opts) tape le proxy LiteLLM (LITELLM_BASE_URL + LITELLM_API_KEY lus SERVEUR ONLY, jamais NEXT_PUBLIC ni bundle client), fetch injectable, AbortSignal timeout, JAMAIS throw → LlmResult { ok:true, content } | { ok:false, reason }",
         "vérif proxy AVANT code : GET /v1/models répond (clé jamais affichée, preuve = code HTTP + noms modèles) → alias applicatif strate-default ; repli codé si indisponible",
