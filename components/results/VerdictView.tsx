@@ -66,7 +66,7 @@ export function VerdictView({ verdict, preset, onExpert }: VerdictViewProps): Re
         <CostLine
           label="Mise en route (une fois)"
           value={`${verdict.setupCostBand.low} – ${verdict.setupCostBand.high} €`}
-          note="ingestion du backlog existant"
+          note="ingestion du backlog et premier full de sauvegarde"
         />
       </div>
 

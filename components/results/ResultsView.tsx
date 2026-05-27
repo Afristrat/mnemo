@@ -24,6 +24,7 @@ import {
   type ScoreKey,
   type Volume,
 } from "@/lib/engine";
+import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { VOLUME_OPTIONS } from "@/lib/wizard/options";
@@ -101,8 +102,15 @@ export function ResultsView(): ReactElement {
     return { ...base, volume: VOLUME_ORDER[volIndex], users };
   }, [base, volIndex, users]);
 
-  const result = useMemo(() => (projected === null ? null : recommend(projected, prices)), [projected, prices]);
-  const ensemble = useMemo(() => (projected === null ? null : buildEnsemble(projected, prices)), [projected, prices]);
+  // Prix backup injectés (seed sourcé) → le coût de sauvegarde est visible dans les couches/CostMap.
+  const result = useMemo(
+    () => (projected === null ? null : recommend(projected, prices, undefined, getBackupPrices())),
+    [projected, prices],
+  );
+  const ensemble = useMemo(
+    () => (projected === null ? null : buildEnsemble(projected, prices, undefined, getBackupPrices())),
+    [projected, prices],
+  );
 
   if (projected === null || result === null || ensemble === null) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
@@ -227,6 +235,7 @@ export function ResultsView(): ReactElement {
         totalCost={result.totalCost}
         setupCost={result.setupCost}
         media={media}
+        backup={result.backup}
       />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}

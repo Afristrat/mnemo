@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatusDot } from "@/components/ui/StatusDot";
-import { costBand, type ActiveModule, type GpuTier, type Layer } from "@/lib/engine";
+import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer } from "@/lib/engine";
 import { pricingForLayer } from "@/lib/pricing/sources";
 
 /** Décomposition de l'apport multimédia (déjà inclus dans les couches C4/C5/C6), pour la transparence. */
@@ -23,14 +23,17 @@ type CostMapProps = {
   setupCost?: number;
   /** Décomposition multimédia (déjà comprise dans les couches), pastilles 🟢 souverain / 💳 API. */
   media?: MediaBreakdown;
+  /** Plan de sauvegarde (coût récurrent déjà compris dans C6) — ligne backup + sources (S-031). */
+  backup?: BackupPlan;
 };
 
 /** Carte de coûts transparente : chaque poste avec confiance + source datée, total avec bande ±30 %. */
-export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media }: CostMapProps): ReactElement {
+export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup }: CostMapProps): ReactElement {
   const band = costBand(totalCost);
   const setupBand = costBand(setupCost);
   const hasMedia =
     media !== undefined && (media.gpuCost > 0 || media.storageCost > 0 || media.embeddingsCost > 0 || media.apiLines.length > 0);
+  const hasBackup = backup !== undefined && backup.criticality !== "none" && backup.monthlyCost > 0;
 
   return (
     <Card>
@@ -125,6 +128,43 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
         </div>
       ) : null}
 
+      {hasBackup && backup !== undefined ? (
+        <div className="mt-4 rounded-card bg-surface-container p-3">
+          <p className="text-label-caps uppercase text-on-surface-variant">
+            Sauvegarde &amp; résilience <span className="normal-case">(déjà comprise dans C6)</span>
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            <li className="flex items-center justify-between gap-3 text-body-sm">
+              <span>
+                🟢 Plan « {backup.criticality} » : {backup.copies} copies
+                {backup.offsite ? ", hors-site" : ""}
+                {backup.airgap ? ", air-gap" : ""}
+                {backup.immutable ? ", immuable" : ""} · rétention {backup.retentionDays} j · vecteurs {backup.vector.strategy}
+              </span>
+              <span className="font-mono text-on-surface">{Math.round(backup.monthlyCost)} €/mois</span>
+            </li>
+          </ul>
+          {backup.costSources.length > 0 ? (
+            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-body-sm">
+              {backup.costSources.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary underline decoration-dotted"
+                >
+                  {s.label} ({s.checkedAt})
+                </a>
+              ))}
+            </p>
+          ) : null}
+          <p className="mt-2 text-body-sm text-on-surface-variant">
+            Effacement : {backup.erasurePolicy === "crypto-shred" ? "crypto-shred (destruction de clé)" : "expiration de la rétention"}. Orientation d’ingénierie, pas un avis juridique.
+          </p>
+        </div>
+      ) : null}
+
       <div className="mt-4 flex items-center justify-between border-t border-outline-variant pt-4">
         <span className="font-display font-semibold text-on-surface">Total estimé (récurrent)</span>
         <span className="text-right">
@@ -137,7 +177,10 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
 
       {setupCost > 0 ? (
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-body-sm text-on-surface-variant">Mise en route (une fois), ingestion du backlog</span>
+          <span className="text-body-sm text-on-surface-variant">
+            Mise en route (une fois), ingestion du backlog
+            {backup !== undefined && backup.setupCost > 0 ? " + premier full de sauvegarde" : ""}
+          </span>
           <span className="text-right">
             <span className="block font-mono text-body-md text-on-surface">{setupCost} €</span>
             <span className="block font-mono text-body-sm text-on-surface-variant">

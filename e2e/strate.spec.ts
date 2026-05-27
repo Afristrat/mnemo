@@ -30,6 +30,22 @@ test("bloc Médias : génération vidéo souveraine → budget rouge + levier", 
   await expect(page.getByText(/Levier/)).toBeVisible();
 });
 
+test("profil critique régulé → ligne backup + radar 9 axes + érasure crypto-shred", async ({ page }) => {
+  await page.goto("/configurateur");
+  // Bloc ① : sensibilité « secret » → surcharge conformité (crypto-shred + immutable).
+  await page.getByRole("button", { name: /Secret/ }).click();
+  // Bloc ② Infra (1 « Suivant ») : section Sauvegarde → criticité « Critique ».
+  await page.getByRole("button", { name: "Suivant" }).click();
+  await page.getByRole("button", { name: /Critique/ }).click();
+
+  await page.goto("/resultats");
+  // CostMap : la ligne backup reflète le plan critique + l'érasure crypto-shred (régulé).
+  await expect(page.getByText(/Plan « critical »/)).toBeVisible();
+  await expect(page.getByText(/crypto-shred/)).toBeVisible();
+  // Radar passé à 9 axes (dimension resilience).
+  await expect(page.getByRole("img", { name: /Radar des 9 dimensions/ })).toBeVisible();
+});
+
 test("round-trip /configurateur → /resultats : la génération souveraine se retrouve dans les coûts", async ({ page }) => {
   await page.goto("/configurateur");
   for (let i = 0; i < 3; i += 1) {
