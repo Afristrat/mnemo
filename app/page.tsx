@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactElement } from "react";
+import { IntakeField } from "@/components/intake/IntakeField";
 import { QuickProfileForm } from "@/components/quick-profile/QuickProfileForm";
 
 // Homepage de vente Strate, portage du brouillon validé en sparring (homepage-draft.html,
@@ -328,8 +329,14 @@ export default function Home(): ReactElement {
               ferme et la marche à suivre.
             </p>
           </div>
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-6">
             <QuickProfileForm />
+            <div className="flex w-full max-w-2xl items-center gap-3 text-body-sm text-on-surface-variant">
+              <span className="h-px flex-1 bg-outline-variant" />
+              <span className="uppercase tracking-widest">ou en langage naturel</span>
+              <span className="h-px flex-1 bg-outline-variant" />
+            </div>
+            <IntakeField />
           </div>
         </section>
 

@@ -46,6 +46,17 @@ test("profil critique régulé → ligne backup + radar 9 axes + érasure crypto
   await expect(page.getByRole("img", { name: /Radar des 9 dimensions/ })).toBeVisible();
 });
 
+test("intake libre : décrire son besoin pré-remplit le configurateur", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel(/décrivez votre besoin/i).fill(
+    "cabinet d'avocats, 8 personnes, dossiers clients confidentiels, hébergement en France",
+  );
+  await page.getByRole("button", { name: /Analyser et pré-remplir/ }).click();
+  // Repli garanti (profil par défaut si LLM indispo) → la navigation vers le configurateur a lieu.
+  await expect(page).toHaveURL(/\/configurateur/, { timeout: 35000 });
+  await expect(page.getByRole("heading", { name: /Quelle infrastructure/ })).toBeVisible();
+});
+
 test("reco vivante : la provenance des choix techniques est affichée (repli seed immédiat)", async ({ page }) => {
   await page.goto("/resultats");
   await expect(page.getByText("Provenance des choix techniques")).toBeVisible();
