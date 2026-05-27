@@ -233,7 +233,7 @@
     },
     {
       "id": "S-024", "title": "E2E parcours Strate + nettoyage code mort", "feature": "refonte",
-      "passes": false, "deps": ["S-020", "S-021", "S-022", "S-023", "S-013"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-020", "S-021", "S-022", "S-023", "S-013"],
       "acceptance": [
         "e2e (desktop + mobile) : 90 s → verdict ; wizard 4 blocs → expert ; bloc Médias génération vidéo souveraine → budget rouge + levier",
         "round-trip /configurateur ↔ /resultats (cohérence localStorage)",
