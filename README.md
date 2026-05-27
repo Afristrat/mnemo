@@ -42,7 +42,7 @@ npx supabase db reset # (ré)applique les migrations (schéma + RLS)
 ## Parcours
 
 `/` → `/configurateur` (wizard 6 étapes, 16 paramètres) → `/resultats` (stack 7 couches,
-radar 8 dimensions, carte de coûts sourcée, ensemble d'incertitude, export MD/PDF, bundle
+radar 9 dimensions, carte de coûts sourcée, ensemble d'incertitude, export MD/PDF, bundle
 Exit Escrow) · `/fiduciaire` (charte : zéro commission cachée).
 
 ## Qualité

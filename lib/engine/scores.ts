@@ -1,14 +1,71 @@
-import type { Preset, Profile, ScoreDimension } from "./types";
+import { type BackupCore, deriveBackupPlan } from "./backup";
+import type { BackupCriticality, Preset, Profile, ScoreDimension } from "./types";
 
 function hasMultimodal(p: Profile): boolean {
   return p.contentTypes.some((t) => t === "audio" || t === "video" || t === "images");
 }
 
+const CRITICALITY_LABEL: Record<BackupCriticality, string> = {
+  none: "aucune",
+  standard: "standard",
+  high: "élevée",
+  critical: "critique",
+};
+
+const RESILIENCE_BASE: Record<BackupCriticality, number> = { none: 1, standard: 5, high: 7, critical: 8 };
+
 /**
- * Score les 8 dimensions (avant bonus modules). Fonction pure.
- * Porté du simulateur v2, règles déterministes calibrées sur les convergences cohorte.
+ * 9ᵉ dimension `resilience` (spec n°1 §8). Pure, dérivée du `BackupCore` (criticité + 3-2-1-1-0 +
+ * restauration testée + immutabilité + érasure conforme), avec **pénalité** si RPO/RTO sont incohérents
+ * avec la criticité déclarée (override expert trop laxiste). Synergie « Plan de panne » = pendant
+ * opérationnel (non scoré ici, le module reste indépendant). Échelle 0-10.
  */
-export function computeScores(preset: Preset, p: Profile, totalCost: number): ScoreDimension[] {
+function resilienceScore(core: BackupCore): { score: number; why: string } {
+  if (core.criticality === "none") {
+    return {
+      score: RESILIENCE_BASE.none,
+      why: "Aucune sauvegarde modélisée — risque de perte de données et de non-conformité. Définissez une criticité dans le Bloc ② Infra.",
+    };
+  }
+
+  let s = RESILIENCE_BASE[core.criticality];
+  if (core.threeTwoOne.copies >= 3) s += 0.5;
+  if (core.offsite) s += 0.5;
+  if (core.airgap) s += 0.5;
+  if (core.immutable) s += 0.5;
+  if (core.restoreTestsPerYear > 0) s += 1;
+  if (core.erasurePolicy === "crypto-shred") s += 0.5;
+
+  // Pénalité : RPO/RTO relâchés au-delà de ce qu'implique la criticité affichée (incohérence expert).
+  const incoherent =
+    (core.criticality === "critical" && (core.rpoMinutes > 60 || core.rtoMinutes > 120)) ||
+    (core.criticality === "high" && (core.rpoMinutes > 240 || core.rtoMinutes > 480));
+  if (incoherent) s -= 2;
+
+  const score = Math.max(0, Math.min(10, s));
+  const parts = [`${core.copies} copie${core.copies > 1 ? "s" : ""}`];
+  if (core.offsite) parts.push("hors-site");
+  if (core.airgap) parts.push("air-gap");
+  if (core.immutable) parts.push("immuable (WORM)");
+  const why = `Criticité « ${CRITICALITY_LABEL[core.criticality]} » : ${parts.join(", ")}. Restauration ${
+    core.restoreTestsPerYear > 0 ? `testée ${core.restoreTestsPerYear}×/an` : "non testée"
+  }${core.erasurePolicy === "crypto-shred" ? ", érasure crypto-shred" : ""}.${
+    incoherent ? " ⚠️ RPO/RTO incohérents avec la criticité déclarée." : ""
+  }`;
+  return { score, why };
+}
+
+/**
+ * Score les 9 dimensions (avant bonus modules). Fonction pure.
+ * Porté du simulateur v2, règles déterministes ; 9ᵉ dimension `resilience` ajoutée en S-027.
+ * `backupCore` est INJECTÉ (défaut = dérivé du profil) — recommend passe le core déjà calculé (S-028).
+ */
+export function computeScores(
+  preset: Preset,
+  p: Profile,
+  totalCost: number,
+  backupCore: BackupCore = deriveBackupPlan(p),
+): ScoreDimension[] {
   const wantsMultimodal = hasMultimodal(p);
 
   // 1. Conformité
@@ -51,6 +108,7 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
 
   const regCount = p.regulations.filter((r) => r !== "none").length;
   const multimodalTypes = p.contentTypes.filter((t) => t === "audio" || t === "video" || t === "images");
+  const resilience = resilienceScore(backupCore);
 
   return [
     {
@@ -102,6 +160,12 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
       label: "Coût opérationnel mensuel",
       score: cost,
       why: `≈ ${totalCost} €/mois. ${cost >= 8 ? "Très soutenable." : cost >= 6 ? "Soutenable, surveiller la croissance." : "Investissement notable, vérifier ROI."}`,
+    },
+    {
+      key: "resilience",
+      label: "Résilience & sauvegarde (RPO/RTO, 3-2-1-1-0, restauration testée)",
+      score: resilience.score,
+      why: resilience.why,
     },
   ];
 }

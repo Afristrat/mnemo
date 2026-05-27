@@ -76,7 +76,7 @@ describe("recommend, défaut neutre (moteur pur, sans prix injectés)", () => {
     // verdict toujours rempli
     expect(r.verdict.firmPriceTier).toContain("[PLACEHOLDER]");
     expect(r.layers).toHaveLength(7);
-    expect(r.scores).toHaveLength(8);
+    expect(r.scores).toHaveLength(9);
   });
 });
 

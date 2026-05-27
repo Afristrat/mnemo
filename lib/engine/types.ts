@@ -169,8 +169,11 @@ export type BackupPlan = {
   costSources: CostSource[]; // DÉFCON 1
 };
 
-/** Clés des 8 dimensions de scoring (ordre stable). `resilience` (9ᵉ) arrive en S-027 (refonte 8→9). */
-export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost"] as const;
+/**
+ * Clés des 9 dimensions de scoring (ordre stable). `resilience` (9ᵉ) ajoutée en S-027 (refonte 8→9) :
+ * pilotée par le `BackupPlan` (criticité, 3-2-1-1-0, restauration testée, immutabilité, érasure).
+ */
+export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost", "resilience"] as const;
 export type ScoreKey = (typeof SCORE_KEYS)[number];
 
 export type Profile = {

@@ -263,7 +263,7 @@
     },
     {
       "id": "S-027", "title": "Scoring : 9ᵉ dimension resilience (refonte 8→9)", "feature": "backup",
-      "passes": false, "deps": ["S-015"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015"],
       "acceptance": [
         "SCORE_KEYS contient resilience (9 entrées) ; computeScores retourne 9 dimensions ; RadarChart rend 9 axes",
         "dimension resilience selon rubrique §8 (criticité, 3-2-1-1-0, tests, immutabilité, érasure ; pénalité RPO/RTO incohérents)",

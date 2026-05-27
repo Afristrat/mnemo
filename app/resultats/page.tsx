@@ -4,7 +4,7 @@ import { ResultsView } from "@/components/results/ResultsView";
 export const metadata: Metadata = {
   title: "Recommandation, Strate",
   description:
-    "Votre stack de base mémorielle souveraine recommandée : 7 couches, radar 8 dimensions et carte de coûts sourcée.",
+    "Votre stack de base mémorielle souveraine recommandée : 7 couches, radar 9 dimensions et carte de coûts sourcée.",
 };
 
 export default function ResultatsPage() {
