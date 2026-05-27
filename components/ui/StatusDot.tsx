@@ -25,7 +25,7 @@ export function StatusDot({
   const meta = CONFIDENCE_META[confidence];
   return (
     <span className={cn("inline-flex items-center gap-1.5", className)}>
-      <span className={cn("h-2.5 w-2.5 rounded-full", meta.dot)} aria-hidden="true" />
+      <span className={cn("h-2.5 w-2.5 rounded-full", meta.dot)} aria-hidden="true" title={`Confiance : ${meta.label}`} />
       {showLabel ? (
         <span className="text-body-sm text-on-surface-variant">{meta.label}</span>
       ) : (

@@ -43,6 +43,11 @@ export function BudgetMeter({ totalCost, budget, sizing, backupMonthlyCost = 0, 
         </div>
       ) : null}
       <p className={cn("mt-2 text-body-sm font-medium", meta.text)}>{meta.label}</p>
+      {status === "over" && !unbounded ? (
+        <p className="text-body-sm text-error">
+          ≈ {totalCost - ceiling} € au-dessus du plafond de {ceiling} € (coût d’infra, pas le prix de vente).
+        </p>
+      ) : null}
       {status !== "ok" ? (
         <div className="mt-1 space-y-1 text-body-sm text-on-surface-variant">
           <p>

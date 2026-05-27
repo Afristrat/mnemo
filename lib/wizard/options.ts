@@ -33,17 +33,17 @@ export const ZONE_OPTIONS: Option<Zone>[] = [
 ];
 
 export const VOLUME_OPTIONS: Option<Volume>[] = [
-  { value: "lt1", label: "< 1 Go" },
-  { value: "1to10", label: "1 – 10 Go" },
-  { value: "10to100", label: "10 – 100 Go" },
-  { value: "100to1000", label: "100 Go – 1 To" },
-  { value: "gt1000", label: "> 1 To" },
+  { value: "lt1", label: "< 1 Go", hint: "≈ centaines de documents" },
+  { value: "1to10", label: "1 – 10 Go", hint: "≈ milliers de documents" },
+  { value: "10to100", label: "10 – 100 Go", hint: "≈ dizaines de milliers" },
+  { value: "100to1000", label: "100 Go – 1 To", hint: "gros corpus / médias" },
+  { value: "gt1000", label: "> 1 To", hint: "très gros corpus multimédia" },
 ];
 
 export const GROWTH_OPTIONS: Option<Growth>[] = [
-  { value: "low", label: "Faible" },
-  { value: "medium", label: "Modérée" },
-  { value: "high", label: "Forte" },
+  { value: "low", label: "Faible", hint: "stable, peu d'ajouts" },
+  { value: "medium", label: "Modérée", hint: "croissance régulière" },
+  { value: "high", label: "Forte", hint: "montée en charge rapide" },
 ];
 
 export const CONTENT_TYPE_OPTIONS: Option<ContentType>[] = [
@@ -65,10 +65,10 @@ export const REGULATION_OPTIONS: Option<Regulation>[] = [
 ];
 
 export const SENSITIVITY_OPTIONS: Option<Sensitivity>[] = [
-  { value: "public", label: "Public" },
-  { value: "internal", label: "Interne" },
-  { value: "confidential", label: "Confidentiel" },
-  { value: "secret", label: "Secret / ultra-sensible" },
+  { value: "public", label: "Public", hint: "Diffusable sans risque" },
+  { value: "internal", label: "Interne", hint: "Circule en interne, fuite gênante" },
+  { value: "confidential", label: "Confidentiel", hint: "Accès restreint, fuite dommageable" },
+  { value: "secret", label: "Secret / ultra-sensible", hint: "Fuite critique (secret pro, santé, défense)" },
 ];
 
 export const TECH_LEVEL_OPTIONS: Option<TechLevel>[] = [
