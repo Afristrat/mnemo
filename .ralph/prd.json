@@ -465,7 +465,7 @@
     },
     {
       "id": "S-050", "title": "Récap des choix sous le budget-mètre (toutes les options + valeur effective)", "feature": "refonte",
-      "passes": false, "deps": ["S-019", "S-020"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-019", "S-020"],
       "acceptance": [
         "panneau récap (déterministe, pur) sous le BudgetMeter : tous les champs du profil avec leur valeur EFFECTIVE (libellés FR, valeur dérivée pour backup/preset, modules actifs, médias)",
         "indique explicitement les options sans impact sur le coût (transparence DÉFCON 1) ; pas d'invention",
