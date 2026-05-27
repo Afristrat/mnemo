@@ -86,8 +86,46 @@ describe("computeScores", () => {
     expect(dims.find((d) => d.key === "audit")?.score).toBe(10);
   });
 
-  it("retourne toujours les 8 dimensions", () => {
-    expect(computeScores("MEDIUM", baseProfile(), 100)).toHaveLength(8);
+  it("retourne toujours les 9 dimensions", () => {
+    expect(computeScores("MEDIUM", baseProfile(), 100)).toHaveLength(9);
+  });
+});
+
+describe("computeScores — résilience (9ᵉ dimension, S-027)", () => {
+  function resilienceOf(profile: Profile): number {
+    const dim = computeScores("MEDIUM", profile, 100).find((d) => d.key === "resilience");
+    if (dim === undefined) throw new Error("dimension resilience introuvable");
+    return dim.score;
+  }
+
+  it("croît strictement avec la criticité (none < standard < high < critical)", () => {
+    const none = resilienceOf(baseProfile()); // pas de backup => criticité none
+    const standard = resilienceOf(baseProfile({ backup: { criticality: "standard" } }));
+    const high = resilienceOf(baseProfile({ backup: { criticality: "high" } }));
+    const critical = resilienceOf(baseProfile({ backup: { criticality: "critical" } }));
+    expect(none).toBeLessThan(standard);
+    expect(standard).toBeLessThan(high);
+    expect(high).toBeLessThan(critical);
+  });
+
+  it("absence de backup => score plancher + libellé d'alerte (pas de sauvegarde)", () => {
+    const dim = computeScores("MEDIUM", baseProfile(), 100).find((d) => d.key === "resilience");
+    expect(dim?.score).toBe(1);
+    expect(dim?.why).toMatch(/Aucune sauvegarde/i);
+  });
+
+  it("pénalise un RPO incohérent avec la criticité déclarée (override expert laxiste)", () => {
+    const coherent = resilienceOf(baseProfile({ backup: { criticality: "critical" } }));
+    const incoherent = resilienceOf(baseProfile({ backup: { criticality: "critical", rpoMinutes: 1440 } }));
+    expect(incoherent).toBeLessThan(coherent);
+  });
+
+  it("la surcharge conformité (secret) renforce la résilience (crypto-shred + immutable)", () => {
+    const base = resilienceOf(baseProfile({ backup: { criticality: "standard" } }));
+    const secret = resilienceOf(
+      baseProfile({ sensitivity: "secret", backup: { criticality: "standard" } }),
+    );
+    expect(secret).toBeGreaterThanOrEqual(base);
   });
 });
 
@@ -108,7 +146,7 @@ describe("recommend", () => {
     for (const preset of PRESET_PROFILES) {
       const r = recommend(preset.profile);
       expect(r.layers).toHaveLength(7);
-      expect(r.scores).toHaveLength(8);
+      expect(r.scores).toHaveLength(9);
       expect(PRESETS).toContain(r.preset);
       expect(r.totalCost).toBeGreaterThan(0);
       expect(r.scoreAvg).toBeGreaterThanOrEqual(0);

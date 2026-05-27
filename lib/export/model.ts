@@ -102,7 +102,7 @@ export function buildDeliverable(
   };
 
   const scores: DeliverableSection = {
-    heading: "Scores (8 dimensions)",
+    heading: "Scores (9 dimensions)",
     bullets: [],
     rows: reco.scores.map((s) => ({ left: s.label, right: `${s.score}/10` })),
   };

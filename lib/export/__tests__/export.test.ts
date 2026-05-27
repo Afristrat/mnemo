@@ -37,7 +37,7 @@ describe("buildDeliverable", () => {
       expect.arrayContaining([
         "Profil",
         "Stack recommandée (7 couches)",
-        "Scores (8 dimensions)",
+        "Scores (9 dimensions)",
         "Carte de coûts",
         "Ensemble de configurations (incertitude)",
       ]),
