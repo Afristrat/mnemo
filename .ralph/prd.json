@@ -353,7 +353,7 @@
     },
     {
       "id": "S-036", "title": "Veille temps réel catalogue (Firecrawl + LLM) + garde-fou + audit trail RLS", "feature": "llm",
-      "passes": false, "deps": ["S-034", "S-035"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-034", "S-035"],
       "acceptance": [
         "lib/catalog/live-catalog.ts : assembleLiveCatalog(profile, deps) par slot (recherche web Firecrawl + callLLM → ComponentCandidate[] → reconcileCatalog), parallélisé, repli seed total si indispo",
         "filtre contraintes dures (secret ⇒ pas d'api-third-party) ; cache.ts TTL court (now injectable) ne relance pas une requête identique",

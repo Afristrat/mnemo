@@ -6,6 +6,8 @@ import { seedCatalog } from "@/lib/catalog/catalog-seed";
 import { assembleLiveCatalog, proposeForSlotLive, type ProposeForSlot } from "@/lib/catalog/live-catalog";
 import type { CatalogSlot, ComponentCandidate, SlotId } from "@/lib/catalog/types";
 
+const SLOT_IDS: readonly SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
+
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
@@ -70,6 +72,30 @@ describe("assembleLiveCatalog (orchestration, S-036)", () => {
     expect(cat.source).toBe("mixed");
     expect(cat.slots.c4.recommended.provenance).toBe("live");
     expect(cat.slots.c2.recommended.provenance).toBe("seed");
+  });
+
+  it("profil secret + candidat api-third-party → rejeté (flagged), aucune API tierce retenue (DÉFCON 1)", async () => {
+    const apiCand: ProposeForSlot = async (slot, _p, seedSlot) => ({
+      name: `Api-${slot}`,
+      role: seedSlot.recommended.role,
+      sovereignty: "api-third-party",
+      source: { label: "web", url: `https://vendor.example/${slot}`, checkedAt: "2026-05-27" },
+      confidence: "medium",
+      provenance: "live",
+    });
+    const cat = await assembleLiveCatalog(prof({ sensitivity: "secret" }), { proposeForSlot: apiCand });
+    for (const id of SLOT_IDS) {
+      expect(cat.slots[id].recommended.provenance).toBe("flagged"); // garde-fou : repli seed
+      expect(cat.slots[id].recommended.name).not.toBe(`Api-${id}`); // le candidat API n'est pas retenu
+    }
+  });
+
+  it("invariant DÉFCON 1 : tout composant recommandé porte une source (URL non vide)", async () => {
+    const live: ProposeForSlot = async (slot, _p, seedSlot) => liveCand(slot, seedSlot.recommended.role);
+    const cat = await assembleLiveCatalog(prof(), { proposeForSlot: live });
+    for (const id of SLOT_IDS) {
+      expect(cat.slots[id].recommended.source.url.trim().length).toBeGreaterThan(0);
+    }
   });
 });
 

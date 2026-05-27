@@ -9,3 +9,4 @@ export type {
 } from "./types";
 export { seedCatalog } from "./catalog-seed";
 export { reconcileCatalog } from "./reconcile";
+export { buildCatalogObservations } from "./observation";
