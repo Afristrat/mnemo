@@ -1,3 +1,5 @@
+import { seedCatalog } from "@/lib/catalog/catalog-seed";
+import type { Catalog, CatalogSlot, SlotId } from "@/lib/catalog/types";
 import type { Layer, Preset, Profile } from "./types";
 
 const COLORS = ["#312e81", "#4338ca", "#6366f1", "#8b5cf6", "#a855f7", "#d946ef", "#ec4899"] as const;
@@ -6,93 +8,73 @@ function hasMultimodal(profile: Profile): boolean {
   return profile.contentTypes.some((t) => t === "audio" || t === "video" || t === "images");
 }
 
-/** Construit la stack 7 couches (C0→C6) selon le preset et le profil. */
-export function buildLayers(preset: Preset, profile: Profile): Layer[] {
+/** Reconstruit la chaîne d'alternatives d'une couche depuis les candidats du catalogue. */
+function altString(slot: CatalogSlot): string {
+  return slot.alternatives.map((a) => a.name).join(", ");
+}
+
+/**
+ * Construit la stack 7 couches (C0→C6) selon le preset et le profil. Les CHOIX (choice/note/
+ * alternatives) viennent du `catalog` injecté (défaut = seed daté = transposition de l'historique
+ * `layers.ts`) ; les identifiants, noms de couche, couleurs et **coûts** restent calculés ici (le
+ * catalogue ne porte pas les coûts — DÉFCON 1, ils viennent du feed/dimensionnement). Reco vivante
+ * (spec n°3) : S-036 injecte un catalogue live ; le défaut seed garantit une sortie **identique**
+ * à l'historique (déterminisme préservé).
+ */
+export function buildLayers(
+  preset: Preset,
+  profile: Profile,
+  catalog: Catalog = seedCatalog(preset, profile),
+): Layer[] {
   const wantsMultimodal = hasMultimodal(profile);
   const wantsBitemporal = profile.bitemporal;
+  const s = (id: SlotId): CatalogSlot => catalog.slots[id];
 
   const c0: Layer = {
     id: 0,
     name: "Contrat commun (frontmatter YAML)",
     color: COLORS[0],
-    choice: "Frontmatter universel Xavier v1.0.0",
+    choice: s("c0").recommended.name,
     cost: 0,
-    note: "JSON Schema, triple validation, champ circle pivot RLS",
-    alternatives: "Schema custom (déconseillé)",
+    note: s("c0").recommended.note ?? "",
+    alternatives: altString(s("c0")),
   };
 
   const c1: Layer = {
     id: 1,
     name: "Surface utilisateur (MCP)",
     color: COLORS[1],
-    choice:
-      preset === "LIGHT"
-        ? "Claude Desktop (abonnement Pro 20$/mois)"
-        : preset === "HARD"
-          ? "Claude Desktop + Anthropic Workbench (audit)"
-          : "Claude Desktop + Claude Code",
+    choice: s("c1").recommended.name,
     cost: preset === "LIGHT" ? 20 : preset === "HARD" ? 100 : 40,
-    note: "MCP-first : Claude comme surface unique (pas d'UI custom à maintenir)",
-    alternatives: "UI custom React (effort dev), ChatGPT (non recommandé : pas de MCP)",
+    note: s("c1").recommended.note ?? "",
+    alternatives: altString(s("c1")),
   };
 
   const c2: Layer = {
     id: 2,
     name: "Orchestrateur RAG (+ cascade LLM)",
     color: COLORS[2],
-    choice:
-      preset === "LIGHT"
-        ? "LangChain ou LlamaIndex (Python) sans cascade"
-        : preset === "MEDIUM"
-          ? "LiteLLM self-host + cascade T1→T2 (V1+ recommandé)"
-          : "LiteLLM + vLLM on-prem + cascade T1→T2 stricte",
+    choice: s("c2").recommended.name,
     cost: 0,
-    note:
-      preset === "LIGHT"
-        ? "open-source ; LLM API direct"
-        : preset === "MEDIUM"
-          ? "T1 = Mistral Small, T2 = Claude Sonnet sur escalade"
-          : "T1 = Qwen3-4B local, T2 = Qwen3-30B local",
-    alternatives: preset === "LIGHT" ? "Haystack, DSPy" : preset === "MEDIUM" ? "OpenRouter, Portkey" : "SGLang, TGI",
+    note: s("c2").recommended.note ?? "",
+    alternatives: altString(s("c2")),
   };
 
   const c3: Layer = {
     id: 3,
     name: "Retrieval + reranking",
     color: COLORS[3],
-    choice:
-      preset === "LIGHT"
-        ? "Qdrant Cloud (free tier) ou pgvector simple"
-        : preset === "MEDIUM"
-          ? "Qdrant self-host + hybride dense/sparse + BGE-Reranker-v2"
-          : "Qdrant on-prem air-gapped + BGE-Reranker v2.5",
+    choice: s("c3").recommended.name,
     cost: 0,
-    note:
-      preset === "LIGHT"
-        ? "dense uniquement ; pas de reranker"
-        : preset === "MEDIUM"
-          ? "score composite cosine × cognitive_weight × freshness (V1+)"
-          : "isolé du net, audit trail sur chaque query",
-    alternatives:
-      preset === "LIGHT" ? "Pinecone, Weaviate Cloud" : preset === "MEDIUM" ? "Vespa, Marqo" : "ElasticSearch + RankZephyr",
+    note: s("c3").recommended.note ?? "",
+    alternatives: altString(s("c3")),
   };
 
   const c4: Layer = {
     id: 4,
     name: "Embeddings" + (wantsMultimodal ? " multimodaux" : ""),
     color: COLORS[4],
-    choice:
-      preset === "LIGHT"
-        ? wantsMultimodal
-          ? "Voyage-Multimodal-3 API"
-          : "Mistral embed API"
-        : preset === "MEDIUM"
-          ? wantsMultimodal
-            ? "LCO-Embedding-Omni-7B local (GPU)"
-            : "BGE-M3 local (Ollama)"
-          : wantsMultimodal
-            ? "Qwen3-Embed-7B + Whisper large-v3 (audio)"
-            : "Qwen3-Embed-7B local",
+    choice: s("c4").recommended.name,
     cost:
       preset === "LIGHT"
         ? wantsMultimodal
@@ -105,72 +87,28 @@ export function buildLayers(preset: Preset, profile: Profile): Layer[] {
           : wantsMultimodal
             ? 200
             : 100,
-    note:
-      preset === "LIGHT"
-        ? "API SaaS, simple"
-        : preset === "MEDIUM"
-          ? "self-host, contrôle total"
-          : "GPU H100/A100 loué ou on-prem",
-    alternatives:
-      preset === "LIGHT"
-        ? "OpenAI text-embedding-3, Cohere"
-        : preset === "MEDIUM"
-          ? "NV-Embed-v2, Stella"
-          : "InternLM-Embed, GTE",
+    note: s("c4").recommended.note ?? "",
+    alternatives: altString(s("c4")),
   };
 
   const c5: Layer = {
     id: 5,
     name: "Stockage polyglotte" + (wantsBitemporal ? " bitemporel" : ""),
     color: COLORS[5],
-    choice:
-      preset === "LIGHT"
-        ? wantsBitemporal
-          ? "Postgres 16 + pgvector + colonnes valid_from/recorded_at"
-          : "Postgres 16 + pgvector (Supabase free tier)"
-        : preset === "MEDIUM"
-          ? profile.bitemporal
-            ? "Postgres + Apache AGE (option Amine ADR-011) OU Graphiti+Neo4j"
-            : "Postgres + pgvector + Graphiti (option Meydeey)"
-          : "XTDB + Graphiti hybride (option C Chris) OU Postgres+AGE on-prem",
+    choice: s("c5").recommended.name,
     cost: preset === "LIGHT" ? (wantsBitemporal ? 10 : 0) : preset === "MEDIUM" ? 15 : 40,
-    note:
-      preset === "LIGHT"
-        ? "vault markdown source de vérité (Amine) recommandé"
-        : preset === "MEDIUM"
-          ? "vault markdown source de vérité + projections rejouables"
-          : "fact-store bitemporel natif, audit signé PL/pgSQL",
-    alternatives:
-      preset === "LIGHT"
-        ? "SQLite + Chroma (déconseillé production)"
-        : preset === "MEDIUM"
-          ? "XTDB hybride (option Chris), DuckDB+VSS"
-          : "Datomic Pro, TerminusDB",
+    note: s("c5").recommended.note ?? "",
+    alternatives: altString(s("c5")),
   };
 
   const c6: Layer = {
     id: 6,
     name: "Infra (LLM Gateway + inference + backup)",
     color: COLORS[6],
-    choice:
-      preset === "LIGHT"
-        ? "Mistral La Plateforme (API directe) + Scaleway FR (VPS €10) + Restic vers Backblaze B2"
-        : preset === "MEDIUM"
-          ? "Mistral + escalade Claude Sonnet via LiteLLM + Hetzner CX31 + Backup 3-2-1 (B2 + Scaleway)"
-          : "vLLM on-prem (Qwen3-30B) + escalade Sonnet sources publiques + on-prem Hetzner dedicated + LUKS/Tang/Clevis",
+    choice: s("c6").recommended.name,
     cost: preset === "LIGHT" ? 30 : preset === "MEDIUM" ? 100 : 400,
-    note:
-      preset === "LIGHT"
-        ? "tout managé, démarrage en 2h"
-        : preset === "MEDIUM"
-          ? "souveraineté UE/FR, cascade T1/T2 économise ~70 % LLM"
-          : "souveraineté N4 + backup multi-continental P4 (Meydeey)",
-    alternatives:
-      preset === "LIGHT"
-        ? "OpenAI API + OVH Public Cloud"
-        : preset === "MEDIUM"
-          ? "OVHcloud + Scaleway IA"
-          : "OVHcloud Bare Metal + GPU AMD MI300",
+    note: s("c6").recommended.note ?? "",
+    alternatives: altString(s("c6")),
   };
 
   return [c0, c1, c2, c3, c4, c5, c6];

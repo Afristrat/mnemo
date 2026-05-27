@@ -1,3 +1,4 @@
+import type { Catalog } from "@/lib/catalog/types";
 import { applyMultimodalSizing, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
@@ -96,12 +97,14 @@ function buildVerdict(profile: Profile, totalCost: number, setupCost: number, ri
 export function recommend(
   profile: Profile,
   prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES,
+  catalog?: Catalog,
 ): Recommendation {
   const { preset, reason } = decidePreset(profile);
   const sizing = costMultimodalSizing(profile, prices);
 
-  // Les coûts multimédias sont injectés DANS les couches C4/C5/C6 (jamais en ligne séparée).
-  const layers = applyMultimodalSizing(buildLayers(preset, profile), sizing, prices);
+  // Les choix de composants viennent du `catalog` injecté (défaut seed = sortie identique, spec n°3) ;
+  // les coûts multimédias sont injectés DANS les couches C4/C5/C6 (jamais en ligne séparée).
+  const layers = applyMultimodalSizing(buildLayers(preset, profile, catalog), sizing, prices);
   const baseCost = layersBaseCost(layers) + profileCostFactors(profile);
   const activeModules = computeActiveModules(profile);
   const moduleCost = activeModules.reduce((sum, m) => sum + m.cost, 0);
