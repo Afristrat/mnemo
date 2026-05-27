@@ -65,7 +65,20 @@ describe("buildExitBundle", () => {
   });
 
   it("ne lève pas selon le preset (LIGHT inclus, sans orchestrateur conteneurisé)", () => {
-    const light: Profile = { ...PROFILE, sensitivity: "public", audit: false, bitemporal: false, budget: "lt50", volume: "lt1" };
+    // LIGHT (S-051, modèle scoré) = profil réellement minuscule : volume < 1 Go, solo, public, faible charge.
+    const light: Profile = {
+      ...PROFILE,
+      activity: "particulier",
+      sensitivity: "public",
+      audit: false,
+      bitemporal: false,
+      budget: "lt50",
+      volume: "lt1",
+      users: 1,
+      voices: "solo",
+      growth: "low",
+      reqPerDay: "lt100",
+    };
     const reco = recommend(light);
     expect(reco.preset).toBe("LIGHT");
     const compose = buildExitBundle(light, reco).files["docker-compose.yml"];

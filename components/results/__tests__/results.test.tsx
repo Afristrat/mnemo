@@ -11,8 +11,9 @@ describe("ResultsView", () => {
   });
 
   it("vue expert par défaut : preset + carte de coûts + stack", async () => {
+    // DEFAULT_PROFILE (confidentiel + corpus 1–10 Go) → MEDIUM sous le modèle scoré (S-051, ADR-020).
     render(<ResultsView />);
-    expect(await screen.findByText("Preset : LIGHT")).toBeInTheDocument();
+    expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
     expect(screen.getByText("Carte de coûts")).toBeInTheDocument();
     expect(screen.getByText("Stack recommandée")).toBeInTheDocument();
   });

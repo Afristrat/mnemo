@@ -155,6 +155,14 @@ describe("recommend", () => {
     }
   });
 
+  // S-051 : RÉCONCILIATION étiquette ↔ règles. Le modèle scoré est calibré pour que chaque
+  // profil-type calcule EXACTEMENT son `expected` (lève l'incohérence historique, ex. Coach MEDIUM).
+  it("le preset calculé correspond à l'étiquette expected de CHAQUE profil-type (réconciliation)", () => {
+    for (const preset of PRESET_PROFILES) {
+      expect(decidePreset(preset.profile).preset).toBe(preset.expected);
+    }
+  });
+
   it("le module conflict (max) augmente la conformité et le coût", () => {
     const off = baseProfile();
     const on = baseProfile({ modules: { bisect: 0, reversal: 0, prereg: 0, mel: 0, conflict: 4 } });
