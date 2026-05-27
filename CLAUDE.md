@@ -5,7 +5,7 @@ Guidage pour Claude Code (claude.ai/code) sur ce dépôt.
 ## Nature du dépôt
 
 Application **Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind v3 +
-Supabase (RLS)** — **Mnémo**, configurateur d'infrastructure de base mémorielle IA
+Supabase (RLS)** — **Strate**, configurateur d'infrastructure de base mémorielle IA
 souveraine (positionnement : « base mémorielle » d'une organisation). **Lot 1 = conseil
 + moats** : le configurateur recommande une stack 7 couches, chiffre les coûts (sourcés,
 ±30 %), explore l'incertitude (ensemble), exporte un livrable, génère un bundle de

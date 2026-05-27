@@ -1,4 +1,4 @@
-// Feed de prix LIVE (S-025) — extraction structurée Firecrawl + garde-fou DÉFCON 1.
+// Feed de prix LIVE (S-025), extraction structurée Firecrawl + garde-fou DÉFCON 1.
 //
 // Doctrine (mémoire `prix-jamais-hardcodes-feed-live`) : les prix d'infra ne sont PAS des
 // littéraux figés. Ce module interroge en direct, côté serveur, les pages vendor (Scaleway,
@@ -8,7 +8,7 @@
 // Périmètre live (extraction nette et validable) : pool GPU souverain (L4, H100) et stockage
 // objet/froid Scaleway + postes backup (egress, archive, retrait). Les API tierces à l'usage
 // ($ OpenAI/Google/Runway, unités dérivées) restent au seed sourcé (non extractibles de façon
-// fiable) — leur fraîcheur est suivie ailleurs. Tout échec/aberration → repli seed (garde-fou).
+// fiable), leur fraîcheur est suivie ailleurs. Tout échec/aberration → repli seed (garde-fou).
 //
 // La clé Firecrawl reste serveur ; `fetchImpl` est injectable (tests sans réseau).
 
@@ -24,7 +24,7 @@ const GPU_URL = "https://www.scaleway.com/en/pricing/gpu/";
 const H100_URL = "https://www.scaleway.com/en/h100/";
 const STORAGE_URL = "https://www.scaleway.com/en/pricing/storage/";
 
-/** Heures mensuelles d'utilisation par palier GPU (hypothèse documentée — cf. notes du seed médias). */
+/** Heures mensuelles d'utilisation par palier GPU (hypothèse documentée, cf. notes du seed médias). */
 const GPU_HOURS = { shared: 200, dedicatedSmall: 730, dedicatedLarge: 730 } as const;
 
 const GPU_SCHEMA: Record<string, unknown> = {
@@ -185,7 +185,7 @@ export async function getLivePrices(deps: LiveFeedDeps): Promise<LivePriceFeed> 
     fetchUsdToEur(deps.fxDeps ?? { fetchImpl: deps.fetchImpl, now: deps.now }),
   ]);
 
-  // Base € (seed normalisé) — les postes API $ restent ainsi seed+FX ; on n'écrase que le live validé.
+  // Base € (seed normalisé), les postes API $ restent ainsi seed+FX ; on n'écrase que le live validé.
   const base = getMediaPricesEur(fx.rate);
 
   // GPU : €/h live → mensuel (× heures), réconcilié vs le mensuel seed.

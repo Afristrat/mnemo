@@ -35,7 +35,7 @@ function variant(profile: Profile, id: EnsembleVariantId) {
   return found;
 }
 
-describe("buildEnsemble — génération des membres", () => {
+describe("buildEnsemble, génération des membres", () => {
   it("produit exactement les 3 membres attendus (souveraineté / coût / délai)", () => {
     const { variants } = buildEnsemble(baseProfile());
     expect(variants.map((v) => v.id)).toEqual([...ENSEMBLE_VARIANT_IDS]);
@@ -79,7 +79,7 @@ describe("buildEnsemble — génération des membres", () => {
   });
 });
 
-describe("buildEnsemble — spread (= incertitude)", () => {
+describe("buildEnsemble, spread (= incertitude)", () => {
   it("l'écart de coût est cohérent (range = max − min, % rapporté au min)", () => {
     const { spread } = buildEnsemble(baseProfile());
     expect(spread.count).toBe(4);
@@ -117,7 +117,7 @@ describe("buildEnsemble — spread (= incertitude)", () => {
   });
 });
 
-describe("buildEnsemble — déterminisme", () => {
+describe("buildEnsemble, déterminisme", () => {
   it("renvoie un résultat stable pour un même profil", () => {
     const profile = baseProfile();
     expect(buildEnsemble(profile)).toEqual(buildEnsemble(profile));

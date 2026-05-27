@@ -141,7 +141,7 @@ export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur(
               {setupCost > 0 ? <> · mise en route ≈ {setupCost} € (une fois)</> : null}.
             </p>
             <p className="mt-1 text-on-surface-variant/80">
-              Coûts variables ±30 % — un devis est recommandé avant le go (cf. page résultats, sources datées).
+              Coûts variables ±30 %, un devis est recommandé avant le go (cf. page résultats, sources datées).
             </p>
           </>
         ) : (

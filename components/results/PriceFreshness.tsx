@@ -51,7 +51,7 @@ export function PriceFreshness(): ReactElement {
       </div>
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Prix re-vérifiés en direct sur les pages vendor (Firecrawl), comparés à un instantané daté.
-        Une IA peut se tromper — chaque chiffre reste à confirmer à la source.
+        Une IA peut se tromper, chaque chiffre reste à confirmer à la source.
       </p>
 
       {state.kind === "error" ? (

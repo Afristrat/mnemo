@@ -96,7 +96,7 @@ export function buildDeliverable(
     heading: "Stack recommandée (7 couches)",
     bullets: [],
     rows: reco.layers.map((l) => ({
-      left: `${l.name} — ${l.choice}`,
+      left: `${l.name}, ${l.choice}`,
       right: l.cost > 0 ? `${l.cost} €/mois` : "inclus",
     })),
   };
@@ -139,13 +139,13 @@ export function buildDeliverable(
       rows: [],
       bullets: [
         FIDUCIARY_CHARTER.revenueModel,
-        ...FIDUCIARY_CHARTER.commitments.map((c) => `${c.title} — ${c.detail}`),
+        ...FIDUCIARY_CHARTER.commitments.map((c) => `${c.title}, ${c.detail}`),
       ],
     },
   ];
 
   return {
-    title: "Mnémo — Plan d'infrastructure mémorielle",
+    title: "Strate, Plan d'infrastructure mémorielle",
     subtitle: "Recommandation de configuration souveraine",
     generatedAt,
     meta: [

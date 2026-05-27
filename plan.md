@@ -1,4 +1,4 @@
-# Plan — Mnémo
+# Plan — Strate
 
 Plateforme souveraine de choix, déploiement et exploitation d'infrastructures de base mémorielle IA. **Spec complète : `PRD.md`.** Chasse au moat : `docs/MOAT-HUNT.md`.
 

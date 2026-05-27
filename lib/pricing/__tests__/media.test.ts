@@ -11,7 +11,7 @@ import {
   refreshMediaPriceFreshness,
 } from "@/lib/pricing/media-feed";
 
-// S-017 — pricing médias sourcé (DÉFCON 1). Vérifie : devises natives + sources sur chaque coût,
+// S-017, pricing médias sourcé (DÉFCON 1). Vérifie : devises natives + sources sur chaque coût,
 // normalisation FX en €, repli du taux de change, intégration au dimensionnement S-016.
 
 function allEntries(t: MultimodalPriceTable): MultimodalPriceEntry[] {
@@ -49,7 +49,7 @@ function fxResponse(eur: number): Response {
   return { ok: true, json: async () => ({ date: "2026-05-26", rates: { EUR: eur } }) } as unknown as Response;
 }
 
-describe("seed médias — DÉFCON 1 (sources sur chaque coût)", () => {
+describe("seed médias, DÉFCON 1 (sources sur chaque coût)", () => {
   it("chaque prix non nul porte une source datée (URL + checkedAt) et une confiance", () => {
     for (const e of allEntries(MEDIA_PRICE_SEED)) {
       expect(["high", "medium", "low"]).toContain(e.confidence);

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { reconcilePrice, DEFAULT_TOLERANCE } from "@/lib/pricing/reconcile";
 
-// S-025 — garde-fou DÉFCON 1 : une valeur live n'est promue que si plausible vs la baseline sourcée.
+// S-025, garde-fou DÉFCON 1 : une valeur live n'est promue que si plausible vs la baseline sourcée.
 
 describe("reconcilePrice", () => {
   it("promeut une valeur live dans la bande (confiance haute)", () => {

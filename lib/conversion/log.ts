@@ -1,5 +1,5 @@
 // Conversion & data (S-023) : constructeurs PURS des charges utiles à insérer (log des
-// simulations + capture e-mail). Aucun effet de bord — l'insertion Supabase (et le respect
+// simulations + capture e-mail). Aucun effet de bord, l'insertion Supabase (et le respect
 // RLS) se fait côté appelant (route serveur / client), exercé par le test d'intégration gated
 // et l'e2e (S-024). Pattern aligné sur `lib/network/consent.ts` (builder pur).
 

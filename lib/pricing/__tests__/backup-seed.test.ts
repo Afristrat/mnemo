@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { BACKUP_PRICE_SEED, getBackupPrices } from "@/lib/pricing/backup-seed";
 
-// S-025 — seed backup (DÉFCON 1) : repli + baseline de validation. Chaque poste réellement sourcé.
+// S-025, seed backup (DÉFCON 1) : repli + baseline de validation. Chaque poste réellement sourcé.
 
-describe("seed backup — DÉFCON 1", () => {
+describe("seed backup, DÉFCON 1", () => {
   it("chaque poste a un montant > 0, € natif, une confiance et une source datée (URL + checkedAt)", () => {
     for (const e of Object.values(BACKUP_PRICE_SEED)) {
       expect(e.amount).toBeGreaterThan(0);

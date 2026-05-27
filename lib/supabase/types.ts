@@ -1,4 +1,4 @@
-// Types de la base Mnémo (rails F9). Tenus à la main, alignés sur la migration
+// Types de la base Strate (rails F9). Tenus à la main, alignés sur la migration
 // 20260525010854_init_rails.sql. `circle_id` est le pivot multi-tenant (RLS).
 
 export type CircleRole = "owner" | "admin" | "member";
@@ -55,7 +55,7 @@ export type NetworkConsentInsert = {
   revoked_at: string | null;
 };
 
-// Conversion & data (S-023) — log des simulations + capture e-mail.
+// Conversion & data (S-023), log des simulations + capture e-mail.
 export type LeadContext = "exit_intent" | "report" | "other";
 
 export type SimulationLogRow = {

@@ -1,4 +1,4 @@
-// Types du moteur de recommandation Mnémo.
+// Types du moteur de recommandation Strate.
 // Porté de design-reference/.../simulator-archi-base-memorielle-v2.html (logique pure, sans UI).
 
 export const PRESETS = ["LIGHT", "MEDIUM", "HARD"] as const;
@@ -43,7 +43,7 @@ export type Modality = "audio" | "video" | "images";
  * Besoin pour une modalité, à deux volets qui dimensionnent tous deux l'infra :
  * `ingest` = mémoriser/traiter l'existant ; `generate` = créer/produire sur l'infra de l'utilisateur.
  * Convention (consommée en S-016) : si `ingest.tier === "none"` ET `generate.tier === "none"`, la MediaNeed
- * est INACTIVE et ne contribue pas au `Sizing` — le consommateur doit la filtrer. `volume` (optionnel) override le palier.
+ * est INACTIVE et ne contribue pas au `Sizing`, le consommateur doit la filtrer. `volume` (optionnel) override le palier.
  */
 export type MediaNeed = {
   modality: Modality;
@@ -65,11 +65,11 @@ export type MediaNeed = {
  */
 export type GpuTier = "none" | "shared" | "dedicated-small" | "dedicated-large";
 /**
- * Ligne de charge multimédia produite par le dimensionnement (`sizing.ts`, S-016) — traçabilité.
- * `monthlyCost` (€/mois) : coût récurrent propre de la ligne — **0** pour `sovereign` (la charge est
+ * Ligne de charge multimédia produite par le dimensionnement (`sizing.ts`, S-016), traçabilité.
+ * `monthlyCost` (€/mois) : coût récurrent propre de la ligne, **0** pour `sovereign` (la charge est
  * absorbée par le pool GPU mutualisé `Sizing.gpu`, compté UNE SEULE FOIS → anti double-comptage C4/C6),
  * **> 0** pour `api` (coût à l'usage du service tiers). `contributesTo` : couches alimentées par cette
- * charge (C4 embeddings · C5 stockage · C6 inférence/GPU) — exploité par la décomposition de coûts
+ * charge (C4 embeddings · C5 stockage · C6 inférence/GPU), exploité par la décomposition de coûts
  * S-018/S-022. (Extension additive de la spec §4.3, cf. ADR-010.)
  */
 export type WorkloadLine = {
@@ -97,10 +97,10 @@ export type Verdict = {
 };
 export type BlockId = "profil" | "infra" | "memoire" | "medias";
 
-/** Source d'un coût (URL + date) — structurellement compatible avec `PriceSource` (`lib/pricing`). */
+/** Source d'un coût (URL + date), structurellement compatible avec `PriceSource` (`lib/pricing`). */
 export type CostSource = { label: string; url: string; checkedAt: string };
 
-// --- Sauvegarde & résilience (backup, spec n°1 §3 — types S-026, consommés S-028→S-031) ---
+// --- Sauvegarde & résilience (backup, spec n°1 §3, types S-026, consommés S-028→S-031) ---
 
 export type BackupCriticality = "none" | "standard" | "high" | "critical";
 export type BackupStorageTier = "hot" | "cold"; // chaud (objet) / froid (archive)
@@ -151,7 +151,7 @@ export type BackupPlan = {
   rpoMinutes: number;
   rtoMinutes: number;
   retentionDays: number;
-  legalRetentionYears: number; // = max(régimes), §6 — plancher légal
+  legalRetentionYears: number; // = max(régimes), §6, plancher légal
   copies: number;
   offsite: boolean;
   airgap: boolean;

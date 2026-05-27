@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { costBand, recommend } from "@/lib/engine";
 import type { MediaNeed, MultimodalPriceEntry, MultimodalPriceTable, Profile, Recommendation } from "@/lib/engine";
 
-// S-018 — intégration du dimensionnement multimédia dans recommend() : coûts DANS les couches
+// S-018, intégration du dimensionnement multimédia dans recommend() : coûts DANS les couches
 // (C4/C5/C6), GPU compté une seule fois, setupCost (backlog), verdict, costSources. Prix injectés.
 
 function eur(amount: number): MultimodalPriceEntry {
@@ -15,7 +15,7 @@ function eur(amount: number): MultimodalPriceEntry {
   };
 }
 
-// Table de TEST en € (valeurs rondes fictives) — l'intégration avec les vrais prix est en S-017.
+// Table de TEST en € (valeurs rondes fictives), l'intégration avec les vrais prix est en S-017.
 function makePrices(): MultimodalPriceTable {
   return {
     gpuMonthly: {
@@ -65,7 +65,7 @@ function layerCost(rec: Recommendation, id: number): number {
   return rec.layers.find((l) => l.id === id)?.cost ?? 0;
 }
 
-describe("recommend — défaut neutre (moteur pur, sans prix injectés)", () => {
+describe("recommend, défaut neutre (moteur pur, sans prix injectés)", () => {
   it("ne facture aucun coût multimédia et conserve l'invariant totalCost = baseCost + moduleCost", () => {
     const r = recommend(baseProfile({ mediaNeeds: MEDIA }));
     expect(r.totalCost).toBe(r.baseCost + r.moduleCost);
@@ -80,7 +80,7 @@ describe("recommend — défaut neutre (moteur pur, sans prix injectés)", () =>
   });
 });
 
-describe("recommend — prix injectés (coûts multimédias dans les couches)", () => {
+describe("recommend, prix injectés (coûts multimédias dans les couches)", () => {
   const profile = baseProfile({ mediaNeeds: MEDIA });
   const prices = makePrices();
   const neutral = recommend(profile);
@@ -91,7 +91,7 @@ describe("recommend — prix injectés (coûts multimédias dans les couches)", 
     expect(layerCost(priced, 6) - layerCost(neutral, 6)).toBe(2030);
     // C5 ← stockage (15 Go vidéo + 3 Go audio = 18 Go × 1 €)
     expect(layerCost(priced, 5) - layerCost(neutral, 5)).toBe(18);
-    // C4 ← forfait embeddings (50) UNIQUEMENT — le GPU n'y est pas ré-imputé (anti double-comptage)
+    // C4 ← forfait embeddings (50) UNIQUEMENT, le GPU n'y est pas ré-imputé (anti double-comptage)
     expect(layerCost(priced, 4) - layerCost(neutral, 4)).toBe(50);
     expect(priced.sizing.gpu.tier).toBe("dedicated-large");
     expect(priced.sizing.gpu.monthlyCost).toBe(2000);

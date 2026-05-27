@@ -21,7 +21,7 @@ import type { Option } from "@/lib/wizard/options";
 const WHO_OPTIONS: Option<QuickWho>[] = [
   { value: "solo", label: "Indépendant / solo" },
   { value: "team", label: "Équipe / PME" },
-  { value: "regulated", label: "Profession régulée", hint: "Avocat, santé, CGP — secret pro" },
+  { value: "regulated", label: "Profession régulée", hint: "Avocat, santé, CGP, secret pro" },
   { value: "research", label: "Recherche / académique" },
 ];
 

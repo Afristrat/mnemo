@@ -6,7 +6,7 @@ import { evaluateBudget, type BudgetStatus } from "@/lib/wizard/budget";
 import { cn } from "@/lib/utils/cn";
 
 type BudgetMeterProps = {
-  /** Coût mensuel d'infra (variable, ±30 %) — jamais le prix de vente du service. */
+  /** Coût mensuel d'infra (variable, ±30 %), jamais le prix de vente du service. */
   totalCost: number;
   budget: Budget;
   sizing: Sizing;

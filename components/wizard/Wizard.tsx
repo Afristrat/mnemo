@@ -39,10 +39,10 @@ const BLOCKS: { id: BlockId; title: string; description: string }[] = [
   { id: "profil", title: "Profil & contraintes", description: "Qui vous êtes, et vos contraintes : conformité, sensibilité, budget." },
   { id: "infra", title: "Infra pure", description: "Volume, débit, latence, croissance attendue." },
   { id: "memoire", title: "Usage-Mémoire", description: "À qui sert cette mémoire, que mémoriser, et les usages avancés." },
-  { id: "medias", title: "Médias", description: "Besoins audio / vidéo / images — à mémoriser et/ou à créer." },
+  { id: "medias", title: "Médias", description: "Besoins audio / vidéo / images, à mémoriser et/ou à créer." },
 ];
 
-// Infobulles « pourquoi + conséquence » — factuelles, non orientées (l'utilisateur tranche).
+// Infobulles « pourquoi + conséquence », factuelles, non orientées (l'utilisateur tranche).
 const INFO = {
   zone: {
     why: "L'emplacement d'hébergement détermine quelles lois s'appliquent (RGPD, CNDP) et l'exposition à des juridictions étrangères (Cloud Act).",
@@ -54,7 +54,7 @@ const INFO = {
   },
   sensitivity: {
     why: "Le niveau de sensibilité conditionne le chiffrement, l'isolation et l'auditabilité exigés.",
-    consequence: "Plus c'est sensible, plus la stack se durcit — et le coût augmente.",
+    consequence: "Plus c'est sensible, plus la stack se durcit, et le coût augmente.",
   },
   techLevel: {
     why: "Vos compétences déterminent ce qui est exploitable en interne, sans prestataire.",
@@ -78,14 +78,14 @@ const INFO = {
   },
   contentTypes: {
     why: "Les types de contenu déterminent le modèle d'embeddings (texte seul vs multimodal).",
-    consequence: "Du multimodal (audio/vidéo/images) ajoute des modèles et du GPU — détaillé au bloc Médias.",
+    consequence: "Du multimodal (audio/vidéo/images) ajoute des modèles et du GPU, détaillé au bloc Médias.",
   },
   audit: {
     why: "L'audit signé trace de façon infalsifiable qui a écrit quoi, et quand.",
     consequence: "Exiger l'audit écarte les presets les plus légers (pas de journal signé).",
   },
   bitemporal: {
-    why: "Le bitemporel distingue « quand c'est arrivé » de « quand on l'a su » — rejouer l'état des connaissances à une date.",
+    why: "Le bitemporel distingue « quand c'est arrivé » de « quand on l'a su », rejouer l'état des connaissances à une date.",
     consequence: "Exiger le bitemporel impose un stockage dédié (Postgres+AGE, Graphiti…).",
   },
 } as const;
@@ -326,7 +326,7 @@ export function Wizard(): ReactElement {
       </div>
       </div>
 
-      {/* Budget-mètre — colonne de droite, sticky (ne mange pas la hauteur du contenu). Coût d'infra, jamais prix de vente. */}
+      {/* Budget-mètre, colonne de droite, sticky (ne mange pas la hauteur du contenu). Coût d'infra, jamais prix de vente. */}
       <aside className="mt-6 lg:mt-0 lg:sticky lg:top-6">
         <BudgetMeter totalCost={result.totalCost} budget={profile.budget} sizing={result.sizing} />
       </aside>

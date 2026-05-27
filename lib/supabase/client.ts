@@ -1,7 +1,7 @@
 "use client";
 
 // Client Supabase navigateur (@supabase/ssr). N'utilise QUE la clé publishable
-// (publique) — jamais la clé secrète. Références littérales à process.env pour que
+// (publique), jamais la clé secrète. Références littérales à process.env pour que
 // Next inline les variables NEXT_PUBLIC_* dans le bundle client.
 
 import { createBrowserClient } from "@supabase/ssr";

@@ -3,7 +3,7 @@ import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES } from "@/lib/engine";
 import type { Preset, Profile } from "@/lib/engine";
 import { COMPUTE_PRICE_SEED } from "@/lib/pricing/compute-seed";
 
-// S-033 — compute souverain : dimensionnement des serveurs self-hosted. Prix INJECTÉS (DÉFCON 1).
+// S-033, compute souverain : dimensionnement des serveurs self-hosted. Prix INJECTÉS (DÉFCON 1).
 
 const P = COMPUTE_PRICE_SEED;
 
@@ -16,7 +16,7 @@ function profile(over: Partial<Profile> = {}): Profile {
   };
 }
 
-describe("computeSovereignCompute — dimensionnement serveurs self-hosted", () => {
+describe("computeSovereignCompute, dimensionnement serveurs self-hosted", () => {
   it("LIGHT : 1 petite instance (glue), le reste est managé", () => {
     const c = computeSovereignCompute(profile(), "LIGHT", P);
     expect(c.instances).toHaveLength(1);

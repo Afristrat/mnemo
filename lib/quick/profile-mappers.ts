@@ -1,6 +1,6 @@
 // Chemin 90 s (S-021) : traduit 4 réponses qualitatives orientées « douleur » en un `Profile`
 // complet, par DÉFAUTS INTELLIGENTS DOCUMENTÉS. Fonction pure et déterministe (testée). L'utilisateur
-// peut ensuite « Affiner » dans le configurateur — le `Profile` produit est la même source de vérité
+// peut ensuite « Affiner » dans le configurateur, le `Profile` produit est la même source de vérité
 // (`useWizardProfile` / localStorage). Aucun défaut n'est « orienté » : ils sont prudents et explicités.
 
 import { defaultModuleLevels, type Profile } from "@/lib/engine";
@@ -21,7 +21,7 @@ export type QuickAnswers = {
   media: QuickMedia;
 };
 
-/** Réponses par défaut (entrée la plus neutre — petite structure, données internes, priorité souveraineté, texte). */
+/** Réponses par défaut (entrée la plus neutre, petite structure, données internes, priorité souveraineté, texte). */
 export const DEFAULT_QUICK_ANSWERS: QuickAnswers = {
   who: "solo",
   data: "internal",

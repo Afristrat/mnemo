@@ -6,12 +6,12 @@ import {
 } from "@/lib/engine";
 import type { MediaNeed, MMMode, MMTier, Modality, Profile, Sizing } from "@/lib/engine";
 
-// S-016 — tests table-driven du dimensionnement multimédia (spec §5.6).
+// S-016, tests table-driven du dimensionnement multimédia (spec §5.6).
 // Vérifie : GPU compté une seule fois (anti double-comptage C4/C6), mode api hors GPU souverain,
 // générer > mémoriser sur le GPU, monotonie (intensive ≥ medium ≥ light), stockage croissant,
 // mediaNeeds vide → neutre, présence d'une source sur chaque prix utilisé. Prix INJECTÉS (DÉFCON 1).
 
-// Table de TEST déjà normalisée en € (devise unique) — la conversion native→€ est testée en S-017.
+// Table de TEST déjà normalisée en € (devise unique), la conversion native→€ est testée en S-017.
 function entry(amount: number, unit: string): MultimodalPriceEntry {
   return {
     amount,
@@ -22,7 +22,7 @@ function entry(amount: number, unit: string): MultimodalPriceEntry {
   };
 }
 
-// Table de prix de TEST (valeurs fictives, sources factices) — la table réelle sourcée arrive en S-017.
+// Table de prix de TEST (valeurs fictives, sources factices), la table réelle sourcée arrive en S-017.
 // Contrainte respectée : `gpuMonthly` est monotone croissant en palier (none ≤ shared ≤ small ≤ large).
 function makePrices(): MultimodalPriceTable {
   return {
@@ -88,7 +88,7 @@ const MODES: MMMode[] = ["sovereign", "api"];
 const VOLETS = ["ingest", "generate"] as const;
 const ASCENDING: MMTier[] = ["none", "light", "medium", "intensive"];
 
-describe("costMultimodalSizing — cas neutre", () => {
+describe("costMultimodalSizing, cas neutre", () => {
   it("mediaNeeds absent → dimensionnement neutre", () => {
     const s = sizeWith(undefined);
     expect(s.gpu.tier).toBe("none");
@@ -108,7 +108,7 @@ describe("costMultimodalSizing — cas neutre", () => {
   });
 });
 
-describe("costMultimodalSizing — GPU mutualisé compté une seule fois", () => {
+describe("costMultimodalSizing, GPU mutualisé compté une seule fois", () => {
   it("trois charges souveraines → UN seul pool dimensionné sur la charge totale (pas la somme de 3 GPU)", () => {
     const needs: MediaNeed[] = [
       singleVolet("audio", "sovereign", "ingest", "light"), // 600 × 0,05 = 30
@@ -133,7 +133,7 @@ describe("costMultimodalSizing — GPU mutualisé compté une seule fois", () =>
   });
 });
 
-describe("costMultimodalSizing — mode api ne consomme pas le GPU souverain", () => {
+describe("costMultimodalSizing, mode api ne consomme pas le GPU souverain", () => {
   it("charge API → GPU neutre, coût porté par la ligne", () => {
     const s = sizeWith([singleVolet("audio", "api", "ingest", "intensive")]); // 15000 min
     expect(s.gpu.tier).toBe("none");
@@ -158,7 +158,7 @@ describe("costMultimodalSizing — mode api ne consomme pas le GPU souverain", (
   });
 });
 
-describe("costMultimodalSizing — générer pèse plus que mémoriser (GPU)", () => {
+describe("costMultimodalSizing, générer pèse plus que mémoriser (GPU)", () => {
   it("génération > ingestion à palier égal sur la charge souveraine", () => {
     const ingest = sizeWith([singleVolet("video", "sovereign", "ingest", "medium")]); // 300 × 0,5 = 150
     const generate = sizeWith([singleVolet("video", "sovereign", "generate", "medium")]); // 300 × 5 = 1500
@@ -168,7 +168,7 @@ describe("costMultimodalSizing — générer pèse plus que mémoriser (GPU)", (
   });
 });
 
-describe("costMultimodalSizing — monotonie (table-driven)", () => {
+describe("costMultimodalSizing, monotonie (table-driven)", () => {
   function metric(mode: MMMode, s: Sizing): number {
     return mode === "sovereign" ? s.gpu.monthlyCost : s.workloads.reduce((sum, w) => sum + w.monthlyCost, 0);
   }
@@ -193,7 +193,7 @@ describe("costMultimodalSizing — monotonie (table-driven)", () => {
   }
 });
 
-describe("costMultimodalSizing — stockage", () => {
+describe("costMultimodalSizing, stockage", () => {
   it("croît avec le volume déclaré", () => {
     const small = sizeWith([singleVolet("video", "sovereign", "ingest", "light", 100)]); // 100 × 0,05 = 5 Go
     const large = sizeWith([singleVolet("video", "sovereign", "ingest", "light", 1000)]); // 1000 × 0,05 = 50 Go
@@ -208,7 +208,7 @@ describe("costMultimodalSizing — stockage", () => {
   });
 });
 
-describe("costMultimodalSizing — traçabilité & invariants", () => {
+describe("costMultimodalSizing, traçabilité & invariants", () => {
   it("embeddingsMultimodal vrai dès qu'un besoin médias est actif, faux sinon", () => {
     expect(sizeWith([singleVolet("images", "sovereign", "ingest", "light")]).embeddingsMultimodal).toBe(true);
     expect(sizeWith([]).embeddingsMultimodal).toBe(false);

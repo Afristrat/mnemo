@@ -44,7 +44,7 @@ describe("Charte fiduciaire", () => {
   });
 });
 
-describe("Invariant fiduciaire — aucune reco conditionnée à une commission", () => {
+describe("Invariant fiduciaire, aucune reco conditionnée à une commission", () => {
   it("le profil d'entrée ne porte aucune notion de commission", () => {
     expect(Object.keys(PROFILE).some((k) => COMMISSION_RE.test(k))).toBe(false);
   });

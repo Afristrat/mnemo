@@ -1,4 +1,4 @@
-# Journal de décisions (ADR) — Mnémo
+# Journal de décisions (ADR) — Strate
 
 > Registre des arbitrages d'architecture pris en autonomie pendant le Ralph Loop.
 > **Protocole** (consigne Amine, 2026-05-25) : en run autonome, à chaque décision à
@@ -305,7 +305,7 @@ Format : décision · contexte · options · choix · conséquences.
   vers `/resultats?mode=verdict`. « Affiner » → `/configurateur` (pré-rempli). Écriture localStorage
   **synchrone** avant navigation (évite la course avec l'effet de persistance du hook).
 - **`app/page.tsx`** : l'accueil devient le **chemin 90 s par défaut** (hero + formulaire). Nom
-  « Mnémo » conservé (le renommage Strate est une story dédiée, spec §15).
+  « Strate » conservé (le renommage Strate est une story dédiée, spec §15).
 - **Conséquence** : le **mode verdict** de `/resultats` (rendu réel) est S-022 ; ici on établit le
   chemin + le paramètre `?mode=verdict`. Tests : mappers 8 + form 3 (persistance + navigation,
   `useRouter` mocké via `vi.hoisted`). Vérifié au **navigateur** (accueil 90 s). typecheck 0, lint
@@ -338,7 +338,7 @@ Format : décision · contexte · options · choix · conséquences.
   costables renommés. Tous les composants wizard restent utilisés.
 - **REFONTE STRATE COMPLÈTE (S-015 → S-024, 10/10).** typecheck 0, lint 0/0, **163 + 8 skip**,
   build OK, **e2e 11 + 1 skip**. Restent hors-refonte : déploiement de la refonte en prod, backlog
-  use-cases (S-025+), renommage code Mnémo→Strate, sondage → prix de vente → homepage.
+  use-cases (S-025+), renommage code Strate→Strate, sondage → prix de vente → homepage.
 
 ## ADR-019 — Price feed LIVE Firecrawl + garde-fou DÉFCON 1 (S-025)
 

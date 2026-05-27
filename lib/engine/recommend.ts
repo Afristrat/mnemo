@@ -37,7 +37,7 @@ function computeActiveModules(profile: Profile): ActiveModule[] {
       levelDesc: levelMeta.desc,
       fraction,
       cost: Math.round(mod.costFull * fraction),
-      task: `[Niveau ${level}/${mod.maxLevel} — ${levelMeta.label}] ${mod.baseTask} Spécificité du niveau : ${levelMeta.desc}`,
+      task: `[Niveau ${level}/${mod.maxLevel}, ${levelMeta.label}] ${mod.baseTask} Spécificité du niveau : ${levelMeta.desc}`,
       bonusFull: mod.bonusFull,
     });
   }
@@ -46,7 +46,7 @@ function computeActiveModules(profile: Profile): ActiveModule[] {
 
 // Prix de vente du service Strate : volontairement non figé tant que le sondage Van Westendorp
 // n'a pas de réponses (spec §11). Emplacement d'injection centralisé.
-const FIRM_PRICE_TIER_PLACEHOLDER = "[PLACEHOLDER] — prix de vente du service Strate (sondage en cours)";
+const FIRM_PRICE_TIER_PLACEHOLDER = "[PLACEHOLDER], prix de vente du service Strate (sondage en cours)";
 
 const PAIN_BY_ACTIVITY: Partial<Record<Activity, string>> = {
   "cabinet-regule":

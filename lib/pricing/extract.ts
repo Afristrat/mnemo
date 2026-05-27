@@ -1,4 +1,4 @@
-// Extraction et empreinte des figures monétaires d'une page vendor (F4 — price feed).
+// Extraction et empreinte des figures monétaires d'une page vendor (F4, price feed).
 // Pur et déterministe : aucune dépendance réseau ni UI, entièrement testable.
 
 export type Currency = "USD" | "EUR";

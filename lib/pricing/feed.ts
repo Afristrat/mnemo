@@ -63,7 +63,7 @@ export function buildObservation(
       confidence: seed.confidence,
       figureCount: 0,
       sampleFigures: [],
-      note: "Indisponible à l'instant — repli sur la dernière vérification enregistrée.",
+      note: "Indisponible à l'instant, repli sur la dernière vérification enregistrée.",
     };
   }
 
@@ -78,7 +78,7 @@ export function buildObservation(
       confidence: "medium",
       figureCount: 0,
       sampleFigures: [],
-      note: "Tarification à l'usage (aucune figure fixe) — page joignable, à vérifier manuellement.",
+      note: "Tarification à l'usage (aucune figure fixe), page joignable, à vérifier manuellement.",
     };
   }
 
@@ -93,7 +93,7 @@ export function buildObservation(
       confidence: "low",
       figureCount: figures.length,
       sampleFigures,
-      note: `Figures différentes du snapshot du ${baseline.capturedAt} — revérifier la source avant décision.`,
+      note: `Figures différentes du snapshot du ${baseline.capturedAt}, revérifier la source avant décision.`,
     };
   }
 

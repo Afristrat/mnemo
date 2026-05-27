@@ -36,7 +36,7 @@ export function ModuleSlider({ module, level, onChange }: ModuleSliderProps): Re
       />
       <div className="mt-2 flex items-center justify-between gap-3">
         <span className="text-label-caps uppercase text-primary">
-          Niveau {safeLevel}/{module.maxLevel} — {current.label}
+          Niveau {safeLevel}/{module.maxLevel}, {current.label}
         </span>
       </div>
       <p className="mt-1 text-body-sm text-on-surface-variant">{current.desc}</p>
