@@ -399,6 +399,17 @@
         "question hors catalogue → recherche web Firecrawl SOURCÉE ; AUCUN chiffre inventé (montants cités == ceux de la reco/feed) ; disclaimer IA",
         "tests route (callLLM + Firecrawl mockés) ; e2e question → réponse sourcée ; typecheck 0 / lint 0/0 / build OK / e2e verts"
       ]
+    },
+    {
+      "id": "S-041", "title": "Compute souverain intégré dans recommend (remplace le forfait C6 hardcodé)", "feature": "pricing",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-033", "S-028"],
+      "acceptance": [
+        "recommend(profile, prices, catalog?, backupPrices?, computePrices = NEUTRAL_COMPUTE_PRICES) appelle computeSovereignCompute ; Recommendation.compute: ComputeSizing rempli",
+        "applyCompute (cost.ts) : compute injecté > 0 → REMPLACE le forfait C6 hardcodé (30/100/400) par le compute dimensionné+sourcé ; compute neutre → forfait conservé (invariant tests existants préservé)",
+        "ordre couches : applyCompute (remplace C6) → applyMultimodalSizing (GPU média s'ajoute) → applyBackup ; LLM tokens à l'usage signalé NON chiffré (dette transparente, story future)",
+        "ResultsView + Wizard + ensemble injectent getComputePrices() → serveurs VISIBLES (note C6 + CostMap) ; costSources inclut les sources compute",
+        "tests : compute injecté remplace le forfait, monotonie, neutre→forfait gardé ; typecheck 0 / lint 0/0 / build OK"
+      ]
     }
   ]
 }

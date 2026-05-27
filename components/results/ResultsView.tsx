@@ -25,6 +25,7 @@ import {
   type Volume,
 } from "@/lib/engine";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
+import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { VOLUME_OPTIONS } from "@/lib/wizard/options";
@@ -102,13 +103,13 @@ export function ResultsView(): ReactElement {
     return { ...base, volume: VOLUME_ORDER[volIndex], users };
   }, [base, volIndex, users]);
 
-  // Prix backup injectés (seed sourcé) → le coût de sauvegarde est visible dans les couches/CostMap.
+  // Prix backup + compute injectés (seed sourcé) → coûts de sauvegarde ET serveurs visibles (CostMap).
   const result = useMemo(
-    () => (projected === null ? null : recommend(projected, prices, undefined, getBackupPrices())),
+    () => (projected === null ? null : recommend(projected, prices, undefined, getBackupPrices(), getComputePrices())),
     [projected, prices],
   );
   const ensemble = useMemo(
-    () => (projected === null ? null : buildEnsemble(projected, prices, undefined, getBackupPrices())),
+    () => (projected === null ? null : buildEnsemble(projected, prices, undefined, getBackupPrices(), getComputePrices())),
     [projected, prices],
   );
 

@@ -1,6 +1,8 @@
 // Types du moteur de recommandation Strate.
 // Porté de design-reference/.../simulator-archi-base-memorielle-v2.html (logique pure, sans UI).
 
+import type { ComputeSizing } from "./compute";
+
 export const PRESETS = ["LIGHT", "MEDIUM", "HARD"] as const;
 export type Preset = (typeof PRESETS)[number];
 
@@ -275,6 +277,8 @@ export type Recommendation = {
   costSources: CostSource[];
   /** Plan de sauvegarde & résilience déduit du profil (spec n°1, intégré en S-028). */
   backup: BackupPlan;
+  /** Compute souverain dimensionné (serveurs self-hosted, S-041) ; remplace le forfait C6 si injecté. */
+  compute: ComputeSizing;
   /** Synthèse « verdict » pour le chemin 90 s (douleur/risque/gain/prix ferme/coûts/next step). */
   verdict: Verdict;
 };

@@ -17,6 +17,7 @@ import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId } from "@/lib/engine";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
+import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
@@ -159,7 +160,7 @@ export function Wizard(): ReactElement {
   const prices = getMediaPricesEur();
   const backupPrices = getBackupPrices();
   const decision = decidePreset(profile);
-  const result = recommend(profile, prices, undefined, backupPrices);
+  const result = recommend(profile, prices, undefined, backupPrices, getComputePrices());
 
   return (
     <div className="w-full lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
