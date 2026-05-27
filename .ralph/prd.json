@@ -328,6 +328,77 @@
         "RESTE (intégration, S-028 élargi) : remplacer le forfait C6 hardcodé (30/100/400) par ce compute dans recommend + feed live instances + visibilité CostMap",
         "tests compute verts ; typecheck 0 / lint 0/0 / build OK"
       ]
+    },
+    {
+      "id": "S-034", "title": "Fondation LLM plateforme (client proxy LiteLLM + route serveur)", "feature": "llm",
+      "passes": false, "deps": [],
+      "acceptance": [
+        "lib/llm/{types,client}.ts : callLLM(messages, opts) tape le proxy LiteLLM (LITELLM_BASE_URL + LITELLM_API_KEY lus SERVEUR ONLY, jamais NEXT_PUBLIC ni bundle client), fetch injectable, AbortSignal timeout, JAMAIS throw → LlmResult { ok:true, content } | { ok:false, reason }",
+        "vérif proxy AVANT code : GET /v1/models répond (clé jamais affichée, preuve = code HTTP + noms modèles) → alias applicatif strate-default ; repli codé si indisponible",
+        "route app/api/llm/chat (squelette) : clé jamais exposée, Node runtime ; le navigateur ne parle qu'à nos routes",
+        "tests fetch mocké : succès / 5xx / timeout / clé absente → repli sans throw ; clé absente du résultat",
+        ".env.example += noms LiteLLM ; noms ajoutés au coffre DPAPI ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-035", "title": "Catalogue injecté (seed = layers.ts) + garde-fou + recommend(catalog)", "feature": "llm",
+      "passes": false, "deps": [],
+      "acceptance": [
+        "lib/catalog/types.ts : Catalog, ComponentCandidate (name/role/license/sovereignty/benchmarkRank/sourceUrl/checkedAt/confidence/provenance), CatalogSlot, Provenance",
+        "catalog-seed.ts : seedCatalog(preset, profile) transpose À L'IDENTIQUE les littéraux conditionnels de layers.ts (LIGHT/MEDIUM/HARD × multimodal × bitemporel) ; chaque candidat porte sourceUrl + checkedAt (DÉFCON 1)",
+        "buildLayers(preset, profile, catalog = seedCatalog(...)) lit catalog.slots[ci] → sortie identique (tous les tests existants verts) ; recommend(profile, prices, catalog?) + buildEnsemble threadent le catalogue (défaut seed, moteur pur)",
+        "reconcileCatalog(live, seed, profile) pur : valide existence/licence/souveraineté/classement → live, sinon flagged + confidence low + repli seed ; lecture JSON inconnu sans as/any (type guard)",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-036", "title": "Veille temps réel catalogue (Firecrawl + LLM) + garde-fou + audit trail RLS", "feature": "llm",
+      "passes": false, "deps": ["S-034", "S-035"],
+      "acceptance": [
+        "lib/catalog/live-catalog.ts : assembleLiveCatalog(profile, deps) par slot (recherche web Firecrawl + callLLM → ComponentCandidate[] → reconcileCatalog), parallélisé, repli seed total si indispo",
+        "filtre contraintes dures (secret ⇒ pas d'api-third-party) ; cache.ts TTL court (now injectable) ne relance pas une requête identique",
+        "route app/api/catalog/live (POST profil → Catalog, clé serveur jamais exposée)",
+        "migration catalog_observations (RLS, pivot circle) + builder pur d'audit ; test RLS gated (skip CI)",
+        "invariant zéro pondération vendor (aucune justification commission/partenariat) ; jamais de candidat sans sourceUrl ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-037", "title": "Snapshot reproductible + provenance catalogue (UI + export + Exit Escrow)", "feature": "llm",
+      "passes": false, "deps": ["S-035", "S-036"],
+      "acceptance": [
+        "ResultsView rend d'abord avec le seed (repli immédiat) → fetch /api/catalog/live → recommend(profile, prices, liveCatalog) recalcule",
+        "CatalogProvenance.tsx (jumeau LivePriceStatus) : provenance live/seed/flagged + source + fraîcheur + confiance",
+        "buildDeliverable (model.ts) + buildExitBundle (bundle.ts) FIGENT le catalogue retenu (candidats + sources + assembledAt) → rejouable (test cohérence snapshot)",
+        "e2e : provenance affichée, cohérence seed→live ; typecheck 0 / lint 0/0 / build OK / e2e verts"
+      ]
+    },
+    {
+      "id": "S-038", "title": "Intake libre → Profile (route LLM + validation + pré-remplissage)", "feature": "llm",
+      "passes": false, "deps": ["S-034"],
+      "acceptance": [
+        "route app/api/llm/intake : texte/dictée → callLLM → JSON parsé VALIDÉ par schéma vers Profile (hors-bornes rejeté → re-prompt/repli) ; le LLM ne calcule pas",
+        "texte ambigu → défauts prudents documentés (jamais sous-dimensionné) ; Profile écrit dans localStorage (STORAGE_KEY) consommable par recommend",
+        "components/intake/IntakeField (« Décrivez votre besoin » + dictée navigateur si dispo) sur accueil / tête wizard → pré-remplit puis « Affiner » ; saisie manuelle toujours dispo (repli)",
+        "tests route + mappers ; e2e intake → wizard pré-rempli → verdict ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-039", "title": "Narration LLM (infobulles/verdict, chiffres préservés)", "feature": "llm",
+      "passes": false, "deps": ["S-034"],
+      "acceptance": [
+        "route app/api/llm/narrate : reçoit les chiffres injectés et les PRÉSERVE (invariant : aucun montant régénéré/altéré)",
+        "réécrit infobulles + verdict selon le profil ; repli = textes actuels si LLM KO ; disclaimer IA présent",
+        "branchement UI progressif avec repli sur les textes statiques existants ; tests invariant chiffres ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-040", "title": "Assistant Q&A contextuel (chat + recherche web sourcée)", "feature": "llm",
+      "passes": false, "deps": ["S-034", "S-037"],
+      "acceptance": [
+        "components/assistant/AssistantPanel (chat contextuel sur /resultats) + route app/api/llm/chat étoffée (contexte reco sérialisé)",
+        "question hors catalogue → recherche web Firecrawl SOURCÉE ; AUCUN chiffre inventé (montants cités == ceux de la reco/feed) ; disclaimer IA",
+        "tests route (callLLM + Firecrawl mockés) ; e2e question → réponse sourcée ; typecheck 0 / lint 0/0 / build OK / e2e verts"
+      ]
     }
   ]
 }
