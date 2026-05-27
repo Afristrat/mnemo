@@ -1,12 +1,12 @@
 // Logique PURE du budget-mètre (S-020) : compare le coût mensuel d'infra (variable, ±30 %) au
-// budget déclaré, et — en cas de tension — pointe la cause DOMINANTE + propose UN levier.
+// budget déclaré, et, en cas de tension, pointe la cause DOMINANTE + propose UN levier.
 // Ne touche JAMAIS au prix de vente du service (spec §8). Testable sans UI.
 
 import type { Budget, Sizing } from "@/lib/engine";
 
 export type BudgetStatus = "ok" | "warn" | "over";
 
-/** Plafond mensuel (€) par palier de budget — borne haute du palier ; gt2k = pas de plafond pratique. */
+/** Plafond mensuel (€) par palier de budget, borne haute du palier ; gt2k = pas de plafond pratique. */
 const BUDGET_CEILING: Record<Budget, number> = {
   lt50: 50,
   "50to200": 200,
@@ -46,7 +46,7 @@ export function evaluateBudget(totalCost: number, budget: Budget, sizing: Sizing
     cause = "La stack de base (preset choisi) porte l'essentiel du coût.";
     lever = "Alléger le preset (revoir sensibilité, audit, modules) ou relever le budget.";
   } else if (gpu >= api) {
-    cause = `Le pool GPU souverain (${gpu} €/mois) domine — typiquement la génération de médias.`;
+    cause = `Le pool GPU souverain (${gpu} €/mois) domine, typiquement la génération de médias.`;
     lever = "Passer la génération concernée en API 💳, réduire le volume/palier, ou ne pas générer.";
   } else {
     cause = `Le coût à l'usage des API médias (${api} €/mois) domine.`;

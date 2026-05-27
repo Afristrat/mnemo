@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 import { QuickProfileForm } from "@/components/quick-profile/QuickProfileForm";
 
-// Homepage de vente Mnémo — portage du brouillon validé en sparring (homepage-draft.html,
+// Homepage de vente Strate, portage du brouillon validé en sparring (homepage-draft.html,
 // décision #11 de la passation). 4 promesses (une seule « prouvée » = −risques, DÉFCON 1 :
 // pas de stat inventée), wedge « notre différence », chemin 90 s, tarifs (prix = sondage en
 // cours), CTA final. Tokens du design system (DESIGN.md), jamais de couleur hors palette.
@@ -36,7 +36,7 @@ const PROMISES: Promise[] = [
   {
     title: "↓ Moins de risques",
     body: "Zéro verrouillage (repartez avec toute votre stack en un clic), conformité par conception, et l’expertise qui vous évite l’erreur qui coûte cher.",
-    proof: "★ Prouvé — Exit Escrow + mode fiduciaire",
+    proof: "★ Prouvé, Exit Escrow + mode fiduciaire",
     hard: true,
   },
 ];
@@ -64,7 +64,7 @@ const STEPS: Step[] = [
   {
     n: 3,
     title: "Déploiement par agents",
-    body: "Nos agents déploient et opèrent — sans que vous ayez à recruter ni à tout réapprendre.",
+    body: "Nos agents déploient et opèrent, sans que vous ayez à recruter ni à tout réapprendre.",
   },
 ];
 
@@ -125,7 +125,7 @@ export default function Home(): ReactElement {
       <header className="sticky top-0 z-30 border-b border-outline-variant/60 bg-surface/85 backdrop-blur">
         <nav className="mx-auto flex max-w-[1080px] items-center justify-between px-6 py-4">
           <Link href="/" className="font-display text-2xl font-bold tracking-tight">
-            Mné<span className="text-primary">mo</span>
+            St<span className="text-primary">rate</span>
           </Link>
           <div className="hidden items-center gap-7 text-body-sm text-on-surface-variant md:flex">
             <a href="#pourquoi" className="transition-colors hover:text-on-surface">
@@ -156,30 +156,30 @@ export default function Home(): ReactElement {
             <span className="text-primary">jamais</span> quitter vos murs.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-body-lg text-on-surface-variant">
-            Mnémo transforme vos documents, décisions et échanges en une mémoire interrogeable —
+            Strate transforme vos documents, décisions et échanges en une mémoire interrogeable —
             hébergée chez vous ou en UE, jamais chez des géants étrangers. Vous gardez tout. Vous
             ne dépendez de personne.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <a href="#diagnostic" className={PILL_PRIMARY}>
-              Faire mon diagnostic — 90 s, gratuit
+              Faire mon diagnostic, 90 s, gratuit
             </a>
             <a href="#comment" className={PILL_GHOST}>
               Voir comment ça marche
             </a>
           </div>
           <p className="mt-5 text-body-sm text-on-surface-variant">
-            Hébergé UE / Maroc · Conforme CNDP & RGPD · Zéro verrouillage — repartez avec tout,
+            Hébergé UE / Maroc · Conforme CNDP & RGPD · Zéro verrouillage, repartez avec tout,
             quand vous voulez
           </p>
         </section>
 
-        {/* Pourquoi — 4 promesses */}
+        {/* Pourquoi, 4 promesses */}
         <section id="pourquoi" className="scroll-mt-24 py-12">
           <div className="mx-auto mb-8 max-w-2xl text-center">
-            <Eyebrow>Pourquoi Mnémo</Eyebrow>
+            <Eyebrow>Pourquoi Strate</Eyebrow>
             <h2 className="mt-2 font-display text-headline-lg">
-              Quatre promesses. Une seule déjà prouvée — les autres, mesurées chez vous.
+              Quatre promesses. Une seule déjà prouvée, les autres, mesurées chez vous.
             </h2>
             <p className="mt-2 text-body-md text-on-surface-variant">
               On ne vous promet pas la lune sans preuve. Voici ce qu’on défend, et avec quelle
@@ -208,19 +208,19 @@ export default function Home(): ReactElement {
           </div>
         </section>
 
-        {/* Wedge — notre différence */}
+        {/* Wedge, notre différence */}
         <section className="py-12">
           <div className="rounded-xl bg-inverse-surface px-6 py-10 text-center text-inverse-on-surface sm:px-10">
             <span className="text-label-caps uppercase tracking-widest text-inverse-primary">
               Notre différence
             </span>
             <h2 className="mt-2 font-display text-headline-lg text-inverse-on-surface">
-              On vous dit la vérité — même quand elle dérange.
+              On vous dit la vérité, même quand elle dérange.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-body-md text-inverse-on-surface/80">
               Si une solution open-source suffit, on vous le dit. Si seul un outil payant tient la
               route, on vous le dit aussi. Si vos contraintes se contredisent (petit budget +
-              souveraineté maximale), on le pointe — on ne vous vend pas l’impossible. Et on ne
+              souveraineté maximale), on le pointe, on ne vous vend pas l’impossible. Et on ne
               touche aucune commission cachée des fournisseurs qu’on recommande.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2.5">
@@ -237,7 +237,7 @@ export default function Home(): ReactElement {
               href="/fiduciaire"
               className="mt-6 inline-block text-body-sm text-inverse-primary underline decoration-dotted"
             >
-              Lire la charte fiduciaire — zéro commission cachée
+              Lire la charte fiduciaire, zéro commission cachée
             </Link>
           </div>
         </section>
@@ -271,7 +271,7 @@ export default function Home(): ReactElement {
               Le diagnostic est gratuit. Vous ne payez que la cuisine.
             </h2>
             <p className="mt-2 text-body-md text-on-surface-variant">
-              Le coût de l’infra reste transparent, payé à vos fournisseurs — on ne marge pas
+              Le coût de l’infra reste transparent, payé à vos fournisseurs, on ne marge pas
               dessus.
             </p>
           </div>
@@ -289,7 +289,7 @@ export default function Home(): ReactElement {
                   <h3 className="font-display text-headline-md">{tier.name}</h3>
                   {tier.surveyTag ? (
                     <span className="rounded-full bg-tertiary/10 px-2.5 py-0.5 text-label-caps uppercase text-tertiary">
-                      Prix — sondage en cours
+                      Prix, sondage en cours
                     </span>
                   ) : null}
                 </div>
@@ -314,11 +314,11 @@ export default function Home(): ReactElement {
           </div>
           <p className="mx-auto mt-4 max-w-2xl text-center text-body-sm text-on-surface-variant">
             Les montants seront calés par le sondage de prix (Van Westendorp + analyse conjointe)
-            en cours — pas de chiffre au doigt mouillé.
+            en cours, pas de chiffre au doigt mouillé.
           </p>
         </section>
 
-        {/* Diagnostic — chemin 90 s (vrai formulaire) */}
+        {/* Diagnostic, chemin 90 s (vrai formulaire) */}
         <section id="diagnostic" className="scroll-mt-24 py-12">
           <div className="mx-auto mb-8 max-w-2xl text-center">
             <Eyebrow>Diagnostic gratuit</Eyebrow>
@@ -351,7 +351,7 @@ export default function Home(): ReactElement {
       </main>
 
       <footer className="mt-10 border-t border-outline-variant py-8 text-center text-body-sm text-on-surface-variant">
-        © 2026 Mnémo — Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme
+        © 2026 Strate, Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme
         CNDP & RGPD
       </footer>
     </div>

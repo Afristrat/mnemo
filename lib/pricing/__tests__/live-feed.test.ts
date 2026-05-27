@@ -3,7 +3,7 @@ import { getLivePrices } from "@/lib/pricing/live-feed";
 import { MEDIA_PRICE_SEED } from "@/lib/pricing/media-seed";
 import { BACKUP_PRICE_SEED } from "@/lib/pricing/backup-seed";
 
-// S-025 — feed LIVE : extraction structurée + garde-fou. fetchImpl routé (Frankfurter + 3 pages
+// S-025, feed LIVE : extraction structurée + garde-fou. fetchImpl routé (Frankfurter + 3 pages
 // Firecrawl distinguées par l'URL du body). Jamais de réseau réel.
 
 type FcJson = Record<string, unknown>;

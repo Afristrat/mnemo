@@ -1,10 +1,10 @@
-# AGENTS.md — Mnémo
+# AGENTS.md — Strate
 
 Instructions pour tout agent (Claude Code / Ralph Loop) travaillant sur ce repo.
 
 ## Quoi
 
-Mnémo — plateforme SaaS souveraine de choix + déploiement + exploitation d'infra de base mémorielle IA. Spec : `PRD.md`. Moats : `docs/MOAT-HUNT.md`. Pilotage : `.ralph/prd.json` + `.ralph/progress.md`.
+Strate — plateforme SaaS souveraine de choix + déploiement + exploitation d'infra de base mémorielle IA. Spec : `PRD.md`. Moats : `docs/MOAT-HUNT.md`. Pilotage : `.ralph/prd.json` + `.ralph/progress.md`.
 
 ## Avant chaque action
 

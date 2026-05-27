@@ -1,4 +1,4 @@
-// Seed des prix de compute souverain (S-033) — DÉFCON 1.
+// Seed des prix de compute souverain (S-033), DÉFCON 1.
 //
 // Instances Scaleway (France/UE, EUR) réellement publiées (relevé 2026-05-27, extraction structurée
 // Firecrawl). Sources : docs/pricing/compute-cost-sources.md. Le feed live (`live-feed.ts`)
@@ -20,7 +20,7 @@ export const COMPUTE_PRICE_SEED: ComputePriceTable = {
     vcpu: 3,
     ramGb: 4,
     pricePerHourEur: 0.0198,
-    source: { label: "Scaleway — Virtual Instances (DEV1-M)", url: SCALEWAY_INSTANCES, checkedAt: CHECKED_AT },
+    source: { label: "Scaleway, Virtual Instances (DEV1-M)", url: SCALEWAY_INSTANCES, checkedAt: CHECKED_AT },
   },
   // Nœud self-host mutualisé (orchestrateur, Postgres, Qdrant, app).
   node: {
@@ -28,11 +28,11 @@ export const COMPUTE_PRICE_SEED: ComputePriceTable = {
     vcpu: 8,
     ramGb: 32,
     pricePerHourEur: 0.219,
-    source: { label: "Scaleway — Virtual Instances (PRO2-S)", url: SCALEWAY_INSTANCES, checkedAt: CHECKED_AT },
+    source: { label: "Scaleway, Virtual Instances (PRO2-S)", url: SCALEWAY_INSTANCES, checkedAt: CHECKED_AT },
   },
 };
 
-/** Prix compute en € — table seed (repli/baseline). Le live arrive via `getLivePrices().compute`. */
+/** Prix compute en €, table seed (repli/baseline). Le live arrive via `getLivePrices().compute`. */
 export function getComputePrices(): ComputePriceTable {
   return COMPUTE_PRICE_SEED;
 }

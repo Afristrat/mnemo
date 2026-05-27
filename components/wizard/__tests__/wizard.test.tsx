@@ -29,7 +29,7 @@ describe("Wizard (4 blocs)", () => {
   });
 });
 
-describe("YesNo — accessibilité", () => {
+describe("YesNo, accessibilité", () => {
   it("expose un groupe nommé et des boutons à bascule (aria-pressed)", () => {
     render(<YesNo ariaLabel="Audit (traçabilité signée)" value={true} onChange={() => {}} />);
     expect(screen.getByRole("group", { name: "Audit (traçabilité signée)" })).toBeInTheDocument();

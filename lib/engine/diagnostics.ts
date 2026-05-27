@@ -11,7 +11,7 @@ export function computeCompliance(p: Profile): string[] {
     actions.push("📜 Mettre à jour la politique de confidentialité (traitement IA + base mémorielle)");
   }
   if (p.regulations.includes("cndp")) {
-    actions.push("🇲🇦 Déclaration CNDP (Loi 09-08 Maroc) — formulaire F211 via cndp.ma");
+    actions.push("🇲🇦 Déclaration CNDP (Loi 09-08 Maroc), formulaire F211 via cndp.ma");
     actions.push("👤 Désigner un correspondant CNDP (équivalent DPO)");
     actions.push("📞 Documenter droits d'accès et de rectification (Art. 7-8 Loi 09-08), SLA 10 jours min.");
   }
@@ -25,7 +25,7 @@ export function computeCompliance(p: Profile): string[] {
     actions.push("🔐 Chiffrement AES-256 au repos ET en transit, audit log immuable");
   }
   if (p.regulations.includes("secret-pro")) {
-    actions.push("🔒 Verrouillage accès par RLS Postgres (champ `circle`) — chaque dossier client = un circle distinct");
+    actions.push("🔒 Verrouillage accès par RLS Postgres (champ `circle`), chaque dossier client = un circle distinct");
     actions.push("✍ Audit trail signé append-only (PL/pgSQL triggers)");
     actions.push("👤 Anonymisation k-anonymity k=5 minimum sur tout export hors périmètre dossier");
   }
@@ -93,7 +93,7 @@ export function computeKMChecks(preset: Preset, p: Profile): KMCheck[] {
     {
       cause: "2. Rigidité des instantanés figés",
       coverage: wantsBitemp
-        ? "Bitemporel actif sur faits (Chris/Xavier) — V1+ ajoute bi-temp sur arêtes"
+        ? "Bitemporel actif sur faits (Chris/Xavier), V1+ ajoute bi-temp sur arêtes"
         : "Pas de bitemporel demandé → archive plate, risque de figer",
       ok: wantsBitemp,
       warn: false,

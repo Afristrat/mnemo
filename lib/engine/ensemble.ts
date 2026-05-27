@@ -1,5 +1,5 @@
 // Ensemble multi-configuration (F5).
-// Analogie : prévision météo d'ensemble — on ne lance pas un seul modèle, mais
+// Analogie : prévision météo d'ensemble, on ne lance pas un seul modèle, mais
 // plusieurs, et la DISPERSION de leurs sorties (le « spread ») mesure l'incertitude.
 // Ici chaque « membre » de l'ensemble est le profil utilisateur biaisé vers une
 // priorité différente (souveraineté / coût / délai). On passe chaque membre dans
@@ -171,7 +171,7 @@ function describeUncertainty(
       ? "Les membres convergent : la recommandation est robuste et peu sensible aux arbitrages."
       : agreement === "modéré"
         ? "Un arbitrage souveraineté / coût / délai reste à trancher selon votre priorité."
-        : "Forte divergence : la décision dépend fortement de la priorité retenue — tranchez explicitement souveraineté vs coût vs délai.";
+        : "Forte divergence : la décision dépend fortement de la priorité retenue, tranchez explicitement souveraineté vs coût vs délai.";
   return head + tail;
 }
 

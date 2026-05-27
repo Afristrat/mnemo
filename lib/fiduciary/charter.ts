@@ -1,6 +1,6 @@
-// Fiduciary Mode (F8, moat ②) : charte fiduciaire — donnée pure, source de vérité
+// Fiduciary Mode (F8, moat ②) : charte fiduciaire, donnée pure, source de vérité
 // unique, réutilisée par la page de divulgation /fiduciaire ET par le livrable export.
-// Principe : Mnémo agit dans le seul intérêt du client. Zéro commission vendor cachée
+// Principe : Strate agit dans le seul intérêt du client. Zéro commission vendor cachée
 // (leçon Flipper, cf. docs/MOAT-HUNT.md).
 
 export type FiduciaryCommitment = { title: string; detail: string };
@@ -14,11 +14,11 @@ export type FiduciaryCharter = {
 };
 
 export const FIDUCIARY_CHARTER: FiduciaryCharter = {
-  title: "Charte fiduciaire Mnémo",
+  title: "Charte fiduciaire Strate",
   intro:
-    "Mnémo agit dans votre seul intérêt. Nos recommandations ne sont jamais orientées par une rémunération de fournisseur. Ce document est public et opposable.",
+    "Strate agit dans votre seul intérêt. Nos recommandations ne sont jamais orientées par une rémunération de fournisseur. Ce document est public et opposable.",
   revenueModel:
-    "Nous facturons le conseil et le déploiement — la « cuisine ». La recette, elle, reste ouverte. Nous ne percevons aucune commission, aucun apport d'affaires ni aucune rétrocommission des fournisseurs que nous recommandons.",
+    "Nous facturons le conseil et le déploiement, la « cuisine ». La recette, elle, reste ouverte. Nous ne percevons aucune commission, aucun apport d'affaires ni aucune rétrocommission des fournisseurs que nous recommandons.",
   commitments: [
     {
       title: "Zéro commission cachée",

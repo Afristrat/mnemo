@@ -6,7 +6,7 @@
 // confronte chaque valeur live à la **baseline sourcée** (seed) : promue seulement si plausible,
 // sinon rejetée au profit de la baseline avec un drapeau « à revérifier ».
 //
-// Pure et déterministe — aucune dépendance réseau ni UI. C'est ici que se joue la fiabilité.
+// Pure et déterministe, aucune dépendance réseau ni UI. C'est ici que se joue la fiabilité.
 
 import type { Confidence } from "@/components/ui/StatusDot";
 
@@ -53,7 +53,7 @@ export function reconcilePrice(
           amount: baselineAmount,
           status: "flagged",
           confidence: "low",
-          note: "Valeur live inattendue sur un poste gratuit — baseline conservée.",
+          note: "Valeur live inattendue sur un poste gratuit, baseline conservée.",
         };
   }
 
@@ -66,6 +66,6 @@ export function reconcilePrice(
     amount: baselineAmount,
     status: "flagged",
     confidence: "low",
-    note: `Valeur live (${live}) hors bande vs baseline (${baselineAmount}) — extraction jugée non fiable, baseline conservée.`,
+    note: `Valeur live (${live}) hors bande vs baseline (${baselineAmount}), extraction jugée non fiable, baseline conservée.`,
   };
 }

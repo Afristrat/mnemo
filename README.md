@@ -1,6 +1,6 @@
-# Mnémo
+# Strate
 
-**Infrastructure de base mémorielle IA souveraine.** Mnémo aide une organisation à
+**Infrastructure de base mémorielle IA souveraine.** Strate aide une organisation à
 **choisir, déployer et exploiter** sa base mémorielle — sans migration, sans verrouillage,
 sans coûts cachés. Ce dépôt couvre le **Lot 1 (conseil + moats)** : un configurateur qui
 recommande une stack, la chiffre (prix sourcés, ±30 %), explore l'incertitude, produit un
@@ -70,5 +70,5 @@ Détails d'architecture et conventions : [`CLAUDE.md`](./CLAUDE.md) · spec : [`
 
 ---
 
-> Mnémo produit des **projections sourcées** (±30 %), pas des engagements. Une IA peut se
+> Strate produit des **projections sourcées** (±30 %), pas des engagements. Une IA peut se
 > tromper : vérifiez chaque source avant décision.

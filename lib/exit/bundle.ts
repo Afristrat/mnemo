@@ -1,5 +1,5 @@
 // Exit Escrow (F7, moat ①) : génère un bundle de déploiement reproductible à partir
-// de la recommandation — IaC (Compose + Terraform skeleton), squelette de coffre,
+// de la recommandation, IaC (Compose + Terraform skeleton), squelette de coffre,
 // runbook opérationnel, scripts de ré-embedding et de backup, manifeste machine.
 // Tout est pur (profil + reco → fichiers texte) : zéro I/O, entièrement testable.
 //
@@ -38,7 +38,7 @@ export type ExitBundle = {
 };
 
 const DISCLAIMER =
-  "Bundle généré par Mnémo — recette ouverte, reproductible, sans dépendance à Mnémo. Une IA peut se tromper : revérifiez chaque valeur et chaque source avant production.";
+  "Bundle généré par Strate, recette ouverte, reproductible, sans dépendance à Strate. Une IA peut se tromper : revérifiez chaque valeur et chaque source avant production.";
 
 function layerById(reco: Recommendation, id: number): Layer {
   const found = reco.layers.find((l) => l.id === id);
@@ -60,7 +60,7 @@ function collectSources(reco: Recommendation): BundleManifest["sources"] {
 
 function manifestOf(profile: Profile, reco: Recommendation, generatedAt: string): BundleManifest {
   return {
-    product: "Mnémo — base mémorielle IA souveraine",
+    product: "Strate, base mémorielle IA souveraine",
     generatedAt,
     preset: reco.preset,
     zone: profile.zone,
@@ -89,23 +89,23 @@ function readme(m: BundleManifest, reco: Recommendation): string {
   const layerLines = reco.layers
     .map((l) => `| C${l.id} | ${l.name} | ${l.choice} | ${l.cost > 0 ? `${l.cost} €/mois` : "inclus"} |`)
     .join("\n");
-  return `# Bundle de déploiement Mnémo — Exit Escrow
+  return `# Bundle de déploiement Strate, Exit Escrow
 
 > Preset **${m.preset}** · zone **${m.zone}** · coût estimé **${m.totalCost} €/mois** · score **${m.scoreAvg}/10**
 > Généré le ${m.generatedAt}.
 
-Ce bundle contient tout le nécessaire pour **redéployer votre base mémorielle ailleurs, sans Mnémo**.
+Ce bundle contient tout le nécessaire pour **redéployer votre base mémorielle ailleurs, sans Strate**.
 C'est la matérialisation de la promesse « zéro vendor lock-in » : la recette est ouverte.
 
 ## Contenu
 
-- \`manifest.json\` — description machine de la stack (source de vérité).
-- \`docker-compose.yml\` — services auto-hébergeables (vector DB, Postgres, orchestrateur).
-- \`terraform/\` — squelette de provisioning de l'infra (C6).
-- \`vault/\` — squelette du coffre à secrets (noms de variables, **jamais** de valeur).
-- \`runbook.md\` — exploitation : déploiement, backup 3-2-1, restauration, MEL, incident.
-- \`scripts/re-embed.sh\` — ré-embedding du vault vers la base vectorielle.
-- \`scripts/backup.sh\` — sauvegarde chiffrée (Restic).
+- \`manifest.json\`, description machine de la stack (source de vérité).
+- \`docker-compose.yml\`, services auto-hébergeables (vector DB, Postgres, orchestrateur).
+- \`terraform/\`, squelette de provisioning de l'infra (C6).
+- \`vault/\`, squelette du coffre à secrets (noms de variables, **jamais** de valeur).
+- \`runbook.md\`, exploitation : déploiement, backup 3-2-1, restauration, MEL, incident.
+- \`scripts/re-embed.sh\`, ré-embedding du vault vers la base vectorielle.
+- \`scripts/backup.sh\`, sauvegarde chiffrée (Restic).
 
 ## Stack recommandée
 
@@ -134,7 +134,7 @@ function dockerCompose(reco: Recommendation): string {
   const litellm = needsLiteLLM
     ? `
   orchestrator:
-    # C2 — ${c2.choice}
+    # C2, ${c2.choice}
     image: ghcr.io/berriai/litellm:main-stable
     restart: unless-stopped
     env_file: [vault/.env]
@@ -142,22 +142,22 @@ function dockerCompose(reco: Recommendation): string {
     depends_on: [qdrant, postgres]
 `
     : `
-  # C2 — ${c2.choice}
+  # C2, ${c2.choice}
   # Preset LIGHT : orchestrateur lancé hors conteneur (script Python), API LLM directe.
 `;
-  return `# docker-compose.yml — généré par Mnémo (preset ${reco.preset})
+  return `# docker-compose.yml, généré par Strate (preset ${reco.preset})
 # Services auto-hébergeables de la stack. Les couches « API » (LLM, embeddings SaaS)
 # sont configurées via vault/.env, pas conteneurisées.
 services:
   qdrant:
-    # C3 — ${c3.choice}
+    # C3, ${c3.choice}
     image: qdrant/qdrant:latest
     restart: unless-stopped
     ports: ["6333:6333"]
     volumes: ["qdrant_data:/qdrant/storage"]
 
   postgres:
-    # C5 — ${c5.choice}
+    # C5, ${c5.choice}
     image: pgvector/pgvector:pg16
     restart: unless-stopped
     env_file: [vault/.env]
@@ -173,7 +173,7 @@ volumes:
 
 function terraformMain(reco: Recommendation): string {
   const c6 = layerById(reco, 6);
-  return `# terraform/main.tf — squelette de provisioning (C6)
+  return `# terraform/main.tf, squelette de provisioning (C6)
 # Cible : ${c6.choice}
 # Adaptez le provider à votre hébergeur souverain (Scaleway / Hetzner / OVH / on-prem).
 
@@ -202,7 +202,7 @@ output "next_steps" {
 function terraformVars(profile: Profile, reco: Recommendation): string {
   const region = profile.zone === "maroc" ? "fr-par" : profile.zone === "us" ? "us-east" : "fr-par";
   const instance = reco.preset === "HARD" ? "GPU-3070-S" : reco.preset === "MEDIUM" ? "DEV1-L" : "DEV1-S";
-  return `# terraform/terraform.tfvars — valeurs par défaut (preset ${reco.preset})
+  return `# terraform/terraform.tfvars, valeurs par défaut (preset ${reco.preset})
 region        = "${region}"
 instance_type = "${instance}"
 ssh_public_key = "CHANGEZ-MOI"
@@ -211,8 +211,8 @@ ssh_public_key = "CHANGEZ-MOI"
 
 function vaultEnv(reco: Recommendation): string {
   const lines = [
-    "# vault/.env.example — squelette de secrets. NE JAMAIS COMMITTER vault/.env.",
-    "# Renseignez les valeurs côté client ; Mnémo ne les voit jamais.",
+    "# vault/.env.example, squelette de secrets. NE JAMAIS COMMITTER vault/.env.",
+    "# Renseignez les valeurs côté client ; Strate ne les voit jamais.",
     "",
     "POSTGRES_DB=mnemo",
     "POSTGRES_USER=mnemo",
@@ -242,10 +242,10 @@ function vaultReadme(): string {
 
 function runbook(reco: Recommendation): string {
   const c6 = layerById(reco, 6);
-  return `# Runbook opérationnel — Mnémo (preset ${reco.preset})
+  return `# Runbook opérationnel, Strate (preset ${reco.preset})
 
 ## Déploiement
-1. Provisionner l'infra (\`terraform/\`) — cible : ${c6.choice}.
+1. Provisionner l'infra (\`terraform/\`), cible : ${c6.choice}.
 2. Installer Docker + Docker Compose sur l'hôte.
 3. \`cp vault/.env.example vault/.env\` et renseigner les secrets.
 4. \`docker compose up -d\` puis vérifier \`docker compose ps\`.
@@ -260,7 +260,7 @@ function runbook(reco: Recommendation): string {
 2. Recharger les volumes Postgres/Qdrant.
 3. \`bash scripts/re-embed.sh\` si l'index doit être reconstruit depuis le vault.
 
-## MEL — Minimum Equipment List (dégradation)
+## MEL, Minimum Equipment List (dégradation)
 | Composant | En panne → | Mode dégradé | Délai max réparation |
 |---|---|---|---|
 | Base vectorielle (Qdrant) | Recherche sémantique KO | Repli recherche plein-texte Postgres | 4 h |
@@ -277,7 +277,7 @@ Une IA peut se tromper : ce runbook est un point de départ à adapter à votre 
 
 function reEmbedScript(reco: Recommendation): string {
   return `#!/usr/bin/env bash
-# scripts/re-embed.sh — reconstruit l'index vectoriel depuis le vault markdown.
+# scripts/re-embed.sh, reconstruit l'index vectoriel depuis le vault markdown.
 # Le vault markdown est la source de vérité ; l'index est une projection rejouable.
 set -euo pipefail
 
@@ -285,7 +285,7 @@ VAULT_DIR="\${VAULT_DIR:-./vault/atoms}"
 QDRANT_URL="\${QDRANT_URL:-http://localhost:6333}"
 COLLECTION="\${COLLECTION:-mnemo}"
 
-echo "Preset : ${reco.preset} — ré-embedding depuis \$VAULT_DIR vers \$QDRANT_URL/\$COLLECTION"
+echo "Preset : ${reco.preset}, ré-embedding depuis \$VAULT_DIR vers \$QDRANT_URL/\$COLLECTION"
 
 # 1. Créer la collection si absente (dimension selon le modèle d'embeddings retenu).
 # 2. Pour chaque atome markdown : parser le frontmatter (champ 'circle' = pivot RLS),
@@ -302,7 +302,7 @@ echo "Ré-embedding terminé."
 
 function backupScript(): string {
   return `#!/usr/bin/env bash
-# scripts/backup.sh — sauvegarde chiffrée 3-2-1 via Restic.
+# scripts/backup.sh, sauvegarde chiffrée 3-2-1 via Restic.
 set -euo pipefail
 : "\${RESTIC_REPOSITORY:?Définir RESTIC_REPOSITORY dans vault/.env}"
 : "\${RESTIC_PASSWORD:?Définir RESTIC_PASSWORD dans vault/.env}"
@@ -310,7 +310,7 @@ set -euo pipefail
 restic backup ./vault ./data --tag mnemo
 restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
 restic check
-echo "Backup OK — pensez à tester une restauration."
+echo "Backup OK, pensez à tester une restauration."
 `;
 }
 

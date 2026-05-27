@@ -67,7 +67,7 @@ export function LivePriceStatus(): ReactElement {
       <p className="mt-1 text-body-sm text-on-surface-variant">
         Valeurs extraites en direct des pages vendor (Firecrawl), puis validées contre un relevé
         sourcé : une valeur aberrante est rejetée au profit de la baseline (« à revérifier »). Une IA
-        peut se tromper — chaque chiffre reste à confirmer à la source.
+        peut se tromper, chaque chiffre reste à confirmer à la source.
       </p>
 
       {state.kind === "error" ? (

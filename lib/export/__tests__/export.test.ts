@@ -57,7 +57,7 @@ describe("buildDeliverable", () => {
 describe("renderMarkdown", () => {
   it("rend titres, sources en lien markdown et disclaimer", () => {
     const md = renderMarkdown(deliverable());
-    expect(md).toContain("# Mnémo — Plan d'infrastructure mémorielle");
+    expect(md).toContain("# Strate, Plan d'infrastructure mémorielle");
     expect(md).toContain("## Stack recommandée (7 couches)");
     expect(md).toMatch(/\]\(https?:\/\//); // lien cliquable [label](http…)
     expect(md).toContain(DISCLAIMER);

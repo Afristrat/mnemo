@@ -4,7 +4,7 @@ import { TtlCache } from "@/lib/pricing/cache";
 import { scrapePricingMarkdown } from "@/lib/pricing/firecrawl";
 import { buildObservation, refreshAllPricing, feedSources, type FeedSource } from "@/lib/pricing/feed";
 
-const SOURCE: FeedSource = { layerId: 99, label: "Vendor — pricing", url: "https://vendor.test/pricing" };
+const SOURCE: FeedSource = { layerId: 99, label: "Vendor, pricing", url: "https://vendor.test/pricing" };
 
 function okResponse(markdown: string): Response {
   return { ok: true, json: async () => ({ success: true, data: { markdown } }) } as unknown as Response;

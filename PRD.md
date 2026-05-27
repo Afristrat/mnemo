@@ -1,4 +1,4 @@
-# PRD — Mnémo
+# PRD — Strate
 
 > Product Requirements Document — la plateforme souveraine de choix, déploiement et exploitation d'infrastructures de base mémorielle IA.
 > Version 1.1 · 2026-05-24 · Auteur : Amine (sparring : Claude Code /NP)
@@ -10,7 +10,7 @@
 
 ## 0. TL;DR
 
-Mnémo profile le besoin d'un dirigeant, **recommande** une stack de base mémorielle souveraine sur 7 couches avec coût projeté, **livre** un plan exportable et sourcé, **déploie** l'infra via un provisioning hybride (l'utilisateur crée le compte, l'agent optimise le setup) et la **monitore**. Modèle « recette ouverte, cuisine payante ». Trois moats inspirés d'autres industries — **Exit Escrow**, **Fiduciary Mode**, **Intelligence Network** — reproduisent le playbook Cloudflare et rendent la plateforme défendable là où la simple reco est commoditisée. Première brique d'un écosystème de souveraineté mémorielle.
+Strate profile le besoin d'un dirigeant, **recommande** une stack de base mémorielle souveraine sur 7 couches avec coût projeté, **livre** un plan exportable et sourcé, **déploie** l'infra via un provisioning hybride (l'utilisateur crée le compte, l'agent optimise le setup) et la **monitore**. Modèle « recette ouverte, cuisine payante ». Trois moats inspirés d'autres industries — **Exit Escrow**, **Fiduciary Mode**, **Intelligence Network** — reproduisent le playbook Cloudflare et rendent la plateforme défendable là où la simple reco est commoditisée. Première brique d'un écosystème de souveraineté mémorielle.
 
 ---
 
@@ -20,7 +20,7 @@ Mnémo profile le besoin d'un dirigeant, **recommande** une stack de base mémor
 
 **Thèse** : aujourd'hui, un dirigeant qui veut une mémoire IA a trois options bancales — ChatGPT/Claude grand public (mémoire faible, données chez un tiers US), projet sur-mesure (30-200 k€, 6 mois, non réutilisable), ou SaaS mémoire US (locataire à vie). Aucune ne suit le client dans sa croissance, ne respecte la souveraineté progressive, ni ne s'adapte au budget réel. *(Source : genèse, présentation P4.)*
 
-Mnémo n'est pas un conseil isolé : c'est **le point d'entrée d'un écosystème de souveraineté mémorielle** qui adresse quatre douleurs structurelles — perte de connaissance critique, re-contextualisation permanente dans chaque chat, non-souveraineté des données, et vendor lock-in.
+Strate n'est pas un conseil isolé : c'est **le point d'entrée d'un écosystème de souveraineté mémorielle** qui adresse quatre douleurs structurelles — perte de connaissance critique, re-contextualisation permanente dans chaque chat, non-souveraineté des données, et vendor lock-in.
 
 **Promesse de marque** : *« La base mémorielle souveraine qui grandit avec votre organisation — sans migration, sans verrouillage, sans coûts cachés. »*
 
@@ -28,7 +28,7 @@ Mnémo n'est pas un conseil isolé : c'est **le point d'entrée d'un écosystèm
 
 ## 2. Jobs-to-be-done (le job ≠ la solution)
 
-Le dirigeant n'« embauche » pas Mnémo pour « designer son infra » (ça, c'est le moyen). Les vrais jobs :
+Le dirigeant n'« embauche » pas Strate pour « designer son infra » (ça, c'est le moyen). Les vrais jobs :
 
 1. « Ne plus perdre la connaissance critique quand un sachant part. »
 2. « Que mon IA réponde avec **MA** doctrine, pas la moyenne du web. »
@@ -59,7 +59,7 @@ La couche de **reco** est commoditisée (un LLM généraliste la rapproche gratu
 
 | # | Moat | Analogie | Ce qu'il défend | Lot 1 |
 |---|---|---|---|---|
-| ① | **Exit Escrow** — sortie certifiée | Escrow logiciel / IP Bankruptcy Act | Anti-capture : en 1 clic, un bundle reproductible (IaC + dumps + vault + runbook) redéployable ailleurs ; release auto même si Mnémo ferme. | ✅ |
+| ① | **Exit Escrow** — sortie certifiée | Escrow logiciel / IP Bankruptcy Act | Anti-capture : en 1 clic, un bundle reproductible (IaC + dumps + vault + runbook) redéployable ailleurs ; release auto même si Strate ferme. | ✅ |
 | ② | **Fiduciary Mode** — mandataire transparent | Courtier énergie/assurance | Confiance : payé par l'utilisateur, **jamais commissionné en douce** par les vendors. Mode payant = négociation tarifaire au nom du client. | ✅ |
 | ③ | **Intelligence Network** — effet réseau de données | ISAC cyber | Données : coût réel anonymisé renvoyé par chaque déploiement → calibration irréplicable + alertes vendor. | ✅ (rails) |
 
@@ -83,7 +83,7 @@ La couche de **reco** est commoditisée (un LLM généraliste la rapproche gratu
 - **F9 Rails du Network (③)** : consentement opt-in RGPD + schéma de données coût réel (collecte effective dès le monitoring).
 
 ### Lot 2 — Cuisine payante (déploiement assisté + monitoring)
-- **F10 Provisioning hybride (human-in-the-loop par design)** : Mnémo fournit à l'utilisateur le **lien + la procédure guidée** pour créer lui-même chaque compte vendor (avec sa carte). L'agent **prend le relais après** sur la **configuration et l'optimisation du setup**, via OAuth/MCP/API officiels sur le compte autorisé par l'utilisateur. **L'agent ne crée jamais de compte ni ne saisit de carte** → zéro automatisation d'inscription (CGU respectées), zéro engagement financier au nom d'autrui (responsabilité maîtrisée).
+- **F10 Provisioning hybride (human-in-the-loop par design)** : Strate fournit à l'utilisateur le **lien + la procédure guidée** pour créer lui-même chaque compte vendor (avec sa carte). L'agent **prend le relais après** sur la **configuration et l'optimisation du setup**, via OAuth/MCP/API officiels sur le compte autorisé par l'utilisateur. **L'agent ne crée jamais de compte ni ne saisit de carte** → zéro automatisation d'inscription (CGU respectées), zéro engagement financier au nom d'autrui (responsabilité maîtrisée).
 - **F11 Coffre de secrets** chiffré, zéro clé en clair.
 - **F12 Monitoring** : Infra Health Score (composite, seuil = alerte) + Dispatch Deviation Guide (dégradation opérée façon MEL).
 - **F13 Network actif** : collecte du coût réel → recalibration continue + alertes vendor partagées.
@@ -126,7 +126,7 @@ Génère N variantes (ex. « souveraineté max », « coût min », « time-to-V
 Crawl périodique + à la demande des pages tarifaires (rendu JS via Firecrawl). Stocke prix + timestamp + niveau de confiance + URL source. Détecte et flague les variations. Tout chiffre affiché renvoie à sa source datée.
 
 ### 6.5 Provisioning hybride (F10)
-Flux : (1) Mnémo affiche pour chaque vendor de la stack choisie un **lien direct + procédure guidée** de création de compte ; (2) l'utilisateur crée le compte et saisit sa carte lui-même ; (3) l'utilisateur autorise Mnémo via **OAuth/MCP officiel** ; (4) l'agent configure et optimise le setup (paramètres, quotas, sécurité) sur le compte autorisé ; (5) chaque action est journalisée (audit trail). L'agent n'inscrit jamais, ne paie jamais.
+Flux : (1) Strate affiche pour chaque vendor de la stack choisie un **lien direct + procédure guidée** de création de compte ; (2) l'utilisateur crée le compte et saisit sa carte lui-même ; (3) l'utilisateur autorise Strate via **OAuth/MCP officiel** ; (4) l'agent configure et optimise le setup (paramètres, quotas, sécurité) sur le compte autorisé ; (5) chaque action est journalisée (audit trail). L'agent n'inscrit jamais, ne paie jamais.
 
 ---
 

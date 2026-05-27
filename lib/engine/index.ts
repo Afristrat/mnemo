@@ -1,4 +1,4 @@
-// Moteur de recommandation Mnémo — point d'entrée public.
+// Moteur de recommandation Strate, point d'entrée public.
 export * from "./types";
 export { MODULES, defaultModuleLevels } from "./modules";
 export { PRESET_PROFILES, type PresetProfile } from "./presets";

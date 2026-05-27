@@ -6,7 +6,7 @@
 //  2. **normalise** la table en € (devise unique) pour le moteur (`costMultimodalSizing`, S-016) ;
 //  3. signale la **fraîcheur** des pages source via le client Firecrawl existant (repli seed).
 //
-// Toutes les fonctions sont pures ou à effets injectables (`fetchImpl`) — testabilité, jamais de
+// Toutes les fonctions sont pures ou à effets injectables (`fetchImpl`), testabilité, jamais de
 // throw côté réseau (repli systématique). La clé Firecrawl reste serveur (jamais exposée au client).
 
 import type { GpuTier, MultimodalPriceEntry, MultimodalPriceTable } from "@/lib/engine";
@@ -56,7 +56,7 @@ export async function fetchUsdToEur(deps: FxDeps = {}): Promise<FxRate> {
     const checkedAt = typeof payload.date === "string" && payload.date.length > 0 ? payload.date : isoDate(nowMs);
     return {
       rate,
-      source: { label: "Frankfurter (taux BCE) — USD→EUR", url: "https://www.frankfurter.app", checkedAt },
+      source: { label: "Frankfurter (taux BCE), USD→EUR", url: "https://www.frankfurter.app", checkedAt },
       live: true,
     };
   } catch {

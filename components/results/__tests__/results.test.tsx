@@ -30,7 +30,7 @@ describe("VerdictView", () => {
     pain: "Douleur test",
     risk: "Risque test",
     gain: "Gain test",
-    firmPriceTier: "[PLACEHOLDER] — prix de vente",
+    firmPriceTier: "[PLACEHOLDER], prix de vente",
     variableCostBand: { low: 70, high: 130 },
     setupCostBand: { low: 0, high: 0 },
     nextStep: "Étape test",

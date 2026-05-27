@@ -19,7 +19,7 @@ export function renderMarkdown(d: Deliverable): string {
   if (d.sources.length > 0) {
     lines.push("## Sources", "");
     for (const src of d.sources) {
-      lines.push(`- [${src.label}](${src.url}) — vérifié le ${src.checkedAt}`);
+      lines.push(`- [${src.label}](${src.url}), vérifié le ${src.checkedAt}`);
     }
     lines.push("");
   }

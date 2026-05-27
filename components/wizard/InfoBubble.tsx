@@ -15,7 +15,7 @@ type InfoBubbleProps = {
 
 /**
  * Divulgation accessible « pourquoi + conséquence » à côté d'un champ. Présente une information
- * FACTUELLE et NON ORIENTÉE (l'utilisateur tranche) — jamais une recommandation. Bouton « ? »
+ * FACTUELLE et NON ORIENTÉE (l'utilisateur tranche), jamais une recommandation. Bouton « ? »
  * qui révèle/masque le contenu (disclosure pattern, aria-expanded + région reliée).
  */
 export function InfoBubble({ why, consequence, label, className }: InfoBubbleProps): ReactElement {

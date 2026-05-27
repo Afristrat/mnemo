@@ -4,7 +4,7 @@ import type { Backup, BackupCriticality, Profile, Sizing } from "@/lib/engine";
 import { MEDIA_PRICE_SEED } from "@/lib/pricing/media-seed";
 import { BACKUP_PRICE_SEED } from "@/lib/pricing/backup-seed";
 
-// S-026 — moteur backup pur : dérivation criticité→plan, surcharge conformité, monotonie coût,
+// S-026, moteur backup pur : dérivation criticité→plan, surcharge conformité, monotonie coût,
 // arbitrage vecteurs. Prix INJECTÉS (DÉFCON 1 : aucune valeur réelle en dur dans les tests).
 
 const HOT = MEDIA_PRICE_SEED.storagePerGbMonth; // stockage chaud (€/Go·mois)
@@ -24,7 +24,7 @@ function plan(backup: Backup | undefined, over: Partial<Profile> = {}): ReturnTy
 }
 const force = (c: BackupCriticality): Backup => ({ criticality: c, vectorStrategy: "backup" });
 
-describe("deriveBackupPlan — dérivation criticité → plan", () => {
+describe("deriveBackupPlan, dérivation criticité → plan", () => {
   it("none → plan neutre (0 copie, coûts 0)", () => {
     const p = plan({ criticality: "none" });
     expect(p.copies).toBe(0);
@@ -100,7 +100,7 @@ describe("conformité (§6, sourcée)", () => {
   });
 });
 
-describe("coût (§7) — monotonie & sources", () => {
+describe("coût (§7), monotonie & sources", () => {
   it("monotonie criticité : none < standard < high < critical", () => {
     const none = plan(force("none")).monthlyCost;
     const std = plan(force("standard")).monthlyCost;

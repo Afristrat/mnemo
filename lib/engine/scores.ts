@@ -6,7 +6,7 @@ function hasMultimodal(p: Profile): boolean {
 
 /**
  * Score les 8 dimensions (avant bonus modules). Fonction pure.
- * Porté du simulateur v2 — règles déterministes calibrées sur les convergences cohorte.
+ * Porté du simulateur v2, règles déterministes calibrées sur les convergences cohorte.
  */
 export function computeScores(preset: Preset, p: Profile, totalCost: number): ScoreDimension[] {
   const wantsMultimodal = hasMultimodal(p);
@@ -63,7 +63,7 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
       key: "audit",
       label: "Auditabilité bitemporelle (qui savait quoi quand)",
       score: audit,
-      why: `Choix bitemporel : ${p.bitemporal ? "Oui" : "Non"}. ${preset === "LIGHT" && p.bitemporal ? "Incompatible — passer en MEDIUM." : "OK"}`,
+      why: `Choix bitemporel : ${p.bitemporal ? "Oui" : "Non"}. ${preset === "LIGHT" && p.bitemporal ? "Incompatible, passer en MEDIUM." : "OK"}`,
     },
     {
       key: "stress",
@@ -101,7 +101,7 @@ export function computeScores(preset: Preset, p: Profile, totalCost: number): Sc
       key: "cost",
       label: "Coût opérationnel mensuel",
       score: cost,
-      why: `≈ ${totalCost} €/mois. ${cost >= 8 ? "Très soutenable." : cost >= 6 ? "Soutenable, surveiller la croissance." : "Investissement notable — vérifier ROI."}`,
+      why: `≈ ${totalCost} €/mois. ${cost >= 8 ? "Très soutenable." : cost >= 6 ? "Soutenable, surveiller la croissance." : "Investissement notable, vérifier ROI."}`,
     },
   ];
 }

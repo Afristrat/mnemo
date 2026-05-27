@@ -1,4 +1,4 @@
-// Compute souverain — dimensionnement des serveurs self-hosted (S-033, pur).
+// Compute souverain, dimensionnement des serveurs self-hosted (S-033, pur).
 //
 // Comble le trou : les VM CPU/RAM qui font tourner Postgres, Qdrant, l'orchestrateur (LiteLLM/vLLM),
 // l'app et le vault en self-hosted étaient invisibles (forfait C6 codé en dur). Ici elles sont
@@ -75,7 +75,7 @@ export function computeSovereignCompute(
   if (preset === "LIGHT") {
     const count = 1;
     lines.push({
-      role: "Glue souveraine (vault, scripts) — services principaux managés",
+      role: "Glue souveraine (vault, scripts), services principaux managés",
       spec: prices.glue,
       count,
       monthlyCost: monthly(prices.glue, count),
@@ -98,7 +98,7 @@ export function computeSovereignCompute(
   return { instances: lines, monthlyCost, sources: dedupeSources(lines.map((l) => l.spec.source)) };
 }
 
-/** Table neutre (coûts 0) — défaut d'injection pour préserver la pureté/les invariants. */
+/** Table neutre (coûts 0), défaut d'injection pour préserver la pureté/les invariants. */
 export const NEUTRAL_COMPUTE_PRICES: ComputePriceTable = {
   glue: { name: "—", vcpu: 0, ramGb: 0, pricePerHourEur: 0, source: null },
   node: { name: "—", vcpu: 0, ramGb: 0, pricePerHourEur: 0, source: null },

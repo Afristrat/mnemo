@@ -10,7 +10,7 @@ export const LAYER_PRICING: Record<number, LayerPricing> = {
   1: {
     confidence: "high",
     source: {
-      label: "Anthropic — pricing",
+      label: "Anthropic, pricing",
       url: "https://platform.claude.com/docs/en/about-claude/pricing",
       checkedAt: "2026-05-23",
     },
@@ -18,20 +18,20 @@ export const LAYER_PRICING: Record<number, LayerPricing> = {
   2: { confidence: "high", source: null },
   3: {
     confidence: "high",
-    source: { label: "Qdrant — pricing", url: "https://qdrant.tech/pricing/", checkedAt: "2026-05-23" },
+    source: { label: "Qdrant, pricing", url: "https://qdrant.tech/pricing/", checkedAt: "2026-05-23" },
   },
   4: {
     confidence: "medium",
-    source: { label: "Mistral — pricing", url: "https://mistral.ai/pricing", checkedAt: "2026-05-23" },
+    source: { label: "Mistral, pricing", url: "https://mistral.ai/pricing", checkedAt: "2026-05-23" },
   },
   5: {
     confidence: "medium",
-    source: { label: "Supabase — pricing", url: "https://supabase.com/pricing", checkedAt: "2026-05-23" },
+    source: { label: "Supabase, pricing", url: "https://supabase.com/pricing", checkedAt: "2026-05-23" },
   },
   6: {
     confidence: "high",
     source: {
-      label: "Scaleway — pricing",
+      label: "Scaleway, pricing",
       url: "https://www.scaleway.com/en/pricing/virtual-instances-pricing/",
       checkedAt: "2026-05-23",
     },

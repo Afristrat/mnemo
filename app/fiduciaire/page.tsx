@@ -5,9 +5,9 @@ import { Card } from "@/components/ui/Card";
 import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 
 export const metadata: Metadata = {
-  title: "Charte fiduciaire — Mnémo",
+  title: "Charte fiduciaire, Strate",
   description:
-    "Mnémo agit dans votre seul intérêt : zéro commission vendor cachée, recette ouverte, prix sourcés, souveraineté d'abord.",
+    "Strate agit dans votre seul intérêt : zéro commission vendor cachée, recette ouverte, prix sourcés, souveraineté d'abord.",
 };
 
 export default function FiduciaryPage(): ReactElement {

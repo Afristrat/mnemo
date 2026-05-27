@@ -1,4 +1,4 @@
-// Sauvegarde & résilience — moteur pur (spec n°1, S-026).
+// Sauvegarde & résilience, moteur pur (spec n°1, S-026).
 //
 // `deriveBackupPlan(profile)` traduit la criticité (+ affinage expert + surcharge conformité) en
 // paramètres de plan ; `costBackup(...)` chiffre le plan avec des **prix injectés** (DÉFCON 1 :
@@ -81,7 +81,7 @@ const LEGAL_RETENTION_YEARS: Partial<Record<Regulation, number>> = {
   cndp: 0, // Maroc loi 09-08 : limitation, pas de plancher
   aiact: 10, // Règlement UE 2024/1689 art. 18 : documentation technique conservée 10 ans (plancher le + long du régime ; logs art. 19 = ≥ 6 mois)
   hipaa: 6, // 45 CFR §164.316(b)(2)(i) : 6 ans
-  "secret-pro": 5, // recommandation CNB (Guide RGPD avocats) adossée à la prescription civile 5 ans — confiance medium
+  "secret-pro": 5, // recommandation CNB (Guide RGPD avocats) adossée à la prescription civile 5 ans, confiance medium
   none: 0,
 };
 
@@ -173,7 +173,7 @@ export function deriveBackupPlan(profile: Profile): BackupCore {
 
 // --- §7 Coût (agrégé, prix injectés) -----------------------------------------------------------
 
-/** Volume de base (Go) par palier de volume — hypothèse ±30 %, documentée (comme les facteurs S-016). */
+/** Volume de base (Go) par palier de volume, hypothèse ±30 %, documentée (comme les facteurs S-016). */
 const VOLUME_TO_GB: Record<Profile["volume"], number> = {
   lt1: 5,
   "1to10": 30,
@@ -234,7 +234,7 @@ export function costBackup(
   const hotPrice = eur(hotStoragePerGbMonth);
   const coldPrice = eur(backupPrices.archiveStoragePerGbMonth);
 
-  // Backup opérationnel CHAUD (copie récente accessible pour le RTO) — présent à tous les paliers.
+  // Backup opérationnel CHAUD (copie récente accessible pour le RTO), présent à tous les paliers.
   // Le tier froid n'est PAS un remplacement (sinon un plan « high » coûterait moins qu'un « standard »
   // vu le tarif archive ~6× plus bas) mais une archive longue durée EN PLUS → monotonie préservée.
   const operationalGb = baseGb * retentionFactor * core.copies * DEDUP_COMPRESSION;
@@ -271,10 +271,10 @@ export function costBackup(
     reason = "Sauvegarde des vecteurs imposée (expert).";
   } else if (forced === "reembed") {
     vectorStrategy = "reembed";
-    reason = "Ré-embed imposé (expert) — RTO plus long, vecteurs reconstruits depuis la source.";
+    reason = "Ré-embed imposé (expert), RTO plus long, vecteurs reconstruits depuis la source.";
   } else if (reembedViable && reembedCost <= vectorBackupMonthly * REEMBED_HORIZON_MONTHS) {
     vectorStrategy = "reembed";
-    reason = `Ré-embed moins cher sur ${REEMBED_HORIZON_MONTHS} mois (vecteurs reconstructibles depuis la source) — RTO plus long.`;
+    reason = `Ré-embed moins cher sur ${REEMBED_HORIZON_MONTHS} mois (vecteurs reconstructibles depuis la source), RTO plus long.`;
   } else {
     vectorStrategy = "backup";
     reason =

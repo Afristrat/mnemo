@@ -92,7 +92,7 @@ export function renderPdf(d: Deliverable): jsPDF {
     for (const src of d.sources) {
       y = ensureSpace(doc, y, 15);
       doc.setTextColor(20, 80, 160);
-      doc.textWithLink(`• ${src.label} — vérifié le ${src.checkedAt}`, MARGIN, y, { url: src.url });
+      doc.textWithLink(`• ${src.label}, vérifié le ${src.checkedAt}`, MARGIN, y, { url: src.url });
       doc.setTextColor(0);
       y += 15;
     }

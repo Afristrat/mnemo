@@ -15,9 +15,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mnémo — infrastructure de base mémorielle souveraine",
+  title: "Strate, infrastructure de base mémorielle souveraine",
   description:
-    "Choisissez, déployez et exploitez votre base mémorielle IA souveraine — sans migration, sans verrouillage, sans coûts cachés.",
+    "Choisissez, déployez et exploitez votre base mémorielle IA souveraine, sans migration, sans verrouillage, sans coûts cachés.",
 };
 
 export default function RootLayout({

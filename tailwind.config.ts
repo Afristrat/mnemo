@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Système de design Mnémo — tokens portés de design-reference/mn_mo_brand_identity/DESIGN.md.
+// Système de design Strate, tokens portés de design-reference/mn_mo_brand_identity/DESIGN.md.
 // Source de vérité : ne pas inventer de couleur hors de cette palette.
 const config: Config = {
   content: [

@@ -156,7 +156,7 @@ export function ResultsView(): ReactElement {
         <div className="mt-4 grid gap-6 sm:grid-cols-2">
           <div>
             <label htmlFor="vol" className="text-label-caps uppercase text-on-surface-variant">
-              Volume de données — {VOLUME_OPTIONS[volIndex].label}
+              Volume de données, {VOLUME_OPTIONS[volIndex].label}
             </label>
             <input
               id="vol"
@@ -178,7 +178,7 @@ export function ResultsView(): ReactElement {
         </div>
         {projectionChanged ? (
           <p className="mt-3 text-body-sm text-primary">
-            Projection active — coût recalculé en direct. Le profil enregistré n’est pas modifié.
+            Projection active, coût recalculé en direct. Le profil enregistré n’est pas modifié.
           </p>
         ) : null}
       </Card>
@@ -267,7 +267,7 @@ export function ResultsView(): ReactElement {
       <Card>
         <h2 className="font-display text-headline-md text-on-surface">Emporter ce plan</h2>
         <p className="mt-1 text-body-sm text-on-surface-variant">
-          Export complet — profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown
+          Export complet, profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown
           se relit partout ; le PDF garde les sources cliquables.
         </p>
         <div className="mt-4">
@@ -275,7 +275,7 @@ export function ResultsView(): ReactElement {
         </div>
       </Card>
 
-      {/* Exit Escrow — bundle reproductible (F7, moat ①) */}
+      {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
       <ExitEscrow profile={projected} recommendation={result} />
 
       <Link

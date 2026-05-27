@@ -79,7 +79,7 @@ export function EnsembleView({ ensemble }: EnsembleViewProps): ReactElement {
 
       <p className="mt-4 text-body-sm text-on-surface-variant">
         Ces membres relâchent ou durcissent volontairement certaines hypothèses : ils ne remplacent
-        pas votre profil, ils en bornent les conséquences. Une IA peut se tromper — chaque coût reste
+        pas votre profil, ils en bornent les conséquences. Une IA peut se tromper, chaque coût reste
         une projection sourcée (±30 %).
       </p>
     </Card>

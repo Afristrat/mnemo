@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Wizard } from "@/components/wizard/Wizard";
 
 export const metadata: Metadata = {
-  title: "Configurateur — Mnémo",
+  title: "Configurateur, Strate",
   description: "Profilez votre besoin en quelques étapes pour obtenir une stack de base mémorielle souveraine recommandée.",
 };
 
@@ -17,7 +17,7 @@ export default function ConfigurateurPage() {
           Quelle infrastructure pour votre base mémorielle ?
         </h1>
         <p className="mt-2 max-w-2xl text-body-lg text-on-surface-variant">
-          Répondez à quelques questions : Mnémo recommande une stack souveraine sur 7 couches,
+          Répondez à quelques questions : Strate recommande une stack souveraine sur 7 couches,
           avec un coût projeté et des sources vérifiables.
         </p>
       </header>

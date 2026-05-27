@@ -17,7 +17,7 @@ export type Option<T extends string> = { value: T; label: string; hint?: string 
 
 export const ACTIVITY_OPTIONS: Option<Activity>[] = [
   { value: "freelance", label: "Freelance / indépendant" },
-  { value: "cabinet-regule", label: "Cabinet régulé", hint: "Avocat, santé, CGP — secret pro" },
+  { value: "cabinet-regule", label: "Cabinet régulé", hint: "Avocat, santé, CGP, secret pro" },
   { value: "particulier", label: "Particulier" },
   { value: "agence", label: "Agence / programme d'accompagnement" },
   { value: "pme-startup", label: "PME / startup tech" },
@@ -57,7 +57,7 @@ export const CONTENT_TYPE_OPTIONS: Option<ContentType>[] = [
 
 export const REGULATION_OPTIONS: Option<Regulation>[] = [
   { value: "rgpd", label: "RGPD", hint: "Union européenne" },
-  { value: "cndp", label: "CNDP", hint: "Maroc — loi 09-08" },
+  { value: "cndp", label: "CNDP", hint: "Maroc, loi 09-08" },
   { value: "aiact", label: "AI Act", hint: "Union européenne" },
   { value: "hipaa", label: "HIPAA", hint: "Santé (US)" },
   { value: "secret-pro", label: "Secret professionnel" },

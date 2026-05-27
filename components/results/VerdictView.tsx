@@ -36,7 +36,7 @@ function CostLine({ label, value, note }: { label: string; value: string; note?:
 }
 
 /**
- * Mode « verdict » (chemin 90 s) : synthèse factuelle d'une même `Recommendation` — douleur, risque,
+ * Mode « verdict » (chemin 90 s) : synthèse factuelle d'une même `Recommendation`, douleur, risque,
  * gain (mesuré, jamais inventé), prix ferme du service ([PLACEHOLDER]), coût d'infra ±30 %, mise en
  * route, prochaine étape. Neutre : présente des faits + une fourchette, pas une injonction d'achat.
  */
@@ -45,7 +45,7 @@ export function VerdictView({ verdict, preset, onExpert }: VerdictViewProps): Re
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Chip tone="primary">Preset retenu : {preset}</Chip>
-        <span className="text-body-sm text-on-surface-variant">Synthèse — le détail complet est sous « Voir le détail ».</span>
+        <span className="text-body-sm text-on-surface-variant">Synthèse, le détail complet est sous « Voir le détail ».</span>
       </div>
 
       <h2 className="mt-4 font-display text-headline-lg text-on-surface">Votre verdict</h2>
@@ -57,7 +57,7 @@ export function VerdictView({ verdict, preset, onExpert }: VerdictViewProps): Re
       </dl>
 
       <div className="mt-6 divide-y divide-outline-variant">
-        <CostLine label="Service Strate (prix ferme)" value={verdict.firmPriceTier} note="prix de vente — sondage en cours" />
+        <CostLine label="Service Strate (prix ferme)" value={verdict.firmPriceTier} note="prix de vente, sondage en cours" />
         <CostLine
           label="Coût d'infrastructure (payé aux fournisseurs)"
           value={`${verdict.variableCostBand.low} – ${verdict.variableCostBand.high} €/mois`}
@@ -76,7 +76,7 @@ export function VerdictView({ verdict, preset, onExpert }: VerdictViewProps): Re
       </div>
 
       <p className="mt-4 text-body-sm text-on-surface-variant">
-        Coûts variables ±30 % selon volume et fournisseur — demandez un devis avant le go. Une IA peut se tromper :
+        Coûts variables ±30 % selon volume et fournisseur, demandez un devis avant le go. Une IA peut se tromper :
         chaque coût est sourcé et daté dans le détail.
       </p>
 

@@ -1,7 +1,7 @@
-# Moat Hunt — Mnémo — 2026-05-24
+# Moat Hunt — Strate — 2026-05-24
 
 > Chasse aux features par analogies inter-industries (skill `moat-hunter`).
-> Objectif : trouver le game-changer qui fait de Mnémo « le Cloudflare des infras ».
+> Objectif : trouver le game-changer qui fait de Strate « le Cloudflare des infras ».
 > Toutes les analogies sont sourcées (DÉFCON-1). Une IA peut se tromper : vérifier les sources.
 
 ## Job universel identifié (niveau 3)
@@ -14,7 +14,7 @@ Validé sur 10+ industries (énergie, assurance, banque, santé, aviation, tél�
 
 Le playbook Cloudflare, transposé :
 
-| Cloudflare a gagné par… | …Mnémo le réplique avec |
+| Cloudflare a gagné par… | …Strate le réplique avec |
 |---|---|
 | Se mettre devant l'origine **sans capturer** (tu peux partir) | **Exit Escrow** (sortie certifiée) |
 | Free tier + transparence créant l'habitude | **Fiduciary Mode** (mandataire transparent) |
@@ -27,13 +27,13 @@ Le playbook Cloudflare, transposé :
 ### 1. Sovereignty Exit Escrow — 14/15 — effort S
 - **Analogie** : Source code escrow + IP Bankruptcy Protection Act 1989 (juridique/logiciel).
 - **Mécanisme source** : un tiers séquestre code + conditions ; release automatique et inattaquable si le vendor fait faillite ou cesse la maintenance.
-- **Translation** : bouton « Exit Guarantee » — en 1 clic, un bundle reproductible (Terraform/Docker Compose + dumps DB + vault markdown source-de-vérité + embeddings rejouables + runbook) redéployable ailleurs ou en self-host. Release auto même si Mnémo ferme.
+- **Translation** : bouton « Exit Guarantee » — en 1 clic, un bundle reproductible (Terraform/Docker Compose + dumps DB + vault markdown source-de-vérité + embeddings rejouables + runbook) redéployable ailleurs ou en self-host. Release auto même si Strate ferme.
 - **Pourquoi personne n'y a pensé** : les plateformes d'infra vivent du lock-in ; **certifier la sortie** est contre-intuitif pour elles, mais c'est exactement la thèse anti-lock-in d'Amine rendue contractuelle. Faisable car le vault = source de vérité est DÉJÀ la doctrine ; les projections sont rejouables.
 
 ### 2. Fiduciary Broker Mode — 13/15 — effort S
 - **Analogie** : courtier fiduciaire énergie/assurance vs litiges « secret commission ».
 - **Mécanisme source** : le courtier qui agit « dans le meilleur intérêt du client » lui doit un devoir fiduciaire = divulgation totale de toute rémunération ; la commission cachée du vendor = violation du mandat.
-- **Translation** : Mnémo s'engage contractuellement comme agent fiduciaire de l'utilisateur, jamais commissionné en douce par les vendors. Mode payant = « je négocie le tarif vendor en ton nom », rémunération affichée.
+- **Translation** : Strate s'engage contractuellement comme agent fiduciaire de l'utilisateur, jamais commissionné en douce par les vendors. Mode payant = « je négocie le tarif vendor en ton nom », rémunération affichée.
 - **Leçon négative décisive** : **Flipper (auto-switch énergie) a fermé** et Look After My Bills ne bascule que vers les vendors qui le commissionnent → un courtier commissionné par le vendor trahit le mandat et meurt. Le moat est défensif : les concurrents commissionnés ne peuvent pas copier sans saborder leur modèle.
 
 ### 3. Cost & Config Intelligence Network — 12/15 — effort L

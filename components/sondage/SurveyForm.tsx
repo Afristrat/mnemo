@@ -106,7 +106,7 @@ export function SurveyForm(): ReactElement {
       <section>
         <h2 className="text-lg font-semibold text-slate-900">Le juste prix du service</h2>
         <p className="mt-1 text-sm text-slate-600">
-          Mnémo déploie et exploite votre mémoire d’organisation (l’infra reste payée à vos fournisseurs, à part).
+          Strate déploie et exploite votre mémoire d’organisation (l’infra reste payée à vos fournisseurs, à part).
           Pour <b>l’abonnement au service</b>, indiquez un montant ({cur}) :
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">

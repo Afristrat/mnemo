@@ -4,7 +4,7 @@ import { StatusDot } from "@/components/ui/StatusDot";
 import { costBand, type ActiveModule, type GpuTier, type Layer } from "@/lib/engine";
 import { pricingForLayer } from "@/lib/pricing/sources";
 
-/** Décomposition de l'apport multimédia (déjà inclus dans les couches C4/C5/C6) — pour la transparence. */
+/** Décomposition de l'apport multimédia (déjà inclus dans les couches C4/C5/C6), pour la transparence. */
 export type MediaBreakdown = {
   gpuTier: GpuTier;
   gpuCost: number;
@@ -21,7 +21,7 @@ type CostMapProps = {
   totalCost: number;
   /** Coût one-time de mise en route (ingestion du backlog). Affiché en ligne séparée. */
   setupCost?: number;
-  /** Décomposition multimédia (déjà comprise dans les couches) — pastilles 🟢 souverain / 💳 API. */
+  /** Décomposition multimédia (déjà comprise dans les couches), pastilles 🟢 souverain / 💳 API. */
   media?: MediaBreakdown;
 };
 
@@ -36,7 +36,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
     <Card>
       <h3 className="font-display text-headline-md text-on-surface">Carte de coûts</h3>
       <p className="mt-1 text-body-sm text-on-surface-variant">
-        Coûts cloud exposés, marge à découvert. Projection ±30 % — une IA peut se tromper.
+        Coûts cloud exposés, marge à découvert. Projection ±30 %, une IA peut se tromper.
       </p>
 
       <ul className="mt-4 divide-y divide-outline-variant">
@@ -96,7 +96,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
           <ul className="mt-2 space-y-1.5">
             {media.gpuCost > 0 ? (
               <li className="flex items-center justify-between gap-3 text-body-sm">
-                <span>🟢 Pool GPU souverain ({media.gpuTier}) — compté une seule fois</span>
+                <span>🟢 Pool GPU souverain ({media.gpuTier}), compté une seule fois</span>
                 <span className="font-mono text-on-surface">{media.gpuCost} €/mois</span>
               </li>
             ) : null}
@@ -108,7 +108,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
             ) : null}
             {media.storageCost > 0 ? (
               <li className="flex items-center justify-between gap-3 text-body-sm">
-                <span>🟢 Stockage médias (C5) — {media.storageGb} Go</span>
+                <span>🟢 Stockage médias (C5), {media.storageGb} Go</span>
                 <span className="font-mono text-on-surface">{media.storageCost} €/mois</span>
               </li>
             ) : null}
@@ -120,7 +120,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
             ))}
           </ul>
           <p className="mt-2 text-body-sm text-on-surface-variant">
-            Ces coûts varient fortement selon le volume et le fournisseur — demandez un devis avant le go.
+            Ces coûts varient fortement selon le volume et le fournisseur, demandez un devis avant le go.
           </p>
         </div>
       ) : null}
@@ -137,7 +137,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
 
       {setupCost > 0 ? (
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-body-sm text-on-surface-variant">Mise en route (une fois) — ingestion du backlog</span>
+          <span className="text-body-sm text-on-surface-variant">Mise en route (une fois), ingestion du backlog</span>
           <span className="text-right">
             <span className="block font-mono text-body-md text-on-surface">{setupCost} €</span>
             <span className="block font-mono text-body-sm text-on-surface-variant">

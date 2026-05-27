@@ -37,6 +37,6 @@ test("export du livrable : Markdown, PDF et bundle Exit Escrow", async ({ page }
 
 test("charte fiduciaire accessible et explicite", async ({ page }) => {
   await page.goto("/fiduciaire");
-  await expect(page.getByRole("heading", { name: "Charte fiduciaire Mnémo" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Charte fiduciaire Strate" })).toBeVisible();
   await expect(page.getByText(/commission/i).first()).toBeVisible();
 });

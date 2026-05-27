@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { computeScores, type MediaNeed, type Profile } from "@/lib/engine";
 
-// S-015 — garde de validation des types migrés (au-delà du typecheck) :
+// S-015, garde de validation des types migrés (au-delà du typecheck) :
 // audit/bitemporal booléens lisibles par le moteur, et nouveaux champs optionnels valides.
 
 function makeProfile(overrides: Partial<Profile> = {}): Profile {
@@ -26,7 +26,7 @@ function makeProfile(overrides: Partial<Profile> = {}): Profile {
   };
 }
 
-describe("S-015 — types migrés (booléens + nouveaux champs)", () => {
+describe("S-015, types migrés (booléens + nouveaux champs)", () => {
   it("computeScores lit audit/bitemporal booléens (dimension audit pilotée par bitemporal)", () => {
     const dims = computeScores("MEDIUM", makeProfile({ audit: true, bitemporal: false }), 100);
     expect(dims.find((d) => d.key === "audit")?.score).toBe(5); // bitemporal=false → base 5
