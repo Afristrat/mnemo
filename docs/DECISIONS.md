@@ -325,3 +325,17 @@ Format : décision · contexte · options · choix · conséquences.
 - **Conséquence** : vérifié au **navigateur** (vue verdict). Tests : ResultsView verdict/expert +
   VerdictView. typecheck 0, lint 0/0, **163 + 8 skip**, build OK (`/resultats` statique). Reste **S-024**
   (e2e + nettoyage) pour clore la refonte.
+
+## ADR-018 — E2E parcours Strate + nettoyage (S-024, refonte close)
+
+- **`e2e/strate.spec.ts`** : 3 parcours critiques — (a) chemin 90 s → verdict ; (b) bloc Médias
+  génération vidéo souveraine → **budget rouge + levier** ; (c) round-trip /configurateur → /resultats
+  (la génération souveraine se retrouve dans les coûts). **Desktop + mobile**, 11/11 (+1 skip
+  mobile-export). Slider réglé via `focus()` + `press("End")` (déclenche l'onChange React natif).
+  Le parcours « wizard 4 blocs → expert » reste couvert par `parcours.spec.ts`.
+- **Nettoyage** : aucun code mort — le wizard a été réécrit **en place** (zéro fichier 6-steps
+  orphelin), `Requirement` supprimé dès S-015 (ne subsiste qu'en commentaires historiques), usages
+  costables renommés. Tous les composants wizard restent utilisés.
+- **REFONTE STRATE COMPLÈTE (S-015 → S-024, 10/10).** typecheck 0, lint 0/0, **163 + 8 skip**,
+  build OK, **e2e 11 + 1 skip**. Restent hors-refonte : déploiement de la refonte en prod, backlog
+  use-cases (S-025+), renommage code Mnémo→Strate, sondage → prix de vente → homepage.
