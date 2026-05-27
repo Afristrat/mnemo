@@ -156,7 +156,7 @@ export default function Home(): ReactElement {
             <span className="text-primary">jamais</span> quitter vos murs.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-body-lg text-on-surface-variant">
-            Strate transforme vos documents, décisions et échanges en une mémoire interrogeable —
+            Strate transforme vos documents, décisions et échanges en une mémoire interrogeable,
             hébergée chez vous ou en UE, jamais chez des géants étrangers. Vous gardez tout. Vous
             ne dépendez de personne.
           </p>
