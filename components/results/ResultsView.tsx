@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactElement } from "react";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
-import { CostMap } from "@/components/results/CostMap";
+import { CostMap, type MediaBreakdown } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
 import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
+import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import {
   buildEnsemble,
@@ -20,6 +22,7 @@ import {
   type ScoreKey,
   type Volume,
 } from "@/lib/engine";
+import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { VOLUME_OPTIONS } from "@/lib/wizard/options";
 
@@ -53,12 +56,22 @@ export function ResultsView(): ReactElement {
   const [base, setBase] = useState<Profile | null>(null);
   const [volIndex, setVolIndex] = useState(1);
   const [users, setUsers] = useState(1);
+  const [mode, setMode] = useState<"verdict" | "expert">("expert");
+
+  // Prix médias réels (€) injectés → coûts multimodaux dans les couches + verdict chiffré.
+  const prices = useMemo(() => getMediaPricesEur(), []);
 
   useEffect(() => {
     const profile = loadProfile();
     setBase(profile);
     setVolIndex(Math.max(0, VOLUME_ORDER.indexOf(profile.volume)));
     setUsers(profile.users);
+    // Le chemin 90 s arrive avec ?mode=verdict ; sinon vue expert par défaut.
+    try {
+      if (new URLSearchParams(window.location.search).get("mode") === "verdict") setMode("verdict");
+    } catch {
+      /* pas d'URL exploitable : vue expert. */
+    }
   }, []);
 
   const projected = useMemo<Profile | null>(() => {
@@ -66,24 +79,50 @@ export function ResultsView(): ReactElement {
     return { ...base, volume: VOLUME_ORDER[volIndex], users };
   }, [base, volIndex, users]);
 
-  const result = useMemo(() => (projected === null ? null : recommend(projected)), [projected]);
-  const ensemble = useMemo(() => (projected === null ? null : buildEnsemble(projected)), [projected]);
+  const result = useMemo(() => (projected === null ? null : recommend(projected, prices)), [projected, prices]);
+  const ensemble = useMemo(() => (projected === null ? null : buildEnsemble(projected, prices)), [projected, prices]);
 
   if (projected === null || result === null || ensemble === null) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
+  }
+
+  // Mode verdict (chemin 90 s) : synthèse compacte de la même recommandation.
+  if (mode === "verdict") {
+    return (
+      <div className="space-y-8">
+        <VerdictView verdict={result.verdict} preset={result.preset} onExpert={() => setMode("expert")} />
+      </div>
+    );
   }
 
   const factorsCost = profileCostFactors(projected);
   const radarData = result.scores.map((s) => ({ label: SHORT_LABELS[s.key], score: s.score }));
   const projectionChanged = base !== null && (projected.volume !== base.volume || projected.users !== base.users);
 
+  // Décomposition de l'apport multimédia (déjà compris dans les couches) pour la CostMap.
+  const media: MediaBreakdown = {
+    gpuTier: result.sizing.gpu.tier,
+    gpuCost: result.sizing.gpu.monthlyCost,
+    storageGb: result.sizing.storageGb,
+    storageCost: Math.round(result.sizing.storageGb * prices.storagePerGbMonth.amount),
+    embeddingsCost: result.sizing.embeddingsMultimodal ? Math.round(prices.multimodalEmbeddings.amount) : 0,
+    apiLines: result.sizing.workloads
+      .filter((w) => w.mode === "api" && w.monthlyCost > 0)
+      .map((w) => ({ label: w.estimate, cost: w.monthlyCost })),
+  };
+
   return (
     <div className="space-y-8">
       {/* En-tête */}
-      <div className="flex flex-wrap items-center gap-3">
-        <Chip tone="primary">Preset : {result.preset}</Chip>
-        <Chip tone="neutral">Score {result.scoreAvg}/10</Chip>
-        <span className="font-mono text-body-md text-on-surface-variant">≈ {result.totalCost} €/mois</span>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Chip tone="primary">Preset : {result.preset}</Chip>
+          <Chip tone="neutral">Score {result.scoreAvg}/10</Chip>
+          <span className="font-mono text-body-md text-on-surface-variant">≈ {result.totalCost} €/mois</span>
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => setMode("verdict")}>
+          Vue verdict
+        </Button>
       </div>
       <p className="max-w-2xl text-body-md text-on-surface-variant">{result.presetReason}</p>
 
@@ -164,6 +203,8 @@ export function ResultsView(): ReactElement {
         factorsCost={factorsCost}
         activeModules={result.activeModules}
         totalCost={result.totalCost}
+        setupCost={result.setupCost}
+        media={media}
       />
 
       {/* Fraîcheur des prix (price feed Firecrawl) */}

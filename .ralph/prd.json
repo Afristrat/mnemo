@@ -215,7 +215,7 @@
     },
     {
       "id": "S-022", "title": "Résultats : mode verdict + CostMap étendu (décomposition multimodale dans les couches + setup)", "feature": "refonte",
-      "passes": false, "deps": ["S-018", "S-021", "S-006"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-018", "S-021", "S-006"],
       "acceptance": [
         "mode verdict (douleur/risque/gain/prix ferme/coût ±30 %/setup/next step)",
         "mode expert : CostMap décompose l'apport multimodal DANS les couches + ligne setup, pastilles 🟢/💳, sources cliquables",
