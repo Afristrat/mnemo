@@ -1,7 +1,7 @@
 {
   "project": "Strate (ex-Mnémo)",
   "repo": "https://github.com/Afristrat/mnemo",
-  "lot": "Lot 1 — Conseil + moats (S-001→S-014, ✅) · Refonte Strate (S-015→S-024)",
+  "lot": "Lot 1 — Conseil + moats (S-001→S-014, ✅) · Refonte Strate (S-015→S-024, ✅) · Sauvegarde & résilience (S-025→S-031)",
   "principe": "Production-ready, zéro dette. Pas de version mince. Chaque story : typecheck + tests + lint + build verts avant passes=true, puis commit + push.",
   "stack": "Next.js 15 (App Router) + React 19 + TypeScript + Tailwind v3 + Supabase (RLS) + Vitest + Playwright. Héberg. cible Vercel.",
   "spec": "PRD.md (racine) — features F1..F9.",
@@ -238,6 +238,72 @@
         "e2e (desktop + mobile) : 90 s → verdict ; wizard 4 blocs → expert ; bloc Médias génération vidéo souveraine → budget rouge + levier",
         "round-trip /configurateur ↔ /resultats (cohérence localStorage)",
         "code mort du wizard 6-steps supprimé ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-025", "title": "Pricing backup sourcé (egress / archive / bande passante hors-site)", "feature": "backup",
+      "passes": false, "deps": ["S-017"],
+      "acceptance": [
+        "tarifs egress €/Go, archive retrieval (tier froid), bande passante hors-site sourcés : URL + date + pastille de confiance, consignés dans docs/pricing/backup-cost-sources.md",
+        "getBackupPrices() renvoie une table ; chaque entrée {amount,currency,unit,confidence,source} ; normalisation € (étage FX réutilisé) ; repli seed",
+        "source incertaine → confidence low + « estimation, à confirmer par devis »",
+        "AUCUN prix non sourcé (DÉFCON 1)"
+      ]
+    },
+    {
+      "id": "S-026", "title": "Module backup.ts — plan dérivé + coût agrégé + arbitrage vecteurs", "feature": "backup",
+      "passes": false, "deps": ["S-015", "S-025"],
+      "acceptance": [
+        "types Backup/BackupPlan/VectorDecision/ThreeTwoOne (spec §3) ; Profile.backup?",
+        "deriveBackupPlan(profile, prices) pur : criticité → params (table §4) ; surcharge conformité (régulé/secret → crypto-shred + immutable + legalRetentionYears = max(régimes)) ; none → neutre",
+        "costBackup pur, prix INJECTÉS : monotonie (criticité/rétention/copies ↑ → coût ↑ ; offsite>onsite ; critical>high>standard>none) ; arbitrage vecteurs (min(backup, reembed), bon seuil) ; PITR si criticité ≥ high",
+        "volumeToGb = mapping documenté ±30 % ; chaque coût porte une CostSource ; tests table-driven"
+      ]
+    },
+    {
+      "id": "S-027", "title": "Scoring : 9ᵉ dimension resilience (refonte 8→9)", "feature": "backup",
+      "passes": false, "deps": ["S-015"],
+      "acceptance": [
+        "SCORE_KEYS contient resilience (9 entrées) ; computeScores retourne 9 dimensions ; RadarChart rend 9 axes",
+        "dimension resilience selon rubrique §8 (criticité, 3-2-1-1-0, tests, immutabilité, érasure ; pénalité RPO/RTO incohérents)",
+        "TOUS les tests asservis à « 8 dimensions » mis à jour vers 9 (engine/types/results/e2e) ; libellés MAJ",
+        "typecheck 0 / lint 0/0 / tests verts"
+      ]
+    },
+    {
+      "id": "S-028", "title": "Intégration backup dans recommend (couches + setup + resilience)", "feature": "backup",
+      "passes": false, "deps": ["S-026", "S-027"],
+      "acceptance": [
+        "Recommendation.backup rempli ; coût backup récurrent DANS les couches (C5/C6), one-time dans setupCost",
+        "computeScores reçoit le plan → dimension resilience cohérente",
+        "none → backup neutre, invariant totalCost = baseCost + moduleCost préservé ; totalCost cohérent",
+        "tests recommend étendus verts"
+      ]
+    },
+    {
+      "id": "S-029", "title": "Exit Escrow piloté par le BackupPlan (runbook + backup.sh)", "feature": "backup",
+      "passes": false, "deps": ["S-028"],
+      "acceptance": [
+        "buildExitBundle : runbook.md + scripts/backup.sh reflètent le plan réel (RPO/rétention/copies/offsite/airgap/immutable/PITR/érasure)",
+        "cohérence manifest ↔ plan ; tests bundle étendus verts"
+      ]
+    },
+    {
+      "id": "S-030", "title": "UI Bloc ② Sauvegarde & résilience (criticité + expert + aperçu live)", "feature": "backup",
+      "passes": false, "deps": ["S-026", "S-019"],
+      "acceptance": [
+        "section dans le Bloc ② : RadioCards criticité + InfoBubble neutre + affinage expert (RPO/RTO/rétention/copies/offsite/airgap/immutable/tier/BYOK/tests) + vectorStrategy + politique d'érasure recommandée/surchargeable",
+        "setField('backup', …) propage ; aperçu live (≈ X €/mois + Y € mise en route) ; budget-mètre intègre le backup",
+        "tests composant verts"
+      ]
+    },
+    {
+      "id": "S-031", "title": "Résultats backup (CostMap + radar 9 axes + verdict setup) + e2e + nettoyage", "feature": "backup",
+      "passes": false, "deps": ["S-028", "S-027", "S-029", "S-024"],
+      "acceptance": [
+        "CostMap : ligne backup récurrent + setup enrichi + pastilles 🟢/💳 + sources cliquables ; verdict inclut la mise en route backup ; radar 9 axes",
+        "e2e (desktop + mobile) : profil critique + régulé → ligne backup + radar 9 axes + érasure crypto-shred + bundle Exit Escrow reflète le plan ; round-trip",
+        "zéro toHaveLength(8) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"
       ]
     }
   ]
