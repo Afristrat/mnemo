@@ -291,7 +291,7 @@
     },
     {
       "id": "S-030", "title": "UI Bloc ② Sauvegarde & résilience (criticité + expert + aperçu live)", "feature": "backup",
-      "passes": false, "deps": ["S-026", "S-019"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-026", "S-019"],
       "acceptance": [
         "section dans le Bloc ② : RadioCards criticité + InfoBubble neutre + affinage expert (RPO/RTO/rétention/copies/offsite/airgap/immutable/tier/BYOK/tests) + vectorStrategy + politique d'érasure recommandée/surchargeable",
         "setField('backup', …) propage ; aperçu live (≈ X €/mois + Y € mise en route) ; budget-mètre intègre le backup",

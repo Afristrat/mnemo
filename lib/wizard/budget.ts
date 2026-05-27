@@ -28,10 +28,16 @@ export type BudgetEval = {
 
 /**
  * Évalue le budget : vert (`ok`, ≤ 80 % du plafond), jaune (`warn`, ≤ 100 %), rouge (`over`, > 100 %).
- * La cause dominante distingue le GPU souverain (typiquement la génération), le coût à l'usage des
- * API médias, ou la stack de base. Pur et déterministe.
+ * La cause dominante distingue la sauvegarde, le GPU souverain (typiquement la génération), le coût à
+ * l'usage des API médias, ou la stack de base. `backupMonthlyCost` (S-030) est pris en compte : si la
+ * sauvegarde pèse au moins autant que les médias, c'est elle la cause dominante (levier dédié). Pur.
  */
-export function evaluateBudget(totalCost: number, budget: Budget, sizing: Sizing): BudgetEval {
+export function evaluateBudget(
+  totalCost: number,
+  budget: Budget,
+  sizing: Sizing,
+  backupMonthlyCost = 0,
+): BudgetEval {
   const ceiling = BUDGET_CEILING[budget];
   const ratio = ceiling === Number.POSITIVE_INFINITY ? 0 : totalCost / ceiling;
   const status: BudgetStatus = totalCost <= ceiling * 0.8 ? "ok" : totalCost <= ceiling ? "warn" : "over";
@@ -39,10 +45,14 @@ export function evaluateBudget(totalCost: number, budget: Budget, sizing: Sizing
   const gpu = sizing.gpu.monthlyCost;
   const api = sizing.workloads.reduce((sum, w) => sum + w.monthlyCost, 0);
   const media = gpu + api;
+  const backup = Math.round(backupMonthlyCost);
 
   let cause: string;
   let lever: string;
-  if (media <= 0) {
+  if (backup > 0 && backup >= media) {
+    cause = `La sauvegarde & résilience (${backup} €/mois) pèse autant ou plus que le reste.`;
+    lever = "Réduire la criticité ou la rétention, passer en tier froid, ou ré-embed les vecteurs plutôt que les sauvegarder.";
+  } else if (media <= 0) {
     cause = "La stack de base (preset choisi) porte l'essentiel du coût.";
     lever = "Alléger le preset (revoir sensibilité, audit, modules) ou relever le budget.";
   } else if (gpu >= api) {
