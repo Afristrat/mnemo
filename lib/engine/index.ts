@@ -25,6 +25,14 @@ export {
   type BackupPriceTable,
   type BackupCore,
 } from "./backup";
+export {
+  computeSovereignCompute,
+  NEUTRAL_COMPUTE_PRICES,
+  type ComputeInstanceSpec,
+  type ComputePriceTable,
+  type ComputeInstanceLine,
+  type ComputeSizing,
+} from "./compute";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
 export {

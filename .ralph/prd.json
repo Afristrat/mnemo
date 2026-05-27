@@ -317,6 +317,17 @@
         "section diagnostic intègre le QuickProfileForm réel (chemin 90 s fonctionnel) ; e2e « chemin 90 s → verdict » préservé",
         "français accents majuscules ; responsive desktop + mobile vérifié ; typecheck 0 / lint 0/0 / tests verts / build OK"
       ]
+    },
+    {
+      "id": "S-033", "title": "Compute souverain dimensionné + sourcé (serveurs self-hosted — comble le forfait C6 hardcodé)", "feature": "pricing",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-025"],
+      "acceptance": [
+        "FONDATION : lib/engine/compute.ts (computeSovereignCompute pur, prix injectés) dimensionne les VM self-hosted (Postgres/Qdrant/orchestrateur/app/vault) selon preset + volume + users + débit",
+        "prix instances RÉELS sourcés (Scaleway DEV1-M/PRO2-S, extraction live prouvée) → lib/pricing/compute-seed.ts + docs/pricing/compute-cost-sources.md ; seed = repli + baseline",
+        "monotonie (HARD ≥ MEDIUM ≥ LIGHT ; scaling volume/users/débit) ; chaque instance porte une CostSource ; table neutre ⇒ 0",
+        "RESTE (intégration, S-028 élargi) : remplacer le forfait C6 hardcodé (30/100/400) par ce compute dans recommend + feed live instances + visibilité CostMap",
+        "tests compute verts ; typecheck 0 / lint 0/0 / build OK"
+      ]
     }
   ]
 }
