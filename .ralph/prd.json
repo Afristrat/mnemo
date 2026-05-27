@@ -242,7 +242,7 @@
     },
     {
       "id": "S-025", "title": "Price feed LIVE Firecrawl (extraction structurée) — média + backup ; seed = repli daté", "feature": "pricing",
-      "passes": false, "deps": ["S-008", "S-017"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-008", "S-017"],
       "acceptance": [
         "les prix d'infra NE sont PAS des littéraux écrits à la main : extraction structurée Firecrawl (JSON/LLM) des prix RÉELS sur les pages vendor, au runtime, côté serveur (clé jamais exposée)",
         "REPRENDRE le pricing médias (S-017) sur ce modèle : getMediaPrices() = LIVE en primaire (async, route serveur) → injecté dans recommend ; le seed devient repli daté + baseline de validation",
