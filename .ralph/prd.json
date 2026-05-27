@@ -410,6 +410,17 @@
         "ResultsView + Wizard + ensemble injectent getComputePrices() → serveurs VISIBLES (note C6 + CostMap) ; costSources inclut les sources compute",
         "tests : compute injecté remplace le forfait, monotonie, neutre→forfait gardé ; typecheck 0 / lint 0/0 / build OK"
       ]
+    },
+    {
+      "id": "S-042", "title": "UX quick wins (langage test utilisateur 2026-05-27)", "feature": "refonte",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-024"],
+      "acceptance": [
+        "U9 : StatusDot expose un title (tooltip survol) expliquant 🟢🟡🟠 (« pourquoi orange ? »)",
+        "U2 : BudgetMeter chiffre le dépassement (« ≈ X € au-dessus du plafond de Y € ») quand over",
+        "U1/U3/U4 : hints sur sensibilité (interne vs confidentiel), volume (repères docs), croissance",
+        "U12 : EnsembleView clarifie que les variantes sont des scénarios « et si », pas des choix imposés (label « Scénario » + note)",
+        "tests existants verts + 1 test dépassement budget ; typecheck 0 / lint 0/0 / build OK. Reste backlog (U5/U7/U8/U10/U11) = stories dédiées"
+      ]
     }
   ]
 }

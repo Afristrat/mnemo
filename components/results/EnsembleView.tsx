@@ -28,7 +28,8 @@ export function EnsembleView({ ensemble }: EnsembleViewProps): ReactElement {
       </div>
       <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">
         Comme une prévision météo d’ensemble : plutôt qu’une seule réponse, on explore plusieurs
-        priorités. La dispersion de leurs résultats est la mesure honnête de l’incertitude.
+        priorités. La dispersion de leurs résultats est la mesure honnête de l’incertitude. Ce sont des
+        scénarios « et si », <strong>pas des choix imposés</strong> — votre recommandation reste celle détaillée ci-dessus.
       </p>
 
       {/* Bande d'incertitude de coût */}
@@ -52,7 +53,8 @@ export function EnsembleView({ ensemble }: EnsembleViewProps): ReactElement {
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {variants.map((v) => (
           <div key={v.id} className="rounded-card border border-outline-variant p-4">
-            <div className="flex items-center justify-between gap-2">
+            <span className="text-label-caps uppercase text-on-surface-variant/70">Scénario</span>
+            <div className="mt-1 flex items-center justify-between gap-2">
               <h3 className="font-display text-body-lg text-on-surface">{v.label}</h3>
               <Chip tone="neutral">{v.recommendation.preset}</Chip>
             </div>

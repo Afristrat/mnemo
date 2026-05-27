@@ -73,4 +73,9 @@ describe("BudgetMeter — intégration backup (S-030)", () => {
     expect(screen.getByText("Au-dessus du budget")).toBeInTheDocument();
     expect(screen.getByText(/sauvegarde & résilience/i)).toBeInTheDocument();
   });
+
+  it("chiffre le dépassement quand on est au-dessus du plafond (S-042, finding U2)", () => {
+    render(<BudgetMeter totalCost={300} budget="50to200" sizing={sizing0()} />);
+    expect(screen.getByText(/au-dessus du plafond de 200 €/)).toBeInTheDocument();
+  });
 });
