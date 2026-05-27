@@ -310,3 +310,18 @@ Format : décision · contexte · options · choix · conséquences.
   chemin + le paramètre `?mode=verdict`. Tests : mappers 8 + form 3 (persistance + navigation,
   `useRouter` mocké via `vi.hoisted`). Vérifié au **navigateur** (accueil 90 s). typecheck 0, lint
   0/0, **161 + 8 skip**, build OK. Script générique `scripts/shoot-page.mjs` ajouté.
+
+## ADR-017 — Résultats : mode verdict + CostMap étendu (S-022)
+
+- **`ResultsView`** injecte `getMediaPricesEur()` dans `recommend`/`buildEnsemble` → les coûts
+  multimodaux apparaissent **dans** C4/C5/C6 (câblage UI de S-018). **Mode `verdict` | `expert`** lu
+  depuis `?mode=verdict` via `window.location` (pas `useSearchParams` → `/resultats` reste **statique**,
+  pas de Suspense forcé) ; toggle bidirectionnel (« Vue verdict » / « Voir le détail »).
+- **`VerdictView`** : synthèse **neutre** (besoin / risque / gain mesuré · prix ferme `[PLACEHOLDER]` ·
+  coût infra ±30 % · mise en route · prochaine étape) + bascule expert + « Affiner ».
+- **`CostMap` étendu** : ligne « Mise en route (une fois) » (`setupCost` + bande) + section **« Apport
+  multimédia (déjà compris dans les couches) »** — 🟢 pool GPU (compté 1×) / embeddings / stockage ·
+  💳 charges API, + disclaimer « coûts variables, devis avant go ».
+- **Conséquence** : vérifié au **navigateur** (vue verdict). Tests : ResultsView verdict/expert +
+  VerdictView. typecheck 0, lint 0/0, **163 + 8 skip**, build OK (`/resultats` statique). Reste **S-024**
+  (e2e + nettoyage) pour clore la refonte.

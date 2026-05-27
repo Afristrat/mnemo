@@ -3,14 +3,14 @@
 > Passation de quart (protocole nucléaire). Le quart suivant reprend **sans relire d'autre fichier que celui-ci** ; pointeurs détaillés en bas.
 
 ```
-== PASSATION MNEMO 2026-05-26T13:30 ==
-[ETAT]    Lot 1 (conseil+moats) ✅ COMPLET 14/14 + DÉPLOYÉ en prod (https://infra.ai-mpower.com via Coolify) | branche main propre (artefacts non commités présents) | unit 76+4skip · e2e 5+1skip · typecheck 0 · lint 0/0
-[ENCOURS] REFONTE → renommée **Strate** (ex-Mnémo, nom acté 2026-05-26). Spec de design **VALIDÉ** (`docs/superpowers/specs/2026-05-26-refonte-simulateur-strate-design.md`) + plan (`docs/superpowers/plans/2026-05-26-strate-refonte.md`) + **10 stories S-015→S-024** dans `.ralph/prd.json`. **S-015 ✅ faite** (migration des types, ADR-009, unit 80+4skip). Reste S-016→S-024. + Sondage de prix en COLLECTE.
-[FAIT]    Lot 1 (S-001→S-014) | déploiement Coolify | refonte design (compagnon visuel + conseil 5 voix + pricing) | veille concurrentielle | sondage /sondage live | Supabase SERVEUR relancé + rails RLS Mnémo appliqués | fichier credentials
-[ALERTE]  !! NE PAS CODER la refonte avant spec écrite+validée (HARD GATE brainstorming) | secrets → coffre chiffré DPAPI (load-secrets.ps1) ; token Coolify rotaté ✅ | Supabase serveur NON exposé (localhost:8200) | prix = [PLACEHOLDER] tant que le sondage n'a pas de réponses | costing multimodal (création de contenu) N'EXISTE PAS encore | webhook GitHub→Coolify non configuré → redeploy manuel
+== PASSATION STRATE 2026-05-27T01:20 ==
+[ETAT]    Lot 1 ✅ COMPLET + déployé prod (https://infra.ai-mpower.com, Coolify). REFONTE Strate : **9/10 stories ✅ (S-015→S-023)**, reste **S-024**. origin/main propre & à jour. unit **163+8skip** · typecheck 0 · lint 0/0 · build OK · RLS multi-tenant **vérifiée LIVE 8/8** · parcours wizard vérifié au navigateur. ⚠ La refonte N'EST PAS encore déployée en prod (déployer après S-024).
+[ENCOURS] **S-024** (dernière story refonte) : e2e Playwright des **3 parcours** (90 s→verdict ; wizard 4 blocs→expert ; bloc Médias génération vidéo souveraine→budget rouge+levier) + round-trip /configurateur↔/resultats (cohérence localStorage) + **supprimer le code mort** (wizard 6-steps déjà remplacé ; vérifier `Requirement` inutilisé). Garde-fou : typecheck 0/lint 0/build OK. + Sondage prix en COLLECTE.
+[FAIT]    Session 2026-05-27 (8 stories) : S-016 sizing.ts (GPU mutualisé compté **1×**) · S-017 pricing médias **SOURCÉ** (devises natives + étage FX Frankfurter/BCE ; embeddings = **Qwen3-VL-Embedding** open #1 MMEB-V2, pas Voyage) · S-018 sizing→couches + verdict + setupCost · S-019 wizard **4 blocs** (InfoBubble neutres, sliders continus, notes libres, usages renommés, a11y YesNo) · S-020 bloc **Médias** + **budget-mètre** (colonne DROITE sticky) · S-021 **chemin 90 s** (mappers + QuickProfileForm, accueil) · S-022 résultats **verdict** + CostMap étendu · S-023 **conversion/data** (simulation_log+lead_capture, RLS LIVE 8/8). Design poussé (design-proposals/homepage/deck PPTX). Backlog use-cases écrit. ADR-010→017.
+[ALERTE]  **Costing multimodal EXISTE désormais** (sizing.ts + pricing médias + intégration recommend). Prix de VENTE = **[PLACEHOLDER]** (sondage en cours). UI injecte `getMediaPricesEur()` (taux FX = repli BCE seedé ; live via `getMediaPricesEurLive`). **Routes HTTP simulation/lead + UI capture exit-intent NON faites** (mécanisme S-023 prêt+prouvé ; exposition à finir S-024/Lot 2). **Renommage Mnémo→Strate dans le CODE = story dédiée NON faite** (l'UI affiche encore « Mnémo », §15 spec). Supabase serveur non exposé (localhost:8200). webhook GitHub→Coolify non configuré → redeploy manuel.
 [BLOQUE]  RAS
-[NEXT]    Reprendre le run Ralph en **S-016** (`lib/engine/sizing.ts` — GPU mutualisé compté UNE fois, stockage indexé, anti double-comptage ; valider granularité GpuTier ; cf. ADR-009). Mode d'exécution validé par Amine : **worker subagent par story + double revue Sparring Partner + Avocat du Diable** avant passes=true. Puis S-017 (pricing médias SOURCÉ, DÉFCON 1)→S-024. Parallèle possible : exposer Supabase serveur (prérequis S-023). Ensuite : sondage→figer prix de vente→homepage.
-[MEMO]    Tous les accès/secrets : coffre GLOBAL ~/.claude/secrets/secrets.env.dpapi (chiffré DPAPI, charger via ~/.claude/secrets/load-secrets.ps1 — cf. mémoire secrets-handling-protocol + CLAUDE.md global). Design refonte : design-proposals.html + décisions ci-dessous. "reprends en Ralph" relit .ralph/ + AGENTS.md.
+[NEXT]    Faire **S-024** → toutes stories passes=true → `<promise>COMPLETE</promise>` après vérif (typecheck+tests+lint+build+e2e). PUIS **backlog `docs/BACKLOG-USECASES.md`** (stories S-025+) : besoins **backup** chiffrables (RPO/RTO, 3-2-1) · stockage **multi-continent / résidence multi-juridiction** · **gap-hunt** systématique (skill moat-hunter). PUIS sondage→figer prix→homepage ; renommage Strate ; déployer la refonte.
+[MEMO]    Accès/secrets : coffre GLOBAL ~/.claude/secrets/secrets.env.dpapi (load-secrets.ps1). Mémoires AJOUTÉES : `strate-avis-critique-non-oriente` (présenter alternatives/sources, **l'utilisateur tranche**, jamais d'avis orienté ni de question de ratification) · `strate-backlog-usecases-manquants`. « reprends en Ralph » relit `.ralph/` + AGENTS.md AVANT d'agir.
 ```
 
 ---
@@ -21,12 +21,12 @@
 3. Lire les **mémoires** (MEMORY.md) : cadrage produit, déploiement Coolify, Supabase serveur, protocole run autonome, « Amine veut le big picture » (pas de menus fragmentés).
 4. Selon la tâche : refonte simulateur → reprendre les **décisions design ci-dessous** + `design-proposals.html`, et **écrire le spec AVANT de coder**. Infra → cf. credentials + mémoires.
 
-**Vérifs d'entrée** : `git log --oneline -3` (dernier commit code ≈ `8eb30b4 feat(sondage)`). App live : `curl -s -o /dev/null -w "%{http_code}" https://infra.ai-mpower.com/` → 200. Sondage : `https://infra.ai-mpower.com/sondage`.
+**Vérifs d'entrée** : `git log --oneline -8` (HEAD ≈ `[S-022] … + passation` ; refonte S-016→S-023 poussée). `npm run typecheck && npm test && npm run lint && npm run build` → tout vert (163+8skip). App live (Lot 1 déployé) : `curl -s -o /dev/null -w "%{http_code}" https://infra.ai-mpower.com/` → 200 (⚠ c'est encore le Lot 1, PAS la refonte).
 
 ---
 
 ## [ÉTAT] détaillé
-- **Repo** : `github.com/Afristrat/mnemo`, branche `main`. Working tree : **artefacts non commités** (design-proposals.html, homepage-draft.html, scripts/shoot-*.mjs, docs/pricing/, presentation/, .gitignore +.superpowers) — pas du code produit, à committer ou ignorer au choix.
+- **Repo** : `github.com/Afristrat/mnemo`, branche `main` (local == origin/main). Working tree **propre** : design/homepage/deck PPTX/scripts de capture désormais **commités** (`docs(design)`) ; seul `docs/pricing/wtp-research.md` reste untracked (étude WTP du *service*, pas du code).
 - **Stack** : Next.js 15 (App Router) · React 19 · TS strict · Tailwind v3 · Vitest · Playwright · jspdf · fflate · pg · @supabase/ssr+supabase-js. Lint = ESLint 9 flat config (`eslint .`).
 - **Routes prod** : `/` `/configurateur` `/resultats` `/fiduciaire` `/api/pricing` (Firecrawl) `/sondage` + `/api/sondage` `/health`.
 - **Déploiement** : Coolify app `mnemo` uuid `by7kdehyeieujf6oxzzt1r0m` (projet Ventures), Dockerfile standalone, domaine `https://infra.ai-mpower.com` (tunnel Cloudflare nahda → Traefik). Redeploy : `POST $COOLIFY_URL/api/v1/deploy?uuid=$MNEMO_APP_UUID&force=true` (webhook auto NON configuré).
@@ -65,8 +65,8 @@
 - **Token Coolify** : ✅ **rotaté le 2026-05-26** — ancien token (leaké en chat) remplacé dans le coffre DPAPI puis révoqué au dashboard. Coffre = `mnemo-infra-credentials.env.dpapi`, chargé via `load-secrets.ps1` (cf. mémoire `secrets-handling-protocol`).
 - **Supabase serveur** : non exposé (localhost:8200). Pour brancher l'app prod dessus → router via tunnel (`supabase.ai-mpower.com → localhost:8200`) puis fixer `NEXT_PUBLIC_SUPABASE_*` côté app. **Supabase LOCAL = dev jetable**, ne pas l'utiliser en prod.
 - **sondage.ai-mpower.com** ajouté au tunnel + domaine app, mais son routage Traefik renvoyait 404 au dernier test → **à vérifier** (le sondage marche sûrement via `infra.ai-mpower.com/sondage`).
-- **Costing multimodal** (bloc Création de contenu) = vrai chantier neuf (le moteur ignore audio/vidéo/images aujourd'hui : `profileCostFactors` = volume/req/users seulement).
-- **Modules** sont encore costés dans le moteur actuel ; la refonte les déplace en « usage costable » — à recâbler proprement.
+- **Costing multimodal = FAIT** (S-016/017/018) : `lib/engine/sizing.ts` (GPU mutualisé compté 1×, stockage indexé, embeddings, workloads) + pricing médias **sourcé** (`lib/pricing/media-seed.ts`+`media-feed.ts`, audit `docs/pricing/media-cost-sources.md`) + intégration `recommend(profile, prices)` → coûts dans C4/C5/C6 + `setupCost` + `verdict`.
+- **Modules = renommés** en usages costables (S-019, `modules.ts` `name` : Traçage des revirements / Mémoire infalsifiable / Décisions horodatées / Plan de panne / Détecteur de conflits), présentés en opt-in dans le bloc Usage-Mémoire ; coût inchangé.
 - OneDrive : I/O parfois lents (non bloquant).
 
 ## [MEMO] conventions & learnings (ne pas réapprendre)
@@ -92,8 +92,9 @@
 - **Credentials** : coffre GLOBAL `C:\Users\amans\.claude\secrets\secrets.env.dpapi` (chiffré DPAPI, chargeur `C:\Users\amans\.claude\secrets\load-secrets.ps1`, hors git + hors OneDrive, partagé tous projets).
 - **Design refonte** : `design-proposals.html` · `homepage-draft.html` · `.superpowers/brainstorm/.../content/*.html`.
 - **Pricing** : `docs/pricing/wtp-research.md`.
-- **Spec & règles** : `PRD.md` (F1→F15, threat model §8) · `docs/MOAT-HUNT.md` · `docs/DECISIONS.md` (ADR-001..008) · `AGENTS.md` · `plan.md` · `CLAUDE.md`.
-- **Ralph** : `.ralph/prd.json` (14/14 ✓) · `.ralph/progress.md`.
+- **Spec & règles** : `PRD.md` · `docs/superpowers/specs/2026-05-26-refonte-…-strate-design.md` (spec refonte) + `…/plans/…strate-refonte.md` · `docs/MOAT-HUNT.md` · `docs/DECISIONS.md` (**ADR-001..017**) · `AGENTS.md` · `CLAUDE.md`.
+- **Ralph** : `.ralph/prd.json` (Lot 1 14/14 ✓ ; refonte **9/10 ✓, reste S-024**) · `.ralph/progress.md`.
+- **Pricing médias** : `docs/pricing/media-cost-sources.md` (audit trail sourcé). **Backlog** post-refonte : `docs/BACKLOG-USECASES.md` (backup, multi-continent/multi-loi, gap-hunt).
 - **Design system** : `design-reference/mn_mo_brand_identity/DESIGN.md`.
 - **Mémoires** : `~/.claude/projects/C--Users-amans-OneDrive-Projets-Infra/memory/MEMORY.md` (cadrage, déploiement, Supabase serveur, credentials, protocoles).
 ```
