@@ -30,6 +30,13 @@
 **Note interne** : la prod date d'**avant** le travail du 2026-05-27 (S-027→S-031, S-035, spec n°3). Premier
 réflexe : **redéployer** puis re-tester B1–B3 avant d'ouvrir une enquête de régression.
 
+> **✅ RÉSOLU (2026-05-27, après redéploiement)** — les bugs B1/B2/B3 étaient dus à l'**obsolescence de la
+> prod** (build antérieur au travail du jour), **pas à une régression de code**. Après redéploiement Coolify
+> + suite e2e Playwright **en navigateur propre contre la prod** (`E2E_BASE_URL=https://infra.ai-mpower.com`,
+> **7/7 verts**), « charte fiduciaire accessible » et « export Markdown/PDF/ZIP » passent ; B3 couvert par le
+> round-trip `/configurateur ↔ /resultats`. La pollution observée côté navigateur du test manuel venait des
+> **extensions** (Loom/Quillbot/…) + du beacon Cloudflare Insights (503, tiers, non critique).
+
 ## P1 — Blocages de parcours & conversion
 
 | ID | Timecode | Verbatim | Diagnostic | Mapping |
