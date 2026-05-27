@@ -33,3 +33,6 @@ npm-debug.log*
 
 # brainstorm visual companion
 .superpowers/
+
+# firecrawl skill cache
+.firecrawl/

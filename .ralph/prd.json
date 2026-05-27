@@ -241,13 +241,14 @@
       ]
     },
     {
-      "id": "S-025", "title": "Pricing backup sourcé (egress / archive / bande passante hors-site)", "feature": "backup",
-      "passes": false, "deps": ["S-017"],
+      "id": "S-025", "title": "Price feed LIVE Firecrawl (extraction structurée) — média + backup ; seed = repli daté", "feature": "pricing",
+      "passes": false, "deps": ["S-008", "S-017"],
       "acceptance": [
-        "tarifs egress €/Go, archive retrieval (tier froid), bande passante hors-site sourcés : URL + date + pastille de confiance, consignés dans docs/pricing/backup-cost-sources.md",
-        "getBackupPrices() renvoie une table ; chaque entrée {amount,currency,unit,confidence,source} ; normalisation € (étage FX réutilisé) ; repli seed",
-        "source incertaine → confidence low + « estimation, à confirmer par devis »",
-        "AUCUN prix non sourcé (DÉFCON 1)"
+        "les prix d'infra NE sont PAS des littéraux écrits à la main : extraction structurée Firecrawl (JSON/LLM) des prix RÉELS sur les pages vendor, au runtime, côté serveur (clé jamais exposée)",
+        "REPRENDRE le pricing médias (S-017) sur ce modèle : getMediaPrices() = LIVE en primaire (async, route serveur) → injecté dans recommend ; le seed devient repli daté + baseline de validation",
+        "prix backup (egress/archive/retrait/hors-site) via le MÊME feed live ; baseline sourcée déjà consignée dans docs/pricing/backup-cost-sources.md",
+        "DÉFCON 1 : valeur live validée vs baseline seed (écart hors tolérance → flag « à revérifier » + confiance basse) ; source cliquable + fraîcheur ; repli seed si Firecrawl indispo ; jamais de prix présenté comme certain sans validation",
+        "PRÉREQUIS aux stories backup S-026→S-031. Cf. mémoire prix-jamais-hardcodes-feed-live"
       ]
     },
     {
