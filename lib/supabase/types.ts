@@ -95,6 +95,41 @@ export type LeadCaptureInsert = {
   context: LeadContext;
 };
 
+// Veille temps réel du catalogue (S-036) : audit trail des composants proposés par la veille.
+// Les unions de valeurs (slot/sovereignty/provenance/confidence) sont garanties par les CHECK
+// SQL de la migration ; côté TS on conserve `string` pour ne pas coupler les types base aux types
+// du catalogue (le builder y injecte les valeurs typées).
+export type CatalogObservationRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  slot: string;
+  component: string;
+  role: string;
+  sovereignty: string;
+  provenance: string;
+  confidence: string;
+  source_url: string;
+  source_label: string | null;
+  checked_at: string | null;
+  assembled_at: string;
+  created_at: string;
+};
+export type CatalogObservationInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  slot: string;
+  component: string;
+  role: string;
+  sovereignty: string;
+  provenance: string;
+  confidence: string;
+  source_url: string;
+  source_label: string | null;
+  checked_at: string | null;
+  assembled_at: string;
+};
+
 type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert> };
 
 export type Database = {
@@ -107,6 +142,7 @@ export type Database = {
       cost_observations: TableShape<CostObservationRow, Omit<CostObservationRow, "id" | "observed_at">>;
       simulation_log: TableShape<SimulationLogRow, SimulationLogInsert>;
       lead_capture: TableShape<LeadCaptureRow, LeadCaptureInsert>;
+      catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
     };
     Views: Record<string, never>;
     Functions: {
