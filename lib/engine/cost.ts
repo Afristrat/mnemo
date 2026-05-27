@@ -1,3 +1,4 @@
+import type { ComputeSizing } from "./compute";
 import type { MultimodalPriceTable } from "./sizing";
 import type { BackupPlan, Layer, Profile, ReqPerDay, Sizing, Volume } from "./types";
 
@@ -64,6 +65,26 @@ export function applyMultimodalSizing(layers: Layer[], sizing: Sizing, prices: M
     }
     return layer;
   });
+}
+
+/**
+ * Remplace le **forfait C6 hardcodé** (30/100/400, jadis serveurs + LLM mélangés) par le compute
+ * souverain **dimensionné + sourcé** (S-041). Pure. `compute.monthlyCost <= 0` (table neutre) →
+ * couches inchangées (le forfait historique est conservé, invariant des tests préservé). Le LLM à
+ * l'usage n'est PAS inclus ici (estimation séparée, dette transparente notée S-033).
+ */
+export function applyCompute(layers: Layer[], compute: ComputeSizing): Layer[] {
+  if (compute.monthlyCost <= 0) return layers;
+  const detail = compute.instances.map((i) => `${i.count}×${i.spec.name}`).join(", ");
+  return layers.map((layer) =>
+    layer.id === 6
+      ? {
+          ...layer,
+          cost: compute.monthlyCost,
+          note: `Serveurs souverains dimensionnés : ${compute.monthlyCost} €/mois (${detail}) · LLM à l'usage non chiffré (devis)`,
+        }
+      : layer,
+  );
 }
 
 /**

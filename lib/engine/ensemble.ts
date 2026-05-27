@@ -7,6 +7,7 @@
 
 import type { Catalog } from "@/lib/catalog/types";
 import { NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
+import { NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
 import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
@@ -146,6 +147,7 @@ function buildVariant(
   base: Profile,
   prices: MultimodalPriceTable,
   backupPrices: BackupPriceTable,
+  computePrices: ComputePriceTable,
 ): EnsembleVariant {
   const meta = VARIANT_META[id];
   const { profile, assumptions } = applyVariant(id, base);
@@ -155,7 +157,7 @@ function buildVariant(
     intent: meta.intent,
     assumptions,
     profile,
-    recommendation: recommend(profile, prices, undefined, backupPrices),
+    recommendation: recommend(profile, prices, undefined, backupPrices, computePrices),
   };
 }
 
@@ -238,12 +240,13 @@ export function buildEnsemble(
   prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES,
   catalog?: Catalog,
   backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
+  computePrices: ComputePriceTable = NEUTRAL_COMPUTE_PRICES,
 ): Ensemble {
   // Le catalogue (live ou seed) s'applique à la baseline ; les variants explorent sur leur propre
   // seed (le spread coût/score n'en dépend pas — les coûts sont indépendants du choix de composant).
-  // Les prix backup sont threadés partout pour que le spread de coût reflète aussi la sauvegarde.
-  const baseline = recommend(profile, prices, catalog, backupPrices);
-  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices, backupPrices));
+  // Prix backup + compute threadés partout pour que le spread de coût reflète sauvegarde ET serveurs.
+  const baseline = recommend(profile, prices, catalog, backupPrices, computePrices);
+  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices, backupPrices, computePrices));
   const spread = computeSpread([baseline, ...variants.map((v) => v.recommendation)]);
   return { baseline, variants, spread };
 }
