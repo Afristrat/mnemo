@@ -300,7 +300,7 @@
     },
     {
       "id": "S-031", "title": "Résultats backup (CostMap + radar 9 axes + verdict setup) + e2e + nettoyage", "feature": "backup",
-      "passes": false, "deps": ["S-028", "S-027", "S-029", "S-024"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-028", "S-027", "S-029", "S-024"],
       "acceptance": [
         "CostMap : ligne backup récurrent + setup enrichi + pastilles 🟢/💳 + sources cliquables ; verdict inclut la mise en route backup ; radar 9 axes",
         "e2e (desktop + mobile) : profil critique + régulé → ligne backup + radar 9 axes + érasure crypto-shred + bundle Exit Escrow reflète le plan ; round-trip",

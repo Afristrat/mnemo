@@ -6,6 +6,7 @@
 // le moteur déterministe `recommend()` et on quantifie l'écart résultant.
 
 import type { Catalog } from "@/lib/catalog/types";
+import { NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
 import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
@@ -140,7 +141,12 @@ function applyVariant(
   }
 }
 
-function buildVariant(id: EnsembleVariantId, base: Profile, prices: MultimodalPriceTable): EnsembleVariant {
+function buildVariant(
+  id: EnsembleVariantId,
+  base: Profile,
+  prices: MultimodalPriceTable,
+  backupPrices: BackupPriceTable,
+): EnsembleVariant {
   const meta = VARIANT_META[id];
   const { profile, assumptions } = applyVariant(id, base);
   return {
@@ -149,7 +155,7 @@ function buildVariant(id: EnsembleVariantId, base: Profile, prices: MultimodalPr
     intent: meta.intent,
     assumptions,
     profile,
-    recommendation: recommend(profile, prices),
+    recommendation: recommend(profile, prices, undefined, backupPrices),
   };
 }
 
@@ -231,11 +237,13 @@ export function buildEnsemble(
   profile: Profile,
   prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES,
   catalog?: Catalog,
+  backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
 ): Ensemble {
   // Le catalogue (live ou seed) s'applique à la baseline ; les variants explorent sur leur propre
   // seed (le spread coût/score n'en dépend pas — les coûts sont indépendants du choix de composant).
-  const baseline = recommend(profile, prices, catalog);
-  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices));
+  // Les prix backup sont threadés partout pour que le spread de coût reflète aussi la sauvegarde.
+  const baseline = recommend(profile, prices, catalog, backupPrices);
+  const variants = ENSEMBLE_VARIANT_IDS.map((id) => buildVariant(id, profile, prices, backupPrices));
   const spread = computeSpread([baseline, ...variants.map((v) => v.recommendation)]);
   return { baseline, variants, spread };
 }
