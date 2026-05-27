@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ConfigurateurPage() {
   return (
-    <main className="mx-auto max-w-5xl px-container-margin py-section-padding">
+    <main className="mx-auto max-w-[1400px] px-container-margin py-section-padding">
       <header className="mb-8">
         <span className="font-mono text-xs uppercase tracking-widest text-primary">
           Configurateur

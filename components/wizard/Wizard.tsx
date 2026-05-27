@@ -159,7 +159,7 @@ export function Wizard(): ReactElement {
   const result = recommend(profile, prices);
 
   return (
-    <div className="mx-auto max-w-5xl lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
+    <div className="w-full lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
       <div className="min-w-0">
       {/* Indicateur de blocs */}
       <ol className="mb-6 flex flex-wrap gap-2">
