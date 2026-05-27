@@ -475,7 +475,7 @@
     },
     {
       "id": "S-051", "title": "Refonte taxonomie presets : preset scoré/explicable + réconciliation étiquettes + ADR", "feature": "refonte",
-      "passes": false, "deps": ["S-003", "S-004"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-003", "S-004"],
       "acceptance": [
         "DÉCISION Amine (option 2+1) : remplacer la cascade binaire decidePreset par un score de besoin explicite (souveraineté/criticité/charge/conformité) → palier LIGHT/MEDIUM/HARD dérivé + justification chiffrée (pourquoi ce palier)",
         "réconcilier les étiquettes expected des PRESET_PROFILES avec le résultat réel des règles (ex. Coach indépendant labellisé MEDIUM mais classé LIGHT par les règles) — zéro divergence étiquette↔calcul",
