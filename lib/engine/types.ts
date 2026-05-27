@@ -273,6 +273,8 @@ export type Recommendation = {
   setupCost: number;
   /** Sources des coûts multimédias effectivement utilisés (URL + date), dédupliquées (DÉFCON 1). */
   costSources: CostSource[];
+  /** Plan de sauvegarde & résilience déduit du profil (spec n°1, intégré en S-028). */
+  backup: BackupPlan;
   /** Synthèse « verdict » pour le chemin 90 s (douleur/risque/gain/prix ferme/coûts/next step). */
   verdict: Verdict;
 };

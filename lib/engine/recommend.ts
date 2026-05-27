@@ -1,5 +1,6 @@
 import type { Catalog } from "@/lib/catalog/types";
-import { applyMultimodalSizing, costBand, layersBaseCost, profileCostFactors } from "./cost";
+import { buildBackupPlan, NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
+import { applyBackup, applyMultimodalSizing, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
 import { MODULES } from "./modules";
@@ -16,10 +17,24 @@ import {
   SCORE_KEYS,
   type ActiveModule,
   type Activity,
+  type CostSource,
   type Profile,
   type Recommendation,
   type Verdict,
 } from "./types";
+
+/** Dédoublonne des sources par URL (préserve l'ordre d'apparition). */
+function dedupeSources(sources: CostSource[]): CostSource[] {
+  const seen = new Set<string>();
+  const out: CostSource[] = [];
+  for (const s of sources) {
+    if (!seen.has(s.url)) {
+      seen.add(s.url);
+      out.push(s);
+    }
+  }
+  return out;
+}
 
 function computeActiveModules(profile: Profile): ActiveModule[] {
   const active: ActiveModule[] = [];
@@ -98,19 +113,26 @@ export function recommend(
   profile: Profile,
   prices: MultimodalPriceTable = NEUTRAL_MEDIA_PRICES,
   catalog?: Catalog,
+  backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
 ): Recommendation {
   const { preset, reason } = decidePreset(profile);
   const sizing = costMultimodalSizing(profile, prices);
+  // Plan de sauvegarde déduit du profil (criticité none → plan neutre, coûts 0 → invariant préservé).
+  const backup = buildBackupPlan(profile, sizing, prices.storagePerGbMonth, backupPrices);
 
   // Les choix de composants viennent du `catalog` injecté (défaut seed = sortie identique, spec n°3) ;
-  // les coûts multimédias sont injectés DANS les couches C4/C5/C6 (jamais en ligne séparée).
-  const layers = applyMultimodalSizing(buildLayers(preset, profile, catalog), sizing, prices);
+  // les coûts multimédias sont injectés DANS les couches C4/C5/C6, le coût récurrent backup dans C6.
+  const layers = applyBackup(
+    applyMultimodalSizing(buildLayers(preset, profile, catalog), sizing, prices),
+    backup,
+  );
   const baseCost = layersBaseCost(layers) + profileCostFactors(profile);
   const activeModules = computeActiveModules(profile);
   const moduleCost = activeModules.reduce((sum, m) => sum + m.cost, 0);
   const totalCost = baseCost + moduleCost;
 
-  const scores = computeScores(preset, profile, totalCost);
+  // Le plan backup alimente la dimension `resilience` (S-027) de façon cohérente avec le coût injecté.
+  const scores = computeScores(preset, profile, totalCost, backup);
 
   // Bonus modules, proportionnels au niveau d'intensité choisi.
   for (const mod of activeModules) {
@@ -130,7 +152,8 @@ export function recommend(
   for (const dim of scores) dim.score = Math.round(dim.score);
   const scoreAvg = Number((scores.reduce((sum, x) => sum + x.score, 0) / scores.length).toFixed(1));
 
-  const setupCost = computeSetupCost(profile, prices);
+  // Mise en route = backlog multimédia + premier full de sauvegarde (one-time).
+  const setupCost = computeSetupCost(profile, prices) + Math.round(backup.setupCost);
   const risks = computeRisks(preset, profile, totalCost);
 
   return {
@@ -148,7 +171,8 @@ export function recommend(
     kmChecks: computeKMChecks(preset, profile),
     sizing,
     setupCost,
-    costSources: mediaCostSources(profile, sizing, prices),
+    costSources: dedupeSources([...mediaCostSources(profile, sizing, prices), ...backup.costSources]),
+    backup,
     verdict: buildVerdict(profile, totalCost, setupCost, risks),
   };
 }
