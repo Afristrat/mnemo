@@ -259,7 +259,7 @@ export function ResultsView(): ReactElement {
       </div>
 
       <p className="text-body-sm text-on-surface-variant">
-        Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper —
+        Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper,
         vérifiez chaque source avant décision.
       </p>
 

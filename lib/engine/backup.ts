@@ -72,7 +72,7 @@ const CRITICALITY_PARAMS: Record<BackupCriticality, CriticalityParams> = {
 
 // --- §6 Conformité : rétention légale (plancher) + érasure ------------------------------------
 //
-// Durées MINIMALES de conservation par régime, en années. Valeurs SOURCÉES + vérifiées (DÉFCON 1) —
+// Durées MINIMALES de conservation par régime, en années. Valeurs SOURCÉES + vérifiées (DÉFCON 1),
 // table complète (URL + citation + confiance) dans docs/pricing/backup-cost-sources.md §conformité.
 // ⚠ Orientation d'ingénierie, PAS un avis juridique (cf. disclaimer du runbook). RGPD/CNDP n'imposent
 // PAS de plancher (principe de minimisation, plafond) → 0 ; le plancher vient des régimes sectoriels.

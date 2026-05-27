@@ -2,7 +2,7 @@
 //
 // Comble le trou : les VM CPU/RAM qui font tourner Postgres, Qdrant, l'orchestrateur (LiteLLM/vLLM),
 // l'app et le vault en self-hosted étaient invisibles (forfait C6 codé en dur). Ici elles sont
-// DIMENSIONNÉES (preset + volume + users + débit) et chiffrées avec des **prix injectés** (DÉFCON 1) —
+// DIMENSIONNÉES (preset + volume + users + débit) et chiffrées avec des **prix injectés** (DÉFCON 1),
 // au même titre que le pool GPU (S-016). Hypothèses ±30 %, documentées dans
 // docs/pricing/compute-cost-sources.md.
 
