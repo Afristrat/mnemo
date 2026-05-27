@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { BackupBlock } from "@/components/wizard/BackupBlock";
 import { BudgetMeter } from "@/components/wizard/BudgetMeter";
+import { ChoiceRecap } from "@/components/wizard/ChoiceRecap";
 import { CheckboxCards } from "@/components/wizard/CheckboxCards";
 import { ContinuousSlider } from "@/components/wizard/ContinuousSlider";
 import { InfoBubble } from "@/components/wizard/InfoBubble";
@@ -19,6 +20,7 @@ import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId } from 
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
+import { buildChoiceRecap } from "@/lib/wizard/recap";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -351,6 +353,7 @@ export function Wizard(): ReactElement {
           sizing={result.sizing}
           backupMonthlyCost={result.backup.monthlyCost}
         />
+        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result)} />
       </aside>
     </div>
   );
