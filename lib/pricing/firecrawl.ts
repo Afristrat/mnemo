@@ -3,12 +3,63 @@
 // `fetchImpl` injectable pour les tests. La clé n'est jamais exposée au client.
 
 const FIRECRAWL_SCRAPE_URL = "https://api.firecrawl.dev/v2/scrape";
+const FIRECRAWL_SEARCH_URL = "https://api.firecrawl.dev/v2/search";
 
 export type ScrapeDeps = {
   apiKey: string | undefined;
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
 };
+
+/** Un résultat de recherche web (sous-ensemble exploité ; jamais de valeur sensible). */
+export type WebSearchResult = { title: string; url: string; snippet: string };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+/**
+ * Recherche web (Firecrawl `/search`) → liste de résultats {title, url, snippet}, pour alimenter la
+ * veille de composants (reco vivante, S-036). Ne lève jamais (clé absente / échec / réponse invalide →
+ * `[]`), l'appelant replie sur le seed. Lecture JSON inconnu sans `as`/`any` (type guards).
+ */
+export async function searchWeb(query: string, limit: number, deps: ScrapeDeps): Promise<WebSearchResult[]> {
+  if (deps.apiKey === undefined || deps.apiKey.length === 0) return [];
+
+  const doFetch = deps.fetchImpl ?? fetch;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), deps.timeoutMs ?? 30_000);
+
+  try {
+    const response = await doFetch(FIRECRAWL_SEARCH_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${deps.apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ query, limit }),
+      signal: controller.signal,
+    });
+    if (!response.ok) return [];
+
+    const payload: unknown = await response.json();
+    if (!isRecord(payload) || payload.success !== true || !isRecord(payload.data)) return [];
+    const web = payload.data.web;
+    if (!Array.isArray(web)) return [];
+
+    const out: WebSearchResult[] = [];
+    for (const item of web) {
+      if (!isRecord(item)) continue;
+      const url = typeof item.url === "string" ? item.url : "";
+      if (url.length === 0) continue;
+      const title = typeof item.title === "string" ? item.title : "";
+      const snippet = typeof item.description === "string" ? item.description : "";
+      out.push({ title, url, snippet });
+    }
+    return out;
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 type FirecrawlScrapeResponse = {
   success?: boolean;
