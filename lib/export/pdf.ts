@@ -10,6 +10,36 @@ const PAGE_W = 595.28; // A4 en points
 const PAGE_H = 841.89;
 const CONTENT_W = PAGE_W - MARGIN * 2;
 
+// Sous-ensemble Unicode des 27 caractères « hauts » de WinAnsi/CP1252 (plage
+// 0x80–0x9F : € ‚ ƒ „ … † ‡ ˆ ‰ Š ‹ Œ Ž ‘ ’ “ ” • – — ˜ ™ š › œ ž Ÿ).
+const CP1252_HIGH: ReadonlySet<number> = new Set([
+  0x20ac, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 0x2021, 0x02c6, 0x2030,
+  0x0160, 0x2039, 0x0152, 0x017d, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022,
+  0x2013, 0x2014, 0x02dc, 0x2122, 0x0161, 0x203a, 0x0153, 0x017e, 0x0178,
+]);
+
+/**
+ * Réduit un texte à ce que la police standard de jsPDF (WinAnsi/CP1252) sait
+ * rendre : ASCII imprimable, Latin-1 (0xA0–0xFF, dont é è à ç ç… et l'espace
+ * insécable) et les 27 caractères spéciaux CP1252 (€ « » — ’ …). Les émojis et
+ * autres glyphes hors plage — qui sortiraient sinon en « Ø=ÜÄ » (surrogate UTF-16
+ * réémis en CP1252) — sont retirés, et les espaces ainsi libérés sont compactés.
+ * La typographie française reste intacte ; le Markdown (UTF-8) garde ses émojis.
+ */
+export function toWinAnsi(text: string): string {
+  let out = "";
+  for (const ch of text) {
+    const cp = ch.codePointAt(0) ?? 0;
+    const renderable =
+      cp === 0x09 || // tabulation
+      (cp >= 0x20 && cp <= 0x7e) || // ASCII imprimable
+      (cp >= 0xa0 && cp <= 0xff) || // Latin-1 (typo FR + espace insécable)
+      CP1252_HIGH.has(cp); // spéciaux CP1252 (€ « » — ’ …)
+    if (renderable) out += ch;
+  }
+  return out.replace(/ {2,}/g, " ").trim();
+}
+
 function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   if (y + needed > PAGE_H - MARGIN) {
     doc.addPage();
@@ -19,7 +49,7 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
 }
 
 function writeWrapped(doc: jsPDF, text: string, x: number, y: number, width: number, lineHeight: number): number {
-  const parts: string[] = doc.splitTextToSize(text, width);
+  const parts: string[] = doc.splitTextToSize(toWinAnsi(text), width);
   let cursor = y;
   for (const part of parts) {
     cursor = ensureSpace(doc, cursor, lineHeight);
@@ -29,8 +59,10 @@ function writeWrapped(doc: jsPDF, text: string, x: number, y: number, width: num
   return cursor;
 }
 
-function writeRow(doc: jsPDF, left: string, right: string, y: number): number {
+function writeRow(doc: jsPDF, leftRaw: string, rightRaw: string, y: number): number {
   const lineHeight = 14;
+  const left = toWinAnsi(leftRaw);
+  const right = toWinAnsi(rightRaw);
   const rightWidth = doc.getTextWidth(right);
   const leftWidth = CONTENT_W - rightWidth - 14;
   const parts: string[] = doc.splitTextToSize(left, leftWidth > 80 ? leftWidth : CONTENT_W);
@@ -92,7 +124,7 @@ export function renderPdf(d: Deliverable): jsPDF {
     for (const src of d.sources) {
       y = ensureSpace(doc, y, 15);
       doc.setTextColor(20, 80, 160);
-      doc.textWithLink(`• ${src.label}, vérifié le ${src.checkedAt}`, MARGIN, y, { url: src.url });
+      doc.textWithLink(toWinAnsi(`• ${src.label}, vérifié le ${src.checkedAt}`), MARGIN, y, { url: src.url });
       doc.setTextColor(0);
       y += 15;
     }

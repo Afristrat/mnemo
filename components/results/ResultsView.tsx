@@ -19,6 +19,7 @@ import {
   buildEnsemble,
   profileCostFactors,
   recommend,
+  type EnsembleVariantId,
   type MultimodalPriceTable,
   type Profile,
   type ScoreKey,
@@ -62,6 +63,9 @@ export function ResultsView(): ReactElement {
   const [volIndex, setVolIndex] = useState(1);
   const [users, setUsers] = useState(1);
   const [mode, setMode] = useState<"verdict" | "expert">("expert");
+  // Solution affichée par toute la page : null = la recommandation de référence,
+  // sinon un scénario de l'ensemble (bascule sans modifier le profil enregistré).
+  const [activeVariant, setActiveVariant] = useState<EnsembleVariantId | null>(null);
 
   // Prix médias réels (€) injectés → coûts multimodaux dans les couches + verdict chiffré.
   // Rendu initial avec le seed sourcé (repli immédiat), puis bascule sur les prix LIVE extraits
@@ -117,7 +121,7 @@ export function ResultsView(): ReactElement {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
   }
 
-  // Mode verdict (chemin 90 s) : synthèse compacte de la même recommandation.
+  // Mode verdict (chemin 90 s) : synthèse compacte de la recommandation de référence.
   if (mode === "verdict") {
     return (
       <div className="space-y-8">
@@ -126,18 +130,25 @@ export function ResultsView(): ReactElement {
     );
   }
 
-  const factorsCost = profileCostFactors(projected);
-  const radarData = result.scores.map((s) => ({ label: SHORT_LABELS[s.key], score: s.score }));
+  // Solution active : la référence par défaut, ou le scénario sélectionné dans l'ensemble.
+  // Toute la vue experte (en-tête, radar, coûts, stack, export, Exit Escrow) la suit.
+  const activeVariantData =
+    activeVariant === null ? null : (ensemble.variants.find((v) => v.id === activeVariant) ?? null);
+  const activeProfile = activeVariantData?.profile ?? projected;
+  const activeResult = activeVariantData?.recommendation ?? result;
+
+  const factorsCost = profileCostFactors(activeProfile);
+  const radarData = activeResult.scores.map((s) => ({ label: SHORT_LABELS[s.key], score: s.score }));
   const projectionChanged = base !== null && (projected.volume !== base.volume || projected.users !== base.users);
 
   // Décomposition de l'apport multimédia (déjà compris dans les couches) pour la CostMap.
   const media: MediaBreakdown = {
-    gpuTier: result.sizing.gpu.tier,
-    gpuCost: result.sizing.gpu.monthlyCost,
-    storageGb: result.sizing.storageGb,
-    storageCost: Math.round(result.sizing.storageGb * prices.storagePerGbMonth.amount),
-    embeddingsCost: result.sizing.embeddingsMultimodal ? Math.round(prices.multimodalEmbeddings.amount) : 0,
-    apiLines: result.sizing.workloads
+    gpuTier: activeResult.sizing.gpu.tier,
+    gpuCost: activeResult.sizing.gpu.monthlyCost,
+    storageGb: activeResult.sizing.storageGb,
+    storageCost: Math.round(activeResult.sizing.storageGb * prices.storagePerGbMonth.amount),
+    embeddingsCost: activeResult.sizing.embeddingsMultimodal ? Math.round(prices.multimodalEmbeddings.amount) : 0,
+    apiLines: activeResult.sizing.workloads
       .filter((w) => w.mode === "api" && w.monthlyCost > 0)
       .map((w) => ({ label: w.estimate, cost: w.monthlyCost })),
   };
@@ -147,15 +158,28 @@ export function ResultsView(): ReactElement {
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <Chip tone="primary">Preset : {result.preset}</Chip>
-          <Chip tone="neutral">Score {result.scoreAvg}/10</Chip>
-          <span className="font-mono text-body-md text-on-surface-variant">≈ {result.totalCost} €/mois</span>
+          <Chip tone="primary">Preset : {activeResult.preset}</Chip>
+          <Chip tone="neutral">Score {activeResult.scoreAvg}/10</Chip>
+          <span className="font-mono text-body-md text-on-surface-variant">≈ {activeResult.totalCost} €/mois</span>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setMode("verdict")}>
           Vue verdict
         </Button>
       </div>
-      <p className="max-w-2xl text-body-md text-on-surface-variant">{result.presetReason}</p>
+      <p className="max-w-2xl text-body-md text-on-surface-variant">{activeResult.presetReason}</p>
+
+      {/* Bandeau de scénario actif (bascule depuis l'ensemble) */}
+      {activeVariantData !== null ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-primary/40 bg-primary/5 px-4 py-3">
+          <p className="text-body-sm text-on-surface">
+            Vous explorez le scénario <strong>{activeVariantData.label}</strong>. Toute la page (coûts,
+            stack, export, bundle) suit ce scénario — votre profil enregistré n’est pas modifié.
+          </p>
+          <Button variant="secondary" size="sm" onClick={() => setActiveVariant(null)}>
+            Revenir à ma recommandation
+          </Button>
+        </div>
+      ) : null}
 
       {/* Projection */}
       <Card>
@@ -193,8 +217,8 @@ export function ResultsView(): ReactElement {
         ) : null}
       </Card>
 
-      {/* Ensemble multi-configuration (incertitude) */}
-      <EnsembleView ensemble={ensemble} />
+      {/* Ensemble multi-configuration (incertitude) — bascule la page entière */}
+      <EnsembleView ensemble={ensemble} activeId={activeVariant} onSelect={setActiveVariant} />
 
       {/* Radar + scores */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -225,18 +249,18 @@ export function ResultsView(): ReactElement {
       {/* Stack */}
       <section>
         <h2 className="mb-4 font-display text-headline-lg text-on-surface">Stack recommandée</h2>
-        <LayerStack layers={result.layers} />
+        <LayerStack layers={activeResult.layers} />
       </section>
 
       {/* Coûts */}
       <CostMap
-        layers={result.layers}
+        layers={activeResult.layers}
         factorsCost={factorsCost}
-        activeModules={result.activeModules}
-        totalCost={result.totalCost}
-        setupCost={result.setupCost}
+        activeModules={activeResult.activeModules}
+        totalCost={activeResult.totalCost}
+        setupCost={activeResult.setupCost}
         media={media}
-        backup={result.backup}
+        backup={activeResult.backup}
       />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
@@ -247,21 +271,21 @@ export function ResultsView(): ReactElement {
 
       {/* Conformité & risques */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {result.compliance.length > 0 ? (
+        {activeResult.compliance.length > 0 ? (
           <Card>
             <h2 className="font-display text-headline-md text-on-surface">Actions de conformité</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
-              {result.compliance.map((action) => (
+              {activeResult.compliance.map((action) => (
                 <li key={action}>{action}</li>
               ))}
             </ul>
           </Card>
         ) : null}
-        {result.risks.length > 0 ? (
+        {activeResult.risks.length > 0 ? (
           <Card>
             <h2 className="font-display text-headline-md text-on-surface">Risques détectés</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
-              {result.risks.map((risk) => (
+              {activeResult.risks.map((risk) => (
                 <li key={risk}>{risk}</li>
               ))}
             </ul>
@@ -282,12 +306,12 @@ export function ResultsView(): ReactElement {
           se relit partout ; le PDF garde les sources cliquables.
         </p>
         <div className="mt-4">
-          <ExportButtons profile={projected} recommendation={result} ensemble={ensemble} />
+          <ExportButtons profile={activeProfile} recommendation={activeResult} ensemble={ensemble} />
         </div>
       </Card>
 
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
-      <ExitEscrow profile={projected} recommendation={result} />
+      <ExitEscrow profile={activeProfile} recommendation={activeResult} />
 
       <Link
         href="/configurateur"
