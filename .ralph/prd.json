@@ -273,7 +273,7 @@
     },
     {
       "id": "S-028", "title": "Intégration backup dans recommend (couches + setup + resilience)", "feature": "backup",
-      "passes": false, "deps": ["S-026", "S-027"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-026", "S-027"],
       "acceptance": [
         "Recommendation.backup rempli ; coût backup récurrent DANS les couches (C5/C6), one-time dans setupCost",
         "computeScores reçoit le plan → dimension resilience cohérente",

@@ -1,5 +1,5 @@
 import type { MultimodalPriceTable } from "./sizing";
-import type { Layer, Profile, ReqPerDay, Sizing, Volume } from "./types";
+import type { BackupPlan, Layer, Profile, ReqPerDay, Sizing, Volume } from "./types";
 
 const VOLUME_FACTOR: Record<Volume, number> = {
   lt1: 0,
@@ -64,4 +64,23 @@ export function applyMultimodalSizing(layers: Layer[], sizing: Sizing, prices: M
     }
     return layer;
   });
+}
+
+/**
+ * Injecte le coût récurrent de sauvegarde **dans** la couche C6 (dont le périmètre inclut le backup),
+ * jamais en ligne séparée hors-total. Pure. `criticality "none"` (ou coût 0) → couches inchangées
+ * (invariant `totalCost = baseCost + moduleCost` préservé). Le coût one-time va dans `setupCost`.
+ */
+export function applyBackup(layers: Layer[], backup: BackupPlan): Layer[] {
+  const monthly = Math.round(backup.monthlyCost);
+  if (monthly <= 0) return layers;
+  return layers.map((layer) =>
+    layer.id === 6
+      ? {
+          ...layer,
+          cost: layer.cost + monthly,
+          note: `${layer.note} · +${monthly} €/mois sauvegarde (criticité ${backup.criticality}, ${backup.copies} copies${backup.offsite ? ", hors-site" : ""})`,
+        }
+      : layer,
+  );
 }

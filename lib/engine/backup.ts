@@ -31,6 +31,14 @@ export type BackupPriceTable = {
   offsiteBandwidthPerGb: MultimodalPriceEntry;
 };
 
+/** Table neutre (coûts 0), défaut d'injection pour préserver la pureté du moteur et les invariants. */
+export const NEUTRAL_BACKUP_PRICES: BackupPriceTable = {
+  egressPerGb: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
+  archiveStoragePerGbMonth: { amount: 0, currency: "EUR", unit: "Go·mois", confidence: "low", source: null },
+  archiveRetrievalPerGb: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
+  offsiteBandwidthPerGb: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
+};
+
 // --- §4 Dérivation criticité → paramètres (défauts prudents, surchargeables) -------------------
 
 type CriticalityParams = {
