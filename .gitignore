@@ -36,3 +36,8 @@ npm-debug.log*
 
 # firecrawl skill cache
 .firecrawl/
+
+# playwright MCP captures (artefacts de vérification visuelle)
+.playwright-mcp/
+/homepage-desktop.png
+/homepage-mobile.png

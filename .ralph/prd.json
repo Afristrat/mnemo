@@ -306,6 +306,17 @@
         "e2e (desktop + mobile) : profil critique + régulé → ligne backup + radar 9 axes + érasure crypto-shred + bundle Exit Escrow reflète le plan ; round-trip",
         "zéro toHaveLength(8) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"
       ]
+    },
+    {
+      "id": "S-032", "title": "Homepage de vente (portage du brouillon validé : promesses, wedge, étapes, tarifs, diagnostic 90 s)", "feature": "refonte",
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-021"],
+      "acceptance": [
+        "app/page.tsx porte homepage-draft.html (décision #11) en composants React + tokens du design system, pas de couleur hors palette",
+        "4 promesses : preuve DURE (Exit Escrow + fiduciaire) uniquement sur −risques ; les 3 autres = preuve molle « à mesurer chez vous » (DÉFCON 1, zéro stat inventée)",
+        "wedge « notre différence » + lien charte fiduciaire ; étapes 90 s ; tarifs 3 paliers (prix = [PLACEHOLDER] + badge « sondage en cours », jamais de montant au doigt mouillé)",
+        "section diagnostic intègre le QuickProfileForm réel (chemin 90 s fonctionnel) ; e2e « chemin 90 s → verdict » préservé",
+        "français accents majuscules ; responsive desktop + mobile vérifié ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
     }
   ]
 }
