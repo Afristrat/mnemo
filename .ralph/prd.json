@@ -283,7 +283,7 @@
     },
     {
       "id": "S-029", "title": "Exit Escrow piloté par le BackupPlan (runbook + backup.sh)", "feature": "backup",
-      "passes": false, "deps": ["S-028"],
+      "passes": true, "completedAt": "2026-05-27", "deps": ["S-028"],
       "acceptance": [
         "buildExitBundle : runbook.md + scripts/backup.sh reflètent le plan réel (RPO/rétention/copies/offsite/airgap/immutable/PITR/érasure)",
         "cohérence manifest ↔ plan ; tests bundle étendus verts"

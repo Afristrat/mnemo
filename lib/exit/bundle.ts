@@ -6,7 +6,7 @@
 // Raison d'être : garantir au client qu'il peut TOUT réinstaller ailleurs, sans nous.
 // Anti vendor lock-in par construction (cf. docs/MOAT-HUNT.md).
 
-import type { Layer, Preset, Profile, Recommendation, Zone } from "@/lib/engine";
+import type { BackupPlan, Layer, Preset, Profile, Recommendation, Zone } from "@/lib/engine";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 
 export type BundleManifestLayer = {
@@ -27,6 +27,8 @@ export type BundleManifest = {
   scoreAvg: number;
   layers: BundleManifestLayer[];
   modules: { id: string; name: string; level: number; maxLevel: number }[];
+  /** Plan de sauvegarde réel (source de vérité du runbook + backup.sh ; cohérence manifest↔plan). */
+  backup: BackupPlan;
   sources: { label: string; url: string; checkedAt: string }[];
   disclaimer: string;
 };
@@ -80,9 +82,58 @@ function manifestOf(profile: Profile, reco: Recommendation, generatedAt: string)
       level: m.level,
       maxLevel: m.maxLevel,
     })),
+    backup: reco.backup,
     sources: collectSources(reco),
     disclaimer: DISCLAIMER,
   };
+}
+
+/** Formate une durée en minutes de façon lisible (RPO/RTO). */
+function fmtMinutes(min: number): string {
+  if (min <= 0) return "—";
+  if (min < 60) return `${min} min`;
+  if (min % 1440 === 0) return `${min / 1440} j`;
+  if (min % 60 === 0) return `${min / 60} h`;
+  return `${Math.round(min / 60)} h`;
+}
+
+/** Libellé de la politique d'érasure (droit à l'oubli). */
+function erasureLabel(policy: BackupPlan["erasurePolicy"]): string {
+  return policy === "crypto-shred"
+    ? "crypto-shredding (chiffrement par enregistrement ; « suppression » = destruction de la clé → donnée illisible y compris en sauvegarde)"
+    : "suppression logique + purge à l'expiration de la rétention";
+}
+
+/** Section « Sauvegarde & résilience » du runbook, DÉRIVÉE du plan réel (spec n°1 §9). */
+function backupSection(b: BackupPlan): string {
+  if (b.criticality === "none") {
+    return `## Sauvegarde & résilience
+- Criticité « aucune » : **aucune politique de sauvegarde dimensionnée**. Une base mémorielle sans
+  sauvegarde est exposée à la perte de données — définissez une criticité dans le configurateur (Bloc ② Infra).
+
+## Restauration
+1. \`restic restore latest --target ./restore\` (si un dépôt Restic a été configuré manuellement).
+2. Recharger les volumes Postgres/Qdrant, puis \`bash scripts/re-embed.sh\`.`;
+  }
+  const threeTwoOne =
+    `${b.copies} copies` +
+    (b.offsite ? ", 1 hors-site" : "") +
+    (b.airgap ? ", 1 air-gap (hors-ligne, anti-ransomware)" : "") +
+    (b.immutable ? ", WORM/object-lock (immuable)" : "");
+  return `## Sauvegarde & résilience (plan « ${b.criticality} »)
+- **RPO** (perte de données max) : ${fmtMinutes(b.rpoMinutes)} · **RTO** (reprise max) : ${fmtMinutes(b.rtoMinutes)}.
+- **Rétention** : ${b.retentionDays} jours${b.legalRetentionYears > 0 ? ` (plancher légal : ${b.legalRetentionYears} an(s))` : ""}.
+- **3-2-1-1-0** : ${threeTwoOne} ; ${b.restoreTestsPerYear} restauration(s) testée(s)/an.
+- **Stockage** : tier ${b.tier}${b.pitr ? " + WAL/PITR Postgres (RPO quasi-continu)" : ""}.
+- **Vecteurs** : stratégie ${b.vector.strategy} — ${b.vector.reason}
+- **Érasure (droit à l'oubli)** : ${erasureLabel(b.erasurePolicy)}.${b.byok ? " Clés gérées par le client (BYOK)." : ""}
+- Script : \`scripts/backup.sh\` (Restic chiffré, rétention dérivée du plan).
+> Orientation d'ingénierie, pas un avis juridique : faites valider la rétention légale par votre conseil.
+
+## Restauration (RTO cible ${fmtMinutes(b.rtoMinutes)})
+1. \`restic restore latest --target ./restore\`.
+2. Recharger les volumes Postgres/Qdrant.
+3. \`bash scripts/re-embed.sh\` ${b.vector.strategy === "reembed" ? "(stratégie vecteurs = ré-embed : index reconstruit depuis le vault, RTO plus long)" : "si l'index doit être reconstruit depuis le vault"}.`;
 }
 
 function readme(m: BundleManifest, reco: Recommendation): string {
@@ -251,14 +302,7 @@ function runbook(reco: Recommendation): string {
 4. \`docker compose up -d\` puis vérifier \`docker compose ps\`.
 5. \`bash scripts/re-embed.sh\` pour constituer l'index.
 
-## Backup 3-2-1
-- 3 copies, 2 supports, 1 hors site. Script : \`scripts/backup.sh\` (Restic chiffré).
-- Tester la **restauration** trimestriellement (un backup non restauré n'existe pas).
-
-## Restauration
-1. \`restic restore latest --target ./restore\`.
-2. Recharger les volumes Postgres/Qdrant.
-3. \`bash scripts/re-embed.sh\` si l'index doit être reconstruit depuis le vault.
+${backupSection(reco.backup)}
 
 ## MEL, Minimum Equipment List (dégradation)
 | Composant | En panne → | Mode dégradé | Délai max réparation |
@@ -300,17 +344,36 @@ echo "Ré-embedding terminé."
 `;
 }
 
-function backupScript(): string {
+function backupScript(reco: Recommendation): string {
+  const b = reco.backup;
+  if (b.criticality === "none") {
+    return `#!/usr/bin/env bash
+# scripts/backup.sh — AUCUNE politique de sauvegarde dimensionnée (criticité « aucune »).
+# Définissez une criticité dans le configurateur (Bloc ② Infra) pour générer une vraie politique.
+set -euo pipefail
+echo "Criticité « aucune » : aucune sauvegarde planifiée. Risque de perte de données."
+`;
+  }
+  const notes: string[] = [];
+  if (b.pitr) notes.push("# PITR : configurez l'archivage WAL Postgres (archive_command) en complément de ce snapshot.");
+  if (b.immutable) notes.push("# Immutabilité : activez l'object-lock / WORM sur le bucket de destination (anti-altération).");
+  if (b.airgap) notes.push("# Air-gap : répliquez une copie sur un support hors-ligne (anti-ransomware).");
+  if (b.erasurePolicy === "crypto-shred") {
+    notes.push("# Érasure : chiffrement par enregistrement ; « suppression » RGPD = destruction de la clé.");
+  }
   return `#!/usr/bin/env bash
-# scripts/backup.sh, sauvegarde chiffrée 3-2-1 via Restic.
+# scripts/backup.sh — sauvegarde chiffrée via Restic, politique DÉRIVÉE du plan « ${b.criticality} ».
+# RPO ${fmtMinutes(b.rpoMinutes)} · RTO ${fmtMinutes(b.rtoMinutes)} · rétention ${b.retentionDays} j · ${b.copies} copies.
 set -euo pipefail
 : "\${RESTIC_REPOSITORY:?Définir RESTIC_REPOSITORY dans vault/.env}"
 : "\${RESTIC_PASSWORD:?Définir RESTIC_PASSWORD dans vault/.env}"
 
-restic backup ./vault ./data --tag mnemo
-restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
-restic check
-echo "Backup OK, pensez à tester une restauration."
+restic backup ./vault ./data --tag strate --tag ${b.criticality}
+# Rétention dérivée du plan (conserver les snapshots des ${b.retentionDays} derniers jours).
+restic forget --keep-within ${b.retentionDays}d --prune
+restic check --read-data-subset=5%
+${notes.join("\n")}
+echo "Backup OK (plan ${b.criticality}). Testez une restauration ${b.restoreTestsPerYear}x/an."
 `;
 }
 
@@ -327,7 +390,7 @@ export function buildExitBundle(profile: Profile, reco: Recommendation, now: Dat
     "vault/README.md": vaultReadme(),
     "runbook.md": runbook(reco),
     "scripts/re-embed.sh": reEmbedScript(reco),
-    "scripts/backup.sh": backupScript(),
+    "scripts/backup.sh": backupScript(reco),
   };
   return { files, manifest };
 }
