@@ -10,6 +10,8 @@ type BudgetMeterProps = {
   totalCost: number;
   budget: Budget;
   sizing: Sizing;
+  /** Coût récurrent de sauvegarde (€/mois), pour la cause dominante du budget-mètre (S-030). */
+  backupMonthlyCost?: number;
   className?: string;
 };
 
@@ -20,8 +22,8 @@ const STATUS_META: Record<BudgetStatus, { label: string; bar: string; ring: stri
 };
 
 /** Jauge vert/jaune/rouge comparant le coût d'infra au budget ; en tension : cause + levier (spec §8). */
-export function BudgetMeter({ totalCost, budget, sizing, className }: BudgetMeterProps): ReactElement {
-  const { status, ceiling, ratio, cause, lever } = evaluateBudget(totalCost, budget, sizing);
+export function BudgetMeter({ totalCost, budget, sizing, backupMonthlyCost = 0, className }: BudgetMeterProps): ReactElement {
+  const { status, ceiling, ratio, cause, lever } = evaluateBudget(totalCost, budget, sizing, backupMonthlyCost);
   const meta = STATUS_META[status];
   const unbounded = ceiling === Number.POSITIVE_INFINITY;
   const pct = unbounded ? 0 : Math.min(100, Math.round(ratio * 100));

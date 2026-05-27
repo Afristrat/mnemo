@@ -5,6 +5,7 @@ import { useState, type ReactElement, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
+import { BackupBlock } from "@/components/wizard/BackupBlock";
 import { BudgetMeter } from "@/components/wizard/BudgetMeter";
 import { CheckboxCards } from "@/components/wizard/CheckboxCards";
 import { ContinuousSlider } from "@/components/wizard/ContinuousSlider";
@@ -15,6 +16,7 @@ import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId } from "@/lib/engine";
+import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
@@ -153,10 +155,11 @@ export function Wizard(): ReactElement {
       : true;
 
   const isLast = step === BLOCKS.length - 1;
-  // Prix médias réels injectés → le coût et le budget-mètre reflètent le dimensionnement multimédia.
+  // Prix médias + backup réels injectés → coût et budget-mètre reflètent multimédia ET sauvegarde.
   const prices = getMediaPricesEur();
+  const backupPrices = getBackupPrices();
   const decision = decidePreset(profile);
-  const result = recommend(profile, prices);
+  const result = recommend(profile, prices, undefined, backupPrices);
 
   return (
     <div className="w-full lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
@@ -236,6 +239,19 @@ export function Wizard(): ReactElement {
               <Field label="Croissance attendue">
                 <RadioCards value={profile.growth} options={GROWTH_OPTIONS} onChange={(v) => setField("growth", v)} />
               </Field>
+              <div className="border-t border-outline-variant pt-6">
+                <h3 className="font-display text-body-lg text-on-surface">Sauvegarde &amp; résilience</h3>
+                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">
+                  Choisissez une criticité : le plan (RPO/RTO, copies, hors-site, rétention, effacement) en découle, et
+                  l’affinage expert reste possible. Le coût récurrent entre dans le budget-mètre.
+                </p>
+                <BackupBlock
+                  profile={profile}
+                  prices={prices}
+                  backupPrices={backupPrices}
+                  onChange={(backup) => setField("backup", backup)}
+                />
+              </div>
               <NoteField value={profile.freeNotes?.infra ?? ""} onChange={(v) => setNote("infra", v)} />
             </>
           ) : null}
@@ -328,7 +344,12 @@ export function Wizard(): ReactElement {
 
       {/* Budget-mètre, colonne de droite, sticky (ne mange pas la hauteur du contenu). Coût d'infra, jamais prix de vente. */}
       <aside className="mt-6 lg:mt-0 lg:sticky lg:top-6">
-        <BudgetMeter totalCost={result.totalCost} budget={profile.budget} sizing={result.sizing} />
+        <BudgetMeter
+          totalCost={result.totalCost}
+          budget={profile.budget}
+          sizing={result.sizing}
+          backupMonthlyCost={result.backup.monthlyCost}
+        />
       </aside>
     </div>
   );
