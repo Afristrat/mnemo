@@ -71,6 +71,15 @@ test("note libre par bloc : « Intégrer » ajuste le profil (repli gracieux si 
   await expect(page.getByRole("button", { name: "Suivant" })).toBeEnabled();
 });
 
+test("assistant Q&A : poser une question renvoie une réponse (ou repli gracieux), sans crash", async ({ page }) => {
+  await page.goto("/resultats");
+  await expect(page.getByRole("heading", { name: "Poser une question" })).toBeVisible();
+  await page.getByPlaceholder(/pourquoi ce preset/i).fill("Pourquoi ce preset ?");
+  await page.getByRole("button", { name: "Envoyer" }).click();
+  // LLM présent → réponse ; LLM indispo → message de repli. Dans tous les cas : un message « Assistant » apparaît.
+  await expect(page.getByText("Assistant", { exact: false }).first()).toBeVisible({ timeout: 35000 });
+});
+
 test("reco vivante : la provenance des choix techniques est affichée (repli seed immédiat)", async ({ page }) => {
   await page.goto("/resultats");
   await expect(page.getByText("Provenance des choix techniques")).toBeVisible();

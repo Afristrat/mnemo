@@ -394,7 +394,8 @@
     },
     {
       "id": "S-040", "title": "Assistant Q&A contextuel (chat + recherche web sourcée)", "feature": "llm",
-      "passes": false, "deps": ["S-034", "S-037"],
+      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034", "S-037"],
+      "note": "lib/llm/assistant.ts (pur) : serializeRecoFacts (FAITS autoritatifs = chiffres AFFICHÉS) + buildChatMessages (FAITS + résultats web greffés par placeholders, historique threadé) ; prompt « assistant » ajouté au registre S-053 (éditable). Route /api/llm/chat étoffée : { question, history?, recoFacts? } → searchWeb Firecrawl (repli []) + callLLM → { ok, answer, sources } ; repli si LLM KO. AssistantPanel (chat sur /resultats) branché sur la reco active. Garde-fou DÉFCON 1 par CONSTRUCTION : seuls les montants des FAITS sont autorisés, web sourcé (URL citée), disclaimer IA. LIMITE HONNÊTE : un chat libre ne peut garantir mathématiquement « zéro chiffre inventé » → garanti par contexte (faits injectés + no-invent + sources + disclaimer), pas par preuve. +7 tests (assistant pur + route callLLM/searchWeb mockés) + e2e. typecheck 0 / lint 0/0 / build OK."
       "acceptance": [
         "components/assistant/AssistantPanel (chat contextuel sur /resultats) + route app/api/llm/chat étoffée (contexte reco sérialisé)",
         "question hors catalogue → recherche web Firecrawl SOURCÉE ; AUCUN chiffre inventé (montants cités == ceux de la reco/feed) ; disclaimer IA",

@@ -7,7 +7,7 @@
 // ci-dessous si le store est vide/indisponible. La GREFFE dynamique (profil, notes, énumérations) se
 // fait par PLACEHOLDERS `{{clé}}` que le CODE remplit au runtime (jamais l'utilisateur → pas d'injection).
 
-export const PROMPT_KEYS = ["intake", "narration", "catalog-veille"] as const;
+export const PROMPT_KEYS = ["intake", "narration", "catalog-veille", "assistant"] as const;
 export type PromptKey = (typeof PROMPT_KEYS)[number];
 
 export function isPromptKey(value: string): value is PromptKey {
@@ -51,6 +51,25 @@ export const DEFAULT_PROMPTS: Record<PromptKey, string> = {
     '{"sovereign","eu-hosted","api-third-party"}. "sourceUrl" DOIT être exactement l\'une des URLs des résultats fournis',
     "(n'invente JAMAIS d'URL). Aucune justification commerciale, aucun biais de fournisseur.",
   ].join("\n"),
+  assistant: [
+    "Tu es l'assistant de Strate, configurateur d'infrastructure de base mémorielle IA souveraine.",
+    "Réponds en français soigné (accents sur les majuscules), de façon concise, neutre et factuelle,",
+    "à partir UNIQUEMENT du contexte ci-dessous — jamais une injonction d'achat.",
+    "",
+    "RÈGLES STRICTES (DÉFCON 1) :",
+    "- N'invente AUCUN chiffre. Les SEULS montants/scores autorisés sont ceux du bloc « FAITS » (ce sont",
+    "  ceux affichés à l'utilisateur). Si on te demande un chiffre absent, dis que tu ne l'as pas et invite",
+    "  à demander un devis ferme — ne devine JAMAIS un montant.",
+    "- Pour une information hors recommandation, appuie-toi UNIQUEMENT sur les « RÉSULTATS WEB » fournis et",
+    "  CITE l'URL entre parenthèses. N'invente JAMAIS d'URL ni de source.",
+    "- Une IA peut se tromper : reste prudent, ne promets rien que les faits ne soutiennent pas.",
+    "",
+    "FAITS (recommandation de l'utilisateur — coûts ±30 %, sourcés dans le détail) :",
+    "{{recoFacts}}",
+    "",
+    "RÉSULTATS WEB (pour les questions hors recommandation ; cite l'URL) :",
+    "{{webResults}}",
+  ].join("\n"),
 };
 
 /** Métadonnées d'affichage de la console admin (libellé + placeholders remplis par le code). */
@@ -69,6 +88,11 @@ export const PROMPT_META: Record<PromptKey, { label: string; description: string
     label: "Veille catalogue",
     description: "Choix du meilleur composant par slot à partir des résultats web (URL obligatoirement sourcée).",
     placeholders: [],
+  },
+  assistant: {
+    label: "Assistant Q&A",
+    description: "Chat contextuel sur les résultats : ne cite que les faits de la reco + résultats web sourcés.",
+    placeholders: ["recoFacts", "webResults"],
   },
 };
 
