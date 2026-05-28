@@ -130,7 +130,28 @@ export type CatalogObservationInsert = {
   assembled_at: string;
 };
 
-type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert> };
+// Console admin super-admin (S-053) : prompts système versionnés + table des super-admins globaux.
+export type SuperAdminRow = { user_id: string; created_at: string };
+export type PromptRow = {
+  id: string;
+  prompt_key: string;
+  version: number;
+  content: string;
+  is_active: boolean;
+  author: string | null;
+  created_at: string;
+};
+export type PromptInsert = {
+  prompt_key: string;
+  version: number;
+  content: string;
+  is_active: boolean;
+  author: string | null;
+};
+
+// `Relationships: []` est requis par le contrat `GenericTable` de @supabase/supabase-js (v2) : sans
+// lui, les requêtes typées `<Database>` résolvent les lignes en `never`. Aucune relation FK déclarée ici.
+type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert>; Relationships: [] };
 
 export type Database = {
   public: {
@@ -143,10 +164,13 @@ export type Database = {
       simulation_log: TableShape<SimulationLogRow, SimulationLogInsert>;
       lead_capture: TableShape<LeadCaptureRow, LeadCaptureInsert>;
       catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
+      super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
+      prompts: TableShape<PromptRow, PromptInsert>;
     };
     Views: Record<string, never>;
     Functions: {
       get_simulation_by_token: { Args: { token: string }; Returns: SimulationLogRow[] };
+      is_super_admin: { Args: Record<string, never>; Returns: boolean };
     };
   };
 };

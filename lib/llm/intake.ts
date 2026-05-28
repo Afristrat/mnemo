@@ -21,6 +21,7 @@ import {
   type Volume,
   type Zone,
 } from "@/lib/engine";
+import { composePrompt, DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
 import type { LlmMessage } from "./types";
 
@@ -120,20 +121,9 @@ function intakeSnapshot(p: Profile): Record<string, unknown> {
   };
 }
 
-/**
- * Compose le prompt d'extraction. Le système énumère STRICTEMENT les valeurs autorisées et interdit
- * d'inventer (omettre si absent/ambigu). Le LLM ne calcule aucun coût ; il ne fait qu'extraire.
- * Si `base` est fourni (S-052, note libre par bloc), le LLM AJUSTE ce profil existant : il ne renvoie
- * que les champs réellement modifiés par la note, et pour les listes il conserve l'existant + ajoute.
- */
-export function buildIntakeMessages(text: string, base?: Profile): LlmMessage[] {
-  const lines = [
-    "Tu es un extracteur de paramètres pour un configurateur d'infrastructure mémorielle souveraine.",
-    "À partir de la description de l'utilisateur, produis UNIQUEMENT un objet JSON (aucun texte autour).",
-    "Pour CHAQUE information EXPLICITEMENT présente, renseigne le champ. N'INVENTE RIEN : si une",
-    "information est absente ou ambiguë, OMETS le champ (ne devine pas). Tu ne calcules AUCUN coût.",
-    "",
-    "Champs et valeurs autorisées (emploie EXACTEMENT ces valeurs) :",
+/** Liste des champs + valeurs autorisées (greffée dans le gabarit via `{{enumList}}`). */
+function intakeEnumList(): string {
+  return [
     `- activity: ${ACTIVITIES.join(" | ")}`,
     `- zone: ${ZONES.join(" | ")}`,
     "- users: entier >= 1 (nombre d'utilisateurs)",
@@ -149,20 +139,36 @@ export function buildIntakeMessages(text: string, base?: Profile): LlmMessage[] 
     `- reqPerDay: ${REQ_PER_DAYS.join(" | ")}`,
     `- latency: ${LATENCIES.join(" | ")}`,
     `- voices: ${VOICES_VALUES.join(" | ")}`,
-  ];
-  if (base !== undefined) {
-    lines.push(
-      "",
-      "Profil ACTUEL (ne repars pas de zéro, AJUSTE-le) :",
-      JSON.stringify(intakeSnapshot(base)),
-      "Ne renvoie QUE les champs que la note modifie réellement. Pour les listes (contentTypes,",
-      "regulations), CONSERVE les valeurs déjà présentes et AJOUTE celles demandées (ne remplace",
-      "que si l'utilisateur demande explicitement un retrait).",
-    );
-  }
-  lines.push("", "Réponds par le JSON seul.");
+  ].join("\n");
+}
+
+/**
+ * Compose le prompt d'extraction. Le système énumère STRICTEMENT les valeurs autorisées et interdit
+ * d'inventer (omettre si absent/ambigu). Le LLM ne calcule aucun coût ; il ne fait qu'extraire.
+ * Si `base` est fourni (S-052), le LLM AJUSTE ce profil (greffe `{{adjustContext}}`). Le gabarit est
+ * éditable par le super-admin (S-053, `template`, défaut = `DEFAULT_PROMPTS.intake`) ; les valeurs
+ * dynamiques (énumérations, profil actuel) sont injectées par le CODE via des placeholders.
+ */
+export function buildIntakeMessages(
+  text: string,
+  base?: Profile,
+  template: string = DEFAULT_PROMPTS.intake,
+): LlmMessage[] {
+  const adjustContext =
+    base === undefined
+      ? ""
+      : "\n" +
+        [
+          "",
+          "Profil ACTUEL (ne repars pas de zéro, AJUSTE-le) :",
+          JSON.stringify(intakeSnapshot(base)),
+          "Ne renvoie QUE les champs que la note modifie réellement. Pour les listes (contentTypes,",
+          "regulations), CONSERVE les valeurs déjà présentes et AJOUTE celles demandées (ne remplace",
+          "que si l'utilisateur demande explicitement un retrait).",
+        ].join("\n");
+  const system = composePrompt(template, { enumList: intakeEnumList(), adjustContext });
   return [
-    { role: "system", content: lines.join("\n") },
+    { role: "system", content: system },
     { role: "user", content: text },
   ];
 }
