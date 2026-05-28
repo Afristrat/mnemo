@@ -12,6 +12,7 @@
 //, ce ne sont PAS des prix (cf. ADR-010).
 
 import type { Confidence } from "@/components/ui/StatusDot";
+import { BASELINE_SIZING_PARAMS, type SizingParams, type Volet } from "./sizing-params";
 import type { CostSource, GpuTier, MediaNeed, MMTier, Modality, Profile, Sizing, WorkloadLine } from "./types";
 
 // --- Contrat de prix médias (implémenté, sourcé, en S-017 : `getMediaPrices`) ----------------
@@ -52,33 +53,9 @@ export type MultimodalPriceTable = {
   api: Record<Modality, { ingest: MultimodalPriceEntry; generate: MultimodalPriceEntry }>;
 };
 
-// --- Hypothèses de dimensionnement (modélisation, ±30 %, à raffiner, ADR-010) ----------------
-
-type Volet = "ingest" | "generate";
-
-/** Quantité mensuelle représentative par modalité et palier. Audio/vidéo : min/mois ; images : nb/mois. */
-const TIER_QUANTITY: Record<Modality, Record<MMTier, number>> = {
-  audio: { none: 0, light: 600, medium: 3000, intensive: 15000 },
-  video: { none: 0, light: 60, medium: 300, intensive: 1500 },
-  images: { none: 0, light: 1000, medium: 10000, intensive: 100000 },
-};
-
-/** Empreinte de stockage par unité native (Go), médias bruts + dérivés. */
-const STORAGE_GB_PER_UNIT: Record<Modality, number> = {
-  audio: 0.001, // ~1 Mo/min
-  video: 0.05, // ~50 Mo/min
-  images: 0.002, // ~2 Mo/image
-};
-
-/** Charge GPU relative par unité native et par volet. « créer » pèse plus que « mémoriser » ; vidéo >> audio/images. */
-const GPU_LOAD_PER_UNIT: Record<Modality, Record<Volet, number>> = {
-  audio: { ingest: 0.05, generate: 0.2 },
-  video: { ingest: 0.5, generate: 5 },
-  images: { ingest: 0.02, generate: 0.1 },
-};
-
-/** Seuils (charge GPU cumulée) de bascule de palier souverain : ≤ shared → shared ; ≤ small → dedicated-small ; sinon dedicated-large. */
-const GPU_TIER_THRESHOLDS = { shared: 50, small: 800 } as const;
+// --- Étiquettes de lignes de charge (non paramétriques) --------------------------------------
+// Les HYPOTHÈSES de dimensionnement (quantités, empreinte stockage, charge GPU, seuils) sont
+// désormais des PARAMÈTRES injectables (S-056) : cf. `SizingParams` / `BASELINE_SIZING_PARAMS`.
 
 const UNIT_LABEL: Record<Modality, string> = { audio: "min/mois", video: "min/mois", images: "images/mois" };
 const VERB_LABEL: Record<Modality, Record<Volet, string>> = {
@@ -92,17 +69,17 @@ function isActive(need: MediaNeed): boolean {
   return need.ingest.tier !== "none" || need.generate.tier !== "none";
 }
 
-/** Quantité mensuelle d'un volet : `volume` override si fourni, sinon dérivée du palier. */
-function voletQuantity(modality: Modality, spec: { tier: MMTier; volume?: number }): number {
+/** Quantité mensuelle d'un volet : `volume` override si fourni, sinon dérivée du palier (paramétré). */
+function voletQuantity(modality: Modality, spec: { tier: MMTier; volume?: number }, params: SizingParams): number {
   if (spec.tier === "none") return 0;
-  return spec.volume ?? TIER_QUANTITY[modality][spec.tier];
+  return spec.volume ?? params.tierQuantity[modality][spec.tier];
 }
 
-/** Palier GPU à partir de la charge souveraine cumulée. */
-function selectGpuTier(load: number): GpuTier {
+/** Palier GPU à partir de la charge souveraine cumulée et des seuils paramétrés. */
+function selectGpuTier(load: number, thresholds: SizingParams["gpuTierThresholds"]): GpuTier {
   if (load <= 0) return "none";
-  if (load <= GPU_TIER_THRESHOLDS.shared) return "shared";
-  if (load <= GPU_TIER_THRESHOLDS.small) return "dedicated-small";
+  if (load <= thresholds.shared) return "shared";
+  if (load <= thresholds.small) return "dedicated-small";
   return "dedicated-large";
 }
 
@@ -119,7 +96,11 @@ function selectGpuTier(load: number): GpuTier {
  * Précondition : `prices` doit être **normalisée dans une devise unique** (€), les montants sont
  * sommés tels quels. Le seed natif (devises mixtes) passe d'abord par `normalizeMediaPricesToEur`.
  */
-export function costMultimodalSizing(profile: Profile, prices: MultimodalPriceTable): Sizing {
+export function costMultimodalSizing(
+  profile: Profile,
+  prices: MultimodalPriceTable,
+  params: SizingParams = BASELINE_SIZING_PARAMS,
+): Sizing {
   const needs = (profile.mediaNeeds ?? []).filter(isActive);
 
   if (needs.length === 0) {
@@ -141,12 +122,12 @@ export function costMultimodalSizing(profile: Profile, prices: MultimodalPriceTa
       const spec = need[volet];
       if (spec.tier === "none") continue;
 
-      const qty = voletQuantity(need.modality, spec);
-      storageGb += qty * STORAGE_GB_PER_UNIT[need.modality];
+      const qty = voletQuantity(need.modality, spec, params);
+      storageGb += qty * params.storageGbPerUnit[need.modality];
 
       let monthlyCost = 0;
       if (need.mode === "sovereign") {
-        sovereignLoad += qty * GPU_LOAD_PER_UNIT[need.modality][volet];
+        sovereignLoad += qty * params.gpuLoadPerUnit[need.modality][volet];
       } else {
         monthlyCost = Math.round(qty * prices.api[need.modality][volet].amount);
       }
@@ -163,7 +144,7 @@ export function costMultimodalSizing(profile: Profile, prices: MultimodalPriceTa
     }
   }
 
-  const gpuTier = selectGpuTier(sovereignLoad);
+  const gpuTier = selectGpuTier(sovereignLoad, params.gpuTierThresholds);
 
   return {
     gpu: { tier: gpuTier, monthlyCost: prices.gpuMonthly[gpuTier].amount },

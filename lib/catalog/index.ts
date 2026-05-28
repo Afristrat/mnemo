@@ -3,6 +3,7 @@ export type {
   Catalog,
   CatalogSlot,
   ComponentCandidate,
+  ComponentSizingParams,
   ComponentSovereignty,
   Provenance,
   SlotId,

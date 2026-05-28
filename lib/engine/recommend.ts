@@ -14,6 +14,7 @@ import {
   NEUTRAL_MEDIA_PRICES,
   type MultimodalPriceTable,
 } from "./sizing";
+import { deriveSizingParams } from "./sizing-params";
 import {
   SCORE_KEYS,
   type ActiveModule,
@@ -118,7 +119,10 @@ export function recommend(
   computePrices: ComputePriceTable = NEUTRAL_COMPUTE_PRICES,
 ): Recommendation {
   const { preset, reason } = decidePreset(profile);
-  const sizing = costMultimodalSizing(profile, prices);
+  // Paramètres de dimensionnement « vivants » (S-056) : un composant sourcé du catalogue (C6 GPU,
+  // C5 stockage) peut moduler les heuristiques baseline (garde-fou de bornes, sinon repli baseline).
+  const derivedParams = deriveSizingParams(catalog);
+  const sizing = costMultimodalSizing(profile, prices, derivedParams.params);
   // Plan de sauvegarde déduit du profil (criticité none → plan neutre, coûts 0 → invariant préservé).
   const backup = buildBackupPlan(profile, sizing, prices.storagePerGbMonth, backupPrices);
   // Serveurs souverains dimensionnés (remplacent le forfait C6 si prix injectés ; sinon neutre → forfait).
@@ -179,6 +183,8 @@ export function recommend(
       ...mediaCostSources(profile, sizing, prices),
       ...backup.costSources,
       ...compute.sources,
+      // Sources des facteurs de dimensionnement sourcés effectivement appliqués (S-056, traçabilité).
+      ...derivedParams.applied.map((a) => a.source),
     ]),
     backup,
     compute,
