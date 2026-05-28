@@ -384,7 +384,8 @@
     },
     {
       "id": "S-039", "title": "Narration LLM (infobulles/verdict, chiffres préservés)", "feature": "llm",
-      "passes": false, "deps": ["S-034"],
+      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034"],
+      "note": "Livré : narration du VERDICT (besoin/risque/gain/étape) + du « pourquoi ce preset » sur /resultats, avec invariant chiffres prouvé + repli + disclaimer. Les InfoBubbles du wizard réutilisent le même moteur (narrate.ts) — branchement différé (surface large, faible valeur), à activer si besoin.",
       "acceptance": [
         "route app/api/llm/narrate : reçoit les chiffres injectés et les PRÉSERVE (invariant : aucun montant régénéré/altéré)",
         "réécrit infobulles + verdict selon le profil ; repli = textes actuels si LLM KO ; disclaimer IA présent",

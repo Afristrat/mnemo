@@ -12,6 +12,8 @@ type VerdictViewProps = {
   preset: Preset;
   /** Bascule vers le détail expert (même recommandation). */
   onExpert: () => void;
+  /** true si les textes (besoin/risque/gain/étape) ont été adaptés par IA (chiffres inchangés). */
+  narrated?: boolean;
 };
 
 function Box({ label, children }: { label: string; children: ReactNode }): ReactElement {
@@ -40,12 +42,16 @@ function CostLine({ label, value, note }: { label: string; value: string; note?:
  * gain (mesuré, jamais inventé), prix ferme du service ([PLACEHOLDER]), coût d'infra ±30 %, mise en
  * route, prochaine étape. Neutre : présente des faits + une fourchette, pas une injonction d'achat.
  */
-export function VerdictView({ verdict, preset, onExpert }: VerdictViewProps): ReactElement {
+export function VerdictView({ verdict, preset, onExpert, narrated = false }: VerdictViewProps): ReactElement {
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Chip tone="primary">Preset retenu : {preset}</Chip>
-        <span className="text-body-sm text-on-surface-variant">Synthèse, le détail complet est sous « Voir le détail ».</span>
+        {narrated ? (
+          <Chip tone="neutral">Texte adapté à votre profil par IA, chiffres inchangés</Chip>
+        ) : (
+          <span className="text-body-sm text-on-surface-variant">Synthèse, le détail complet est sous « Voir le détail ».</span>
+        )}
       </div>
 
       <h2 className="mt-4 font-display text-headline-lg text-on-surface">Votre verdict</h2>
