@@ -395,7 +395,7 @@
     {
       "id": "S-040", "title": "Assistant Q&A contextuel (chat + recherche web sourcée)", "feature": "llm",
       "passes": true, "completedAt": "2026-05-28", "deps": ["S-034", "S-037"],
-      "note": "lib/llm/assistant.ts (pur) : serializeRecoFacts (FAITS autoritatifs = chiffres AFFICHÉS) + buildChatMessages (FAITS + résultats web greffés par placeholders, historique threadé) ; prompt « assistant » ajouté au registre S-053 (éditable). Route /api/llm/chat étoffée : { question, history?, recoFacts? } → searchWeb Firecrawl (repli []) + callLLM → { ok, answer, sources } ; repli si LLM KO. AssistantPanel (chat sur /resultats) branché sur la reco active. Garde-fou DÉFCON 1 par CONSTRUCTION : seuls les montants des FAITS sont autorisés, web sourcé (URL citée), disclaimer IA. LIMITE HONNÊTE : un chat libre ne peut garantir mathématiquement « zéro chiffre inventé » → garanti par contexte (faits injectés + no-invent + sources + disclaimer), pas par preuve. +7 tests (assistant pur + route callLLM/searchWeb mockés) + e2e. typecheck 0 / lint 0/0 / build OK."
+      "note": "lib/llm/assistant.ts (pur) : serializeRecoFacts (FAITS autoritatifs = chiffres AFFICHÉS) + buildChatMessages (FAITS + résultats web greffés par placeholders, historique threadé) ; prompt « assistant » ajouté au registre S-053 (éditable). Route /api/llm/chat étoffée : { question, history?, recoFacts? } → searchWeb Firecrawl (repli []) + callLLM → { ok, answer, sources } ; repli si LLM KO. AssistantPanel (chat sur /resultats) branché sur la reco active. Garde-fou DÉFCON 1 par CONSTRUCTION : seuls les montants des FAITS sont autorisés, web sourcé (URL citée), disclaimer IA. LIMITE HONNÊTE : un chat libre ne peut garantir mathématiquement « zéro chiffre inventé » → garanti par contexte (faits injectés + no-invent + sources + disclaimer), pas par preuve. +7 tests (assistant pur + route callLLM/searchWeb mockés) + e2e. typecheck 0 / lint 0/0 / build OK.",
       "acceptance": [
         "components/assistant/AssistantPanel (chat contextuel sur /resultats) + route app/api/llm/chat étoffée (contexte reco sérialisé)",
         "question hors catalogue → recherche web Firecrawl SOURCÉE ; AUCUN chiffre inventé (montants cités == ceux de la reco/feed) ; disclaimer IA",
@@ -499,7 +499,7 @@
     {
       "id": "S-053", "title": "Console admin super-admin (prompts système versionnés : reco / livrable / agent déploiement)", "feature": "llm",
       "passes": true, "completedAt": "2026-05-28", "deps": ["S-034", "S-039"],
-      "note": "Code livré (option C, tout éditable). Migration prompts+super_admins (RLS, helper is_super_admin, index unique 1 active/clé). lib/prompts/{registry (PROMPT_KEYS intake/narration/catalog-veille + DEFAULT_PROMPTS à placeholders + composePrompt),store (loadActivePrompt service-role + listPromptVersions + activateNewVersion, repli partout)}. lib/supabase/admin.ts (service-role, repli null). Builders refactorés en gabarit+composePrompt (intake/narrate/veille), routes chargent le prompt actif (repli défaut). Console /admin (login Supabase + garde super-admin + éditeur versionné) + /api/admin/prompts (RLS-enforced). +15 tests. ACTIVÉ EN PROD 2026-05-28 : migration appliquée (Supabase self-hosté), compte super-admin medamine.mansouriidrissi@gmail.com créé+seedé (super_admins count=1), 3 vars Supabase dans Coolify, redéployé ; login + rôle super-admin VÉRIFIÉS. Console live sur /admin. Livrable + agent-déploiement = Lot 2 (non enregistrés, pas de consommateur LLM)."
+      "note": "Code livré (option C, tout éditable). Migration prompts+super_admins (RLS, helper is_super_admin, index unique 1 active/clé). lib/prompts/{registry (PROMPT_KEYS intake/narration/catalog-veille + DEFAULT_PROMPTS à placeholders + composePrompt),store (loadActivePrompt service-role + listPromptVersions + activateNewVersion, repli partout)}. lib/supabase/admin.ts (service-role, repli null). Builders refactorés en gabarit+composePrompt (intake/narrate/veille), routes chargent le prompt actif (repli défaut). Console /admin (login Supabase + garde super-admin + éditeur versionné) + /api/admin/prompts (RLS-enforced). +15 tests. ACTIVÉ EN PROD 2026-05-28 : migration appliquée (Supabase self-hosté), compte super-admin medamine.mansouriidrissi@gmail.com créé+seedé (super_admins count=1), 3 vars Supabase dans Coolify, redéployé ; login + rôle super-admin VÉRIFIÉS. Console live sur /admin. Livrable + agent-déploiement = Lot 2 (non enregistrés, pas de consommateur LLM).",
       "acceptance": [
         "DÉCISION Amine : super-admin GLOBAL (hors tenant) — un admin plateforme édite les prompts pour tous ; auth super-admin (pas la RLS de cercle) ; route /admin protégée serveur. DÉCISION Amine 2026-05-28 : modèle d'édition = OPTION C (tout éditable, responsabilité humaine, AUCUN garde-fou de contenu sur le prompt) — sûr car les validateurs serveur déterministes (parseIntakeProfile/parseNarration/reconcile) bornent TOUJOURS la sortie quel que soit le prompt ; repli sur le prompt par défaut si le store est vide/indispo. Périmètre : clés à consommateur réel AUJOURD'HUI (intake, narration, veille-catalogue) ; livrable + agent-déploiement = Lot 2 (pas de consommateur LLM actuel → non enregistrées pour éviter une config morte, cf. S-049).",
         "prompts système sortis du code dur (veille catalogue, intake, narration, livrable, agent de déploiement Lot 2) → store versionné (table prompts, RLS admin/service-role only, historique de versions)",
@@ -538,6 +538,47 @@
         "ResultsView : état activeVariant ; la solution active (référence ou scénario) pilote TOUTE la vue experte (en-tête, radar, scores, stack, CostMap, conformité/risques, export, Exit Escrow)",
         "honnêteté U12 préservée : bandeau « vous explorez le scénario X — profil non modifié » + bouton « Revenir à ma recommandation » ; profil localStorage jamais modifié",
         "tests EnsembleView (sélection, aria-pressed) + ResultsView (bascule + bandeau + retour) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-057", "title": "Fondation i18n (next-intl, locale cookie, sélecteur de langue, catalogues fr/en)", "feature": "i18n",
+      "passes": false, "deps": [],
+      "note": "DÉCISION Amine 2026-05-28 : ouvrir l'épic MULTILINGUE (l'app était FR-only par convention ; jamais dans le PRD avant). Approche : next-intl (Next 15 App Router, RSC). Locale SANS préfixe d'URL (stockée en cookie `NEXT_LOCALE` + détection navigateur au 1ᵉʳ accès) → disruption minimale des routes/e2e existantes. Langues : fr (défaut) + en ; ar = S-060 (RTL).",
+      "acceptance": [
+        "installer next-intl ; config i18n (getRequestConfig, locale depuis cookie NEXT_LOCALE, repli fr) + middleware de détection (Accept-Language au 1ᵉʳ accès) ; messages/{fr,en}.json namespacés par surface",
+        "LocaleSwitcher dans l'en-tête (composant accessible, persiste le cookie + reload) ; le `<html lang>` reflète la locale active",
+        "PREUVE : migrer l'accueil (app/page.tsx) + le layout/nav vers next-intl (useTranslations/getTranslations), zéro chaîne en dur sur cette surface ; fr/en complets pour l'accueil",
+        "ne PAS casser l'existant : routes inchangées (pas de segment [locale]), e2e existants verts (ajuster si un libellé devient dynamique) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-058", "title": "Extraction exhaustive des clés i18n de toute l'UI (fr/en complets, zéro chaîne en dur)", "feature": "i18n",
+      "passes": false, "deps": ["S-057"],
+      "acceptance": [
+        "extraire TOUTES les chaînes user-facing : wizard 4 blocs (options.ts, InfoBubble, budget-mètre, récap, médias, backup), résultats (verdict + expert : CostMap, RadarChart labels, LayerStack, provenance, ensemble), fiduciaire, sondage, primitives, intake/assistant UI, messages d'erreur",
+        "catalogues messages/{fr,en}.json complets et namespacés ; traductions EN de qualité native (pas de calque), revues",
+        "garde-fou « zéro chaîne en dur » : règle ESLint (ex. react/jsx-no-literals ciblée) ou script de scan en CI → toute chaîne user-facing passe par t() ; français : accents majuscules préservés côté fr",
+        "e2e bascule fr↔en sur les parcours critiques (accueil → verdict ; wizard) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-059", "title": "Prompts soignés + localisés (réponses LLM dans la langue de l'utilisateur) + livrable/PDF localisés", "feature": "i18n",
+      "passes": false, "deps": ["S-057", "S-053"],
+      "note": "Intègre la demande Amine « prompts ridicules → structure très soignée, comme un vrai natif ». Réécrire les 4 gabarits (intake/narration/veille/assistant) à un niveau natif/structuré EN CONSERVANT placeholders + clauses DÉFCON 1, et les rendre localisés.",
+      "acceptance": [
+        "réécrire DEFAULT_PROMPTS (lib/prompts/registry.ts) à un niveau RÉDACTIONNEL natif et structuré (rôle, contexte, règles, format) — conserver les placeholders ({{enumList}}/{{adjustContext}}/{{profile}}/{{notesBlock}}/{{baseTexts}}/{{recoFacts}}/{{webResults}}) et les garde-fous DÉFCON 1 (N'INVENTE RIEN, AUCUN coût, AUCUN chiffre, −risques, n'invente JAMAIS d'URL)",
+        "passer la LOCALE active aux routes LLM (intake/narrate/chat) → les réponses USER-FACING (verdict narré, assistant Q&A) s'expriment DANS LA LANGUE de l'utilisateur, niveau natif ; l'intake/veille restent JSON (langue-agnostique)",
+        "livrable MD + PDF + verdict localisés (modèle export traduit) ; disclaimer IA localisé",
+        "tests : substrings DÉFCON 1 préservés (ou tests mis à jour), invariant chiffres, localisation des réponses ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-060", "title": "Arabe + RTL (dir=rtl, miroir des layouts, police arabe) — marché Maroc", "feature": "i18n",
+      "passes": false, "deps": ["S-058", "S-059"],
+      "acceptance": [
+        "ajouter la locale ar (messages/ar.json, traduction native) ; `<html dir>` = rtl quand ar ; tokens/layout miroités (logical properties : ms-/me-, text-start/end ; vérifier wizard, résultats, radar)",
+        "police arabe lisible (fallback système ou web font) ; nombres/€ et données mono restent LTR dans le flux RTL",
+        "e2e ar (RTL appliqué + bascule) ; typecheck 0 / lint 0/0 / tests verts / build OK"
       ]
     }
   ]
