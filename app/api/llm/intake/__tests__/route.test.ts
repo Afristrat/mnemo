@@ -41,4 +41,17 @@ describe("POST /api/llm/intake", () => {
     expect(data.rejected).toContain("llm");
     expect(data.profile.sensitivity).toBe(DEFAULT_PROFILE.sensitivity);
   });
+
+  it("base fournie (note libre S-052) → AJUSTE le profil et injecte le contexte dans le prompt", async () => {
+    callLLMMock.mockResolvedValue({ ok: true, content: JSON.stringify({ contentTypes: ["text", "video"] }) });
+    const base = { ...DEFAULT_PROFILE, activity: "agence", contentTypes: ["text"] };
+    const res = await POST(post({ text: "on ajoute de la vidéo", base }));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.profile.contentTypes).toEqual(["text", "video"]);
+    // Le prompt a reçu le profil actuel pour l'AJUSTEMENT (pas un repli au défaut).
+    const messages = callLLMMock.mock.calls[0][0];
+    expect(messages[0].content).toContain("Profil ACTUEL");
+    expect(messages[0].content).toContain("agence");
+  });
 });

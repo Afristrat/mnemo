@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildIntakeMessages, parseIntakeProfile } from "@/lib/llm/intake";
+import { applyIntakeFields, buildIntakeMessages, coerceProfile, parseIntakeProfile, type IntakeResult } from "@/lib/llm/intake";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
+import type { Profile } from "@/lib/engine";
 
 describe("buildIntakeMessages", () => {
   it("compose un prompt système (valeurs énumérées, interdiction d'inventer) + le texte utilisateur", () => {
@@ -10,7 +11,61 @@ describe("buildIntakeMessages", () => {
     expect(messages[0].content).toContain("N'INVENTE RIEN");
     expect(messages[0].content).toContain("cabinet-regule"); // valeurs autorisées listées
     expect(messages[0].content).toContain("AUCUN coût");
+    expect(messages[0].content).not.toContain("Profil ACTUEL"); // pas de base → pas de contexte d'ajustement
     expect(messages[1]).toEqual({ role: "user", content: "cabinet d'avocats, 10 personnes, données secrètes" });
+  });
+
+  it("avec une base (note libre S-052) : injecte le profil actuel + la consigne d'AJUSTEMENT des listes", () => {
+    const base: Profile = { ...DEFAULT_PROFILE, activity: "agence", contentTypes: ["text"] };
+    const messages = buildIntakeMessages("on ajoute de la vidéo", base);
+    expect(messages[0].content).toContain("Profil ACTUEL");
+    expect(messages[0].content).toContain("agence"); // valeur du profil actuel injectée
+    expect(messages[0].content).toContain("CONSERVE les valeurs déjà présentes"); // merge listes
+  });
+});
+
+describe("coerceProfile (borne une base reçue, S-052)", () => {
+  it("ne conserve que les champs d'intake valides, par-dessus le profil par défaut", () => {
+    const out = coerceProfile({ sensitivity: "secret", users: 5, sensitivityBogus: "x" });
+    expect(out.sensitivity).toBe("secret");
+    expect(out.users).toBe(5);
+    expect(out.zone).toBe(DEFAULT_PROFILE.zone); // absent → défaut
+  });
+
+  it("valeur hors-bornes → défaut ; non-objet → profil par défaut intégral", () => {
+    expect(coerceProfile({ sensitivity: "ultra-secret" }).sensitivity).toBe(DEFAULT_PROFILE.sensitivity);
+    expect(coerceProfile("pas un objet")).toEqual(DEFAULT_PROFILE);
+    expect(coerceProfile(null)).toEqual(DEFAULT_PROFILE);
+  });
+});
+
+describe("applyIntakeFields (overlay des seuls champs appliqués, S-052)", () => {
+  it("n'écrase QUE les champs appliqués ; champs structurés et non mentionnés préservés ; champ inconnu ignoré", () => {
+    const current: Profile = {
+      ...DEFAULT_PROFILE,
+      activity: "freelance",
+      sensitivity: "internal",
+      contentTypes: ["text"],
+      modules: { ...DEFAULT_PROFILE.modules },
+      freeNotes: { medias: "garder la vidéo" },
+    };
+    const result: IntakeResult = {
+      profile: { ...DEFAULT_PROFILE, activity: "agence", sensitivity: "secret", contentTypes: ["text", "audio"] },
+      applied: ["sensitivity", "contentTypes", "json"], // "json" = nom inconnu → ignoré sans throw
+      rejected: [],
+    };
+    const next = applyIntakeFields(current, result);
+    expect(next.sensitivity).toBe("secret"); // appliqué
+    expect(next.contentTypes).toEqual(["text", "audio"]); // appliqué (liste déjà fusionnée côté LLM)
+    expect(next.activity).toBe("freelance"); // NON appliqué → préservé (≠ result.profile.activity)
+    expect(next.modules).toEqual(current.modules); // structuré → préservé
+    expect(next.freeNotes).toEqual(current.freeNotes); // structuré → préservé
+  });
+
+  it("applied vide (repli) → profil courant inchangé", () => {
+    const current: Profile = { ...DEFAULT_PROFILE, sensitivity: "internal" };
+    const next = applyIntakeFields(current, { profile: DEFAULT_PROFILE, applied: [], rejected: ["llm"] });
+    expect(next).toEqual(current);
   });
 });
 

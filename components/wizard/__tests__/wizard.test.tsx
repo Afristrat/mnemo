@@ -27,6 +27,12 @@ describe("Wizard (4 blocs)", () => {
     expect(screen.getByRole("button", { name: "Coach indépendant" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cabinet juridique régulé" })).toBeInTheDocument();
   });
+
+  it("expose la note libre intégrable par bloc (S-052)", async () => {
+    render(<Wizard />);
+    await screen.findByText("Profil & contraintes");
+    expect(screen.getByRole("button", { name: "Intégrer cette note" })).toBeInTheDocument();
+  });
 });
 
 describe("YesNo, accessibilité", () => {

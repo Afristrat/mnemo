@@ -46,4 +46,13 @@ describe("POST /api/llm/narrate", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual(BASE);
   });
+
+  it("notes libres (S-052) transmises au prompt de narration en contexte", async () => {
+    callLLMMock.mockResolvedValue({ ok: true, content: JSON.stringify({ pain: "Votre savoir vidéo se disperse." }) });
+    const res = await POST(post({ base: BASE, notes: ["nous traitons des dossiers vidéo"] }));
+    expect(res.status).toBe(200);
+    const messages = callLLMMock.mock.calls[0][0];
+    expect(messages[0].content).toContain("dossiers vidéo");
+    expect(messages[0].content).toContain("Précisions de l'utilisateur");
+  });
 });

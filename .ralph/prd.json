@@ -486,7 +486,8 @@
     },
     {
       "id": "S-052", "title": "Champ texte libre par bloc/option → intake LLM (ajuste le Profile, borné) + narration", "feature": "llm",
-      "passes": false, "deps": ["S-038", "S-039", "S-019"],
+      "passes": true, "completedAt": "2026-05-28", "deps": ["S-038", "S-039", "S-019"],
+      "note": "Note libre par bloc RÉELLEMENT intégrée : « Intégrer cette note » → /api/llm/intake { text, base } (LLM AJUSTE le profil courant, fusionne les listes) → applyIntakeFields n'applique QUE les champs extraits (médias/backup/modules préservés ; freeNotes conservé → dette levée). Narration (/resultats) reprend les freeNotes en CONTEXTE (garde-fou anti-injection + isCleanNarration). Repli gracieux si LLM KO. Surface « options clés » couverte par le champ par bloc ; un champ par option individuelle est différé (faible valeur, même moteur).",
       "acceptance": [
         "chaque bloc (et options clés) du configurateur expose un champ texte libre « dites ce que vous voulez » (additif, jamais bloquant ; saisie manuelle toujours dispo)",
         "le texte est INTÉGRÉ via l'intake LLM (S-038) : mappé en ajustements de Profile VALIDÉS/BORNÉS (hors-bornes rejeté → défaut prudent documenté) ; le LLM ne calcule jamais un coût",

@@ -176,12 +176,18 @@ export function ResultsView(): ReactElement {
   const narrationContext = useMemo<NarrationContext | null>(() => {
     if (base === null) return null;
     const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices());
+    // Notes libres saisies au configurateur (S-052) → contexte de personnalisation du ton (jamais
+    // un chiffre : le garde-fou `isCleanNarration` rejette toute réintroduction de montant/score).
+    const notes = Object.values(base.freeNotes ?? {}).filter(
+      (n): n is string => typeof n === "string" && n.trim().length > 0,
+    );
     return {
       activity: base.activity,
       preset: r.preset,
       sensitivity: base.sensitivity,
       zone: base.zone,
       regulations: base.regulations,
+      notes,
       base: {
         pain: r.verdict.pain,
         risk: r.verdict.risk,

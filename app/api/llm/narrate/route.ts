@@ -53,6 +53,7 @@ export async function POST(req: Request): Promise<Response> {
     sensitivity: typeof raw.sensitivity === "string" ? raw.sensitivity : undefined,
     zone: typeof raw.zone === "string" ? raw.zone : undefined,
     regulations: parseStringArray(raw.regulations),
+    notes: parseStringArray(raw.notes),
     base,
   };
 
