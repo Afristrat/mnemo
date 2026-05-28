@@ -17,6 +17,7 @@ import { RadarChart } from "@/components/results/RadarChart";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { seedCatalog, type Catalog } from "@/lib/catalog";
+import { mergeVerdictNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import {
   buildEnsemble,
   decidePreset,
@@ -79,6 +80,9 @@ export function ResultsView(): ReactElement {
   // sur le catalogue live dès que /api/catalog/live répond. Indispo → on reste sur le seed.
   const [liveCatalog, setLiveCatalog] = useState<Catalog | undefined>(undefined);
   const [catalogPending, setCatalogPending] = useState(true);
+  // Narration LLM (S-039) : textes (verdict + « pourquoi ce preset ») réécrits selon le profil, repli
+  // sur les textes statiques. Les CHIFFRES ne dépendent jamais de la narration (invariant DÉFCON 1).
+  const [narration, setNarration] = useState<NarrationTexts | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -167,15 +171,67 @@ export function ResultsView(): ReactElement {
     [projected, prices, effectiveCatalog],
   );
 
+  // Contexte de narration figé sur le profil de BASE (pas la projection) → on ne re-narre pas à chaque
+  // mouvement de slider ; recalculé seulement si le profil/les prix/le catalogue changent.
+  const narrationContext = useMemo<NarrationContext | null>(() => {
+    if (base === null) return null;
+    const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices());
+    return {
+      activity: base.activity,
+      preset: r.preset,
+      sensitivity: base.sensitivity,
+      zone: base.zone,
+      regulations: base.regulations,
+      base: {
+        pain: r.verdict.pain,
+        risk: r.verdict.risk,
+        gain: r.verdict.gain,
+        nextStep: r.verdict.nextStep,
+        presetReason: r.presetReason,
+      },
+    };
+  }, [base, prices, effectiveCatalog]);
+
+  useEffect(() => {
+    if (narrationContext === null) return;
+    let cancelled = false;
+    setNarration(null);
+    void (async () => {
+      try {
+        const res = await fetch("/api/llm/narrate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(narrationContext),
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data: NarrationTexts = await res.json();
+        if (!cancelled) setNarration(data);
+      } catch {
+        /* repli : les textes statiques restent affichés. */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [narrationContext]);
+
   if (projected === null || result === null || ensemble === null || effectiveCatalog === undefined) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
   }
 
   // Mode verdict (chemin 90 s) : synthèse compacte de la recommandation de référence.
+  // Narration LLM appliquée aux 4 textes seulement ; les bandes de coût restent celles de la reco.
   if (mode === "verdict") {
+    const verdictToShow = narration === null ? result.verdict : mergeVerdictNarration(result.verdict, narration);
     return (
       <div className="space-y-8">
-        <VerdictView verdict={result.verdict} preset={result.preset} onExpert={() => setMode("expert")} />
+        <VerdictView
+          verdict={verdictToShow}
+          preset={result.preset}
+          onExpert={() => setMode("expert")}
+          narrated={narration !== null}
+        />
       </div>
     );
   }
@@ -219,7 +275,9 @@ export function ResultsView(): ReactElement {
           Vue verdict
         </Button>
       </div>
-      <p className="max-w-2xl text-body-md text-on-surface-variant">{activeResult.presetReason}</p>
+      <p className="max-w-2xl text-body-md text-on-surface-variant">
+        {activeVariant === null && narration !== null ? narration.presetReason : activeResult.presetReason}
+      </p>
 
       {/* Bandeau de scénario actif (bascule depuis l'ensemble) */}
       {activeVariantData !== null ? (
