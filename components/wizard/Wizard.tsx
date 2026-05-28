@@ -16,7 +16,8 @@ import { ModuleSlider } from "@/components/wizard/ModuleSlider";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
-import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId } from "@/lib/engine";
+import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId, type Profile } from "@/lib/engine";
+import { applyIntakeFields } from "@/lib/llm/intake";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
@@ -115,12 +116,94 @@ function Field({
   );
 }
 
-function NoteField({ value, onChange }: { value: string; onChange: (v: string) => void }): ReactElement {
+// Libellés FR des champs d'intake (retour « ce qui a été ajusté » après intégration d'une note).
+const INTAKE_FIELD_LABELS: Record<string, string> = {
+  activity: "activité",
+  zone: "zone",
+  users: "utilisateurs",
+  contentTypes: "contenus à mémoriser",
+  volume: "volume",
+  growth: "croissance",
+  regulations: "régimes",
+  sensitivity: "sensibilité",
+  audit: "audit",
+  bitemporal: "bitemporalité",
+  techLevel: "niveau technique",
+  budget: "budget",
+  reqPerDay: "débit",
+  latency: "latence",
+  voices: "voix",
+};
+
+type IntakeResponse = { profile?: Profile; applied?: string[]; rejected?: string[] };
+type NoteState = { kind: "idle" } | { kind: "busy" } | { kind: "error" } | { kind: "done"; applied: string[] };
+
+/**
+ * Note libre par bloc (S-019) RÉELLEMENT intégrée (S-052) : « Intégrer » fait lire la note par l'intake
+ * LLM (route serveur), qui AJUSTE le profil courant (valeurs validées/bornées, le LLM ne calcule rien).
+ * On n'applique que les champs réellement extraits (`applyIntakeFields`) → médias/backup/modules
+ * préservés. Additif et jamais bloquant : la saisie manuelle reste disponible, la note est conservée
+ * (persistée + reprise par la narration des résultats). Repli silencieux si le LLM est indisponible.
+ */
+function NoteField({
+  block,
+  value,
+  onChange,
+  profile,
+  onApply,
+}: {
+  block: BlockId;
+  value: string;
+  onChange: (v: string) => void;
+  profile: Profile;
+  onApply: (next: Profile) => void;
+}): ReactElement {
+  const [state, setState] = useState<NoteState>({ kind: "idle" });
+
+  const integrate = async (): Promise<void> => {
+    if (value.trim() === "") return;
+    setState({ kind: "busy" });
+    try {
+      const res = await fetch("/api/llm/intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: value, base: profile }),
+      });
+      if (!res.ok) {
+        setState({ kind: "error" });
+        return;
+      }
+      const data: IntakeResponse = await res.json();
+      if (data.profile === undefined || data.applied === undefined) {
+        setState({ kind: "error" });
+        return;
+      }
+      // LLM indisponible (repli serveur) → rien appliqué : on le dit honnêtement, pas « aucun paramètre ».
+      if ((data.rejected ?? []).includes("llm")) {
+        setState({ kind: "error" });
+        return;
+      }
+      const next = applyIntakeFields(profile, {
+        profile: data.profile,
+        applied: data.applied,
+        rejected: data.rejected ?? [],
+      });
+      // La note est conservée dans freeNotes (persistée, et reprise par la narration côté résultats).
+      onApply({ ...next, freeNotes: { ...next.freeNotes, [block]: value } });
+      setState({ kind: "done", applied: data.applied });
+    } catch {
+      setState({ kind: "error" });
+    }
+  };
+
   return (
     <Field label="Note libre (facultatif)">
       <textarea
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value);
+          if (state.kind !== "idle") setState({ kind: "idle" });
+        }}
         rows={2}
         placeholder="Une précision, une contrainte particulière, un contexte à garder en tête…"
         className={cn(
@@ -129,6 +212,37 @@ function NoteField({ value, onChange }: { value: string; onChange: (v: string) =
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         )}
       />
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => void integrate()}
+          disabled={state.kind === "busy" || value.trim() === ""}
+        >
+          {state.kind === "busy" ? "Intégration…" : "Intégrer cette note"}
+        </Button>
+        {state.kind === "done" ? (
+          state.applied.length > 0 ? (
+            <span className="text-body-sm text-on-surface-variant">
+              Ajusté : {state.applied.map((f) => INTAKE_FIELD_LABELS[f] ?? f).join(", ")}. Vérifiez les champs, une IA
+              peut se tromper.
+            </span>
+          ) : (
+            <span className="text-body-sm text-on-surface-variant">
+              Aucun paramètre à ajuster dans cette note, la saisie manuelle reste possible.
+            </span>
+          )
+        ) : null}
+        {state.kind === "error" ? (
+          <span className="text-body-sm text-error">
+            Intégration indisponible pour le moment. Réglez les champs à la main, c’est toujours possible.
+          </span>
+        ) : null}
+      </div>
+      <p className="mt-1 text-body-sm text-on-surface-variant">
+        Optionnel : « Intégrer » fait lire votre note par une IA qui ajuste les champs ci-dessus (valeurs bornées,
+        aucun coût inventé). Vous gardez la main.
+      </p>
     </Field>
   );
 }
@@ -224,7 +338,13 @@ export function Wizard(): ReactElement {
               <Field label="Budget mensuel" info={INFO.budget}>
                 <RadioCards value={profile.budget} options={BUDGET_OPTIONS} onChange={(v) => setField("budget", v)} />
               </Field>
-              <NoteField value={profile.freeNotes?.profil ?? ""} onChange={(v) => setNote("profil", v)} />
+              <NoteField
+                block="profil"
+                value={profile.freeNotes?.profil ?? ""}
+                onChange={(v) => setNote("profil", v)}
+                profile={profile}
+                onApply={loadProfile}
+              />
             </>
           ) : null}
 
@@ -255,7 +375,13 @@ export function Wizard(): ReactElement {
                   onChange={(backup) => setField("backup", backup)}
                 />
               </div>
-              <NoteField value={profile.freeNotes?.infra ?? ""} onChange={(v) => setNote("infra", v)} />
+              <NoteField
+                block="infra"
+                value={profile.freeNotes?.infra ?? ""}
+                onChange={(v) => setNote("infra", v)}
+                profile={profile}
+                onApply={loadProfile}
+              />
             </>
           ) : null}
 
@@ -287,7 +413,13 @@ export function Wizard(): ReactElement {
                   ))}
                 </div>
               </Field>
-              <NoteField value={profile.freeNotes?.memoire ?? ""} onChange={(v) => setNote("memoire", v)} />
+              <NoteField
+                block="memoire"
+                value={profile.freeNotes?.memoire ?? ""}
+                onChange={(v) => setNote("memoire", v)}
+                profile={profile}
+                onApply={loadProfile}
+              />
             </>
           ) : null}
 
@@ -298,7 +430,13 @@ export function Wizard(): ReactElement {
                 <strong> créer</strong>, en souverain 🟢 ou via API 💳. Sans besoin audio/vidéo/images, laissez tout sur « Aucun ».
               </p>
               <MediaNeedsBlock profile={profile} prices={prices} onChange={(mn) => setField("mediaNeeds", mn)} />
-              <NoteField value={profile.freeNotes?.medias ?? ""} onChange={(v) => setNote("medias", v)} />
+              <NoteField
+                block="medias"
+                value={profile.freeNotes?.medias ?? ""}
+                onChange={(v) => setNote("medias", v)}
+                profile={profile}
+                onApply={loadProfile}
+              />
             </>
           ) : null}
         </div>

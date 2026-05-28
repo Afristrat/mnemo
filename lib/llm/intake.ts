@@ -99,12 +99,35 @@ function pickBool(value: unknown): boolean | null {
   return typeof value === "boolean" ? value : null;
 }
 
+/** Champs d'intake d'un profil (les 15 que le LLM peut extraire), pour le contexte d'ajustement. */
+function intakeSnapshot(p: Profile): Record<string, unknown> {
+  return {
+    activity: p.activity,
+    zone: p.zone,
+    users: p.users,
+    contentTypes: p.contentTypes,
+    volume: p.volume,
+    growth: p.growth,
+    regulations: p.regulations,
+    sensitivity: p.sensitivity,
+    audit: p.audit,
+    bitemporal: p.bitemporal,
+    techLevel: p.techLevel,
+    budget: p.budget,
+    reqPerDay: p.reqPerDay,
+    latency: p.latency,
+    voices: p.voices,
+  };
+}
+
 /**
  * Compose le prompt d'extraction. Le système énumère STRICTEMENT les valeurs autorisées et interdit
  * d'inventer (omettre si absent/ambigu). Le LLM ne calcule aucun coût ; il ne fait qu'extraire.
+ * Si `base` est fourni (S-052, note libre par bloc), le LLM AJUSTE ce profil existant : il ne renvoie
+ * que les champs réellement modifiés par la note, et pour les listes il conserve l'existant + ajoute.
  */
-export function buildIntakeMessages(text: string): LlmMessage[] {
-  const system = [
+export function buildIntakeMessages(text: string, base?: Profile): LlmMessage[] {
+  const lines = [
     "Tu es un extracteur de paramètres pour un configurateur d'infrastructure mémorielle souveraine.",
     "À partir de la description de l'utilisateur, produis UNIQUEMENT un objet JSON (aucun texte autour).",
     "Pour CHAQUE information EXPLICITEMENT présente, renseigne le champ. N'INVENTE RIEN : si une",
@@ -126,25 +149,26 @@ export function buildIntakeMessages(text: string): LlmMessage[] {
     `- reqPerDay: ${REQ_PER_DAYS.join(" | ")}`,
     `- latency: ${LATENCIES.join(" | ")}`,
     `- voices: ${VOICES_VALUES.join(" | ")}`,
-    "",
-    "Réponds par le JSON seul.",
-  ].join("\n");
+  ];
+  if (base !== undefined) {
+    lines.push(
+      "",
+      "Profil ACTUEL (ne repars pas de zéro, AJUSTE-le) :",
+      JSON.stringify(intakeSnapshot(base)),
+      "Ne renvoie QUE les champs que la note modifie réellement. Pour les listes (contentTypes,",
+      "regulations), CONSERVE les valeurs déjà présentes et AJOUTE celles demandées (ne remplace",
+      "que si l'utilisateur demande explicitement un retrait).",
+    );
+  }
+  lines.push("", "Réponds par le JSON seul.");
   return [
-    { role: "system", content: system },
+    { role: "system", content: lines.join("\n") },
     { role: "user", content: text },
   ];
 }
 
-/**
- * Valide et borne la réponse du LLM contre les unions du moteur, à partir d'un profil de base
- * (défaut = `DEFAULT_PROFILE`, prudent). Champ valide → appliqué ; présent mais invalide → rejeté,
- * défaut conservé ; absent → défaut conservé. JSON illisible → profil de base inchangé. Fonction pure.
- */
-export function parseIntakeProfile(content: string, base: Profile = DEFAULT_PROFILE): IntakeResult {
-  const obj = extractJsonObject(content);
-  if (obj === null) return { profile: { ...base }, applied: [], rejected: ["json"] };
-  const data = obj; // const non-null → narrowing conservé dans la closure `take`.
-
+/** Valide/borne un objet déjà parsé contre les unions du moteur, par-dessus un profil de base. Pur. */
+function validateIntakeFields(data: Record<string, unknown>, base: Profile): IntakeResult {
   const profile: Profile = { ...base };
   const applied: string[] = [];
   const rejected: string[] = [];
@@ -193,4 +217,57 @@ export function parseIntakeProfile(content: string, base: Profile = DEFAULT_PROF
   if (voices !== undefined) profile.voices = voices;
 
   return { profile, applied, rejected };
+}
+
+/**
+ * Valide et borne la réponse du LLM contre les unions du moteur, à partir d'un profil de base
+ * (défaut = `DEFAULT_PROFILE`, prudent). Champ valide → appliqué ; présent mais invalide → rejeté,
+ * défaut conservé ; absent → défaut conservé. JSON illisible → profil de base inchangé. Fonction pure.
+ */
+export function parseIntakeProfile(content: string, base: Profile = DEFAULT_PROFILE): IntakeResult {
+  const obj = extractJsonObject(content);
+  if (obj === null) return { profile: { ...base }, applied: [], rejected: ["json"] };
+  return validateIntakeFields(obj, base);
+}
+
+/**
+ * Borne un profil reçu (ex. base envoyée par le client pour le contexte d'ajustement S-052) : ne
+ * conserve que les 15 champs d'intake valides, par-dessus `DEFAULT_PROFILE`. Les champs structurés
+ * (modules/mediaNeeds/backup) ne sont pas repris ici — l'overlay client (`applyIntakeFields`) les
+ * préserve sur le vrai profil. Non-objet → profil par défaut. Fonction pure.
+ */
+export function coerceProfile(raw: unknown): Profile {
+  if (!isRecord(raw)) return { ...DEFAULT_PROFILE };
+  return validateIntakeFields(raw, DEFAULT_PROFILE).profile;
+}
+
+/**
+ * Applique sur un profil courant UNIQUEMENT les champs effectivement extraits/validés (`result.applied`)
+ * — switch type-safe par nom de champ. Les champs non mentionnés et les champs structurés
+ * (modules/mediaNeeds/backup/freeNotes) sont PRÉSERVÉS. Lève la dette « freeNotes jamais lu » (S-052).
+ */
+export function applyIntakeFields(current: Profile, result: IntakeResult): Profile {
+  const next: Profile = { ...current };
+  const p = result.profile;
+  for (const field of result.applied) {
+    switch (field) {
+      case "activity": next.activity = p.activity; break;
+      case "zone": next.zone = p.zone; break;
+      case "users": next.users = p.users; break;
+      case "contentTypes": next.contentTypes = p.contentTypes; break;
+      case "volume": next.volume = p.volume; break;
+      case "growth": next.growth = p.growth; break;
+      case "regulations": next.regulations = p.regulations; break;
+      case "sensitivity": next.sensitivity = p.sensitivity; break;
+      case "audit": next.audit = p.audit; break;
+      case "bitemporal": next.bitemporal = p.bitemporal; break;
+      case "techLevel": next.techLevel = p.techLevel; break;
+      case "budget": next.budget = p.budget; break;
+      case "reqPerDay": next.reqPerDay = p.reqPerDay; break;
+      case "latency": next.latency = p.latency; break;
+      case "voices": next.voices = p.voices; break;
+      default: break; // champ inconnu (ex. "json"/"llm") ignoré
+    }
+  }
+  return next;
 }

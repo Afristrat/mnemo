@@ -57,6 +57,20 @@ test("intake libre : décrire son besoin pré-remplit le configurateur", async (
   await expect(page.getByRole("heading", { name: /Quelle infrastructure/ })).toBeVisible();
 });
 
+test("note libre par bloc : « Intégrer » ajuste le profil (repli gracieux si LLM indisponible)", async ({ page }) => {
+  await page.goto("/configurateur");
+  // Bouton désactivé tant que la note est vide (additif, jamais bloquant).
+  await expect(page.getByRole("button", { name: "Intégrer cette note" })).toBeDisabled();
+  await page.locator("textarea").first().fill("nous traitons aussi des fichiers audio confidentiels");
+  const integrer = page.getByRole("button", { name: "Intégrer cette note" });
+  await expect(integrer).toBeEnabled();
+  await integrer.click();
+  // LLM présent → « Vérifiez les champs » (ou « Aucun paramètre ») ; LLM indispo → « indisponible ».
+  // Dans tous les cas : aucun crash et les contrôles manuels restent disponibles.
+  await expect(page.getByText(/Vérifiez les champs|indisponible|Aucun paramètre/)).toBeVisible({ timeout: 35000 });
+  await expect(page.getByRole("button", { name: "Suivant" })).toBeEnabled();
+});
+
 test("reco vivante : la provenance des choix techniques est affichée (repli seed immédiat)", async ({ page }) => {
   await page.goto("/resultats");
   await expect(page.getByText("Provenance des choix techniques")).toBeVisible();
