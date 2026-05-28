@@ -20,6 +20,19 @@ export type Provenance = "live" | "seed" | "flagged";
 export type ComponentSovereignty = "sovereign" | "eu-hosted" | "api-third-party";
 
 /**
+ * Paramètres de dimensionnement OPTIONNELS portés par un composant sourcé (S-056, option A). Facteurs
+ * relatifs (× la baseline interne) consommés par le moteur de dimensionnement S'ILS existent ET passent
+ * le garde-fou de bornes (cf. `lib/engine/sizing-params`), sinon repli baseline. Le LLM ne calcule
+ * jamais un coût : il peut seulement PROPOSER ces facteurs sourcés (efficience relative d'un modèle).
+ */
+export type ComponentSizingParams = {
+  /** Charge GPU relative (× baseline) du composant compute/inférence (slot C6). Modèle plus efficient < 1. */
+  gpuLoadFactor?: number;
+  /** Empreinte de stockage relative (× baseline) du composant de stockage/index (slot C5). Compression < 1. */
+  storageFactor?: number;
+};
+
+/**
  * Candidat de composant pour un slot de la stack. `source` (DÉFCON 1) : pour le seed = référence de
  * calibration interne datée (pas une source web ; la veille live apporte les sources web réelles).
  */
@@ -33,6 +46,8 @@ export type ComponentCandidate = {
   confidence: Confidence; // high | medium | low
   provenance: Provenance;
   note?: string; // explication rendue dans `Layer.note`
+  /** Facteurs de dimensionnement sourcés (S-056) — optionnels, validés par le garde-fou avant usage. */
+  sizingParams?: ComponentSizingParams;
 };
 
 /** Identifiant de slot = couche C0..C6 (aligné sur `Layer.id`). */

@@ -17,6 +17,16 @@ export {
 } from "./sizing";
 export { applyMultimodalSizing } from "./cost";
 export {
+  deriveSizingParams,
+  isValidFactor,
+  BASELINE_SIZING_PARAMS,
+  SIZING_FACTOR_BOUNDS,
+  type SizingParams,
+  type AppliedSizingParam,
+  type DerivedSizingParams,
+  type Volet,
+} from "./sizing-params";
+export {
   deriveBackupPlan,
   costBackup,
   buildBackupPlan,

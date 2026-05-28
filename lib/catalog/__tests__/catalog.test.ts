@@ -134,4 +134,15 @@ describe("reconcileCatalog (garde-fou)", () => {
     const r = reconcileCatalog(apiLive, seed, prof());
     expect(r.provenance).toBe("live");
   });
+
+  it("conserve un facteur de dimensionnement valide (S-056)", () => {
+    const r = reconcileCatalog({ ...live, sizingParams: { gpuLoadFactor: 0.5 } }, seed, prof());
+    expect(r.sizingParams?.gpuLoadFactor).toBe(0.5);
+  });
+
+  it("retire un facteur aberrant (hors bornes) → le moteur repliera sur la baseline (S-056)", () => {
+    const r = reconcileCatalog({ ...live, sizingParams: { gpuLoadFactor: 100, storageFactor: 0.5 } }, seed, prof());
+    expect(r.sizingParams?.gpuLoadFactor).toBeUndefined(); // aberrant → retiré
+    expect(r.sizingParams?.storageFactor).toBe(0.5); // valide → conservé
+  });
 });

@@ -507,13 +507,14 @@
     },
     {
       "id": "S-056", "title": "Résorber la dette de supervision : hypothèses de dimensionnement vivantes + sourcées (paramètres injectés, garde-fou)", "feature": "llm",
-      "passes": false, "deps": ["S-036", "S-016", "S-033"],
+      "passes": true, "completedAt": "2026-05-28", "deps": ["S-036", "S-016", "S-033"],
+      "note": "Option A livrée. Heuristiques extraites en SizingParams injectables (lib/engine/sizing-params.ts) ; BASELINE_SIZING_PARAMS datée = défaut + repli. ComponentCandidate gagne sizingParams?: {gpuLoadFactor (C6), storageFactor (C5)}. deriveSizingParams(catalog) consomme un facteur s'il existe ET passe le garde-fou de bornes [0.25,4] (isValidFactor), sinon repli baseline ; reconcileCatalog assainit les facteurs live aberrants. recommend thread les params dans costMultimodalSizing + trace les sources appliquées. Snapshot reproductible : les facteurs voyagent avec le catalogue déjà gelé dans le bundle (S-037). Le LLM ne calcule jamais ; moteur pur/déterministe. +12 tests (dérivation, garde-fou, effet palier GPU, déterminisme). Pas d'effet prod tant que la veille n'émet pas de facteur (baseline) — capacité latente, garde-fou en place.",
       "acceptance": [
         "CONSTAT Amine (2026-05-27) : le CALCUL reste déterministe (bon pour repro Exit Escrow + fiduciaire explicable + DÉFCON 1), mais les HEURISTIQUES de dimensionnement (GPU_LOAD_PER_UNIT, STORAGE_GB_PER_UNIT, seuils preset, pondérations scores, hypothèses ±30 %) sont FIGÉES dans le code → dette de supervision si une solution plus performante émerge",
         "LIMITE liée : le catalogue vivant (S-037) change le NOM du composant mais le COÛT reste attaché à la CATÉGORIE de couche (layers.ts/cost.ts), pas au composant précis proposé → un composant 2× moins cher/efficient n'est pas reflété dans le chiffrage",
         "DOCTRINE à étendre (« tout vivant + filet ») : rendre les PARAMÈTRES (charge GPU par modèle, empreinte stockage, seuils) injectables + sourcés via la veille (Firecrawl + LLM), validés par garde-fou reconcile (aberrant → repli baseline) — JAMAIS le LLM qui calcule, toujours le moteur pur sur paramètres révisables",
         "le ComponentCandidate (S-035) gagne des paramètres optionnels sourcés (ex. gpuLoadFactor, contextWindow) que le dimensionnement consomme s'ils existent, sinon repli sur l'hypothèse interne ; snapshot reproductible préservé (paramètres figés dans le bundle)",
-        "tests : monotonie préservée, repli si paramètre absent/aberrant, snapshot rejouable ; typecheck 0 / lint 0/0 / build OK. DÉCISION D'ARBITRAGE Amine requise avant implémentation (option A paramètres vivants vs C hybride borné)"
+        "tests : monotonie préservée, repli si paramètre absent/aberrant, snapshot rejouable ; typecheck 0 / lint 0/0 / build OK. DÉCISION AMINE 2026-05-28 : **option A** (paramètres de dimensionnement vivants + sourcés) — résoudre la dette à la racine : extraire les heuristiques (charge GPU par modèle, empreinte stockage, seuils/pondérations) en PARAMÈTRES injectables + sourcés (baseline datée = repli), ComponentCandidate porte des params optionnels sourcés consommés par le dimensionnement, garde-fou reconcile (aberrant → repli baseline), snapshot fige les paramètres retenus. Le LLM ne calcule jamais ; le moteur reste pur sur paramètres révisables"
       ]
     },
     {
