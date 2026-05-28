@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
+import { AssistantPanel } from "@/components/assistant/AssistantPanel";
 import { CatalogProvenance } from "@/components/results/CatalogProvenance";
 import { CostMap, type MediaBreakdown } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
@@ -437,6 +438,9 @@ export function ResultsView(): ReactElement {
 
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
       <ExitEscrow profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
+
+      {/* Assistant Q&A contextuel (S-040) : ne cite que les faits de la reco affichée + web sourcé. */}
+      <AssistantPanel reco={activeResult} />
 
       <Link
         href="/configurateur"
