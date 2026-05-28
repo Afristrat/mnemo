@@ -8,6 +8,7 @@
 
 import { decidePreset, type Profile } from "@/lib/engine";
 import type { LlmMessage, LlmResult } from "@/lib/llm";
+import { DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import type { WebSearchResult } from "@/lib/pricing/firecrawl";
 import { seedCatalog } from "./catalog-seed";
 import { reconcileCatalog } from "./reconcile";
@@ -66,6 +67,8 @@ export type ProposeDeps = {
   search: (query: string, limit: number) => Promise<WebSearchResult[]>;
   llm: (messages: LlmMessage[]) => Promise<LlmResult>;
   now?: () => Date;
+  /** Prompt système (S-053) — défaut = gabarit de veille du registre ; surchargé par le store admin. */
+  systemPrompt?: string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -110,13 +113,6 @@ function parseCandidate(content: string, results: WebSearchResult[], role: strin
   };
 }
 
-const SYSTEM_PROMPT =
-  "Tu es un architecte d'infrastructure de base mémorielle IA souveraine. À partir UNIQUEMENT des résultats web fournis, " +
-  "propose LE composant le plus adapté au rôle demandé. Réponds STRICTEMENT en JSON, sans prose ni commentaire, avec les " +
-  'clés : {"name","role","license","sovereignty","benchmarkRank","sourceUrl","note"}. "sovereignty" ∈ ' +
-  '{"sovereign","eu-hosted","api-third-party"}. "sourceUrl" DOIT être exactement l\'une des URLs des résultats fournis ' +
-  "(n'invente JAMAIS d'URL). Aucune justification commerciale, aucun biais de fournisseur.";
-
 /**
  * Veille réelle d'un slot : recherche web → synthèse LLM → `ComponentCandidate` sourcé, ou `null`
  * (pas de résultat / LLM KO / JSON invalide / URL hallucinée → repli seed côté orchestrateur). Pur-ish.
@@ -141,7 +137,7 @@ export async function proposeForSlotLive(
     `Référence actuelle: ${seedSlot.recommended.name}\n` +
     `Résultats web:\n${sourcesBlock}`;
   const messages: LlmMessage[] = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: deps.systemPrompt ?? DEFAULT_PROMPTS["catalog-veille"] },
     { role: "user", content: user },
   ];
   const r = await deps.llm(messages);

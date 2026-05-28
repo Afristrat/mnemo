@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLiveCatalogCached } from "@/lib/catalog/cache";
+import { loadActivePrompt } from "@/lib/prompts/store";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
 import type { Profile } from "@/lib/engine";
 
@@ -21,6 +22,8 @@ export async function POST(req: Request): Promise<Response> {
   }
   // Profil reconstruit sur les défauts (champs manquants comblés), comme la reprise localStorage.
   const profile: Profile = { ...DEFAULT_PROFILE, ...raw };
-  const catalog = await getLiveCatalogCached(profile, { apiKey: process.env.FIRECRAWL_API_KEY });
+  // Prompt de veille éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
+  const systemPrompt = (await loadActivePrompt("catalog-veille")) ?? undefined;
+  const catalog = await getLiveCatalogCached(profile, { apiKey: process.env.FIRECRAWL_API_KEY, systemPrompt });
   return NextResponse.json(catalog);
 }

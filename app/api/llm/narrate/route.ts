@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { callLLM } from "@/lib/llm/client";
 import { buildNarrateMessages, parseNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
+import { loadActivePrompt } from "@/lib/prompts/store";
 
 // Narration LLM (S-039). POST { contexte profil + textes de base } → le LLM réécrit les textes
 // narratifs (côté serveur, clé jamais exposée) → `parseNarration` valide (rejette toute réintroduction
@@ -57,7 +58,9 @@ export async function POST(req: Request): Promise<Response> {
     base,
   };
 
-  const result = await callLLM(buildNarrateMessages(ctx));
+  // Prompt système éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
+  const template = await loadActivePrompt("narration");
+  const result = await callLLM(buildNarrateMessages(ctx, template ?? undefined));
   if (!result.ok) {
     // Repli : les textes statiques de base (aucun chiffre touché de toute façon).
     return NextResponse.json(base);

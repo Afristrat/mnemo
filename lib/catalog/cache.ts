@@ -24,6 +24,8 @@ export type LiveCatalogDeps = {
   llm?: (messages: LlmMessage[]) => Promise<LlmResult>;
   /** Veille d'un slot injectable (tests) ; sinon construite depuis la recherche web + le LLM réels. */
   proposeForSlot?: ProposeForSlot;
+  /** Prompt système de veille éditable (S-053) ; repli sur le gabarit par défaut si absent. */
+  systemPrompt?: string;
   now?: () => Date;
   cache?: TtlCache<Catalog>;
 };
@@ -33,7 +35,8 @@ function realProposeForSlot(deps: LiveCatalogDeps): ProposeForSlot {
   const search = (query: string, limit: number): Promise<WebSearchResult[]> =>
     searchWeb(query, limit, { apiKey: deps.apiKey, fetchImpl: deps.fetchImpl });
   const llm = deps.llm ?? ((messages: LlmMessage[]): Promise<LlmResult> => callLLM(messages));
-  return (slot, profile, seedSlot) => proposeForSlotLive(slot, profile, seedSlot, { search, llm, now: deps.now });
+  return (slot, profile, seedSlot) =>
+    proposeForSlotLive(slot, profile, seedSlot, { search, llm, now: deps.now, systemPrompt: deps.systemPrompt });
 }
 
 /** Assemble le catalogue live (sans cache). Ne lève jamais : repli seed par slot (cf. `live-catalog`). */

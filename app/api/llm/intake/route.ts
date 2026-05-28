@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { callLLM } from "@/lib/llm/client";
 import { buildIntakeMessages, coerceProfile, parseIntakeProfile } from "@/lib/llm/intake";
+import { loadActivePrompt } from "@/lib/prompts/store";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
 
 // Intake libre → Profile (S-038/S-052). POST { text, base? } → le LLM EXTRAIT des paramètres (côté
@@ -30,7 +31,9 @@ export async function POST(req: Request): Promise<Response> {
 
   const text = raw.text.slice(0, MAX_TEXT);
   const base = "base" in raw ? coerceProfile(raw.base) : undefined;
-  const result = await callLLM(buildIntakeMessages(text, base));
+  // Prompt système éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
+  const template = await loadActivePrompt("intake");
+  const result = await callLLM(buildIntakeMessages(text, base, template ?? undefined));
   if (!result.ok) {
     // Repli prudent : profil de base (ou défaut), jamais sous-dimensionné. La saisie manuelle reste possible.
     return NextResponse.json({ profile: base ?? DEFAULT_PROFILE, applied: [], rejected: ["llm"] });
