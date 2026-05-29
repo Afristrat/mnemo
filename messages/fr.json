@@ -109,6 +109,18 @@
       "statusVerified": "Vérifié",
       "statusChanged": "À revérifier",
       "statusUnavailable": "Re-vérif. indisponible"
+    },
+    "share": {
+      "title": "Partager ce plan",
+      "desc": "Transmettez votre recommandation telle quelle. Le profil enregistré n’est jamais modifié chez vous : le destinataire rejoue exactement votre configuration.",
+      "copyLink": "Copier le lien",
+      "copyHint": "Lien instantané : votre profil est encodé dans l’URL, sans passer par nos serveurs.",
+      "copied": "Lien copié",
+      "createShort": "Créer un lien court",
+      "creating": "Création…",
+      "shortHint": "Lien court via nos serveurs, pratique à partager (e-mail, message).",
+      "copyShort": "Copier",
+      "shortError": "Création du lien court impossible pour le moment. Le lien copié ci-dessus fonctionne déjà."
     }
   },
   "Metadata": {

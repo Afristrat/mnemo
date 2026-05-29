@@ -109,6 +109,18 @@
       "statusVerified": "Verified",
       "statusChanged": "To recheck",
       "statusUnavailable": "Recheck unavailable"
+    },
+    "share": {
+      "title": "Share this plan",
+      "desc": "Pass on your recommendation as-is. Your saved profile is never changed on your side: the recipient replays your exact configuration.",
+      "copyLink": "Copy link",
+      "copyHint": "Instant link: your profile is encoded in the URL, without going through our servers.",
+      "copied": "Link copied",
+      "createShort": "Create short link",
+      "creating": "Creating…",
+      "shortHint": "Short link via our servers, handy to share (email, chat).",
+      "copyShort": "Copy",
+      "shortError": "Couldn’t create the short link right now. The link copied above already works."
     }
   },
   "Metadata": {
