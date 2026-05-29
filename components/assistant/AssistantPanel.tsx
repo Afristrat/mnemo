@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { Recommendation } from "@/lib/engine";
 import { useEngineText } from "@/lib/i18n/engine";
-import { serializeRecoFacts, type ChatTurn } from "@/lib/llm/assistant";
+import { serializeRecoFacts, type ChatTurn, type OtherPrecisions } from "@/lib/llm/assistant";
 import type { WebSearchResult } from "@/lib/pricing/firecrawl";
 
 // Assistant Q&A contextuel (S-040). Le panneau envoie la question + l'historique + les FAITS de la
@@ -16,7 +16,14 @@ type Source = WebSearchResult;
 type Message = { role: "user" | "assistant"; content: string; sources?: Source[] };
 type ChatResponse = { ok?: boolean; answer?: string; reason?: string; sources?: Source[] };
 
-export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement {
+export function AssistantPanel({
+  reco,
+  otherPrecisions,
+}: {
+  reco: Recommendation;
+  /** Précisions libres « Autre » du profil (S-064), greffées aux FAITS comme CONTEXTE qualitatif. */
+  otherPrecisions?: OtherPrecisions;
+}): ReactElement {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -33,7 +40,7 @@ export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement
       const res = await fetch("/api/llm/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, history, recoFacts: serializeRecoFacts(reco, resolveEngine) }),
+        body: JSON.stringify({ question, history, recoFacts: serializeRecoFacts(reco, resolveEngine, otherPrecisions) }),
       });
       const data: ChatResponse = await res.json();
       if (res.ok && data.ok === true && typeof data.answer === "string") {
@@ -55,7 +62,7 @@ export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement
       ]);
     }
     setBusy(false);
-  }, [input, busy, messages, reco, resolveEngine]);
+  }, [input, busy, messages, reco, resolveEngine, otherPrecisions]);
 
   return (
     <Card>

@@ -31,4 +31,19 @@ describe("useWizardProfile — hydratation & persistance", () => {
     expect(second.result.current.profile.budget).toBe("gt2k");
     expect(second.result.current.profile.freeNotes?.infra).toBe("débit en pic le matin");
   });
+
+  it("persiste la précision « Autre » (S-064) et la relit au montage suivant", () => {
+    const first = renderHook(() => useWizardProfile());
+    act(() => first.result.current.setOtherText("activity", "Coopérative agricole"));
+    act(() => first.result.current.setOtherText("zone", "Suisse"));
+
+    const second = renderHook(() => useWizardProfile());
+    expect(second.result.current.profile.otherText?.activity).toBe("Coopérative agricole");
+    expect(second.result.current.profile.otherText?.zone).toBe("Suisse");
+  });
+
+  it("invariant : un profil neuf n'a aucun otherText (champ optionnel)", () => {
+    const { result } = renderHook(() => useWizardProfile());
+    expect(result.current.profile.otherText).toBeUndefined();
+  });
 });

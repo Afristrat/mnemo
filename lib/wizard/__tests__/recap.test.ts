@@ -68,4 +68,31 @@ describe("buildChoiceRecap (S-050)", () => {
     expect(value).not.toBe("Aucun module activé");
     expect(value).toContain(reco.activeModules[0]?.name ?? "—");
   });
+
+  describe("précision « Autre » (S-064)", () => {
+    it("intègre la précision libre dans le libellé quand activity/zone = other", () => {
+      const p = prof({
+        activity: "other",
+        zone: "other",
+        otherText: { activity: "Coopérative agricole", zone: "Suisse" },
+      });
+      const groups = buildChoiceRecap(p, recommend(p), (k) => k);
+      expect(item(groups, "Activité")?.value).toContain("Coopérative agricole");
+      expect(item(groups, "Zone d'hébergement")?.value).toContain("Suisse");
+    });
+
+    it("ne montre pas la précision quand la valeur n'est pas other (texte résiduel ignoré)", () => {
+      const p = prof({ activity: "pme-startup", otherText: { activity: "texte résiduel" } });
+      const groups = buildChoiceRecap(p, recommend(p), (k) => k);
+      expect(item(groups, "Activité")?.value ?? "").not.toContain("texte résiduel");
+    });
+
+    it("invariant : sans otherText, le libellé reste celui de l'énum (other → « Autre » muet)", () => {
+      const withOther = prof({ activity: "other", zone: "other" });
+      const groups = buildChoiceRecap(withOther, recommend(withOther), (k) => k);
+      // Avec le traducteur identité (k) => k, « other » résout sur sa clé, sans précision accolée.
+      expect(item(groups, "Activité")?.value).toBe("activity.other");
+      expect(item(groups, "Zone d'hébergement")?.value).toBe("zone.other");
+    });
+  });
 });

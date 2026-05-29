@@ -286,6 +286,14 @@ export type Profile = {
   residency?: Residency;
   /** Notes libres par bloc du wizard (refonte 4-blocs, S-019). */
   freeNotes?: Partial<Record<BlockId, string>>;
+  /**
+   * Précision libre saisie quand un champ borné est réglé sur « Autre » (valeur `other`). DONNÉE pure
+   * du profil (jamais de la logique de coût) : le moteur déterministe continue de chiffrer sur l'énum
+   * (`other` → comportement par défaut), DÉFCON 1 — le texte n'invente AUCUN nombre. Il est « pris en
+   * considération » par les seuls canaux explicatifs/LLM (récap, narration, FAITS de l'assistant).
+   * Absent ⇒ comportement et coûts strictement inchangés (champ optionnel).
+   */
+  otherText?: Partial<Record<"activity" | "zone" | "region", string>>;
 };
 
 export type ModuleLevel = { label: string; desc: string };

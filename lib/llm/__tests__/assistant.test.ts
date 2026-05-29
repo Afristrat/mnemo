@@ -42,6 +42,22 @@ describe("serializeRecoFacts", () => {
     // Chaque couche de la stack est listée avec son coût.
     for (const layer of reco.layers) expect(facts).toContain(layer.name.id);
   });
+
+  it("greffe les précisions « Autre » comme CONTEXTE quand fournies (S-064)", () => {
+    const reco = recommend(baseProfile({ activity: "other", zone: "other" }));
+    const facts = serializeRecoFacts(reco, (m) => m.id, { activity: "Coopérative agricole", zone: "Suisse" });
+    expect(facts).toContain("Précisions « Autre »");
+    expect(facts).toContain("Coopérative agricole");
+    expect(facts).toContain("Suisse");
+  });
+
+  it("invariant : sans précision « Autre », les FAITS sont strictement inchangés", () => {
+    const reco = recommend(baseProfile());
+    const without = serializeRecoFacts(reco, (m) => m.id);
+    expect(serializeRecoFacts(reco, (m) => m.id, undefined)).toBe(without);
+    expect(serializeRecoFacts(reco, (m) => m.id, { activity: "  ", zone: "" })).toBe(without);
+    expect(without).not.toContain("Précisions « Autre »");
+  });
 });
 
 describe("buildChatMessages", () => {

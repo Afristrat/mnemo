@@ -17,12 +17,24 @@ import type { LlmMessage } from "./types";
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
 /**
+ * Précisions libres « Autre » du profil (S-064), CONTEXTE seulement (jamais des chiffres). Greffées
+ * aux FAITS pour que l'assistant tienne compte de ce que l'utilisateur entend par « Autre ».
+ */
+export type OtherPrecisions = { activity?: string; zone?: string; region?: string };
+
+/**
  * Bloc de FAITS autoritatifs = les chiffres EXACTEMENT affichés à l'utilisateur (sa recommandation).
  * Ce sont les SEULS montants/scores que l'assistant a le droit de citer. Pur, déterministe.
+ * `otherPrecisions` (optionnel, S-064) = précisions libres « Autre » du profil : CONTEXTE qualitatif,
+ * jamais une source de chiffre (DÉFCON 1 préservé). Absent ⇒ FAITS strictement inchangés.
  */
-export function serializeRecoFacts(reco: Recommendation, resolve: EngineResolver): string {
+export function serializeRecoFacts(
+  reco: Recommendation,
+  resolve: EngineResolver,
+  otherPrecisions?: OtherPrecisions,
+): string {
   const layers = reco.layers.map((l) => `  - ${resolve(l.name)} : ${l.choice} (${l.cost} €/mois)`).join("\n");
-  return [
+  const lines = [
     `Preset retenu : ${reco.preset}`,
     `Coût d'infrastructure total : ${reco.totalCost} €/mois (±30 %, payé aux fournisseurs)`,
     `Mise en route (une fois) : ${reco.setupCost} €`,
@@ -32,7 +44,20 @@ export function serializeRecoFacts(reco: Recommendation, resolve: EngineResolver
     `Score moyen : ${reco.scoreAvg}/10`,
     "Couches de la stack recommandée :",
     layers,
-  ].join("\n");
+  ];
+  const activity = otherPrecisions?.activity?.trim();
+  const zone = otherPrecisions?.zone?.trim();
+  const region = otherPrecisions?.region?.trim();
+  const hasActivity = activity !== undefined && activity.length > 0;
+  const hasZone = zone !== undefined && zone.length > 0;
+  const hasRegion = region !== undefined && region.length > 0;
+  if (hasActivity || hasZone || hasRegion) {
+    lines.push("Précisions « Autre » saisies par l'utilisateur (CONTEXTE, jamais une source de chiffre) :");
+    if (hasActivity) lines.push(`  - Activité : ${activity}`);
+    if (hasZone) lines.push(`  - Zone d'hébergement : ${zone}`);
+    if (hasRegion) lines.push(`  - Région(s) : ${region}`);
+  }
+  return lines.join("\n");
 }
 
 function formatWebResults(results: WebSearchResult[]): string {

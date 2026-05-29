@@ -162,6 +162,17 @@
     "refine": "Affiner mon profil (configurateur)",
     "expert": "Voir le détail (expert)"
   },
+  "Wizard": {
+    "other": {
+      "activityLabel": "Précisez votre activité",
+      "activityPlaceholder": "Ex. : coopérative agricole, collectivité territoriale, ONG…",
+      "zoneLabel": "Précisez la zone d'hébergement",
+      "zonePlaceholder": "Ex. : Suisse, Canada, Royaume-Uni…",
+      "regionLabel": "Précisez la ou les régions « Autre »",
+      "regionPlaceholder": "Ex. : Suisse, Émirats, Singapour…",
+      "help": "Cette précision est reprise dans le récap et l'explication de votre recommandation. Elle ne modifie aucun coût directement (le chiffrage reste prudent par défaut)."
+    }
+  },
   "Options": {
     "activity": {
       "freelance": "Freelance / indépendant",

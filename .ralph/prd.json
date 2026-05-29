@@ -1043,6 +1043,20 @@
         "réconciliation : statut live divergent du repli daté → flag « à revérifier » + confiance basse ; repli seed si veille indispo ; JAMAIS d'affichage sans date + caractère révisable + disclaimer « ingénierie, pas juridique »",
         "audit trail (table RLS, pivot circle) des révisions de statut ; tests veille+réconciliation (LLM/Firecrawl mockés) ; typecheck 0 / lint 0/0 / build OK"
       ]
+    },
+    {
+      "id": "S-064",
+      "title": "Saisie libre « Autre » dans le configurateur (intégrée à la reco/narration, DÉFCON 1)",
+      "feature": "wizard",
+      "passes": true,
+      "deps": [],
+      "note": "Demande Amine : les champs proposant « Autre » (activity, zone, region) doivent offrir une saisie libre inline pour préciser, et cette précision doit être prise en considération. CONCEPTION DÉFCON 1 : Profile.otherText (optionnel) = donnée pure ; le moteur reste pur et chiffre sur l_énum (other = défaut), JAMAIS de coût inventé depuis du texte libre. La précision alimente les couches EXPLICATIVES (récap buildChoiceRecap « Autre : <précision> », narration narrationContext.notes, assistant serializeRecoFacts otherPrecisions) — canal CONTEXTE-seulement (garde-fou isCleanNarration). activity+zone livrés par sous-agent ; region ajouté ensuite. i18n Wizard.other.* fr/en. LIVRÉ : activity+zone+region. Profile.otherText (optionnel, region ajoutée), setOtherText (hook), OtherTextField inline (i18n Wizard.other.*, region rendu dans bloc infra si primaryRegion=other OU allowedRegions inclut other). Prise en compte : recap (Autre: <precision> pour activity/zone), narration (narrationContext.notes pour les 3), assistant (serializeRecoFacts otherPrecisions {activity,zone,region}). DÉFCON 1 : moteur pur inchangé, AUCUN coût inventé (canal CONTEXTE seulement). +tests recap/assistant/wizard/hook. typecheck 0, lint 0, 446 tests, build OK.",
+      "acceptance": [
+        "saisie libre inline visible dès que la valeur d_un champe Autre est choisie (activity, zone, region) ; persistée dans Profile.otherText",
+        "précision reprise dans le récap des choix + narration + assistant (CONTEXTE seulement, jamais un chiffre inventé — DÉFCON 1) ; moteur pur inchangé (invariant : sans otherText, coûts identiques)",
+        "i18n fr/en (Wizard.other.*) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ],
+      "completedAt": "2026-05-29"
     }
   ]
 }

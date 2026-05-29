@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen } from "@/test/render";
+import { render, screen, fireEvent } from "@/test/render";
 import { Wizard } from "@/components/wizard/Wizard";
 import { YesNo } from "@/components/wizard/YesNo";
 
@@ -32,6 +32,42 @@ describe("Wizard (4 blocs)", () => {
     render(<Wizard />);
     await screen.findByText("Profil & contraintes");
     expect(screen.getByRole("button", { name: "Intégrer cette note" })).toBeInTheDocument();
+  });
+
+  describe("saisie « Autre » (S-064)", () => {
+    it("n'affiche aucune saisie « Autre » par défaut (activité freelance)", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      expect(screen.queryByLabelText("Précisez votre activité")).not.toBeInTheDocument();
+      expect(screen.queryByLabelText("Précisez la zone d'hébergement")).not.toBeInTheDocument();
+    });
+
+    it("affiche la saisie inline dès que l'activité est réglée sur « Autre »", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      // La 1ʳᵉ carte « Autre » est celle de l'activité (avant le champ Zone).
+      const autres = screen.getAllByRole("button", { name: "Autre" });
+      fireEvent.click(autres[0]);
+      expect(screen.getByLabelText("Précisez votre activité")).toBeInTheDocument();
+    });
+
+    it("affiche la saisie inline dès que la zone est réglée sur « Autre »", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      const autres = screen.getAllByRole("button", { name: "Autre" });
+      // La 2ᵉ carte « Autre » est celle de la zone d'hébergement.
+      fireEvent.click(autres[1]);
+      expect(screen.getByLabelText("Précisez la zone d'hébergement")).toBeInTheDocument();
+    });
+
+    it("persiste la saisie « Autre » (relue dans le champ après ressaisie)", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      fireEvent.click(screen.getAllByRole("button", { name: "Autre" })[0]);
+      const input = screen.getByLabelText("Précisez votre activité");
+      fireEvent.change(input, { target: { value: "Coopérative agricole" } });
+      expect(screen.getByLabelText("Précisez votre activité")).toHaveValue("Coopérative agricole");
+    });
   });
 });
 
