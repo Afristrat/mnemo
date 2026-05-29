@@ -82,6 +82,47 @@
     "guarantees": "Guarantees",
     "cta": "Free diagnostic"
   },
+  "QuickProfile": {
+    "fieldWho": "You are…",
+    "fieldData": "Your data is mostly…",
+    "fieldPriority": "Your priority",
+    "fieldMedia": "Beyond text?",
+    "who": {
+      "solo": "Independent / solo",
+      "team": "Team / SME",
+      "regulated": "Regulated profession",
+      "regulatedHint": "Lawyer, healthcare, wealth advisor, professional secrecy",
+      "research": "Research / academic"
+    },
+    "data": {
+      "public": "Public",
+      "internal": "Internal",
+      "sensitive": "Confidential",
+      "secret": "Ultra-sensitive / secret"
+    },
+    "priority": {
+      "sovereignty": "Sovereignty & control",
+      "cost": "Controlled cost",
+      "speed": "Fast ramp-up"
+    },
+    "media": {
+      "text": "Text / documents only",
+      "media": "Also audio / video / images"
+    },
+    "refine": "Refine in detail (configurator)",
+    "verdict": "See my verdict",
+    "disclaimer": "Indicative answers, adjustable later. AI can be wrong: every cost is sourced and dated."
+  },
+  "Intake": {
+    "label": "Or describe your need in one sentence",
+    "placeholder": "E.g.: law firm, 10 people, confidential client files, hosted in France, budget ≈ €300/month…",
+    "analyze": "Analyze and pre-fill",
+    "analyzing": "Analyzing…",
+    "dictate": "Dictate by voice",
+    "listening": "● Listening… (stop)",
+    "error": "Analysis unavailable right now. You can fill in the configurator manually — that's always possible.",
+    "disclaimer": "An AI reads your description and pre-fills the configurator (bounded values, no invented cost). You adjust everything afterwards. AI can be wrong — check the proposed profile."
+  },
   "Home": {
     "hero": {
       "eyebrow": "Sovereign AI memory infrastructure",

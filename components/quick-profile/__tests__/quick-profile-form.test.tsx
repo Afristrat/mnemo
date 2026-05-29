@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@/test/render";
 import { QuickProfileForm } from "@/components/quick-profile/QuickProfileForm";
 import { STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import type { Profile } from "@/lib/engine";

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
@@ -44,6 +45,8 @@ type State =
 
 export function IntakeField(): ReactElement {
   const router = useRouter();
+  const t = useTranslations("Intake");
+  const locale = useLocale();
   const [text, setText] = useState("");
   const [state, setState] = useState<State>({ kind: "idle" });
   const [listening, setListening] = useState(false);
@@ -85,7 +88,7 @@ export function IntakeField(): ReactElement {
       return;
     }
     const rec = new Ctor();
-    rec.lang = "fr-FR";
+    rec.lang = locale === "en" ? "en-US" : "fr-FR";
     rec.interimResults = false;
     rec.onresult = (event): void => {
       let transcript = "";
@@ -99,26 +102,26 @@ export function IntakeField(): ReactElement {
     recognitionRef.current = rec;
     rec.start();
     setListening(true);
-  }, [listening]);
+  }, [listening, locale]);
 
   const dictationAvailable = speechRecognitionCtor() !== null;
 
   return (
     <div className="w-full max-w-2xl text-left">
       <label htmlFor="intake-text" className="text-label-caps uppercase text-on-surface-variant">
-        Ou décrivez votre besoin en une phrase
+        {t("label")}
       </label>
       <textarea
         id="intake-text"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={3}
-        placeholder="Ex. : cabinet d’avocats, 10 personnes, dossiers clients confidentiels, hébergement en France, budget ≈ 300 €/mois…"
+        placeholder={t("placeholder")}
         className="mt-2 w-full rounded-input border border-outline-variant bg-surface p-3 text-body-md text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       />
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <Button onClick={() => void analyse()} disabled={state.kind === "busy" || text.trim() === ""}>
-          {state.kind === "busy" ? "Analyse…" : "Analyser et pré-remplir"}
+          {state.kind === "busy" ? t("analyzing") : t("analyze")}
         </Button>
         {dictationAvailable ? (
           <button
@@ -127,20 +130,14 @@ export function IntakeField(): ReactElement {
             aria-pressed={listening}
             className="rounded-full border border-outline-variant px-4 py-2 text-body-sm font-medium text-on-surface transition-colors hover:bg-surface-container"
           >
-            {listening ? "● Écoute… (arrêter)" : "Dicter à la voix"}
+            {listening ? t("listening") : t("dictate")}
           </button>
         ) : null}
       </div>
       {state.kind === "error" ? (
-        <p className="mt-2 text-body-sm text-error">
-          Analyse indisponible pour le moment. Vous pouvez remplir le configurateur manuellement, c’est
-          toujours possible.
-        </p>
+        <p className="mt-2 text-body-sm text-error">{t("error")}</p>
       ) : null}
-      <p className="mt-2 text-body-sm text-on-surface-variant">
-        Une IA lit votre description et pré-remplit le configurateur (valeurs bornées, aucun coût
-        inventé). Vous ajustez tout ensuite. Une IA peut se tromper, vérifiez le profil proposé.
-      </p>
+      <p className="mt-2 text-body-sm text-on-surface-variant">{t("disclaimer")}</p>
     </div>
   );
 }

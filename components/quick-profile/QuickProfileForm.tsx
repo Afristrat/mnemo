@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement, type ReactNode } from "react";
@@ -18,31 +19,6 @@ import {
 import { STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import type { Option } from "@/lib/wizard/options";
 
-const WHO_OPTIONS: Option<QuickWho>[] = [
-  { value: "solo", label: "Indépendant / solo" },
-  { value: "team", label: "Équipe / PME" },
-  { value: "regulated", label: "Profession régulée", hint: "Avocat, santé, CGP, secret pro" },
-  { value: "research", label: "Recherche / académique" },
-];
-
-const DATA_OPTIONS: Option<QuickData>[] = [
-  { value: "public", label: "Publiques" },
-  { value: "internal", label: "Internes" },
-  { value: "sensitive", label: "Confidentielles" },
-  { value: "secret", label: "Ultra-sensibles / secret" },
-];
-
-const PRIORITY_OPTIONS: Option<QuickPriority>[] = [
-  { value: "sovereignty", label: "Souveraineté & contrôle" },
-  { value: "cost", label: "Coût maîtrisé" },
-  { value: "speed", label: "Mise en route rapide" },
-];
-
-const MEDIA_OPTIONS: Option<QuickMedia>[] = [
-  { value: "text", label: "Texte / documents seulement" },
-  { value: "media", label: "Aussi audio / vidéo / images" },
-];
-
 function Field({ label, children }: { label: string; children: ReactNode }): ReactElement {
   return (
     <fieldset className="border-0 p-0">
@@ -59,7 +35,30 @@ function Field({ label, children }: { label: string; children: ReactNode }): Rea
  */
 export function QuickProfileForm(): ReactElement {
   const router = useRouter();
+  const t = useTranslations("QuickProfile");
   const [answers, setAnswers] = useState<QuickAnswers>(DEFAULT_QUICK_ANSWERS);
+
+  const whoOptions: Option<QuickWho>[] = [
+    { value: "solo", label: t("who.solo") },
+    { value: "team", label: t("who.team") },
+    { value: "regulated", label: t("who.regulated"), hint: t("who.regulatedHint") },
+    { value: "research", label: t("who.research") },
+  ];
+  const dataOptions: Option<QuickData>[] = [
+    { value: "public", label: t("data.public") },
+    { value: "internal", label: t("data.internal") },
+    { value: "sensitive", label: t("data.sensitive") },
+    { value: "secret", label: t("data.secret") },
+  ];
+  const priorityOptions: Option<QuickPriority>[] = [
+    { value: "sovereignty", label: t("priority.sovereignty") },
+    { value: "cost", label: t("priority.cost") },
+    { value: "speed", label: t("priority.speed") },
+  ];
+  const mediaOptions: Option<QuickMedia>[] = [
+    { value: "text", label: t("media.text") },
+    { value: "media", label: t("media.media") },
+  ];
 
   function set<K extends keyof QuickAnswers>(key: K, value: QuickAnswers[K]): void {
     setAnswers((prev) => ({ ...prev, [key]: value }));
@@ -76,17 +75,17 @@ export function QuickProfileForm(): ReactElement {
   return (
     <Card className="w-full max-w-2xl text-left">
       <div className="space-y-6">
-        <Field label="Vous êtes…">
-          <RadioCards value={answers.who} options={WHO_OPTIONS} onChange={(v) => set("who", v)} />
+        <Field label={t("fieldWho")}>
+          <RadioCards value={answers.who} options={whoOptions} onChange={(v) => set("who", v)} />
         </Field>
-        <Field label="Vos données sont surtout…">
-          <RadioCards value={answers.data} options={DATA_OPTIONS} onChange={(v) => set("data", v)} />
+        <Field label={t("fieldData")}>
+          <RadioCards value={answers.data} options={dataOptions} onChange={(v) => set("data", v)} />
         </Field>
-        <Field label="Votre priorité">
-          <RadioCards value={answers.priority} options={PRIORITY_OPTIONS} onChange={(v) => set("priority", v)} />
+        <Field label={t("fieldPriority")}>
+          <RadioCards value={answers.priority} options={priorityOptions} onChange={(v) => set("priority", v)} />
         </Field>
-        <Field label="Au-delà du texte ?">
-          <RadioCards value={answers.media} options={MEDIA_OPTIONS} onChange={(v) => set("media", v)} />
+        <Field label={t("fieldMedia")}>
+          <RadioCards value={answers.media} options={mediaOptions} onChange={(v) => set("media", v)} />
         </Field>
       </div>
 
@@ -96,7 +95,7 @@ export function QuickProfileForm(): ReactElement {
           onClick={persist}
           className="text-body-sm text-secondary underline decoration-dotted"
         >
-          Affiner en détail (configurateur)
+          {t("refine")}
         </Link>
         <Button
           onClick={() => {
@@ -104,12 +103,10 @@ export function QuickProfileForm(): ReactElement {
             router.push("/resultats?mode=verdict");
           }}
         >
-          Voir mon verdict
+          {t("verdict")}
         </Button>
       </div>
-      <p className="mt-3 text-body-sm text-on-surface-variant">
-        Réponses indicatives, ajustables ensuite. Une IA peut se tromper : chaque coût est sourcé et daté.
-      </p>
+      <p className="mt-3 text-body-sm text-on-surface-variant">{t("disclaimer")}</p>
     </Card>
   );
 }

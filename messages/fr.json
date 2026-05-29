@@ -82,6 +82,47 @@
     "guarantees": "Garanties",
     "cta": "Diagnostic gratuit"
   },
+  "QuickProfile": {
+    "fieldWho": "Vous êtes…",
+    "fieldData": "Vos données sont surtout…",
+    "fieldPriority": "Votre priorité",
+    "fieldMedia": "Au-delà du texte ?",
+    "who": {
+      "solo": "Indépendant / solo",
+      "team": "Équipe / PME",
+      "regulated": "Profession régulée",
+      "regulatedHint": "Avocat, santé, CGP, secret pro",
+      "research": "Recherche / académique"
+    },
+    "data": {
+      "public": "Publiques",
+      "internal": "Internes",
+      "sensitive": "Confidentielles",
+      "secret": "Ultra-sensibles / secret"
+    },
+    "priority": {
+      "sovereignty": "Souveraineté & contrôle",
+      "cost": "Coût maîtrisé",
+      "speed": "Mise en route rapide"
+    },
+    "media": {
+      "text": "Texte / documents seulement",
+      "media": "Aussi audio / vidéo / images"
+    },
+    "refine": "Affiner en détail (configurateur)",
+    "verdict": "Voir mon verdict",
+    "disclaimer": "Réponses indicatives, ajustables ensuite. Une IA peut se tromper : chaque coût est sourcé et daté."
+  },
+  "Intake": {
+    "label": "Ou décrivez votre besoin en une phrase",
+    "placeholder": "Ex. : cabinet d’avocats, 10 personnes, dossiers clients confidentiels, hébergement en France, budget ≈ 300 €/mois…",
+    "analyze": "Analyser et pré-remplir",
+    "analyzing": "Analyse…",
+    "dictate": "Dicter à la voix",
+    "listening": "● Écoute… (arrêter)",
+    "error": "Analyse indisponible pour le moment. Vous pouvez remplir le configurateur manuellement, c’est toujours possible.",
+    "disclaimer": "Une IA lit votre description et pré-remplit le configurateur (valeurs bornées, aucun coût inventé). Vous ajustez tout ensuite. Une IA peut se tromper, vérifiez le profil proposé."
+  },
   "Home": {
     "hero": {
       "eyebrow": "Infrastructure de mémoire IA souveraine",
