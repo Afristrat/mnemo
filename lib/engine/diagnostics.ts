@@ -92,21 +92,21 @@ export function computeKMChecks(preset: Preset, p: Profile): KMCheck[] {
   return [
     {
       cause: "1. Fausse prémisse « stocker = savoir »",
-      coverage: "Frontmatter qualifie chaque atome (Xavier v1.0.0) + types décision/méthode/postmortem",
+      coverage: "Frontmatter qualifie chaque atome (contrat de métadonnées) + types décision/méthode/postmortem",
       ok: true,
       warn: false,
     },
     {
       cause: "2. Rigidité des instantanés figés",
       coverage: wantsBitemp
-        ? "Bitemporel actif sur faits (Chris/Xavier), V1+ ajoute bi-temp sur arêtes"
+        ? "Bitemporel actif sur faits, V1+ ajoute bi-temp sur arêtes"
         : "Pas de bitemporel demandé → archive plate, risque de figer",
       ok: wantsBitemp,
       warn: false,
     },
     {
       cause: "3. Décrochage opérationnel (la base n'est pas maintenue)",
-      coverage: "Vault markdown = écriture = ingestion (doctrine Amine). Pas de saisie séparée à entretenir.",
+      coverage: "Vault markdown = écriture = ingestion. Pas de saisie séparée à entretenir.",
       ok: true,
       warn: false,
     },
@@ -130,7 +130,7 @@ export function computeKMChecks(preset: Preset, p: Profile): KMCheck[] {
       coverage:
         preset === "LIGHT"
           ? "Transclusion basique (markdown links). Limité pour archives complexes"
-          : "Transclusion + use cases ancrés possible (MasterNote pattern Amine)",
+          : "Transclusion + use cases ancrés possible (pattern note-maîtresse)",
       ok: preset !== "LIGHT",
       warn: preset === "LIGHT",
     },
