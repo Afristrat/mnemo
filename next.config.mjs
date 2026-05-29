@@ -1,3 +1,9 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
+// Fondation i18n (S-057) : pointe explicitement vers la request config (chemin par défaut,
+// rendu explicite pour la lisibilité). Mode « sans routing » → locale par cookie, cf. i18n/.
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,4 +16,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

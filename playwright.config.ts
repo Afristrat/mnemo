@@ -15,6 +15,9 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "on-first-retry",
+    // i18n (S-057) : la locale est détectée via Accept-Language au 1ᵉʳ accès. On fixe `fr-FR`
+    // pour un rendu français déterministe (audience par défaut) et stable des parcours e2e.
+    locale: "fr-FR",
   },
   projects: [
     { name: "desktop-chromium", use: { ...devices["Desktop Chrome"] } },
