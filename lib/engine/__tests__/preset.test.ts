@@ -70,3 +70,27 @@ describe("decidePreset — score de besoin LIGHT/MEDIUM (S-051)", () => {
     expect(medium.reason).toMatch(/score \d+ > 3/);
   });
 });
+
+describe("decidePreset — préférence souveraineté (S-066)", () => {
+  it("relève le preset d'un cran : LIGHT → MEDIUM", () => {
+    expect(decidePreset(prof({ volume: "lt1" })).preset).toBe("LIGHT");
+    expect(decidePreset(prof({ volume: "lt1", preferSovereign: true })).preset).toBe("MEDIUM");
+  });
+
+  it("relève le preset d'un cran : MEDIUM → HARD", () => {
+    expect(decidePreset(prof({ volume: "10to100" })).preset).toBe("MEDIUM");
+    expect(decidePreset(prof({ volume: "10to100", preferSovereign: true })).preset).toBe("HARD");
+  });
+
+  it("HARD reste HARD (jamais au-delà) + raison explicite", () => {
+    const d = decidePreset(prof({ sensitivity: "secret", preferSovereign: true }));
+    expect(d.preset).toBe("HARD");
+    const bumped = decidePreset(prof({ volume: "lt1", preferSovereign: true }));
+    expect(bumped.reason).toMatch(/open-source\/souverain/i);
+  });
+
+  it("invariant : sans préférence, le preset est inchangé", () => {
+    expect(decidePreset(prof({ volume: "lt1" })).preset).toBe("LIGHT");
+    expect(decidePreset(prof({ volume: "lt1", preferSovereign: false })).preset).toBe("LIGHT");
+  });
+});

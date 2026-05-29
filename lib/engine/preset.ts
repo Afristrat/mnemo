@@ -90,8 +90,8 @@ function needScore(p: Profile): { score: number; drivers: string[] } {
   return { score, drivers };
 }
 
-/** Décide le preset (LIGHT/MEDIUM/HARD) à partir du profil. Pure et déterministe. */
-export function decidePreset(p: Profile): PresetDecision {
+/** Décision de base (besoin/conformité), avant préférence de souveraineté. Pure et déterministe. */
+function baseDecision(p: Profile): PresetDecision {
   const triggers = hardTriggers(p);
   const { score, drivers } = needScore(p);
 
@@ -120,4 +120,24 @@ export function decidePreset(p: Profile): PresetDecision {
     drivers,
     reason: `Besoin intermédiaire (score ${score} > ${LIGHT_MAX}) : ${drivers.join(", ")}. Équilibre souveraineté (hébergement contrôlé) et pragmatisme (cascade API + self-host).`,
   };
+}
+
+/**
+ * Décide le preset (LIGHT/MEDIUM/HARD) à partir du profil. Pure et déterministe.
+ * Si `preferSovereign` est activé (S-066), le preset est relevé d'un cran (la souveraineté de la
+ * stack est portée par le preset dans le catalogue : MEDIUM/HARD = self-host/open-source). Honnête :
+ * coût/complexité plus élevés — la tension budget est signalée par le budget-mètre, jamais masquée.
+ */
+export function decidePreset(p: Profile): PresetDecision {
+  const base = baseDecision(p);
+  if (p.preferSovereign === true && base.preset !== "HARD") {
+    const bumped: Preset = base.preset === "LIGHT" ? "MEDIUM" : "HARD";
+    return {
+      preset: bumped,
+      score: base.score,
+      drivers: [...base.drivers, "préférence souveraineté/open-source (+1 cran)"],
+      reason: `${base.reason} Préférence « open-source/souverain » activée → preset relevé à ${bumped} pour une stack davantage auto-hébergée (composants open-source self-host) ; le surcoût/la complexité associés sont reflétés dans le budget-mètre.`,
+    };
+  }
+  return base;
 }

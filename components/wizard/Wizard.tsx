@@ -390,6 +390,19 @@ export function Wizard(): ReactElement {
               <Field label="Budget mensuel" info={INFO.budget}>
                 <RadioCards value={profile.budget} options={opts.budget} onChange={(v) => setField("budget", v)} />
               </Field>
+              <Field
+                label="Privilégier l'open-source / souverain"
+                info={{
+                  why: "Oriente la recommandation vers une stack davantage auto-hébergée et open-source, plutôt que des outils propriétaires qui enferment.",
+                  consequence: "Le preset est relevé d'un cran (composants self-host) : plus de souveraineté, mais coût et complexité plus élevés — la tension éventuelle avec le budget est signalée, jamais masquée.",
+                }}
+              >
+                <YesNo
+                  ariaLabel="Privilégier l'open-source / souverain"
+                  value={profile.preferSovereign ?? false}
+                  onChange={(v) => setField("preferSovereign", v)}
+                />
+              </Field>
               <NoteField
                 block="profil"
                 value={profile.freeNotes?.profil ?? ""}
