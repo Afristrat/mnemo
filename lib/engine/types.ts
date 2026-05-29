@@ -2,6 +2,7 @@
 // Porté de design-reference/.../simulator-archi-base-memorielle-v2.html (logique pure, sans UI).
 
 import type { ComputeSizing } from "./compute";
+import type { TransferRegion, TransferStatus } from "@/lib/legal/transfers";
 
 export const PRESETS = ["LIGHT", "MEDIUM", "HARD"] as const;
 export type Preset = (typeof PRESETS)[number];
@@ -171,6 +172,51 @@ export type BackupPlan = {
   costSources: CostSource[]; // DÉFCON 1
 };
 
+// --- Résidence multi-juridiction + DR/failover (spec n°2 §3, types S-044, consommés S-045→S-048) ---
+
+/** Région (juridiction), aligné 1-1 sur `Zone`. Type canonique = `TransferRegion` (lib/legal, S-043). */
+export type Region = TransferRegion; // "eu" | "maroc" | "us" | "other"
+export type DrTier = "none" | "warm" | "hot";
+export type RegionRole = "primary" | "replica" | "standby" | "active";
+export type RegionAssignment = { region: Region; role: RegionRole; monthlyCost: number };
+
+/** Conformité d'un flux inter-région (réutilise `TransferStatus` de lib/legal, S-043). */
+export type TransferFlag = { from: Region; to: Region; legalBasis: string; status: TransferStatus; note: string };
+
+/**
+ * Entrée résidence (hybride palier + expert, spec §3.1). Absente ⇒ mono-région dérivée de `zone`,
+ * DR `none`. `primaryRegion`/`drTier` dérivés du profil si absents ; les autres champs = affinage expert.
+ */
+export type Residency = {
+  primaryRegion?: Region;
+  drTier?: DrTier;
+  allowedRegions?: Region[];
+  noTransferOutsideJurisdiction?: boolean;
+  activeActive?: boolean;
+  drRpoMinutes?: number;
+  drRtoMinutes?: number;
+};
+
+/**
+ * Plan résidence/DR déduit (ajouté à `Recommendation` en S-046). `drTier "none"` + mono-région →
+ * plan neutre (coûts 0, invariant `totalCost` préservé). RPO/RTO **régionaux** (≠ backup intra-région).
+ */
+export type ResidencyPlan = {
+  primaryRegion: Region;
+  regions: RegionAssignment[];
+  drTier: DrTier;
+  activeActive: boolean;
+  rpoMinutes: number;
+  rtoMinutes: number;
+  transfers: TransferFlag[];
+  /** Tension résidence × DR exposée, JAMAIS résolue en douce (décision Amine #6 « honnêteté brutale »). */
+  conflict: { hasConflict: boolean; reason: string; levers: string[] };
+  monthlyCost: number; // réplication (egress inter-région) + régions en attente
+  setupCost: number; // amorçage des réplicas (premier transfert complet)
+  geoSovScore: number; // alimente la 10ᵉ dimension `geosov` (câblée en S-045)
+  costSources: CostSource[]; // DÉFCON 1
+};
+
 /**
  * Clés des 9 dimensions de scoring (ordre stable). `resilience` (9ᵉ) ajoutée en S-027 (refonte 8→9) :
  * pilotée par le `BackupPlan` (criticité, 3-2-1-1-0, restauration testée, immutabilité, érasure).
@@ -200,6 +246,8 @@ export type Profile = {
   mediaNeeds?: MediaNeed[];
   /** Sauvegarde & résilience (spec n°1, consommé en S-026/S-028). Absent ⇒ criticité `none`. */
   backup?: Backup;
+  /** Résidence multi-juridiction + DR/failover (spec n°2, consommé en S-044). Absent ⇒ mono-région + DR `none`. */
+  residency?: Residency;
   /** Notes libres par bloc du wizard (refonte 4-blocs, S-019). */
   freeNotes?: Partial<Record<BlockId, string>>;
 };

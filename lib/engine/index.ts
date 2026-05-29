@@ -43,6 +43,13 @@ export {
   type ComputeInstanceLine,
   type ComputeSizing,
 } from "./compute";
+export {
+  deriveResidencyPlan,
+  deriveResidencyTopology,
+  costResidency,
+  type ResidencyTopology,
+  type ResidencyCost,
+} from "./residency";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
 export {
