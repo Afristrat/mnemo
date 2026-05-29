@@ -30,6 +30,23 @@ export type OptionLabel = (key: string) => string;
 function labelOf<T extends string>(defs: OptionDef<T>[], value: T, optionLabel: OptionLabel): string {
   return optionLabel(optionLabelKey(defs, value));
 }
+
+/**
+ * Libellé d'un champ borné, en intégrant la précision libre « Autre » quand la valeur est `other`
+ * ET qu'un texte a été saisi (S-064). Forme : « Autre : <précision> » → le récap montre la précision
+ * au lieu d'un « Autre » muet. Aucune précision ⇒ libellé inchangé (invariant préservé).
+ */
+function labelWithOther<T extends string>(
+  defs: OptionDef<T>[],
+  value: T,
+  optionLabel: OptionLabel,
+  otherText: string | undefined,
+): string {
+  const base = labelOf(defs, value, optionLabel);
+  const precise = otherText?.trim();
+  if (value === "other" && precise !== undefined && precise.length > 0) return `${base} : ${precise}`;
+  return base;
+}
 function labelsOf<T extends string>(defs: OptionDef<T>[], values: T[], optionLabel: OptionLabel): string {
   return values.length === 0 ? "—" : values.map((v) => labelOf(defs, v, optionLabel)).join(", ");
 }
@@ -71,8 +88,8 @@ export function buildChoiceRecap(profile: Profile, reco: Recommendation, optionL
     {
       heading: "Profil & conformité",
       items: [
-        { label: "Activité", value: labelOf(ACTIVITY_OPTIONS, profile.activity, optionLabel), impactsCost: false },
-        { label: "Zone d'hébergement", value: labelOf(ZONE_OPTIONS, profile.zone, optionLabel), impactsCost: false },
+        { label: "Activité", value: labelWithOther(ACTIVITY_OPTIONS, profile.activity, optionLabel, profile.otherText?.activity), impactsCost: false },
+        { label: "Zone d'hébergement", value: labelWithOther(ZONE_OPTIONS, profile.zone, optionLabel, profile.otherText?.zone), impactsCost: false },
         { label: "Sensibilité", value: labelOf(SENSITIVITY_OPTIONS, profile.sensitivity, optionLabel), impactsCost: false },
         { label: "Régimes", value: labelsOf(REGULATION_OPTIONS, profile.regulations, optionLabel), impactsCost: false },
         { label: "Audit", value: profile.audit ? "Oui" : "Non", impactsCost: false },

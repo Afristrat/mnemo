@@ -12,6 +12,7 @@ type UseWizardProfile = {
   toggleRegulation: (value: Regulation) => void;
   setModuleLevel: (id: ModuleId, level: number) => void;
   setNote: (block: BlockId, value: string) => void;
+  setOtherText: (field: "activity" | "zone" | "region", value: string) => void;
   loadProfile: (next: Profile) => void;
 };
 
@@ -72,6 +73,10 @@ export function useWizardProfile(): UseWizardProfile {
     setProfile((prev) => ({ ...prev, freeNotes: { ...prev.freeNotes, [block]: value } }));
   }, []);
 
+  const setOtherText = useCallback((field: "activity" | "zone" | "region", value: string) => {
+    setProfile((prev) => ({ ...prev, otherText: { ...prev.otherText, [field]: value } }));
+  }, []);
+
   const loadProfile = useCallback((next: Profile) => setProfile(next), []);
 
   return {
@@ -82,6 +87,7 @@ export function useWizardProfile(): UseWizardProfile {
     toggleRegulation,
     setModuleLevel,
     setNote,
+    setOtherText,
     loadProfile,
   };
 }

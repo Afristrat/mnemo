@@ -237,6 +237,44 @@ function NoteField({
   );
 }
 
+/**
+ * Saisie libre « Autre » (S-064), rendue inline sous un RadioCards dont la valeur === "other".
+ * Le texte est une DONNÉE du profil (persistée), JAMAIS un nombre : il alimente uniquement le récap
+ * et les canaux explicatifs/LLM (narration, FAITS de l'assistant), pas le chiffrage déterministe.
+ */
+function OtherTextField({
+  field,
+  value,
+  onChange,
+}: {
+  field: "activity" | "zone" | "region";
+  value: string;
+  onChange: (value: string) => void;
+}): ReactElement {
+  const t = useTranslations("Wizard.other");
+  const inputId = `other-${field}`;
+  return (
+    <div className="mt-3 rounded-card border border-outline-variant bg-surface-container-lowest p-4">
+      <label htmlFor={inputId} className="mb-2 block text-label-caps uppercase text-on-surface-variant">
+        {t(`${field}Label`)}
+      </label>
+      <input
+        id={inputId}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={t(`${field}Placeholder`)}
+        className={cn(
+          "w-full rounded-input bg-surface-container p-3 text-body-md text-on-surface",
+          "ring-1 ring-outline/20 placeholder:text-on-surface-variant/60",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        )}
+      />
+      <p className="mt-2 text-body-sm text-on-surface-variant">{t("help")}</p>
+    </div>
+  );
+}
+
 export function Wizard(): ReactElement {
   const {
     profile,
@@ -246,6 +284,7 @@ export function Wizard(): ReactElement {
     toggleRegulation,
     setModuleLevel,
     setNote,
+    setOtherText,
     loadProfile,
   } = useWizardProfile();
   const [step, setStep] = useState(0);
@@ -312,9 +351,23 @@ export function Wizard(): ReactElement {
             <>
               <Field label="Activité">
                 <RadioCards value={profile.activity} options={opts.activity} onChange={(v) => setField("activity", v)} />
+                {profile.activity === "other" ? (
+                  <OtherTextField
+                    field="activity"
+                    value={profile.otherText?.activity ?? ""}
+                    onChange={(v) => setOtherText("activity", v)}
+                  />
+                ) : null}
               </Field>
               <Field label="Zone d'hébergement" info={INFO.zone}>
                 <RadioCards value={profile.zone} options={opts.zone} onChange={(v) => setField("zone", v)} />
+                {profile.zone === "other" ? (
+                  <OtherTextField
+                    field="zone"
+                    value={profile.otherText?.zone ?? ""}
+                    onChange={(v) => setOtherText("zone", v)}
+                  />
+                ) : null}
               </Field>
               <Field label="Nombre d'utilisateurs">
                 <NumberStepper label="Nombre d'utilisateurs" value={profile.users} onChange={(v) => setField("users", v)} />
@@ -381,6 +434,14 @@ export function Wizard(): ReactElement {
                   computePrices={getComputePrices()}
                   onChange={(residency) => setField("residency", residency)}
                 />
+                {profile.residency?.primaryRegion === "other" ||
+                (profile.residency?.allowedRegions ?? []).includes("other") ? (
+                  <OtherTextField
+                    field="region"
+                    value={profile.otherText?.region ?? ""}
+                    onChange={(v) => setOtherText("region", v)}
+                  />
+                ) : null}
               </div>
               <NoteField
                 block="infra"

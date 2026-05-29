@@ -179,6 +179,22 @@ export function ResultsView(): ReactElement {
     const notes = Object.values(base.freeNotes ?? {}).filter(
       (n): n is string => typeof n === "string" && n.trim().length > 0,
     );
+    // Précisions « Autre » (S-064) : même canal CONTEXTE-seulement que les notes libres (jamais un
+    // chiffre). Préfixées pour que le LLM sache à quel champ elles se rapportent.
+    const activityOther = base.otherText?.activity?.trim();
+    if (base.activity === "other" && activityOther !== undefined && activityOther.length > 0) {
+      notes.push(`Activité (précision « Autre ») : ${activityOther}`);
+    }
+    const zoneOther = base.otherText?.zone?.trim();
+    if (base.zone === "other" && zoneOther !== undefined && zoneOther.length > 0) {
+      notes.push(`Zone d'hébergement (précision « Autre ») : ${zoneOther}`);
+    }
+    const regionOther = base.otherText?.region?.trim();
+    const regionIsOther =
+      base.residency?.primaryRegion === "other" || (base.residency?.allowedRegions ?? []).includes("other");
+    if (regionIsOther && regionOther !== undefined && regionOther.length > 0) {
+      notes.push(`Région(s) (précision « Autre ») : ${regionOther}`);
+    }
     return {
       activity: base.activity,
       preset: r.preset,
@@ -432,8 +448,19 @@ export function ResultsView(): ReactElement {
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
       <ExitEscrow profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
 
-      {/* Assistant Q&A contextuel (S-040) : ne cite que les faits de la reco affichée + web sourcé. */}
-      <AssistantPanel reco={activeResult} />
+      {/* Assistant Q&A contextuel (S-040) : ne cite que les faits de la reco affichée + web sourcé.
+          Les précisions « Autre » (S-064) sont greffées aux FAITS comme CONTEXTE qualitatif seulement. */}
+      <AssistantPanel
+        reco={activeResult}
+        otherPrecisions={{
+          activity: base?.activity === "other" ? base.otherText?.activity : undefined,
+          zone: base?.zone === "other" ? base.otherText?.zone : undefined,
+          region:
+            base?.residency?.primaryRegion === "other" || (base?.residency?.allowedRegions ?? []).includes("other")
+              ? base?.otherText?.region
+              : undefined,
+        }}
+      />
 
       <Link
         href="/configurateur"

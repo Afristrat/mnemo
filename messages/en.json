@@ -162,6 +162,17 @@
     "refine": "Refine my profile (configurator)",
     "expert": "See detail (expert)"
   },
+  "Wizard": {
+    "other": {
+      "activityLabel": "Specify your activity",
+      "activityPlaceholder": "E.g. agricultural cooperative, local authority, NGO…",
+      "zoneLabel": "Specify the hosting zone",
+      "zonePlaceholder": "E.g. Switzerland, Canada, United Kingdom…",
+      "regionLabel": "Specify the «Other» region(s)",
+      "regionPlaceholder": "E.g. Switzerland, UAE, Singapore…",
+      "help": "This detail is carried into the recap and the explanation of your recommendation. It does not change any cost directly (the pricing stays conservative by default)."
+    }
+  },
   "Options": {
     "activity": {
       "freelance": "Freelancer / independent",
