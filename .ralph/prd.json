@@ -1110,6 +1110,20 @@
         "lead persisté (RLS) ; pas de régression du verdict",
         "typecheck 0 / lint 0/0 / tests verts / build OK"
       ]
+    },
+    {
+      "id": "S-069",
+      "title": "Cohérence des champs du configurateur (« Aucun » régime mutuellement exclusif + revue)",
+      "feature": "wizard",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [],
+      "note": "Demande Amine : pour « Régimes applicables », cocher « Aucun » doit décocher tous les autres (et réciproquement). REVUE COMPLÈTE des champs : seul multi-select avec option « none » = regulations → corrigé (toggleRegulation : « none » exclusif dans les deux sens). Autres multi-selects sans exclusivité (contentTypes sans « Aucun », residency.allowedRegions multi-continent) ; single-selects (activity/zone/sensibilité/budget/latence/croissance/voix/drTier/primaryRegion) exclusifs par nature (RadioCards). otherText résiduel déjà ignoré quand la valeur ≠ other (S-064). Défauts/presets sans état incohérent (pas de « none » mêlé). +3 tests d_exclusivité. typecheck 0, lint 0, tests verts, build OK.",
+      "acceptance": [
+        "regulations : « Aucun » exclusif (le cocher vide les autres ; cocher un régime retire « Aucun »)",
+        "revue des autres champs : aucune autre incohérence d_exclusivité",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
     }
   ]
 }
