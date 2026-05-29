@@ -16,10 +16,10 @@
 // Le CONTRAT (types + table neutre + sélecteurs) vit DANS le moteur (lib/engine/residency), comme
 // `BackupPriceTable` vit dans lib/engine/backup. Ici = le SEED sourcé (repli daté + baseline) + le
 // garde-fou de réconciliation live. Le moteur reste pur (il n'importe jamais lib/pricing).
-import type { EgressVector, MultimodalPriceEntry, ResidencyPriceTable } from "@/lib/engine";
+import type { EgressVector, InterSiteSecurityPrices, ResidencyPriceTable } from "@/lib/engine";
 import { reconcilePrice, type PriceStatus } from "./reconcile";
 
-export type { EgressVector, HostingClass, ResidencyPriceTable } from "@/lib/engine";
+export type { EgressVector, HostingClass, InterSiteSecurityPrices, ResidencyPriceTable } from "@/lib/engine";
 export { NEUTRAL_RESIDENCY_PRICES, selectEgressVector, vectorsForClass } from "@/lib/engine";
 
 const CHECKED_AT = "2026-05-29";
@@ -124,20 +124,35 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
   },
 ];
 
-// --- Sécurisation inter-site (flag + fourchette ; coût détaillé = S-061) ------------------------
+// --- Sécurisation inter-site self-hosted (chiffrage du poste, S-061) ----------------------------
+//
+// Seuls les postes CHIFFRABLES VENDEUR sont figés (DÉFCON 1) : la VM passerelle (la liaison chiffrée
+// WireGuard/IPsec + mTLS reposent sur des logiciels open-source = licence 0 €, le coût est l'instance)
+// et l'alternative managée (mesh/SASE par utilisateur). La supervision + le durcissement = OPEX /
+// main-d'œuvre interne → flaggés « à chiffrer en devis », JAMAIS un montant inventé.
 
-export const INTER_SITE_SECURITY_SEED: MultimodalPriceEntry = {
-  amount: 0,
-  currency: "EUR",
-  unit: "mois",
-  confidence: "medium",
-  source: src("WireGuard — open source (GPLv2)", "https://www.wireguard.com/"),
-  note: "Liaison inter-site à sécuriser (self-hosted). WireGuard auto-hébergé = 0 € de licence (coût = VM passerelle déjà comptée + OPEX) ; alternative managée (Tailscale/Cloudflare) 7–18 $/utilisateur/mois. Chiffrage détaillé = story sécurité S-061.",
+export const INTER_SITE_SECURITY_SEED: InterSiteSecurityPrices = {
+  selfHostedGatewayPerMonth: {
+    amount: 3.79,
+    currency: "EUR",
+    unit: "mois",
+    confidence: "high",
+    source: src("Hetzner Cloud — CX22 (passerelle WireGuard)", "https://www.hetzner.com/cloud/pricing/"),
+    note: "VM passerelle dédiée CX22 (2 vCPU / 4 Go / 40 Go) = 3,79 €/mois ; WireGuard/IPsec + mTLS (PKI open-source type step-ca) = licence 0 €. Ajustement tarifaire Hetzner eff. 1ᵉʳ avr. 2026. Supervision + durcissement initial = OPEX à chiffrer en devis (non figé, DÉFCON 1).",
+  },
+  managedPerUserPerMonth: {
+    amount: 8,
+    currency: "USD",
+    unit: "utilisateur·mois",
+    confidence: "high",
+    source: src("Tailscale — pricing (Standard)", "https://tailscale.com/pricing"),
+    note: "Alternative managée : Tailscale Standard 8 $/u/mois (Personal 0 € ≤ 6 users ; Premium 18 $). Cloudflare Zero Trust : 0 € ≤ 50 users puis 7 $/u/mois (cloudflare.com/plans/zero-trust-services). Exploitation incluse. Devise USD (étage FX au runtime).",
+  },
 };
 
 export const RESIDENCY_PRICE_SEED: ResidencyPriceTable = {
   egressVectors: RESIDENCY_EGRESS_SEED,
-  interSiteSecurityPerMonth: INTER_SITE_SECURITY_SEED,
+  interSiteSecurity: INTER_SITE_SECURITY_SEED,
 };
 
 /** Prix résidence (seed = repli/baseline daté). Le live arrive via la veille (réutilise `live-feed`). */

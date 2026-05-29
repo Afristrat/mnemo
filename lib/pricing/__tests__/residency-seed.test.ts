@@ -48,10 +48,22 @@ describe("seed egress résidence — multi-segment, DÉFCON 1", () => {
     }
   });
 
-  it("la sécurisation inter-site flague la surface self-hosted (WireGuard 0 € + renvoi S-061)", () => {
-    expect(INTER_SITE_SECURITY_SEED.confidence).toBe("medium");
-    expect(INTER_SITE_SECURITY_SEED.note).toMatch(/sécuris/i);
-    expect(INTER_SITE_SECURITY_SEED.note).toMatch(/S-061/);
+  it("chiffrage sécurisation inter-site (S-061) : VM passerelle sourcée EUR + alternative managée sourcée USD", () => {
+    const gw = INTER_SITE_SECURITY_SEED.selfHostedGatewayPerMonth;
+    const managed = INTER_SITE_SECURITY_SEED.managedPerUserPerMonth;
+    // Postes chiffrables vendeur : source datée https + devise native + confiance.
+    for (const e of [gw, managed]) {
+      expect(e.amount).toBeGreaterThan(0);
+      expect(["high", "medium", "low"]).toContain(e.confidence);
+      expect(e.source).not.toBeNull();
+      expect(e.source?.url).toMatch(/^https:\/\//);
+      expect(e.source?.checkedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+    expect(gw.currency).toBe("EUR"); // Hetzner CX22
+    expect(managed.currency).toBe("USD"); // Tailscale/Cloudflare
+    // WireGuard/mTLS = licence open-source 0 € ; supervision/durcissement = OPEX non figé (DÉFCON 1).
+    expect(gw.note).toMatch(/licence 0|open-source/i);
+    expect(gw.note).toMatch(/devis/i);
   });
 
   it("getResidencyPrices renvoie le seed", () => {
@@ -65,7 +77,8 @@ describe("table neutre (invariant)", () => {
       expect(v.interRegionEgress.amount).toBe(0);
       expect(v.interRegionEgress.source).toBeNull();
     }
-    expect(NEUTRAL_RESIDENCY_PRICES.interSiteSecurityPerMonth.amount).toBe(0);
+    expect(NEUTRAL_RESIDENCY_PRICES.interSiteSecurity.selfHostedGatewayPerMonth.amount).toBe(0);
+    expect(NEUTRAL_RESIDENCY_PRICES.interSiteSecurity.managedPerUserPerMonth.amount).toBe(0);
   });
 });
 

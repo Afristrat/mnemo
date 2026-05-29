@@ -183,6 +183,22 @@ describe("Exit Escrow piloté par le plan résidence/DR (S-047)", () => {
     const runbook = buildExitBundle(conflict, reco).files["runbook.md"];
     expect(runbook).toContain("Conflit résidence × DR à arbitrer");
   });
+
+  it("profil self-hosted multi-région : le runbook documente la liaison inter-site sécurisée + l'alternative managée (S-061)", () => {
+    const selfHosted: Profile = { ...PROFILE, residency: { selfHosted: true, drTier: "warm" } };
+    const reco = recommend(selfHosted);
+    expect(reco.residency.interSiteSecurity).toBeDefined();
+    const runbook = buildExitBundle(selfHosted, reco).files["runbook.md"];
+    expect(runbook).toContain("Sécurisation de la liaison inter-site");
+    expect(runbook).toContain("WireGuard");
+    expect(runbook).toContain("Alternative managée");
+  });
+
+  it("profil hébergé managé (non self-hosted) avec DR : pas de bloc de sécurisation inter-site (S-061)", () => {
+    const reco = recommend(DR_CRITICAL);
+    expect(reco.residency.interSiteSecurity).toBeUndefined(); // managé → liaison sur backbone du fournisseur
+    expect(buildExitBundle(DR_CRITICAL, reco).files["runbook.md"]).not.toContain("Sécurisation de la liaison inter-site");
+  });
 });
 
 describe("Catalogue retenu figé (S-037)", () => {

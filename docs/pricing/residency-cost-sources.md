@@ -36,22 +36,33 @@ mixtes (Go ≠ Gio ≠ To) signalé au sourcing ; la figure publiée d'origine e
 [azure.microsoft.com/pricing/details/bandwidth](https://azure.microsoft.com/en-us/pricing/details/bandwidth/)
 avant tout affichage chiffré.
 
-## Sécurisation de la liaison inter-site (self-hosted — « surface à sécuriser »)
+## Sécurisation de la liaison inter-site (self-hosted — « surface à sécuriser ») — chiffré (S-061)
 
 Le vrai souverain = self-hosted, qui introduit une **liaison inter-site à chiffrer et superviser**.
-S-043 **flague** cette surface et donne la **fourchette sourcée** ; le **chiffrage détaillé** (poste de
-coût complet : passerelle, supervision, durcissement) = **story sécurité dédiée (S-061)**.
+S-043 a **flagué** cette surface + donné la fourchette ; **S-061 chiffre le poste** (`lib/engine/residency.ts`
+`costInterSiteSecurity`, prix injectés via `InterSiteSecurityPrices`, seed = repli daté).
 
-| Solution | Coût | Devise | Confiance | Source | Note |
+**Doctrine DÉFCON 1 du modèle** : seuls les postes **chiffrables vendeur** sont figés — la **VM passerelle**
+(la liaison chiffrée WireGuard/IPsec + le mTLS reposent sur des logiciels open-source, **licence 0 €** ; le
+coût est l'instance) et l'**alternative managée** (mesh/SASE par utilisateur). La **supervision + le
+durcissement** = OPEX / main-d'œuvre interne → **flaggés « à chiffrer en devis », JAMAIS un montant inventé**.
+Le coût retenu (intégré au coût résidence, C6) = l'approche **self-hosted** (cohérente avec l'infra) ;
+l'alternative managée est **chiffrée pour comparaison, jamais imposée** (avis non orienté).
+
+| Poste | Coût retenu (seed) | Devise | Confiance | Source | Note |
 |---|---|---|---|---|---|
-| **WireGuard** auto-hébergé | **0** (licence) | — | high | [wireguard.com](https://www.wireguard.com/) | Open-source **GPLv2** ; coût réel = VM passerelle (déjà comptée en compute S-033/S-041) + OPEX. |
-| **Tailscale** (mesh WireGuard managé) | 8 → 18 $/utilisateur/mois | USD | high | [tailscale.com/pricing](https://tailscale.com/pricing) | Free ≤ 6 users ; Standard 8 $ ; Premium 18 $ ; Enterprise sur devis. |
-| **Cloudflare** Zero Trust / Tunnel | 0 (≤ 50 users) → 7 $/utilisateur/mois | USD | high | [cloudflare.com Zero Trust](https://www.cloudflare.com/plans/zero-trust-services/) | Tunnel sans charge au Go, pas de VM requise. |
-| **OVHcloud vRack** (réseau privé L2 inter-DC) | inclus | — | medium | [ovhcloud.com/network/vrack](https://www.ovhcloud.com/en/network/vrack/) | Réseau privé inter-DC inclus dans la plupart des zones (CSP souverain UE). |
+| **Passerelle chiffrée self-hosted** / site/mois | **3,79 €/mois** (VM CX22) | EUR | high | [Hetzner Cloud pricing](https://www.hetzner.com/cloud/pricing/) | VM passerelle dédiée **CX22** (2 vCPU/4 Go/40 Go) ; **WireGuard/IPsec + mTLS** (PKI open-source type step-ca) = **licence 0 €** ([wireguard.com](https://www.wireguard.com/), GPLv2). Ajustement tarifaire Hetzner eff. **1ᵉʳ avr. 2026**. |
+| **Supervision + durcissement** | **OPEX — à chiffrer en devis** | — | — | — | Main-d'œuvre interne (monitoring, rotation clés, mises à jour, durcissement initial). **Non figé** (DÉFCON 1 : pas de prix au doigt mouillé). |
+| **Alternative managée** (Tailscale) / utilisateur/mois | **8 $** (Standard) | USD | high | [tailscale.com/pricing](https://tailscale.com/pricing) | Personal **0 € ≤ 6 users** ; **Standard 8 $** ; Premium 18 $ ; Enterprise sur devis. Exploitation incluse. |
+| **Alternative managée** (Cloudflare) / utilisateur/mois | **0 € ≤ 50 users → 7 $** | USD | high | [cloudflare.com Zero Trust](https://www.cloudflare.com/plans/zero-trust-services/) | Free ≤ 50 users ; Teams Standard 7 $/u/mois ; Tunnel sans charge au Go, pas de VM requise. |
+| **OVHcloud vRack** (réseau privé L2 inter-DC) | inclus | — | medium | [ovhcloud.com/network/vrack](https://www.ovhcloud.com/en/network/vrack/) | Réseau privé inter-DC inclus dans la plupart des zones (CSP souverain UE) — pertinent si l'hébergement n'est pas bare-metal pur. |
 
-**Fourchette sécurisation inter-site** : **0 €** (WireGuard auto-hébergé / Cloudflare ≤ 50 users /
-vRack inclus) → **7–18 $/utilisateur/mois** (mesh/SASE managé). Retenu en seed : **0 € de licence**
-(WireGuard) + note de fourchette ; coût opérationnel détaillé = S-061.
+**Modèle de coût** (`costInterSiteSecurity`, monotone) : self-hosted = `passerelle/mois × nb de sites
+sécurisés` (primaire + réplicas) ; managé = `tarif/utilisateur × utilisateurs`. Devise USD du managé →
+**étage FX au runtime** (taux BCE/Frankfurter, cf. `media-feed`) — pas de conversion € gravée. Le poste
+n'est ajouté que pour un profil **self-hosted multi-région** (`Profile.residency.selfHosted` + DR/réplica) ;
+hébergement souverain managé / hyperscaler ⇒ liaison sur backbone privé du fournisseur, **pas de poste à part**.
+Relevé **2026-05-29** (pages officielles : Hetzner CX22 3,79 €, Tailscale Standard 8 $, Cloudflare ZT 7 $).
 
 ## Doctrine de mise à jour (NE PAS figer)
 

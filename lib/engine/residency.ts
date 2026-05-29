@@ -10,6 +10,8 @@
 import type {
   CostSource,
   DrTier,
+  InterSiteSecurity,
+  InterSiteSecurityVariant,
   Preset,
   Profile,
   Region,
@@ -39,10 +41,23 @@ export type EgressVector = {
   interRegionEgress: MultimodalPriceEntry;
 };
 
+/**
+ * Prix de sécurisation de la liaison inter-site self-hosted (S-061). Seuls les postes **chiffrables
+ * vendeur** sont figés (DÉFCON 1) : la VM passerelle (WireGuard/IPsec + mTLS = licence open-source 0 €,
+ * coût = l'instance) et l'alternative managée (mesh/SASE par utilisateur). La supervision/durcissement
+ * = OPEX/main-d'œuvre interne → flaggée « à chiffrer en devis », JAMAIS un montant au doigt mouillé.
+ */
+export type InterSiteSecurityPrices = {
+  /** Passerelle chiffrée self-hosted par site/mois : VM dédiée (WireGuard/IPsec + mTLS open-source = licence 0 €). */
+  selfHostedGatewayPerMonth: MultimodalPriceEntry;
+  /** Alternative managée (mesh/SASE : Tailscale, Cloudflare Zero Trust) par utilisateur/mois. */
+  managedPerUserPerMonth: MultimodalPriceEntry;
+};
+
 /** Table résidence injectée : vecteurs d'egress + sécurisation inter-site. */
 export type ResidencyPriceTable = {
   egressVectors: EgressVector[];
-  interSiteSecurityPerMonth: MultimodalPriceEntry;
+  interSiteSecurity: InterSiteSecurityPrices;
 };
 
 /** Table neutre (un vecteur 0 €/Go par classe) : défaut d'injection, invariant `totalCost` préservé. */
@@ -53,7 +68,10 @@ export const NEUTRAL_RESIDENCY_PRICES: ResidencyPriceTable = {
     sovereign: hostingClass !== "hyperscaler",
     interRegionEgress: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
   })),
-  interSiteSecurityPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
+  interSiteSecurity: {
+    selfHostedGatewayPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
+    managedPerUserPerMonth: { amount: 0, currency: "EUR", unit: "utilisateur·mois", confidence: "low", source: null },
+  },
 };
 
 /** Vecteurs d'egress d'une classe d'hébergement (préserve l'ordre). */
@@ -121,12 +139,14 @@ function zoneToRegion(zone: Zone): Region {
 }
 
 /**
- * Classe d'hébergement par défaut dérivée de la zone (choix du vecteur d'egress sourcé, S-048).
- * Souverains UE/Maroc → `sovereign-eu` (vecteurs souverains sourcés) ; US/autre → `hyperscaler`
- * (egress facturé par les hyperscalers). `self-hosted`/`secnumcloud` restent des choix EXPLICITES
- * (jamais imposés par dérivation — ils relèvent d'une décision d'infrastructure, pas de la zone).
+ * Classe d'hébergement par défaut dérivée du profil (choix du vecteur d'egress sourcé, S-048/S-061).
+ * `residency.selfHosted` → `self-hosted` (choix EXPLICITE d'infrastructure : la vraie souveraineté, avec
+ * liaison inter-site à sécuriser, S-061). Sinon dérivé de la zone : souverains UE/Maroc → `sovereign-eu`
+ * (vecteurs souverains sourcés) ; US/autre → `hyperscaler` (egress facturé par les hyperscalers).
+ * `secnumcloud` reste un choix explicite (jamais imposé par dérivation).
  */
 export function hostingClassForProfile(p: Profile): HostingClass {
+  if (p.residency?.selfHosted === true) return "self-hosted";
   return p.zone === "us" || p.zone === "other" ? "hyperscaler" : "sovereign-eu";
 }
 
@@ -211,8 +231,48 @@ export type ResidencyCost = {
   regions: RegionAssignment[];
   monthlyCost: number;
   setupCost: number;
+  interSiteSecurity?: InterSiteSecurity;
   costSources: CostSource[];
 };
+
+/**
+ * Coût de sécurisation de la liaison inter-site self-hosted (pur, prix INJECTÉS, S-061).
+ * `securedSites ≤ 1` (mono-site) → null : aucune liaison inter-site à sécuriser. Le coût RETENU =
+ * `self-hosted` (cohérent avec l'infra auto-hébergée) : passerelle chiffrée × sites (VM dédiée +
+ * WireGuard/IPsec + mTLS open-source, licence 0 €). La **supervision + le durcissement** = OPEX /
+ * main-d'œuvre interne → flaggés dans la note, JAMAIS chiffrés au doigt mouillé (DÉFCON 1).
+ * `alternative` = managé (mesh/SASE × utilisateurs) chiffré pour comparaison — avis NON orienté,
+ * jamais imposé (décision Amine).
+ */
+export function costInterSiteSecurity(
+  users: number,
+  securedSites: number,
+  prices: InterSiteSecurityPrices,
+): InterSiteSecurity | null {
+  if (securedSites <= 1) return null;
+  const gateway = prices.selfHostedGatewayPerMonth;
+  const managedPerUser = prices.managedPerUserPerMonth;
+  const billableUsers = Math.max(1, users);
+
+  const selfHosted: InterSiteSecurityVariant = {
+    approach: "self-hosted",
+    monthlyCost: round(gateway.amount * securedSites),
+    setupCost: 0,
+    note: `${securedSites} sites reliés : passerelle chiffrée par site (WireGuard/IPsec + mTLS open-source, licence 0 €). Supervision + durcissement initial = OPEX / main-d'œuvre interne à chiffrer en devis (non un prix vendeur).`,
+  };
+  const managed: InterSiteSecurityVariant = {
+    approach: "managed",
+    monthlyCost: round(managedPerUser.amount * billableUsers),
+    setupCost: 0,
+    note: `Alternative managée (mesh/SASE) pour ${billableUsers} utilisateur(s) : exploitation incluse, sans VM passerelle ni durcissement à opérer en interne.`,
+  };
+  return {
+    ...selfHosted,
+    securedSites,
+    alternative: managed,
+    costSources: dedupeSources([gateway.source, managedPerUser.source]),
+  };
+}
 
 /**
  * Coût résidence/DR (pur, prix INJECTÉS) : régions en attente (compute via `computeSovereignCompute`)
@@ -256,14 +316,28 @@ export function costResidency(
   // Réplication : egress inter-région × volume × churn, par région répliquée.
   const replicationMonthly = round(egressPerGb * baseGb * CHURN_RATE_MONTHLY * topo.extras.length * replicationMultiplier);
   // Amorçage : premier transfert complet vers chaque réplica.
-  const setupCost = round(egressPerGb * baseGb * topo.extras.length * replicationMultiplier);
+  const replicationSetup = round(egressPerGb * baseGb * topo.extras.length * replicationMultiplier);
 
-  const costSources = dedupeSources([egressVector.interRegionEgress.source, ...baselineSizing.sources]);
+  // Sécurisation inter-site (S-061) : seulement si l'infra est auto-hébergée (liaison à chiffrer soi-même).
+  // Souverain managé / hyperscaler → liaison sur backbone privé du fournisseur, pas de poste à part.
+  const interSiteSecurity =
+    hostingClass === "self-hosted"
+      ? costInterSiteSecurity(p.users, topo.extras.length + 1, residencyPrices.interSiteSecurity)
+      : null;
+  const securityMonthly = interSiteSecurity?.monthlyCost ?? 0;
+  const securitySetup = interSiteSecurity?.setupCost ?? 0;
+
+  const costSources = dedupeSources([
+    egressVector.interRegionEgress.source,
+    ...baselineSizing.sources,
+    ...(interSiteSecurity?.costSources ?? []),
+  ]);
 
   return {
     regions: [primary, ...replicaRegions],
-    monthlyCost: computeMonthly + replicationMonthly,
-    setupCost,
+    monthlyCost: computeMonthly + replicationMonthly + securityMonthly,
+    setupCost: replicationSetup + securitySetup,
+    ...(interSiteSecurity === null ? {} : { interSiteSecurity }),
     costSources,
   };
 }
@@ -352,6 +426,7 @@ export function deriveResidencyPlan(
     monthlyCost: cost.monthlyCost,
     setupCost: cost.setupCost,
     geoSovScore: geoSovScore(topo, transfers, conflict),
+    ...(cost.interSiteSecurity === undefined ? {} : { interSiteSecurity: cost.interSiteSecurity }),
     costSources: cost.costSources,
   };
 }

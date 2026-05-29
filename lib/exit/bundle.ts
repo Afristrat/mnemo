@@ -203,6 +203,14 @@ function residencySection(r: ResidencyPlan): string {
   const conflictBlock = r.conflict.hasConflict
     ? `\n\n> ⚠️ **Conflit résidence × DR à arbitrer** : ${r.conflict.reason}\n${r.conflict.levers.map((l) => `> - ${l}`).join("\n")}`
     : "";
+  const sec = r.interSiteSecurity;
+  const securityBlock =
+    sec === undefined
+      ? ""
+      : `\n\n### Sécurisation de la liaison inter-site (infrastructure auto-hébergée)
+- **Retenu** : passerelle chiffrée sur ${sec.securedSites} sites (WireGuard/IPsec + mTLS open-source, licence 0 €) — ≈ ${Math.round(sec.monthlyCost)} €/mois récurrent.
+  > ${sec.note}
+- **Alternative managée (à arbitrer, jamais imposée)** : mesh/SASE ≈ ${Math.round(sec.alternative.monthlyCost)} (devise vendeur, voir sources) — ${sec.alternative.note}`;
 
   return `## Résidence & continuité régionale (DR « ${drLabel} »)
 - **Région primaire** : ${r.primaryRegion}.
@@ -213,7 +221,7 @@ ${regionOrder}
 
 ### Conformité des transferts inter-région
 ${transferLines}
-> Orientation d'ingénierie, PAS un avis juridique : faites valider chaque base légale par votre conseil.${conflictBlock}
+> Orientation d'ingénierie, PAS un avis juridique : faites valider chaque base légale par votre conseil.${conflictBlock}${securityBlock}
 
 ### Procédure de bascule régionale (failover, RTO cible ${fmtMinutes(r.rtoMinutes)})
 1. Constater l'indisponibilité de la région primaire « ${r.primaryRegion} » (sonde santé + alerte).
