@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useState, type ReactElement, type ReactNode } from "react";
+import { useEffect, useState, type ReactElement, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
@@ -290,6 +290,12 @@ export function Wizard(): ReactElement {
   const [step, setStep] = useState(0);
   const opts = useOptions();
   const tOptions = useTranslations("Options");
+
+  // À chaque changement d'étape (Suivant/Précédent/profil-type), remonter en haut de page :
+  // l'utilisateur n'a pas à utiliser l'ascenseur pour retrouver le début du bloc suivant.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
 
   if (!hydrated) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement…</p>;
