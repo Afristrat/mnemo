@@ -218,10 +218,12 @@ export type ResidencyPlan = {
 };
 
 /**
- * Clés des 9 dimensions de scoring (ordre stable). `resilience` (9ᵉ) ajoutée en S-027 (refonte 8→9) :
- * pilotée par le `BackupPlan` (criticité, 3-2-1-1-0, restauration testée, immutabilité, érasure).
+ * Clés des 10 dimensions de scoring (ordre stable). `resilience` (9ᵉ) ajoutée en S-027 (refonte 8→9) ;
+ * `geosov` (10ᵉ, souveraineté géographique : résidence + transferts conformes) ajoutée en S-045
+ * (refonte 9→10), alimentée par `ResidencyPlan.geoSovScore` ; `resilience` étendue au DR régional ;
+ * `sov` recadrée « zéro vendor lock-in & portabilité » (le géographique part dans `geosov`).
  */
-export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost", "resilience"] as const;
+export const SCORE_KEYS = ["conf", "audit", "stress", "sov", "adapt", "ttv", "mm", "cost", "resilience", "geosov"] as const;
 export type ScoreKey = (typeof SCORE_KEYS)[number];
 
 export type Profile = {

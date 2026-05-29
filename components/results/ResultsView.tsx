@@ -46,6 +46,7 @@ const SHORT_LABELS: Record<ScoreKey, string> = {
   mm: "Multimodal",
   cost: "Coût",
   resilience: "Résilience",
+  geosov: "Géo-souv.",
 };
 
 const VOLUME_ORDER: Volume[] = ["lt1", "1to10", "10to100", "100to1000", "gt1000"];
@@ -341,7 +342,7 @@ export function ResultsView(): ReactElement {
       {/* Radar + scores */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="font-display text-headline-md text-on-surface">Profil sur 9 dimensions</h2>
+          <h2 className="font-display text-headline-md text-on-surface">Profil sur 10 dimensions</h2>
           <div className="mt-4 flex justify-center">
             <RadarChart data={radarData} />
           </div>
