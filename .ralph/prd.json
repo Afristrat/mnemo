@@ -438,7 +438,8 @@
     },
     {
       "id": "S-045", "title": "Scoring 9→10 : geosov (neuf) + resilience étendu DR + sov recadré", "feature": "residence",
-      "passes": false, "deps": ["S-027"],
+      "passes": true, "completedAt": "2026-05-29", "deps": ["S-027"],
+      "note": "SCORE_KEYS +geosov (10 clés, ordre stable, geosov en 10ᵉ). computeScores gagne un param residencyPlan (défaut deriveResidencyPlan(p), price-indépendant) : dimension geosov = ResidencyPlan.geoSovScore (label « Souveraineté géographique (résidence & transferts conformes) », why = région + nb transferts + conflit) ; resilience étendue DR (bonus actif-actif 1.5 / hot 1 / warm 0.5, why cite RTO régional) ; sov RECADRÉ (retrait du bonus zone UE/Maroc → c'est geosov ; label « …(portabilité) »). RadarChart auto (lit data.length → « Radar des 10 dimensions »). MAJ libellés « 9 »→« 10 » : ResultsView (SHORT_LABELS +geosov « Géo-souv. », titre), export/model.ts + export.test, app/resultats metadata, e2e strate (radar 10 axes). Tests toHaveLength(9)→10 (engine ×2, recommend-sizing, profile-mappers). Test résilience « croît avec la criticité » ISOLE l'axe backup (residency drTier none) car le bonus DR clampait high=critical=10 ; +1 test « DR renforce la résilience ». +1 test net → 389. typecheck 0, lint 0/0, build OK. Reste : S-046 (intégration recommend + Recommendation.residency), S-047 (Exit Escrow DR), S-048 (UI + radar 10 visible).",
       "acceptance": ["spec n°2 §7 : SCORE_KEYS +geosov (10) ; computeScores retourne 10 ; geosov (résidence conforme), resilience intègre le DR, sov recadré « zéro lock-in » ; TOUS les toHaveLength(9)→10 + RadarChart 10 axes ; typecheck 0 / lint 0/0 / tests verts"]
     },
     {

@@ -10,7 +10,7 @@ describe("mapQuickAnswersToProfile", () => {
   it("produit un Profile valide consommable par recommend()", () => {
     const r = recommend(mapQuickAnswersToProfile(DEFAULT_QUICK_ANSWERS));
     expect(r.layers).toHaveLength(7);
-    expect(r.scores).toHaveLength(9);
+    expect(r.scores).toHaveLength(10);
   });
 
   it("mappe « qui » vers l'activité + le nombre d'utilisateurs", () => {

@@ -86,17 +86,26 @@ describe("computeScores", () => {
     expect(dims.find((d) => d.key === "audit")?.score).toBe(10);
   });
 
-  it("retourne toujours les 9 dimensions", () => {
-    expect(computeScores("MEDIUM", baseProfile(), 100)).toHaveLength(9);
+  it("retourne toujours les 10 dimensions", () => {
+    expect(computeScores("MEDIUM", baseProfile(), 100)).toHaveLength(10);
   });
 });
 
 describe("computeScores — résilience (9ᵉ dimension, S-027)", () => {
+  // DR neutralisé par défaut (residency drTier none) pour ISOLER l'axe backup. Depuis S-045, la
+  // dimension `resilience` intègre aussi le DR régional (testé séparément ci-dessous).
   function resilienceOf(profile: Profile): number {
-    const dim = computeScores("MEDIUM", profile, 100).find((d) => d.key === "resilience");
+    const p: Profile = { ...profile, residency: profile.residency ?? { drTier: "none" } };
+    const dim = computeScores("MEDIUM", p, 100).find((d) => d.key === "resilience");
     if (dim === undefined) throw new Error("dimension resilience introuvable");
     return dim.score;
   }
+
+  it("le DR régional renforce la résilience (extension S-045)", () => {
+    const noDr = resilienceOf(baseProfile({ backup: { criticality: "standard" }, residency: { drTier: "none" } }));
+    const hotDr = resilienceOf(baseProfile({ backup: { criticality: "standard" }, residency: { drTier: "hot" } }));
+    expect(hotDr).toBeGreaterThan(noDr);
+  });
 
   it("croît strictement avec la criticité (none < standard < high < critical)", () => {
     const none = resilienceOf(baseProfile()); // pas de backup => criticité none
@@ -146,7 +155,7 @@ describe("recommend", () => {
     for (const preset of PRESET_PROFILES) {
       const r = recommend(preset.profile);
       expect(r.layers).toHaveLength(7);
-      expect(r.scores).toHaveLength(9);
+      expect(r.scores).toHaveLength(10);
       expect(PRESETS).toContain(r.preset);
       expect(r.totalCost).toBeGreaterThan(0);
       expect(r.scoreAvg).toBeGreaterThanOrEqual(0);

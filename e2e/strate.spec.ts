@@ -30,7 +30,7 @@ test("bloc Médias : génération vidéo souveraine → budget rouge + levier", 
   await expect(page.getByText(/Levier/)).toBeVisible();
 });
 
-test("profil critique régulé → ligne backup + radar 9 axes + érasure crypto-shred", async ({ page }) => {
+test("profil critique régulé → ligne backup + radar 10 axes + érasure crypto-shred", async ({ page }) => {
   await page.goto("/configurateur");
   // Bloc ① : sensibilité « secret » → surcharge conformité (crypto-shred + immutable).
   await page.getByRole("button", { name: /Secret/ }).click();
@@ -42,8 +42,8 @@ test("profil critique régulé → ligne backup + radar 9 axes + érasure crypto
   // CostMap : la ligne backup reflète le plan critique + l'érasure crypto-shred (régulé).
   await expect(page.getByText(/Plan « critical »/)).toBeVisible();
   await expect(page.getByText(/crypto-shred/)).toBeVisible();
-  // Radar passé à 9 axes (dimension resilience).
-  await expect(page.getByRole("img", { name: /Radar des 9 dimensions/ })).toBeVisible();
+  // Radar passé à 10 axes (dimensions resilience + geosov).
+  await expect(page.getByRole("img", { name: /Radar des 10 dimensions/ })).toBeVisible();
 });
 
 test("intake libre : décrire son besoin pré-remplit le configurateur", async ({ page }) => {

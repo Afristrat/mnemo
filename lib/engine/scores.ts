@@ -1,5 +1,6 @@
 import { type BackupCore, deriveBackupPlan } from "./backup";
-import type { BackupCriticality, Preset, Profile, ScoreDimension } from "./types";
+import { deriveResidencyPlan } from "./residency";
+import type { BackupCriticality, Preset, Profile, ResidencyPlan, ScoreDimension } from "./types";
 
 function hasMultimodal(p: Profile): boolean {
   return p.contentTypes.some((t) => t === "audio" || t === "video" || t === "images");
@@ -56,15 +57,18 @@ function resilienceScore(core: BackupCore): { score: number; why: string } {
 }
 
 /**
- * Score les 9 dimensions (avant bonus modules). Fonction pure.
- * Porté du simulateur v2, règles déterministes ; 9ᵉ dimension `resilience` ajoutée en S-027.
- * `backupCore` est INJECTÉ (défaut = dérivé du profil) — recommend passe le core déjà calculé (S-028).
+ * Score les 10 dimensions (avant bonus modules). Fonction pure.
+ * Porté du simulateur v2, règles déterministes ; 9ᵉ `resilience` (S-027) ; 10ᵉ `geosov` (S-045).
+ * `backupCore` et `residencyPlan` sont INJECTÉS (défauts = dérivés du profil) — recommend passe les
+ * plans déjà calculés (S-028 backup, S-046 residency). `geosov` = `residencyPlan.geoSovScore` ;
+ * `resilience` intègre le DR régional ; `sov` est recadrée (le géographique est dans `geosov`).
  */
 export function computeScores(
   preset: Preset,
   p: Profile,
   totalCost: number,
   backupCore: BackupCore = deriveBackupPlan(p),
+  residencyPlan: ResidencyPlan = deriveResidencyPlan(p),
 ): ScoreDimension[] {
   const wantsMultimodal = hasMultimodal(p);
 
@@ -83,9 +87,8 @@ export function computeScores(
   // 3. Stress-testabilité
   const stress = preset === "LIGHT" ? 7 : 9;
 
-  // 4. Souveraineté
-  let sov = preset === "LIGHT" ? 6 : preset === "MEDIUM" ? 8 : 10;
-  if (p.zone === "ue" || p.zone === "maroc") sov = Math.min(10, sov + 1);
+  // 4. Souveraineté (recadrée S-045 : zéro vendor lock-in & portabilité ; le géographique → `geosov`)
+  const sov = preset === "LIGHT" ? 6 : preset === "MEDIUM" ? 8 : 10;
 
   // 5. Adaptativité multi-métier
   const voiceBonus = p.voices === "many" ? 2 : p.voices === "multi" ? 1 : 0;
@@ -108,7 +111,15 @@ export function computeScores(
 
   const regCount = p.regulations.filter((r) => r !== "none").length;
   const multimodalTypes = p.contentTypes.filter((t) => t === "audio" || t === "video" || t === "images");
-  const resilience = resilienceScore(backupCore);
+
+  // 9. Résilience : sauvegarde (spec n°1) + DR régional (spec n°2, S-045). Bonus warm/hot/actif-actif.
+  const resilienceBase = resilienceScore(backupCore);
+  const drBonus = residencyPlan.activeActive ? 1.5 : residencyPlan.drTier === "hot" ? 1 : residencyPlan.drTier === "warm" ? 0.5 : 0;
+  const resilienceScoreFinal = Math.max(0, Math.min(10, resilienceBase.score + drBonus));
+  const resilienceWhy =
+    drBonus > 0
+      ? `${resilienceBase.why} + DR régional ${residencyPlan.activeActive ? "actif-actif" : residencyPlan.drTier} (RTO ${residencyPlan.rtoMinutes} min).`
+      : resilienceBase.why;
 
   return [
     {
@@ -131,9 +142,9 @@ export function computeScores(
     },
     {
       key: "sov",
-      label: "Souveraineté & zéro vendor lock-in",
+      label: "Souveraineté & zéro vendor lock-in (portabilité)",
       score: sov,
-      why: `Preset ${preset} ${p.zone === "ue" || p.zone === "maroc" ? "+ zone UE/Maroc" : ""}. Vault markdown source de vérité garantit la portabilité (V1+).`,
+      why: `Preset ${preset}. Vault markdown + bundle Exit Escrow = portabilité, zéro lock-in (la résidence géographique est notée séparément).`,
     },
     {
       key: "adapt",
@@ -163,9 +174,19 @@ export function computeScores(
     },
     {
       key: "resilience",
-      label: "Résilience & sauvegarde (RPO/RTO, 3-2-1-1-0, restauration testée)",
-      score: resilience.score,
-      why: resilience.why,
+      label: "Résilience & continuité (sauvegarde + DR régional)",
+      score: resilienceScoreFinal,
+      why: resilienceWhy,
+    },
+    {
+      key: "geosov",
+      label: "Souveraineté géographique (résidence & transferts conformes)",
+      score: residencyPlan.geoSovScore,
+      why: `Données en « ${residencyPlan.primaryRegion} ». ${
+        residencyPlan.transfers.length === 0
+          ? "Aucun transfert inter-juridiction."
+          : `${residencyPlan.transfers.length} flux inter-région (voir conformité des transferts).`
+      }${residencyPlan.conflict.hasConflict ? " ⚠️ Conflit résidence × DR à arbitrer." : ""}`,
     },
   ];
 }
