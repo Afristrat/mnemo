@@ -8,8 +8,12 @@
   "design": "design-reference/mn_mo_brand_identity/DESIGN.md + maquettes Stitch dans design-reference/.",
   "stories": [
     {
-      "id": "S-001", "title": "Scaffold Next.js + TS + Tailwind + ESLint + structure", "feature": "infra",
-      "passes": true, "completedAt": "2026-05-24", "deps": [],
+      "id": "S-001",
+      "title": "Scaffold Next.js + TS + Tailwind + ESLint + structure",
+      "feature": "infra",
+      "passes": true,
+      "completedAt": "2026-05-24",
+      "deps": [],
       "acceptance": [
         "npm run build passe",
         "npm run typecheck 0 erreur",
@@ -19,8 +23,14 @@
       ]
     },
     {
-      "id": "S-002", "title": "Design system (tokens DESIGN.md → Tailwind, polices, primitives UI)", "feature": "design",
-      "passes": true, "completedAt": "2026-05-24", "deps": ["S-001"],
+      "id": "S-002",
+      "title": "Design system (tokens DESIGN.md → Tailwind, polices, primitives UI)",
+      "feature": "design",
+      "passes": true,
+      "completedAt": "2026-05-24",
+      "deps": [
+        "S-001"
+      ],
       "acceptance": [
         "tailwind.config porte les couleurs/typo/rayons de DESIGN.md",
         "polices Space Grotesk / Inter / JetBrains Mono chargées",
@@ -28,8 +38,14 @@
       ]
     },
     {
-      "id": "S-003", "title": "Moteur de reco — lib TS (types + catalogue 7 couches + preset/buildLayers/computeCost/computeScores)", "feature": "F1-F3",
-      "passes": true, "completedAt": "2026-05-24", "deps": ["S-001"],
+      "id": "S-003",
+      "title": "Moteur de reco — lib TS (types + catalogue 7 couches + preset/buildLayers/computeCost/computeScores)",
+      "feature": "F1-F3",
+      "passes": true,
+      "completedAt": "2026-05-24",
+      "deps": [
+        "S-001"
+      ],
       "acceptance": [
         "logique portée depuis design-reference simulateur v2 en TS pur (lib/engine)",
         "fonctions pures sans dépendance UI",
@@ -37,8 +53,14 @@
       ]
     },
     {
-      "id": "S-004", "title": "Tests unitaires du moteur (Vitest)", "feature": "F1-F3",
-      "passes": true, "completedAt": "2026-05-24", "deps": ["S-003"],
+      "id": "S-004",
+      "title": "Tests unitaires du moteur (Vitest)",
+      "feature": "F1-F3",
+      "passes": true,
+      "completedAt": "2026-05-24",
+      "deps": [
+        "S-003"
+      ],
       "acceptance": [
         "couverture preset decision (LIGHT/MEDIUM/HARD)",
         "couverture computeCost (facteurs + modules)",
@@ -47,8 +69,15 @@
       ]
     },
     {
-      "id": "S-005", "title": "Wizard F1 (UI ~16 params, persistance, → preset)", "feature": "F1",
-      "passes": true, "completedAt": "2026-05-24", "deps": ["S-002", "S-003"],
+      "id": "S-005",
+      "title": "Wizard F1 (UI ~16 params, persistance, → preset)",
+      "feature": "F1",
+      "passes": true,
+      "completedAt": "2026-05-24",
+      "deps": [
+        "S-002",
+        "S-003"
+      ],
       "acceptance": [
         "wizard multi-étapes couvrant les ~16 paramètres du profil",
         "persistance localStorage + reprise",
@@ -57,8 +86,14 @@
       ]
     },
     {
-      "id": "S-006", "title": "Résultats F2/F3 (stack 7 couches + radar 8 dim + carte coûts + slider projection + confiance sourcée)", "feature": "F2-F3",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-005"],
+      "id": "S-006",
+      "title": "Résultats F2/F3 (stack 7 couches + radar 8 dim + carte coûts + slider projection + confiance sourcée)",
+      "feature": "F2-F3",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-005"
+      ],
       "acceptance": [
         "rendu des 7 couches C0..C6 avec choix/coût/alternatives",
         "radar 8 dimensions",
@@ -68,8 +103,14 @@
       ]
     },
     {
-      "id": "S-007", "title": "Ensemble multi-config F5 (N configs + spread = incertitude)", "feature": "F5",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-006"],
+      "id": "S-007",
+      "title": "Ensemble multi-config F5 (N configs + spread = incertitude)",
+      "feature": "F5",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-006"
+      ],
       "acceptance": [
         "≥ 3 configs candidates (souveraineté max / coût min / time-to-V1 min)",
         "écart de coût/score affiché comme incertitude",
@@ -77,8 +118,14 @@
       ]
     },
     {
-      "id": "S-008", "title": "Price feed F4 (Firecrawl + cache + sources datées + seed fallback)", "feature": "F4",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-003"],
+      "id": "S-008",
+      "title": "Price feed F4 (Firecrawl + cache + sources datées + seed fallback)",
+      "feature": "F4",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-003"
+      ],
       "acceptance": [
         "route serveur interroge Firecrawl (rendu JS) pour les prix vendor",
         "cache + timestamp + niveau de confiance + URL source",
@@ -87,8 +134,14 @@
       ]
     },
     {
-      "id": "S-009", "title": "Livrable export F6 (MD + PDF, sources, disclaimer)", "feature": "F6",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-006"],
+      "id": "S-009",
+      "title": "Livrable export F6 (MD + PDF, sources, disclaimer)",
+      "feature": "F6",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-006"
+      ],
       "acceptance": [
         "export Markdown + PDF",
         "toutes les sources cliquables",
@@ -96,8 +149,15 @@
       ]
     },
     {
-      "id": "S-010", "title": "Exit Escrow F7 (génération bundle reproductible + test redeploy)", "feature": "F7",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-003", "S-006"],
+      "id": "S-010",
+      "title": "Exit Escrow F7 (génération bundle reproductible + test redeploy)",
+      "feature": "F7",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-003",
+        "S-006"
+      ],
       "acceptance": [
         "bundle = IaC (Terraform/Compose) paramétré + vault skeleton + runbook + script re-embedding",
         "téléchargement zip",
@@ -105,8 +165,14 @@
       ]
     },
     {
-      "id": "S-011", "title": "Fiduciary Mode F8 (divulgation + charte zéro commission cachée)", "feature": "F8",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-002"],
+      "id": "S-011",
+      "title": "Fiduciary Mode F8 (divulgation + charte zéro commission cachée)",
+      "feature": "F8",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-002"
+      ],
       "acceptance": [
         "page de divulgation accessible",
         "charte fiduciaire affichée dans le livrable",
@@ -114,8 +180,14 @@
       ]
     },
     {
-      "id": "S-012", "title": "Supabase + RLS + auth + consentement réseau F9 (rails moat ③)", "feature": "F9",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-001"],
+      "id": "S-012",
+      "title": "Supabase + RLS + auth + consentement réseau F9 (rails moat ③)",
+      "feature": "F9",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-001"
+      ],
       "acceptance": [
         "schéma tables avec tenant/circle pivot",
         "RLS activé sur toutes les tables",
@@ -124,8 +196,16 @@
       ]
     },
     {
-      "id": "S-013", "title": "Playwright E2E parcours critiques", "feature": "tests",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-005", "S-006", "S-009"],
+      "id": "S-013",
+      "title": "Playwright E2E parcours critiques",
+      "feature": "tests",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-005",
+        "S-006",
+        "S-009"
+      ],
       "acceptance": [
         "parcours wizard → résultats → livrable → export",
         "responsive (mobile/desktop)",
@@ -133,8 +213,14 @@
       ]
     },
     {
-      "id": "S-014", "title": "CLAUDE.md projet + README + CI GitHub Actions", "feature": "infra",
-      "passes": true, "completedAt": "2026-05-25", "deps": ["S-001"],
+      "id": "S-014",
+      "title": "CLAUDE.md projet + README + CI GitHub Actions",
+      "feature": "infra",
+      "passes": true,
+      "completedAt": "2026-05-25",
+      "deps": [
+        "S-001"
+      ],
       "acceptance": [
         "CLAUDE.md décrit le projet réel (commandes, archi, conventions)",
         "README d'onboarding",
@@ -142,8 +228,14 @@
       ]
     },
     {
-      "id": "S-015", "title": "Migration des types Strate (audit/bitemporal booléens, MediaNeed/Sizing/Verdict, mediaNeeds/freeNotes)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-26", "deps": ["S-003"],
+      "id": "S-015",
+      "title": "Migration des types Strate (audit/bitemporal booléens, MediaNeed/Sizing/Verdict, mediaNeeds/freeNotes)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-26",
+      "deps": [
+        "S-003"
+      ],
       "acceptance": [
         "audit et bitemporal passent de Requirement à boolean ; scores.ts et defaultProfile.ts adaptés",
         "types MediaNeed, Sizing, WorkloadLine, Verdict définis (consommés en S-016/S-018)",
@@ -153,8 +245,14 @@
       ]
     },
     {
-      "id": "S-016", "title": "Module sizing.ts — besoins → ressources (GPU mutualisé, stockage indexé, setup)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-26", "deps": ["S-015"],
+      "id": "S-016",
+      "title": "Module sizing.ts — besoins → ressources (GPU mutualisé, stockage indexé, setup)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-26",
+      "deps": [
+        "S-015"
+      ],
       "acceptance": [
         "fonction pure costMultimodalSizing(profile, prices) → Sizing, prix injectés (testabilité)",
         "GPU compté UNE SEULE FOIS (anti double-comptage C4/C6), dimensionné sur la charge totale",
@@ -164,8 +262,15 @@
       ]
     },
     {
-      "id": "S-017", "title": "Pricing médias sourcé (seed URL+date+confiance + feed Firecrawl, repli seed)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-26", "deps": ["S-015", "S-008"],
+      "id": "S-017",
+      "title": "Pricing médias sourcé (seed URL+date+confiance + feed Firecrawl, repli seed)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-26",
+      "deps": [
+        "S-015",
+        "S-008"
+      ],
       "acceptance": [
         "tarifs (transcription, OCR, embeddings multimodaux, GPU souverain, génération) sourcés : URL + date + pastille de confiance, consignés dans docs/pricing/",
         "getMediaPrices() renvoie une table ; chaque entrée a {url,date,confidence} ; ±30 %",
@@ -175,8 +280,15 @@
       ]
     },
     {
-      "id": "S-018", "title": "Intégration sizing → couches dans recommend (coûts dans C4/C5/C6, setupCost, verdict)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-26", "deps": ["S-016", "S-017"],
+      "id": "S-018",
+      "title": "Intégration sizing → couches dans recommend (coûts dans C4/C5/C6, setupCost, verdict)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-26",
+      "deps": [
+        "S-016",
+        "S-017"
+      ],
       "acceptance": [
         "Recommendation étendu (sizing/setupCost/costSources/verdict) requis et rempli",
         "recommend appelle sizing et dimensionne C4/C5/C6 (coûts multimodaux DANS les couches, pas en ligne séparée)",
@@ -186,8 +298,15 @@
       ]
     },
     {
-      "id": "S-019", "title": "Wizard 4 blocs + InfoBubble + ContinuousSlider + notes libres + usages renommés", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015", "S-005"],
+      "id": "S-019",
+      "title": "Wizard 4 blocs + InfoBubble + ContinuousSlider + notes libres + usages renommés",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-015",
+        "S-005"
+      ],
       "acceptance": [
         "wizard restructuré en 4 blocs (Profil&contraintes / Infra pure / Usage-Mémoire / Médias)",
         "InfoBubble (pourquoi + conséquence), sliders continus volume/débit, binaires Oui/Non, note libre par bloc",
@@ -196,8 +315,15 @@
       ]
     },
     {
-      "id": "S-020", "title": "Bloc Médias (mémoriser + créer, souverain/API, backlog) + budget-mètre flottant", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-016", "S-019"],
+      "id": "S-020",
+      "title": "Bloc Médias (mémoriser + créer, souverain/API, backlog) + budget-mètre flottant",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-016",
+        "S-019"
+      ],
       "acceptance": [
         "MediaNeedsBlock : par modalité, volet mémoriser ET volet créer/générer (palier ou volume) + toggle 🟢 souverain / 💳 API + backlog initial",
         "live preview du dimensionnement (~X €/mois d'infra, dont GPU)",
@@ -205,8 +331,15 @@
       ]
     },
     {
-      "id": "S-021", "title": "Chemin 90 s (QuickProfileForm + profile-mappers + mode verdict) + entrée accueil", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-018", "S-019"],
+      "id": "S-021",
+      "title": "Chemin 90 s (QuickProfileForm + profile-mappers + mode verdict) + entrée accueil",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-018",
+        "S-019"
+      ],
       "acceptance": [
         "formulaire 3-4 questions qualitatives → Profile complet (défauts documentés, tests mappers)",
         "chemin 90 s = entrée par défaut sur l'accueil → /resultats en mode verdict",
@@ -214,8 +347,16 @@
       ]
     },
     {
-      "id": "S-022", "title": "Résultats : mode verdict + CostMap étendu (décomposition multimodale dans les couches + setup)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-018", "S-021", "S-006"],
+      "id": "S-022",
+      "title": "Résultats : mode verdict + CostMap étendu (décomposition multimodale dans les couches + setup)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-018",
+        "S-021",
+        "S-006"
+      ],
       "acceptance": [
         "mode verdict (douleur/risque/gain/prix ferme/coût ±30 %/setup/next step)",
         "mode expert : CostMap décompose l'apport multimodal DANS les couches + ligne setup, pastilles 🟢/💳, sources cliquables",
@@ -223,8 +364,15 @@
       ]
     },
     {
-      "id": "S-023", "title": "Conversion/data — log des simulations + capture e-mail exit-intent (Supabase RLS)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-012", "S-018"],
+      "id": "S-023",
+      "title": "Conversion/data — log des simulations + capture e-mail exit-intent (Supabase RLS)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-012",
+        "S-018"
+      ],
       "acceptance": [
         "migrations tables simulation_log + lead_capture avec RLS activé",
         "log des simulations (moat data) + capture e-mail exit-intent + rapport partageable (lien)",
@@ -232,8 +380,18 @@
       ]
     },
     {
-      "id": "S-024", "title": "E2E parcours Strate + nettoyage code mort", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-020", "S-021", "S-022", "S-023", "S-013"],
+      "id": "S-024",
+      "title": "E2E parcours Strate + nettoyage code mort",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-020",
+        "S-021",
+        "S-022",
+        "S-023",
+        "S-013"
+      ],
       "acceptance": [
         "e2e (desktop + mobile) : 90 s → verdict ; wizard 4 blocs → expert ; bloc Médias génération vidéo souveraine → budget rouge + levier",
         "round-trip /configurateur ↔ /resultats (cohérence localStorage)",
@@ -241,8 +399,15 @@
       ]
     },
     {
-      "id": "S-025", "title": "Price feed LIVE Firecrawl (extraction structurée) — média + backup ; seed = repli daté", "feature": "pricing",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-008", "S-017"],
+      "id": "S-025",
+      "title": "Price feed LIVE Firecrawl (extraction structurée) — média + backup ; seed = repli daté",
+      "feature": "pricing",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-008",
+        "S-017"
+      ],
       "acceptance": [
         "les prix d'infra NE sont PAS des littéraux écrits à la main : extraction structurée Firecrawl (JSON/LLM) des prix RÉELS sur les pages vendor, au runtime, côté serveur (clé jamais exposée)",
         "REPRENDRE le pricing médias (S-017) sur ce modèle : getMediaPrices() = LIVE en primaire (async, route serveur) → injecté dans recommend ; le seed devient repli daté + baseline de validation",
@@ -252,8 +417,15 @@
       ]
     },
     {
-      "id": "S-026", "title": "Module backup.ts — plan dérivé + coût agrégé + arbitrage vecteurs", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015", "S-025"],
+      "id": "S-026",
+      "title": "Module backup.ts — plan dérivé + coût agrégé + arbitrage vecteurs",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-015",
+        "S-025"
+      ],
       "acceptance": [
         "types Backup/BackupPlan/VectorDecision/ThreeTwoOne (spec §3) ; Profile.backup?",
         "deriveBackupPlan(profile, prices) pur : criticité → params (table §4) ; surcharge conformité (régulé/secret → crypto-shred + immutable + legalRetentionYears = max(régimes)) ; none → neutre",
@@ -262,8 +434,14 @@
       ]
     },
     {
-      "id": "S-027", "title": "Scoring : 9ᵉ dimension resilience (refonte 8→9)", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-015"],
+      "id": "S-027",
+      "title": "Scoring : 9ᵉ dimension resilience (refonte 8→9)",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-015"
+      ],
       "acceptance": [
         "SCORE_KEYS contient resilience (9 entrées) ; computeScores retourne 9 dimensions ; RadarChart rend 9 axes",
         "dimension resilience selon rubrique §8 (criticité, 3-2-1-1-0, tests, immutabilité, érasure ; pénalité RPO/RTO incohérents)",
@@ -272,8 +450,15 @@
       ]
     },
     {
-      "id": "S-028", "title": "Intégration backup dans recommend (couches + setup + resilience)", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-026", "S-027"],
+      "id": "S-028",
+      "title": "Intégration backup dans recommend (couches + setup + resilience)",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-026",
+        "S-027"
+      ],
       "acceptance": [
         "Recommendation.backup rempli ; coût backup récurrent DANS les couches (C5/C6), one-time dans setupCost",
         "computeScores reçoit le plan → dimension resilience cohérente",
@@ -282,16 +467,29 @@
       ]
     },
     {
-      "id": "S-029", "title": "Exit Escrow piloté par le BackupPlan (runbook + backup.sh)", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-028"],
+      "id": "S-029",
+      "title": "Exit Escrow piloté par le BackupPlan (runbook + backup.sh)",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-028"
+      ],
       "acceptance": [
         "buildExitBundle : runbook.md + scripts/backup.sh reflètent le plan réel (RPO/rétention/copies/offsite/airgap/immutable/PITR/érasure)",
         "cohérence manifest ↔ plan ; tests bundle étendus verts"
       ]
     },
     {
-      "id": "S-030", "title": "UI Bloc ② Sauvegarde & résilience (criticité + expert + aperçu live)", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-026", "S-019"],
+      "id": "S-030",
+      "title": "UI Bloc ② Sauvegarde & résilience (criticité + expert + aperçu live)",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-026",
+        "S-019"
+      ],
       "acceptance": [
         "section dans le Bloc ② : RadioCards criticité + InfoBubble neutre + affinage expert (RPO/RTO/rétention/copies/offsite/airgap/immutable/tier/BYOK/tests) + vectorStrategy + politique d'érasure recommandée/surchargeable",
         "setField('backup', …) propage ; aperçu live (≈ X €/mois + Y € mise en route) ; budget-mètre intègre le backup",
@@ -299,8 +497,17 @@
       ]
     },
     {
-      "id": "S-031", "title": "Résultats backup (CostMap + radar 9 axes + verdict setup) + e2e + nettoyage", "feature": "backup",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-028", "S-027", "S-029", "S-024"],
+      "id": "S-031",
+      "title": "Résultats backup (CostMap + radar 9 axes + verdict setup) + e2e + nettoyage",
+      "feature": "backup",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-028",
+        "S-027",
+        "S-029",
+        "S-024"
+      ],
       "acceptance": [
         "CostMap : ligne backup récurrent + setup enrichi + pastilles 🟢/💳 + sources cliquables ; verdict inclut la mise en route backup ; radar 9 axes",
         "e2e (desktop + mobile) : profil critique + régulé → ligne backup + radar 9 axes + érasure crypto-shred + bundle Exit Escrow reflète le plan ; round-trip",
@@ -308,8 +515,14 @@
       ]
     },
     {
-      "id": "S-032", "title": "Homepage de vente (portage du brouillon validé : promesses, wedge, étapes, tarifs, diagnostic 90 s)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-021"],
+      "id": "S-032",
+      "title": "Homepage de vente (portage du brouillon validé : promesses, wedge, étapes, tarifs, diagnostic 90 s)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-021"
+      ],
       "acceptance": [
         "app/page.tsx porte homepage-draft.html (décision #11) en composants React + tokens du design system, pas de couleur hors palette",
         "4 promesses : preuve DURE (Exit Escrow + fiduciaire) uniquement sur −risques ; les 3 autres = preuve molle « à mesurer chez vous » (DÉFCON 1, zéro stat inventée)",
@@ -319,8 +532,14 @@
       ]
     },
     {
-      "id": "S-033", "title": "Compute souverain dimensionné + sourcé (serveurs self-hosted — comble le forfait C6 hardcodé)", "feature": "pricing",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-025"],
+      "id": "S-033",
+      "title": "Compute souverain dimensionné + sourcé (serveurs self-hosted — comble le forfait C6 hardcodé)",
+      "feature": "pricing",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-025"
+      ],
       "acceptance": [
         "FONDATION : lib/engine/compute.ts (computeSovereignCompute pur, prix injectés) dimensionne les VM self-hosted (Postgres/Qdrant/orchestrateur/app/vault) selon preset + volume + users + débit",
         "prix instances RÉELS sourcés (Scaleway DEV1-M/PRO2-S, extraction live prouvée) → lib/pricing/compute-seed.ts + docs/pricing/compute-cost-sources.md ; seed = repli + baseline",
@@ -330,8 +549,12 @@
       ]
     },
     {
-      "id": "S-034", "title": "Fondation LLM plateforme (client proxy LiteLLM + route serveur)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-27", "deps": [],
+      "id": "S-034",
+      "title": "Fondation LLM plateforme (client proxy LiteLLM + route serveur)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [],
       "acceptance": [
         "lib/llm/{types,client}.ts : callLLM(messages, opts) tape le proxy LiteLLM (LITELLM_BASE_URL + LITELLM_API_KEY lus SERVEUR ONLY, jamais NEXT_PUBLIC ni bundle client), fetch injectable, AbortSignal timeout, JAMAIS throw → LlmResult { ok:true, content } | { ok:false, reason }",
         "vérif proxy AVANT code : GET /v1/models répond (clé jamais affichée, preuve = code HTTP + noms modèles) → alias applicatif strate-default ; repli codé si indisponible",
@@ -341,8 +564,12 @@
       ]
     },
     {
-      "id": "S-035", "title": "Catalogue injecté (seed = layers.ts) + garde-fou + recommend(catalog)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-27", "deps": [],
+      "id": "S-035",
+      "title": "Catalogue injecté (seed = layers.ts) + garde-fou + recommend(catalog)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [],
       "acceptance": [
         "lib/catalog/types.ts : Catalog, ComponentCandidate (name/role/license/sovereignty/benchmarkRank/sourceUrl/checkedAt/confidence/provenance), CatalogSlot, Provenance",
         "catalog-seed.ts : seedCatalog(preset, profile) transpose À L'IDENTIQUE les littéraux conditionnels de layers.ts (LIGHT/MEDIUM/HARD × multimodal × bitemporel) ; chaque candidat porte sourceUrl + checkedAt (DÉFCON 1)",
@@ -352,8 +579,15 @@
       ]
     },
     {
-      "id": "S-036", "title": "Veille temps réel catalogue (Firecrawl + LLM) + garde-fou + audit trail RLS", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-034", "S-035"],
+      "id": "S-036",
+      "title": "Veille temps réel catalogue (Firecrawl + LLM) + garde-fou + audit trail RLS",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-034",
+        "S-035"
+      ],
       "acceptance": [
         "lib/catalog/live-catalog.ts : assembleLiveCatalog(profile, deps) par slot (recherche web Firecrawl + callLLM → ComponentCandidate[] → reconcileCatalog), parallélisé, repli seed total si indispo",
         "filtre contraintes dures (secret ⇒ pas d'api-third-party) ; cache.ts TTL court (now injectable) ne relance pas une requête identique",
@@ -363,8 +597,15 @@
       ]
     },
     {
-      "id": "S-037", "title": "Snapshot reproductible + provenance catalogue (UI + export + Exit Escrow)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-035", "S-036"],
+      "id": "S-037",
+      "title": "Snapshot reproductible + provenance catalogue (UI + export + Exit Escrow)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-035",
+        "S-036"
+      ],
       "acceptance": [
         "ResultsView rend d'abord avec le seed (repli immédiat) → fetch /api/catalog/live → recommend(profile, prices, liveCatalog) recalcule",
         "CatalogProvenance.tsx (jumeau LivePriceStatus) : provenance live/seed/flagged + source + fraîcheur + confiance",
@@ -373,8 +614,14 @@
       ]
     },
     {
-      "id": "S-038", "title": "Intake libre → Profile (route LLM + validation + pré-remplissage)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034"],
+      "id": "S-038",
+      "title": "Intake libre → Profile (route LLM + validation + pré-remplissage)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-034"
+      ],
       "acceptance": [
         "route app/api/llm/intake : texte/dictée → callLLM → JSON parsé VALIDÉ par schéma vers Profile (hors-bornes rejeté → re-prompt/repli) ; le LLM ne calcule pas",
         "texte ambigu → défauts prudents documentés (jamais sous-dimensionné) ; Profile écrit dans localStorage (STORAGE_KEY) consommable par recommend",
@@ -383,8 +630,14 @@
       ]
     },
     {
-      "id": "S-039", "title": "Narration LLM (infobulles/verdict, chiffres préservés)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034"],
+      "id": "S-039",
+      "title": "Narration LLM (infobulles/verdict, chiffres préservés)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-034"
+      ],
       "note": "Livré : narration du VERDICT (besoin/risque/gain/étape) + du « pourquoi ce preset » sur /resultats, avec invariant chiffres prouvé + repli + disclaimer. Les InfoBubbles du wizard réutilisent le même moteur (narrate.ts) — branchement différé (surface large, faible valeur), à activer si besoin.",
       "acceptance": [
         "route app/api/llm/narrate : reçoit les chiffres injectés et les PRÉSERVE (invariant : aucun montant régénéré/altéré)",
@@ -393,8 +646,15 @@
       ]
     },
     {
-      "id": "S-040", "title": "Assistant Q&A contextuel (chat + recherche web sourcée)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034", "S-037"],
+      "id": "S-040",
+      "title": "Assistant Q&A contextuel (chat + recherche web sourcée)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-034",
+        "S-037"
+      ],
       "note": "lib/llm/assistant.ts (pur) : serializeRecoFacts (FAITS autoritatifs = chiffres AFFICHÉS) + buildChatMessages (FAITS + résultats web greffés par placeholders, historique threadé) ; prompt « assistant » ajouté au registre S-053 (éditable). Route /api/llm/chat étoffée : { question, history?, recoFacts? } → searchWeb Firecrawl (repli []) + callLLM → { ok, answer, sources } ; repli si LLM KO. AssistantPanel (chat sur /resultats) branché sur la reco active. Garde-fou DÉFCON 1 par CONSTRUCTION : seuls les montants des FAITS sont autorisés, web sourcé (URL citée), disclaimer IA. LIMITE HONNÊTE : un chat libre ne peut garantir mathématiquement « zéro chiffre inventé » → garanti par contexte (faits injectés + no-invent + sources + disclaimer), pas par preuve. +7 tests (assistant pur + route callLLM/searchWeb mockés) + e2e. typecheck 0 / lint 0/0 / build OK.",
       "acceptance": [
         "components/assistant/AssistantPanel (chat contextuel sur /resultats) + route app/api/llm/chat étoffée (contexte reco sérialisé)",
@@ -403,8 +663,15 @@
       ]
     },
     {
-      "id": "S-041", "title": "Compute souverain intégré dans recommend (remplace le forfait C6 hardcodé)", "feature": "pricing",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-033", "S-028"],
+      "id": "S-041",
+      "title": "Compute souverain intégré dans recommend (remplace le forfait C6 hardcodé)",
+      "feature": "pricing",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-033",
+        "S-028"
+      ],
       "acceptance": [
         "recommend(profile, prices, catalog?, backupPrices?, computePrices = NEUTRAL_COMPUTE_PRICES) appelle computeSovereignCompute ; Recommendation.compute: ComputeSizing rempli",
         "applyCompute (cost.ts) : compute injecté > 0 → REMPLACE le forfait C6 hardcodé (30/100/400) par le compute dimensionné+sourcé ; compute neutre → forfait conservé (invariant tests existants préservé)",
@@ -414,8 +681,14 @@
       ]
     },
     {
-      "id": "S-042", "title": "UX quick wins (langage test utilisateur 2026-05-27)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-024"],
+      "id": "S-042",
+      "title": "UX quick wins (langage test utilisateur 2026-05-27)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-024"
+      ],
       "acceptance": [
         "U9 : StatusDot expose un title (tooltip survol) expliquant 🟢🟡🟠 (« pourquoi orange ? »)",
         "U2 : BudgetMeter chiffre le dépassement (« ≈ X € au-dessus du plafond de Y € ») quand over",
@@ -425,44 +698,104 @@
       ]
     },
     {
-      "id": "S-043", "title": "Pricing egress inter-région + table conformité transferts (sourcés)", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-025"],
+      "id": "S-043",
+      "title": "Pricing egress inter-région + table conformité transferts (sourcés)",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-025"
+      ],
       "note": "Recadrage Amine (2026-05-29) : (1) MULTI-SEGMENT, pas de référent unique → `lib/pricing/residency-seed.ts` couvre le spectre des profils d'hébergement first-class (self-hosted/Hetzner, souverains UE Scaleway/OVH/IONOS, secnumcloud Outscale, hyperscalers GCP/AWS en repères), chaque vecteur sourcé en devise native (`EgressVector`/`ResidencyPriceTable`). (2) DOCTRINE « tout vivant + filet » étendue au pricing egress ET au JURIDIQUE : le seed est un REPLI DATÉ + baseline, jamais une décision gravée — `reconcileEgressVector` (garde-fou ±60 %, réutilise `reconcile.ts`) ; Scaleway egress déjà live via `live-feed.ts`. (3) self-hosted = surface à sécuriser : `INTER_SITE_SECURITY_SEED` flague + fourchette (WireGuard 0 € → managé 7-18 $/u/mois), chiffrage détaillé = S-061. (4) `lib/legal/transfers.ts` : `lookupTransferBasis(from,to,ctx)` pur/total → état DATÉ + RÉVISABLE (flag `volatile` sur DPF UE-US sous pourvoi CJUE C-703/25 P et adéquation Maroc), `cloudAct` flag, disclaimer « ingénierie pas juridique » TOUJOURS ; `TransferStatus`/`TransferRegion` canoniques ici (S-044 importe). Veille live des statuts = S-062. Docs : `docs/pricing/residency-cost-sources.md` + `docs/legal/transfer-bases.md` (audit trail, sources officielles relevées 2026-05-29, NON CONFIRMÉ assumés : Azure, intra-EU GCP). +19 tests (seed multi-segment+garde-fou ; lookup datés/volatile/cloudAct/total). typecheck 0, lint 0/0, 375 tests, build OK.",
-      "acceptance": ["spec n°2 §5/§6 : egress inter-région sourcé (Scaleway/OVH/AWS, URL+date+confiance) + table bases légales de transfert (UE/Maroc/US, RGPD chap.V/CNDP/Cloud Act) ; disclaimer « ingénierie, pas juridique » ; DÉFCON 1"]
+      "acceptance": [
+        "spec n°2 §5/§6 : egress inter-région sourcé (Scaleway/OVH/AWS, URL+date+confiance) + table bases légales de transfert (UE/Maroc/US, RGPD chap.V/CNDP/Cloud Act) ; disclaimer « ingénierie, pas juridique » ; DÉFCON 1"
+      ]
     },
     {
-      "id": "S-044", "title": "Moteur résidence/DR pur (deriveResidencyPlan + costResidency + conflit)", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-043", "S-041"],
+      "id": "S-044",
+      "title": "Moteur résidence/DR pur (deriveResidencyPlan + costResidency + conflit)",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-043",
+        "S-041"
+      ],
       "note": "types.ts : Region (= TransferRegion lib/legal), DrTier, Residency (+ Profile.residency?), RegionRole, RegionAssignment, TransferFlag (réutilise TransferStatus lib/legal), ResidencyPlan (PAS encore dans Recommendation — c'est S-046). lib/engine/residency.ts (pur, prix injectés, défaut neutre) : deriveResidencyTopology (primaryRegion via zone ; noTransfer dérivé régulé/secret ; drTier dérivé criticité backup + relevé d'un cran si latence fast & >50 users ; secondaryRegion intra-juridiction sous résidence stricte ; topologie none/warm/hot/actif-actif) ; costResidency (régions en attente via computeSovereignCompute S-041 — warm 0.3 / hot 1.0 / actif-actif 1.0 + réplication egress bidirectionnelle ; egress inter-région via residency-seed S-043 ; setupCost = 1ᵉʳ transfert ; none+mono-région → 0, invariant totalCost) ; buildTransfers via lookupTransferBasis (lib/legal) → TransferFlag avec note datée + volatile + disclaimer + flag Cloud Act ; buildConflict (résidence stricte × DR en juridiction mono-région maroc/other → conflit + leviers, JAMAIS résolu en douce) ; geoSovScore 0-10 (alimente la 10ᵉ dim S-045). +11 tests (dérivation, transferts UE→US restricted/intra-juridiction sans flux, conflit Maroc vs UE multi-région, monotonie none<warm<hot<actif-actif, invariant neutre, sources, geoSov borné). typecheck 0, lint 0/0, 388 tests, build OK. Reste : S-045 (scoring 9→10 geosov), S-046 (intégration recommend + Recommendation.residency), S-047 (Exit Escrow DR), S-048 (UI).",
-      "acceptance": ["spec n°2 §3/§4/§5/§6 : types Residency/ResidencyPlan/Region/TransferFlag ; dérivation profil→plan ; conformité transferts ; conflit résidence×DR exposé + leviers (jamais résolu en douce) ; monotonie coût (none<warm<hot<actif-actif) ; régions repli via computeSovereignCompute ; prix injectés ; tests table-driven"]
+      "acceptance": [
+        "spec n°2 §3/§4/§5/§6 : types Residency/ResidencyPlan/Region/TransferFlag ; dérivation profil→plan ; conformité transferts ; conflit résidence×DR exposé + leviers (jamais résolu en douce) ; monotonie coût (none<warm<hot<actif-actif) ; régions repli via computeSovereignCompute ; prix injectés ; tests table-driven"
+      ]
     },
     {
-      "id": "S-045", "title": "Scoring 9→10 : geosov (neuf) + resilience étendu DR + sov recadré", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-027"],
+      "id": "S-045",
+      "title": "Scoring 9→10 : geosov (neuf) + resilience étendu DR + sov recadré",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-027"
+      ],
       "note": "SCORE_KEYS +geosov (10 clés, ordre stable, geosov en 10ᵉ). computeScores gagne un param residencyPlan (défaut deriveResidencyPlan(p), price-indépendant) : dimension geosov = ResidencyPlan.geoSovScore (label « Souveraineté géographique (résidence & transferts conformes) », why = région + nb transferts + conflit) ; resilience étendue DR (bonus actif-actif 1.5 / hot 1 / warm 0.5, why cite RTO régional) ; sov RECADRÉ (retrait du bonus zone UE/Maroc → c'est geosov ; label « …(portabilité) »). RadarChart auto (lit data.length → « Radar des 10 dimensions »). MAJ libellés « 9 »→« 10 » : ResultsView (SHORT_LABELS +geosov « Géo-souv. », titre), export/model.ts + export.test, app/resultats metadata, e2e strate (radar 10 axes). Tests toHaveLength(9)→10 (engine ×2, recommend-sizing, profile-mappers). Test résilience « croît avec la criticité » ISOLE l'axe backup (residency drTier none) car le bonus DR clampait high=critical=10 ; +1 test « DR renforce la résilience ». +1 test net → 389. typecheck 0, lint 0/0, build OK. Reste : S-046 (intégration recommend + Recommendation.residency), S-047 (Exit Escrow DR), S-048 (UI + radar 10 visible).",
-      "acceptance": ["spec n°2 §7 : SCORE_KEYS +geosov (10) ; computeScores retourne 10 ; geosov (résidence conforme), resilience intègre le DR, sov recadré « zéro lock-in » ; TOUS les toHaveLength(9)→10 + RadarChart 10 axes ; typecheck 0 / lint 0/0 / tests verts"]
+      "acceptance": [
+        "spec n°2 §7 : SCORE_KEYS +geosov (10) ; computeScores retourne 10 ; geosov (résidence conforme), resilience intègre le DR, sov recadré « zéro lock-in » ; TOUS les toHaveLength(9)→10 + RadarChart 10 axes ; typecheck 0 / lint 0/0 / tests verts"
+      ]
     },
     {
-      "id": "S-046", "title": "Intégration résidence/DR dans recommend (+ ensemble)", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-044", "S-045"],
+      "id": "S-046",
+      "title": "Intégration résidence/DR dans recommend (+ ensemble)",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-044",
+        "S-045"
+      ],
       "note": "recommend(profile, prices, catalog?, backupPrices, computePrices, residencyPrices=NEUTRAL) calcule deriveResidencyPlan(profile, residencyPrices, computePrices, preset) → Recommendation.residency (REQUIS) rempli. cost.ts applyResidency : coût récurrent résidence/DR (réplication egress + régions en attente) injecté DANS C6 (ordre : applyCompute→applyMultimodalSizing→applyBackup→applyResidency) ; monthlyCost 0 → couches inchangées (invariant totalCost = baseCost+moduleCost). setupCost += residency.setupCost (amorçage réplicas). computeScores reçoit le plan → geosov réel + resilience étendu DR. costSources += residency.costSources. ensemble.ts threade residencyPrices (baseline + 3 variants). REFACTO ZÉRO-DETTE : le CONTRAT (ResidencyPriceTable/EgressVector/HostingClass/NEUTRAL_RESIDENCY_PRICES/selectEgressVector/vectorsForClass) déplacé de lib/pricing vers lib/engine/residency (le moteur reste PUR, n'importe jamais lib/pricing — comme BackupPriceTable) ; residency-seed.ts importe le contrat du moteur + re-exporte (RESIDENCY_PRICE_SEED + reconcileEgressVector restent côté pricing). +6 tests recommend-residency (champ rempli, coût C6, invariant neutre, geosov, sources, ensemble threadé) → 395. typecheck 0, lint 0/0, build OK. Reste epic Résidence : S-047 (Exit Escrow DR), S-048 (UI Bloc ② + radar 10 + transferts + e2e).",
-      "acceptance": ["spec n°2 §6 : Recommendation.residency rempli ; coût réplication + régions repli dans les couches ; none+mono-région → neutre (invariant totalCost) ; ensemble threade ; tests recommend étendus verts"]
+      "acceptance": [
+        "spec n°2 §6 : Recommendation.residency rempli ; coût réplication + régions repli dans les couches ; none+mono-région → neutre (invariant totalCost) ; ensemble threade ; tests recommend étendus verts"
+      ]
     },
     {
-      "id": "S-047", "title": "Exit Escrow DR (runbook bascule + IaC multi-région)", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-046"],
+      "id": "S-047",
+      "title": "Exit Escrow DR (runbook bascule + IaC multi-région)",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-046"
+      ],
       "note": "bundle.ts lit recommendation.residency. BundleManifest.residency (ResidencyPlan) ajouté (source de vérité, cohérence manifest↔plan). runbook.md : section `residencySection` DÉRIVÉE du plan réel — région primaire, RPO/RTO régionaux, ordre de priorité des régions (topologie), coût récurrent+mise en route, table de conformité des transferts (✅ok/⚠️restreint/⛔interdit + base légale + disclaimer « ingénierie pas juridique »), bloc conflit+leviers si hasConflict, procédure de bascule régionale en 5 étapes (RTO cible). terraform/dr.tf (multi-région : variables primary_region/replica_regions + réplication actif-actif/actif-passif) généré SEULEMENT si des réplicas existent (cohérence manifest↔plan ; profil sans DR → pas de dr.tf, EXPECTED_FILES inchangé). README maj (dr.tf + runbook DR). +5 tests bundle (manifest↔plan, dr.tf+procédure bascule, sans-DR→pas de dr.tf, transfert inter-région listé+disclaimer, conflit Maroc+leviers) → 400. typecheck 0, lint 0/0, build OK. Reste epic Résidence : S-048 (UI Bloc ② + radar 10 visible + transferts + e2e + nettoyage).",
-      "acceptance": ["spec n°2 §8 : buildExitBundle lit recommendation.residency → runbook DR (bascule régionale, ordre régions, RTO) + terraform multi-région ; cohérence manifest↔plan ; tests bundle étendus"]
+      "acceptance": [
+        "spec n°2 §8 : buildExitBundle lit recommendation.residency → runbook DR (bascule régionale, ordre régions, RTO) + terraform multi-région ; cohérence manifest↔plan ; tests bundle étendus"
+      ]
     },
     {
-      "id": "S-048", "title": "UI Bloc ② Résidence & continuité + Résultats (radar 10 + transferts) + e2e", "feature": "residence",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-046", "S-045", "S-047", "S-031"],
+      "id": "S-048",
+      "title": "UI Bloc ② Résidence & continuité + Résultats (radar 10 + transferts) + e2e",
+      "feature": "residence",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-046",
+        "S-045",
+        "S-047",
+        "S-031"
+      ],
       "note": "CLÔT l'épic Résidence (S-043→S-048). Moteur : hostingClassForProfile(p) pur (zone→vecteur egress : ue/maroc→sovereign-eu, us/other→hyperscaler), câblé dans recommend (lève la dette « S-048 le câblera au profil »). UI Bloc ② : ResidencyBlock.tsx (criticité DR none/warm/hot + InfoBubble + affinage expert : région primaire, régions autorisées MULTI-CONTINENT via CheckboxCards = finding C4, résidence stricte, actif-actif, RPO/RTO + aperçu live coût + ALERTE conflit résidence×DR jamais résolue en douce + disclaimer ingénierie). Câblé dans Wizard.tsx (section après Sauvegarde) + injection getResidencyPrices() dans recommend → budget-mètre intègre la résidence. options.ts : REGION_OPTIONS + DR_TIER_OPTIONS. Résultats : CostMap gagne residency → ligne réplication (DR/actif-actif + N régions + RTO + €/mois, sources cliquables, setup « amorçage des réplicas ») ; ResidencyPanel.tsx (NEUVE) = topologie régions + table transferts (✅ Autorisé / ⚠️ Encadré / ⛔ Interdit + base légale datée + note volatile + Cloud Act) + RPO/RTO + alerte conflit + disclaimer (rendu null si plan neutre). ResultsView injecte getResidencyPrices() dans recommend/buildEnsemble/narration, passe residency à CostMap, rend ResidencyPanel. Radar 10 déjà OK (S-045). Doc : README/PRD/PASSATION « 9 »→« 10 » dimensions (zéro trace obsolète). +9 tests (hostingClassForProfile, 4 ResidencyBlock, 3 ResidencyPanel, 1 results) → 409 + 10 skip ; e2e « profil régulé multi-région → réplication + transfert UE→US Encadré + radar 10 » (desktop+mobile, 25 + 1 skip). typecheck 0, lint 0/0, build OK (/resultats statique 13,7 kB). ÉPIC RÉSIDENCE COMPLET. Reste backlog : S-061 (sécu inter-site), S-062 (veille juridique live), épic i18n S-057→060.",
-      "acceptance": ["spec n°2 §9 : section Bloc ② (criticité DR + expert régions/noTransfer/actif-actif) + zone multi-région (finding C4) + alerte conflit ; Résultats : ligne réplication + transferts (pastilles ok/restricted/forbidden + base légale) + radar 10 axes ; e2e profil régulé multi-région ; zéro toHaveLength(9) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"]
+      "acceptance": [
+        "spec n°2 §9 : section Bloc ② (criticité DR + expert régions/noTransfer/actif-actif) + zone multi-région (finding C4) + alerte conflit ; Résultats : ligne réplication + transferts (pastilles ok/restricted/forbidden + base légale) + radar 10 axes ; e2e profil régulé multi-région ; zéro toHaveLength(9) résiduel ; typecheck 0 / lint 0/0 / build OK / e2e verts"
+      ]
     },
     {
-      "id": "S-049", "title": "Intégrer growth + latency dans le moteur (options collectées mais non calculées)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-016", "S-041"],
+      "id": "S-049",
+      "title": "Intégrer growth + latency dans le moteur (options collectées mais non calculées)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-016",
+        "S-041"
+      ],
       "acceptance": [
         "AUDIT confirmé (retour Amine 2026-05-27) : growth et latency sont collectés (Wizard.tsx) + affichés (export/model.ts) mais 0 usage moteur (coût/scores/couches/sizing/preset) — dette DÉFCON 1 à résorber (à NE PAS confondre avec reqPerDay, lui calculé)",
         "growth pilote la projection de montée en charge : facteur de croissance documenté (±30 %) appliqué au dimensionnement (sizing/compute) ou projection explicite ; jamais un prix en dur",
@@ -472,8 +805,15 @@
       ]
     },
     {
-      "id": "S-050", "title": "Récap des choix sous le budget-mètre (toutes les options + valeur effective)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-019", "S-020"],
+      "id": "S-050",
+      "title": "Récap des choix sous le budget-mètre (toutes les options + valeur effective)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-019",
+        "S-020"
+      ],
       "acceptance": [
         "panneau récap (déterministe, pur) sous le BudgetMeter : tous les champs du profil avec leur valeur EFFECTIVE (libellés FR, valeur dérivée pour backup/preset, modules actifs, médias)",
         "indique explicitement les options sans impact sur le coût (transparence DÉFCON 1) ; pas d'invention",
@@ -482,8 +822,15 @@
       ]
     },
     {
-      "id": "S-051", "title": "Refonte taxonomie presets : preset scoré/explicable + réconciliation étiquettes + ADR", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-003", "S-004"],
+      "id": "S-051",
+      "title": "Refonte taxonomie presets : preset scoré/explicable + réconciliation étiquettes + ADR",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-003",
+        "S-004"
+      ],
       "acceptance": [
         "DÉCISION Amine (option 2+1) : remplacer la cascade binaire decidePreset par un score de besoin explicite (souveraineté/criticité/charge/conformité) → palier LIGHT/MEDIUM/HARD dérivé + justification chiffrée (pourquoi ce palier)",
         "réconcilier les étiquettes expected des PRESET_PROFILES avec le résultat réel des règles (ex. Coach indépendant labellisé MEDIUM mais classé LIGHT par les règles) — zéro divergence étiquette↔calcul",
@@ -492,8 +839,16 @@
       ]
     },
     {
-      "id": "S-052", "title": "Champ texte libre par bloc/option → intake LLM (ajuste le Profile, borné) + narration", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-038", "S-039", "S-019"],
+      "id": "S-052",
+      "title": "Champ texte libre par bloc/option → intake LLM (ajuste le Profile, borné) + narration",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-038",
+        "S-039",
+        "S-019"
+      ],
       "note": "Note libre par bloc RÉELLEMENT intégrée : « Intégrer cette note » → /api/llm/intake { text, base } (LLM AJUSTE le profil courant, fusionne les listes) → applyIntakeFields n'applique QUE les champs extraits (médias/backup/modules préservés ; freeNotes conservé → dette levée). Narration (/resultats) reprend les freeNotes en CONTEXTE (garde-fou anti-injection + isCleanNarration). Repli gracieux si LLM KO. Surface « options clés » couverte par le champ par bloc ; un champ par option individuelle est différé (faible valeur, même moteur).",
       "acceptance": [
         "chaque bloc (et options clés) du configurateur expose un champ texte libre « dites ce que vous voulez » (additif, jamais bloquant ; saisie manuelle toujours dispo)",
@@ -503,8 +858,15 @@
       ]
     },
     {
-      "id": "S-053", "title": "Console admin super-admin (prompts système versionnés : reco / livrable / agent déploiement)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-034", "S-039"],
+      "id": "S-053",
+      "title": "Console admin super-admin (prompts système versionnés : reco / livrable / agent déploiement)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-034",
+        "S-039"
+      ],
       "note": "Code livré (option C, tout éditable). Migration prompts+super_admins (RLS, helper is_super_admin, index unique 1 active/clé). lib/prompts/{registry (PROMPT_KEYS intake/narration/catalog-veille + DEFAULT_PROMPTS à placeholders + composePrompt),store (loadActivePrompt service-role + listPromptVersions + activateNewVersion, repli partout)}. lib/supabase/admin.ts (service-role, repli null). Builders refactorés en gabarit+composePrompt (intake/narrate/veille), routes chargent le prompt actif (repli défaut). Console /admin (login Supabase + garde super-admin + éditeur versionné) + /api/admin/prompts (RLS-enforced). +15 tests. ACTIVÉ EN PROD 2026-05-28 : migration appliquée (Supabase self-hosté), compte super-admin medamine.mansouriidrissi@gmail.com créé+seedé (super_admins count=1), 3 vars Supabase dans Coolify, redéployé ; login + rôle super-admin VÉRIFIÉS. Console live sur /admin. Livrable + agent-déploiement = Lot 2 (non enregistrés, pas de consommateur LLM).",
       "acceptance": [
         "DÉCISION Amine : super-admin GLOBAL (hors tenant) — un admin plateforme édite les prompts pour tous ; auth super-admin (pas la RLS de cercle) ; route /admin protégée serveur. DÉCISION Amine 2026-05-28 : modèle d'édition = OPTION C (tout éditable, responsabilité humaine, AUCUN garde-fou de contenu sur le prompt) — sûr car les validateurs serveur déterministes (parseIntakeProfile/parseNarration/reconcile) bornent TOUJOURS la sortie quel que soit le prompt ; repli sur le prompt par défaut si le store est vide/indispo. Périmètre : clés à consommateur réel AUJOURD'HUI (intake, narration, veille-catalogue) ; livrable + agent-déploiement = Lot 2 (pas de consommateur LLM actuel → non enregistrées pour éviter une config morte, cf. S-049).",
@@ -514,8 +876,16 @@
       ]
     },
     {
-      "id": "S-056", "title": "Résorber la dette de supervision : hypothèses de dimensionnement vivantes + sourcées (paramètres injectés, garde-fou)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-28", "deps": ["S-036", "S-016", "S-033"],
+      "id": "S-056",
+      "title": "Résorber la dette de supervision : hypothèses de dimensionnement vivantes + sourcées (paramètres injectés, garde-fou)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-28",
+      "deps": [
+        "S-036",
+        "S-016",
+        "S-033"
+      ],
       "note": "Option A livrée. Heuristiques extraites en SizingParams injectables (lib/engine/sizing-params.ts) ; BASELINE_SIZING_PARAMS datée = défaut + repli. ComponentCandidate gagne sizingParams?: {gpuLoadFactor (C6), storageFactor (C5)}. deriveSizingParams(catalog) consomme un facteur s'il existe ET passe le garde-fou de bornes [0.25,4] (isValidFactor), sinon repli baseline ; reconcileCatalog assainit les facteurs live aberrants. recommend thread les params dans costMultimodalSizing + trace les sources appliquées. Snapshot reproductible : les facteurs voyagent avec le catalogue déjà gelé dans le bundle (S-037). Le LLM ne calcule jamais ; moteur pur/déterministe. +12 tests (dérivation, garde-fou, effet palier GPU, déterminisme). Pas d'effet prod tant que la veille n'émet pas de facteur (baseline) — capacité latente, garde-fou en place.",
       "acceptance": [
         "CONSTAT Amine (2026-05-27) : le CALCUL reste déterministe (bon pour repro Exit Escrow + fiduciaire explicable + DÉFCON 1), mais les HEURISTIQUES de dimensionnement (GPU_LOAD_PER_UNIT, STORAGE_GB_PER_UNIT, seuils preset, pondérations scores, hypothèses ±30 %) sont FIGÉES dans le code → dette de supervision si une solution plus performante émerge",
@@ -526,8 +896,14 @@
       ]
     },
     {
-      "id": "S-054", "title": "Correctif PDF : neutraliser les émojis hors WinAnsi (assainissement CP1252)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-009"],
+      "id": "S-054",
+      "title": "Correctif PDF : neutraliser les émojis hors WinAnsi (assainissement CP1252)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-009"
+      ],
       "acceptance": [
         "BUG remonté par Amine : le PDF affichait « Ø=ÜÄ … » pour les actions de conformité — émojis (📄 U+1F4C4) réémis octet par octet en CP1252 car jsPDF police standard = WinAnsi (cf. ADR-003)",
         "RACINE corrigée dans la couche PDF (lib/export/pdf.ts) : toWinAnsi() retire tout caractère hors CP1252 (ASCII + Latin-1 + 27 spéciaux € « » — ’ …) et compacte les espaces ; appliqué à writeWrapped/writeRow/sources",
@@ -536,8 +912,15 @@
       ]
     },
     {
-      "id": "S-055", "title": "Bascule entre solutions dans l'ensemble (switch scénario → recalcul page)", "feature": "refonte",
-      "passes": true, "completedAt": "2026-05-27", "deps": ["S-007", "S-042"],
+      "id": "S-055",
+      "title": "Bascule entre solutions dans l'ensemble (switch scénario → recalcul page)",
+      "feature": "refonte",
+      "passes": true,
+      "completedAt": "2026-05-27",
+      "deps": [
+        "S-007",
+        "S-042"
+      ],
       "acceptance": [
         "DEMANDE Amine : « Ensemble de configurations » doit permettre de switcher entre les solutions proposées",
         "EnsembleView interactif : 4 cartes-boutons (Votre recommandation + 3 scénarios), aria-pressed + badge « Affichée » sur l'active ; onSelect remonte le choix",
@@ -547,19 +930,28 @@
       ]
     },
     {
-      "id": "S-057", "title": "Fondation i18n (next-intl, locale cookie, sélecteur de langue, catalogues fr/en)", "feature": "i18n",
-      "passes": false, "deps": [],
-      "note": "DÉCISION Amine 2026-05-28 : ouvrir l'épic MULTILINGUE (l'app était FR-only par convention ; jamais dans le PRD avant). Approche : next-intl (Next 15 App Router, RSC). Locale SANS préfixe d'URL (stockée en cookie `NEXT_LOCALE` + détection navigateur au 1ᵉʳ accès) → disruption minimale des routes/e2e existantes. Langues : fr (défaut) + en ; ar = S-060 (RTL).",
+      "id": "S-057",
+      "title": "Fondation i18n (next-intl, locale cookie, sélecteur de langue, catalogues fr/en)",
+      "feature": "i18n",
+      "passes": true,
+      "deps": [],
+      "note": "Décision Amine (2026-05-28) : ouvrir l’épic MULTILINGUE (app FR-only par convention). LIVRÉ — fondation next-intl v4 en mode SANS routing (locale par cookie, zéro segment [locale] → routes/e2e intacts). (1) i18n/config.ts : source de vérité (locales [fr,en], defaultLocale fr, LOCALE_COOKIE=NEXT_LOCALE, LOCALE_HEADER=x-next-locale, localeNames autonymes, garde isLocale). (2) i18n/request.ts : getRequestConfig lit cookie NEXT_LOCALE → repli en-tête x-next-locale (1er accès) → repli fr ; messages via chargeurs STATIQUES typés (Record<Locale,()=>Promise<{default:AbstractIntlMessages}>>) → zéro any/as. (3) middleware.ts : négociation Accept-Language maison (tri q-values, base de tag, repli fr) ; pose x-next-locale sur la requête courante + cookie 1 an si absent/invalide ; matcher exclut api/_next/assets. (4) messages/{fr,en}.json namespacés (Metadata, Nav, Home {hero/why/difference/how/pricing/diagnostic/ctaFinal/footer}, LocaleSwitcher) — fr+en COMPLETS pour l’accueil. (5) LocaleSwitcher (client, <select> natif étiqueté = accessible clavier+SR, persiste cookie + router.refresh() = reload moderne, useTransition). (6) next.config.mjs wrappé createNextIntlPlugin(./i18n/request.ts). (7) layout async : getLocale → <html lang> dynamique + NextIntlClientProvider + generateMetadata localisé. (8) app/page.tsx migré async getTranslations : ZÉRO chaîne en dur (hero en t.rich avec balise <mark>, listes pilotées par clés structurelles PROMISE_KEYS/STEP_KEYS/TIERS+features, drapeaux featured/surveyTag/hasCta via in-operator) ; type local Promise renommé évité (restructuré en clés). (9) playwright.config : use.locale=fr-FR → rendu FR déterministe. VALIDATION : typecheck 0, lint 0/0, tests 434 passed/12 skip, build OK (/ ƒ dynamique car lit cookie, Middleware 34.2kB). RUNTIME vérifié via curl : FR défaut (« ne devrait jamais quitter vos murs » + lang=fr), EN cookie (« should never leave » + lang=en), Accept-Language:en-US → lang=en + Set-Cookie NEXT_LOCALE=en posé, sélecteur aria-label=Langue présent. Warnings build import(t) = dist interne next-intl extractor (non bloquant). NOTE périmètre : QuickProfileForm/IntakeField (formulaires) restent FR → migration exhaustive = S-058 (les e2e n’assertent aucune chaîne de page.tsx, donc verts).",
       "acceptance": [
         "installer next-intl ; config i18n (getRequestConfig, locale depuis cookie NEXT_LOCALE, repli fr) + middleware de détection (Accept-Language au 1ᵉʳ accès) ; messages/{fr,en}.json namespacés par surface",
         "LocaleSwitcher dans l'en-tête (composant accessible, persiste le cookie + reload) ; le `<html lang>` reflète la locale active",
         "PREUVE : migrer l'accueil (app/page.tsx) + le layout/nav vers next-intl (useTranslations/getTranslations), zéro chaîne en dur sur cette surface ; fr/en complets pour l'accueil",
         "ne PAS casser l'existant : routes inchangées (pas de segment [locale]), e2e existants verts (ajuster si un libellé devient dynamique) ; typecheck 0 / lint 0/0 / tests verts / build OK"
-      ]
+      ],
+      "completedAt": "2026-05-29"
     },
     {
-      "id": "S-058", "title": "Extraction exhaustive des clés i18n de toute l'UI (fr/en complets, zéro chaîne en dur)", "feature": "i18n",
-      "passes": false, "deps": ["S-057"],
+      "id": "S-058",
+      "title": "Extraction exhaustive des clés i18n de toute l'UI (fr/en complets, zéro chaîne en dur)",
+      "feature": "i18n",
+      "passes": false,
+      "deps": [
+        "S-057"
+      ],
       "acceptance": [
         "extraire TOUTES les chaînes user-facing : wizard 4 blocs (options.ts, InfoBubble, budget-mètre, récap, médias, backup), résultats (verdict + expert : CostMap, RadarChart labels, LayerStack, provenance, ensemble), fiduciaire, sondage, primitives, intake/assistant UI, messages d'erreur",
         "catalogues messages/{fr,en}.json complets et namespacés ; traductions EN de qualité native (pas de calque), revues",
@@ -568,8 +960,14 @@
       ]
     },
     {
-      "id": "S-059", "title": "Prompts soignés + localisés (réponses LLM dans la langue de l'utilisateur) + livrable/PDF localisés", "feature": "i18n",
-      "passes": false, "deps": ["S-057", "S-053"],
+      "id": "S-059",
+      "title": "Prompts soignés + localisés (réponses LLM dans la langue de l'utilisateur) + livrable/PDF localisés",
+      "feature": "i18n",
+      "passes": false,
+      "deps": [
+        "S-057",
+        "S-053"
+      ],
       "note": "Intègre la demande Amine « prompts ridicules → structure très soignée, comme un vrai natif ». Réécrire les 4 gabarits (intake/narration/veille/assistant) à un niveau natif/structuré EN CONSERVANT placeholders + clauses DÉFCON 1, et les rendre localisés.",
       "acceptance": [
         "réécrire DEFAULT_PROMPTS (lib/prompts/registry.ts) à un niveau RÉDACTIONNEL natif et structuré (rôle, contexte, règles, format) — conserver les placeholders ({{enumList}}/{{adjustContext}}/{{profile}}/{{notesBlock}}/{{baseTexts}}/{{recoFacts}}/{{webResults}}) et les garde-fous DÉFCON 1 (N'INVENTE RIEN, AUCUN coût, AUCUN chiffre, −risques, n'invente JAMAIS d'URL)",
@@ -579,8 +977,14 @@
       ]
     },
     {
-      "id": "S-060", "title": "Arabe + RTL (dir=rtl, miroir des layouts, police arabe) — marché Maroc", "feature": "i18n",
-      "passes": false, "deps": ["S-058", "S-059"],
+      "id": "S-060",
+      "title": "Arabe + RTL (dir=rtl, miroir des layouts, police arabe) — marché Maroc",
+      "feature": "i18n",
+      "passes": false,
+      "deps": [
+        "S-058",
+        "S-059"
+      ],
       "acceptance": [
         "ajouter la locale ar (messages/ar.json, traduction native) ; `<html dir>` = rtl quand ar ; tokens/layout miroités (logical properties : ms-/me-, text-start/end ; vérifier wizard, résultats, radar)",
         "police arabe lisible (fallback système ou web font) ; nombres/€ et données mono restent LTR dans le flux RTL",
@@ -588,8 +992,15 @@
       ]
     },
     {
-      "id": "S-063", "title": "Purger les codenames perso du catalogue seed + diagnostics (composants reconnaissables + sourcés)", "feature": "llm",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-035", "S-036"],
+      "id": "S-063",
+      "title": "Purger les codenames perso du catalogue seed + diagnostics (composants reconnaissables + sourcés)",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-035",
+        "S-036"
+      ],
       "note": "Remontée Amine (2026-05-29) : le seed catalogue + diagnostics + un label de score exposaient des codenames PERSO (Xavier/Chris/Meydeey + attributions « option Amine »/« doctrine Amine »/« pattern Amine »/« méthode Meydeey »), inconnus d'un client, gravés en dur. Faute DÉFCON 1. PURGÉ : 7 libellés catalog-seed.ts (C0 « Frontmatter universel Xavier v1.0.0 » → « Contrat de métadonnées (frontmatter YAML + JSON Schema) » ; C5 options Amine/Meydeey/Chris retirées en gardant la tech réelle Apache AGE/Graphiti/XTDB ; C6 « (Meydeey) » retiré), 4 coverage diagnostics.ts (kmChecks), 1 label radar scores.ts (« stress » : « méthode Meydeey » retiré). Round-trip buildLayers préservé (caractérisation S-035 : seul catalog.test.ts:70 mis à jour). Test de garde `no-personal-codenames.test.ts` : parcourt seedCatalog (3 presets × 3 profils) + computeScores labels/why + computeKMChecks/computeRisks/computeCompliance → zéro codename perso. Grep final : restes uniquement en COMMENTAIRES (« décision Amine ») + email de test, pas user-facing. Le seed reste calibration interne datée NEUTRE ; la veille live (S-036) apporte les vrais composants sourcés. +2 tests → 377. typecheck 0, lint 0/0, build OK.",
       "acceptance": [
         "auditer tout le seed catalogue (catalog-seed.ts) + diagnostics.ts (kmChecks) : lister chaque libellé qui est un codename perso/interne (Xavier, Chris, toute référence à la méthodo KB privée d'Amine) non reconnaissable par un tiers",
@@ -599,8 +1010,15 @@
       ]
     },
     {
-      "id": "S-061", "title": "Sécurisation inter-site self-hosted (coût VPN/WireGuard/mTLS + supervision, sourcé)", "feature": "securite",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-043", "S-041"],
+      "id": "S-061",
+      "title": "Sécurisation inter-site self-hosted (coût VPN/WireGuard/mTLS + supervision, sourcé)",
+      "feature": "securite",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-043",
+        "S-041"
+      ],
       "note": "Décision Amine (2026-05-29, « les 3 ») : le self-hosted est la vraie souveraineté MAIS introduit une liaison inter-site à sécuriser. S-043 a flagué + donné la fourchette ; S-061 CHIFFRE le poste. LIVRÉ : (1) Profile.residency += selfHosted? (choix EXPLICITE d'infra) → hostingClassForProfile renvoie 'self-hosted'. (2) Contrat enrichi InterSiteSecurityPrices (lib/engine/residency : selfHostedGatewayPerMonth + managedPerUserPerMonth) remplace l'ancien interSiteSecurityPerMonth ; NEUTRAL maj. (3) costInterSiteSecurity(users, securedSites, prices) pur : self-hosted = passerelle chiffrée × sites (primaire + réplicas) ; alternative managée chiffrée = tarif/u × users (avis NON orienté, jamais imposée) ; mono-site → null. DÉFCON 1 : seuls les postes CHIFFRABLES VENDEUR figés (VM passerelle Hetzner CX22 3,79 €, WireGuard/mTLS open-source licence 0 €, Tailscale Standard 8 $/Cloudflare ZT 7 $) — supervision/durcissement = OPEX flaggé « à chiffrer en devis », JAMAIS un montant au doigt mouillé. (4) Intégré dans costResidency UNIQUEMENT si hostingClass='self-hosted' ET multi-région (souverain managé/hyperscaler ⇒ backbone privé du fournisseur, pas de poste) → folded dans residency.monthlyCost/setupCost/costSources → remonte au total via applyResidency (C6) + setupCost recommend (invariant neutre préservé). ResidencyPlan += interSiteSecurity?. (5) Exit Escrow : manifest.residency sérialise le plan complet (ride auto) + runbook DR gagne une section « Sécurisation de la liaison inter-site » dérivée (rendue si self-hosted multi-site, avec l'alternative managée présentée). Sources fraîches relevées 2026-05-29 (Hetzner CX22, Tailscale Standard 8 $, Cloudflare ZT 7 $ — page officielle, le snippet « 6 $ » écarté) → docs/pricing/residency-cost-sources.md maj. +8 tests (6 residency : hostingClass self-hosted, mono-site→null, monotonie+alternative+sources, plan multi-région intégré, non-self-hosted→pas de poste, invariant neutre ; 2 bundle : runbook self-hosted documente la liaison+alternative, managé→pas de bloc) → 417 + 10 skip. typecheck 0, lint 0/0, build OK. DETTE TRANSPARENTE (non bloquante, suit le séquençage moteur→UI comme backup S-028→S-030) : le toggle selfHosted dans le wizard (ResidencyBlock) + la surface du détail inter-site/alternative dans ResidencyPanel/CostMap = increment UI futur ; le moteur/coût/bundle sont complets et testés.",
       "acceptance": [
         "modéliser le coût de sécurisation inter-site self-hosted (passerelle chiffrée WireGuard/IPsec + mTLS + supervision/durcissement), prix INJECTÉS + sourcés (devise native, URL+date+confiance, ±30 %), repli seed",
@@ -609,8 +1027,16 @@
       ]
     },
     {
-      "id": "S-062", "title": "Veille live des statuts juridiques de transfert (LLM + sources officielles, réconciliation)", "feature": "legal",
-      "passes": true, "completedAt": "2026-05-29", "deps": ["S-043", "S-053", "S-036"],
+      "id": "S-062",
+      "title": "Veille live des statuts juridiques de transfert (LLM + sources officielles, réconciliation)",
+      "feature": "legal",
+      "passes": true,
+      "completedAt": "2026-05-29",
+      "deps": [
+        "S-043",
+        "S-053",
+        "S-036"
+      ],
       "note": "Décision Amine (2026-05-29) : un statut juridique ne se grave pas. S-043 a posé les états DATÉS + RÉVISABLES (flag volatile) ; S-062 branche la VEILLE LIVE (pattern jumeau de la veille catalogue S-036). LIVRÉ : (1) transfers.ts += TransferProvenance (seed/live/flagged) + TransferBasis.provenance? + WATCHED_TRANSFER_FLOWS (les paires volatile : DPF UE-US, adéquation Maroc). (2) reconcile.ts (PUR, jumeau catalog/reconcile) : reconcileTransferBasis(seed, live, checkedAt) — veille null → repli seed ; signal CONCORDANT → confirmé (provenance live, fraîcheur rafraîchie, source live) ; signal DIVERGENT → JAMAIS adopté en silence (statut seed conservé, confiance basse, volatile, provenance flagged, note « à revérifier par un conseil » + URL du signal). Toujours daté + révisable + disclaimer. (3) live-transfers.ts (orchestration PURE, I/O injectée) : proposeTransferLive (recherche sources officielles Firecrawl + lecture LLM → signal sourcé ; anti-hallucination : sourceUrl DOIT ∈ résultats ; statut ∈ {ok,restricted,forbidden}) + refreshTransferBases (par flux : seed via lookupTransferBasis ; si volatile → veille+reconcile, sinon seed intact ; parallélisé, repli seed garanti, ne lève jamais). (4) live-feed.ts (I/O réelle searchWeb+callLLM + TtlCache 6 h, clés SERVEUR). (5) Prompt 'legal-veille' ajouté au registre (S-053, DEFAULT_PROMPTS + PROMPT_META) → éditable en /admin auto (PROMPT_KEYS) ; clauses DÉFCON 1 (statut sourcé, PAS un avis juridique, n'invente JAMAIS d'URL/fait, défaut prudent restricted). (6) Route GET /api/legal/transfers (Node, clé serveur, prompt actif via loadActivePrompt, repli défaut). (7) Audit trail : migration 20260529120000_transfer_status_observations (RLS activée, pivot circle_id, helper is_circle_member, source_url nullable = résidence stricte) + types Supabase (Row/Insert + Database) + builder PUR buildTransferObservations (observation.ts, jumeau catalog/observation). +17 tests (reconcile 3, observation 4, live-transfers 9 dont anti-hallucination/LLM KO/flux stable non veillé/exception→repli, registry +1) + RLS gated 2 skip → 434 + 12 skip. typecheck 0, lint 0/0, build OK (/api/legal/transfers ƒ). Sources officielles déjà sourcées en S-043 (EUR-Lex/Commission UE/CNDP). À FAIRE EN PROD (comme S-036/S-053) : appliquer la migration au Supabase self-hosté ; l'insertion d'audit depuis la route (anon/circle) + le branchement de la veille dans l'UI ResidencyPanel = mêmes patterns différés que S-036 (builder ready + testé + RLS gated ; wiring prod = increment suivant). Le LLM ne rend JAMAIS un avis juridique : statut indicatif daté + révisable + disclaimer.",
       "acceptance": [
         "veille live (Firecrawl sources officielles + LLM via registre de prompts S-053, clé serveur jamais exposée) rafraîchit les statuts volatiles (DPF UE-US, adéquation Maroc…) ; prompt « veille-juridique » éditable en /admin",

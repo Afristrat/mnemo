@@ -1,0 +1,134 @@
+{
+  "Metadata": {
+    "title": "Strate, infrastructure de base mémorielle souveraine",
+    "description": "Choisissez, déployez et exploitez votre base mémorielle IA souveraine, sans migration, sans verrouillage, sans coûts cachés."
+  },
+  "LocaleSwitcher": {
+    "label": "Langue"
+  },
+  "Nav": {
+    "why": "Pourquoi",
+    "how": "Comment",
+    "pricing": "Tarifs",
+    "guarantees": "Garanties",
+    "cta": "Diagnostic gratuit"
+  },
+  "Home": {
+    "hero": {
+      "eyebrow": "Infrastructure de mémoire IA souveraine",
+      "title": "Le savoir de votre organisation ne devrait <mark>jamais</mark> quitter vos murs.",
+      "subtitle": "Strate transforme vos documents, décisions et échanges en une mémoire interrogeable, hébergée chez vous ou en UE, jamais chez des géants étrangers. Vous gardez tout. Vous ne dépendez de personne.",
+      "ctaPrimary": "Faire mon diagnostic, 90 s, gratuit",
+      "ctaSecondary": "Voir comment ça marche",
+      "trust": "Hébergé UE / Maroc · Conforme CNDP & RGPD · Zéro verrouillage, repartez avec tout, quand vous voulez"
+    },
+    "why": {
+      "eyebrow": "Pourquoi Strate",
+      "title": "Quatre promesses. Une seule déjà prouvée, les autres, mesurées chez vous.",
+      "subtitle": "On ne vous promet pas la lune sans preuve. Voici ce qu'on défend, et avec quelle honnêteté.",
+      "promises": {
+        "profits": {
+          "title": "↑ Plus de profits",
+          "body": "De meilleures décisions, plus vite : votre mémoire répond au lieu de dormir dans des dossiers. Le bon savoir, au bon moment, au bon rôle.",
+          "proof": "À mesurer chez vous (avant / après)"
+        },
+        "efficient": {
+          "title": "↑ Plus efficient",
+          "body": "Fini les heures perdues à chercher « où est ce document, qui a décidé quoi ». On vous rend ce temps.",
+          "proof": "À mesurer chez vous (temps de recherche)"
+        },
+        "costs": {
+          "title": "↓ Moins de coûts",
+          "body": "Le juste dimensionnement, des prix sourcés et datés, et la traque des surcoûts cachés. Jamais de facture surprise.",
+          "proof": "Carte de coûts sourcée + veille prix continue"
+        },
+        "risks": {
+          "title": "↓ Moins de risques",
+          "body": "Zéro verrouillage (repartez avec toute votre stack en un clic), conformité par conception, et l'expertise qui vous évite l'erreur qui coûte cher.",
+          "proof": "★ Prouvé, Exit Escrow + mode fiduciaire"
+        }
+      }
+    },
+    "difference": {
+      "eyebrow": "Notre différence",
+      "title": "On vous dit la vérité, même quand elle dérange.",
+      "body": "Si une solution open-source suffit, on vous le dit. Si seul un outil payant tient la route, on vous le dit aussi. Si vos contraintes se contredisent (petit budget + souveraineté maximale), on le pointe, on ne vous vend pas l'impossible. Et on ne touche aucune commission cachée des fournisseurs qu'on recommande.",
+      "tags": {
+        "openSource": "🟢 Open-source quand c'est mieux",
+        "paid": "💳 Payant quand c'est nécessaire",
+        "noCommission": "⚖️ Zéro commission cachée",
+        "noLockin": "🔓 Zéro verrouillage"
+      },
+      "link": "Lire la charte fiduciaire, zéro commission cachée"
+    },
+    "how": {
+      "eyebrow": "Comment ça marche",
+      "title": "De la douleur à la décision, en 90 secondes.",
+      "steps": {
+        "diagnostic": {
+          "title": "Diagnostic gratuit",
+          "body": "Dites ce qui coince (en vos mots ou guidé). On vous donne votre risque, votre gain et un prix ferme."
+        },
+        "plan": {
+          "title": "Plan sourcé & partageable",
+          "body": "Une reco claire, chaque coût lié à sa source, exportable et partageable à votre direction."
+        },
+        "deploy": {
+          "title": "Déploiement par agents",
+          "body": "Nos agents déploient et opèrent, sans que vous ayez à recruter ni à tout réapprendre."
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Tarifs",
+      "title": "Le diagnostic est gratuit. Vous ne payez que la cuisine.",
+      "subtitle": "Le coût de l'infra reste transparent, payé à vos fournisseurs, on ne marge pas dessus.",
+      "surveyTag": "Prix, sondage en cours",
+      "note": "Les montants seront calés par le sondage de prix (Van Westendorp + analyse conjointe) en cours, pas de chiffre au doigt mouillé.",
+      "tiers": {
+        "diagnostic": {
+          "name": "Diagnostic",
+          "price": "Gratuit",
+          "features": {
+            "configurator": "Configurateur 90 s",
+            "plan": "Plan & coûts sourcés",
+            "deliverable": "Livrable partageable",
+            "exit": "Bundle de sortie (Exit Escrow)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "[__ / mois]",
+          "cta": "Commencer le diagnostic",
+          "features": {
+            "deploy": "Déploiement assisté",
+            "supervision": "Supervision continue",
+            "costs": "Optimisation des coûts",
+            "expertise": "Expertise & évitement d'erreurs"
+          }
+        },
+        "sovereign": {
+          "name": "Souverain+",
+          "price": "Sur devis",
+          "features": {
+            "onprem": "On-premise / air-gapped",
+            "negotiation": "Négociation fournisseurs (mode fiduciaire)",
+            "support": "Support dédié + SLA"
+          }
+        }
+      }
+    },
+    "diagnostic": {
+      "eyebrow": "Diagnostic gratuit",
+      "title": "Votre verdict en 90 secondes.",
+      "subtitle": "Quatre questions. Un verdict chiffré et sourcé : votre risque, votre gain, un prix ferme et la marche à suivre.",
+      "orNaturalLanguage": "ou en langage naturel"
+    },
+    "ctaFinal": {
+      "title": "Votre mémoire vous appartient. Reprenez-la.",
+      "body": "Commencez par le diagnostic gratuit. En 90 secondes, vous saurez votre risque, votre gain, et la marche à suivre.",
+      "cta": "Faire mon diagnostic gratuit"
+    },
+    "footer": "© 2026 Strate, Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme CNDP & RGPD"
+  }
+}
