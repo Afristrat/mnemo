@@ -121,6 +121,19 @@
       "shortHint": "Short link via our servers, handy to share (email, chat).",
       "copyShort": "Copy",
       "shortError": "Couldn’t create the short link right now. The link copied above already works."
+    },
+    "leadGate": {
+      "title": "Unlock the full blueprint",
+      "desc": "Your verdict is above, free to read. To unfold the full blueprint — 7-layer stack, sourced cost map, uncertainty scenarios, radar, export and redeployment bundle — enter your name and email.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "nameError": "Please enter your name (at least 2 characters).",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@organisation.com",
+      "emailError": "Please enter a valid email address.",
+      "submit": "View the detail (expert)",
+      "submitting": "Opening…",
+      "hint": "Sourced and exportable. We won’t ask again on this device."
     }
   },
   "Metadata": {

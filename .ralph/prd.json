@@ -1104,9 +1104,10 @@
       "id": "S-068",
       "title": "Lead gate : verrouiller la recette experte complète derrière nom + email (verdict 90 s libre)",
       "feature": "results",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-30",
       "deps": [],
-      "note": "Demande Amine : capter le lead avant de révéler la recette experte. Le verdict 90 s reste libre ; le détail expert complet (stack, coûts, ensemble) n_apparaît qu_après saisie nom+email. Persister le lead (Supabase RLS + lib/conversion/log).",
+      "note": "Livré : composant LeadGate (components/results/) enveloppe la recette experte dans ResultsView (projection, ensemble, radar, stack, provenance, coûts, résidence, conformité, partage, export, Exit Escrow, assistant). Verdict 90 s (mode=verdict) reste LIBRE et inchangé ; bouton « Voir le verdict » (en-tête, teaser) + lien « Affiner » (pied) restent hors gate. Formulaire nom + e-mail (validation isValidName/isValidEmail), persistance « débloqué » en localStorage (clé strate.leadUnlocked.v1 → jamais redemandé sur l_appareil), repli gracieux (panne réseau → on débloque quand même côté client). Persistance lead : table `leads` (RLS activée, anon INSERT uniquement, AUCUNE lecture publique — PII ; lecture membre = owner du cercle) + route POST /api/lead (buildLead réutilise lib/conversion/log) + types. DÉCISION partage (S-067) : SharePanel reste DANS la zone gatée (livrable expert, comme export + Exit Escrow). Tests : +buildLead/isValidName (log.test) + lead-gate.test.tsx (5 cas dont repli réseau + persistance) + RLS gated (anon INSERT, pas de lecture en masse) + results.test (gate + déverrouillage) ; e2e helper unlockExpert + test de gate dédié. typecheck 0 / lint 0/0 / 483 tests verts / build OK.",
       "acceptance": [
         "verdict libre ; détail expert gaté derrière nom+email",
         "lead persisté (RLS) ; pas de régression du verdict",
