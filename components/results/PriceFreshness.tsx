@@ -1,15 +1,21 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { StatusDot } from "@/components/ui/StatusDot";
 import type { PriceFeedStatus, PriceObservation } from "@/lib/pricing/feed";
 
-const STATUS_META: Record<PriceFeedStatus, { tone: "primary" | "error" | "neutral"; label: string }> = {
-  verified: { tone: "primary", label: "Vérifié" },
-  changed: { tone: "error", label: "À revérifier" },
-  unavailable: { tone: "neutral", label: "Indisponible" },
+const STATUS_TONE: Record<PriceFeedStatus, "primary" | "error" | "neutral"> = {
+  verified: "primary",
+  changed: "error",
+  unavailable: "neutral",
+};
+const STATUS_KEY: Record<PriceFeedStatus, "statusVerified" | "statusChanged" | "statusUnavailable"> = {
+  verified: "statusVerified",
+  changed: "statusChanged",
+  unavailable: "statusUnavailable",
 };
 
 type FeedState =
@@ -18,6 +24,7 @@ type FeedState =
   | { kind: "ready"; observations: PriceObservation[] };
 
 export function PriceFreshness(): ReactElement {
+  const t = useTranslations("Results.freshness");
   const [state, setState] = useState<FeedState>({ kind: "loading" });
 
   const load = useCallback(async () => {
@@ -39,35 +46,29 @@ export function PriceFreshness(): ReactElement {
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-display text-headline-md text-on-surface">Fraîcheur des prix</h3>
+        <h3 className="font-display text-headline-md text-on-surface">{t("title")}</h3>
         <button
           type="button"
           onClick={() => void load()}
           disabled={state.kind === "loading"}
           className="rounded-full border border-outline-variant px-4 py-1.5 text-body-sm font-medium text-on-surface transition-colors hover:bg-surface-container disabled:opacity-50"
         >
-          {state.kind === "loading" ? "Vérification…" : "Rafraîchir les prix"}
+          {state.kind === "loading" ? t("refreshing") : t("refresh")}
         </button>
       </div>
-      <p className="mt-1 text-body-sm text-on-surface-variant">
-        Prix re-vérifiés en direct sur les pages vendor (Firecrawl), comparés à un instantané daté.
-        Une IA peut se tromper, chaque chiffre reste à confirmer à la source.
-      </p>
+      <p className="mt-1 text-body-sm text-on-surface-variant">{t("intro")}</p>
 
       {state.kind === "error" ? (
-        <p className="mt-4 text-body-sm text-error">
-          Vérification impossible pour le moment. Les coûts affichés restent ceux du dernier instantané.
-        </p>
+        <p className="mt-4 text-body-sm text-error">{t("error")}</p>
       ) : null}
 
       {state.kind === "loading" ? (
-        <p className="mt-4 text-body-sm text-on-surface-variant">Vérification des sources en cours…</p>
+        <p className="mt-4 text-body-sm text-on-surface-variant">{t("loadingMsg")}</p>
       ) : null}
 
       {state.kind === "ready" ? (
         <ul className="mt-4 divide-y divide-outline-variant">
           {state.observations.map((obs) => {
-            const meta = STATUS_META[obs.status];
             return (
               <li key={obs.layerId} className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <span className="flex items-center gap-2">
@@ -80,7 +81,7 @@ export function PriceFreshness(): ReactElement {
                   >
                     {obs.label}
                   </a>
-                  <Chip tone={meta.tone}>{meta.label}</Chip>
+                  <Chip tone={STATUS_TONE[obs.status]}>{t(STATUS_KEY[obs.status])}</Chip>
                 </span>
                 <span className="flex items-center gap-3">
                   {obs.sampleFigures.length > 0 ? (

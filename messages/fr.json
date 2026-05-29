@@ -86,7 +86,30 @@
     "disclaimer": "Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper, vérifiez chaque source avant décision.",
     "exportTitle": "Emporter ce plan",
     "exportDesc": "Export complet, profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown se relit partout ; le PDF garde les sources cliquables.",
-    "editProfile": "Modifier mon profil"
+    "editProfile": "Modifier mon profil",
+    "livePrices": {
+      "title": "Prix d'infra en direct",
+      "refresh": "Réextraire",
+      "refreshing": "Extraction…",
+      "intro": "Valeurs extraites en direct des pages vendor (Firecrawl), puis validées contre un relevé sourcé : une valeur aberrante est rejetée au profit de la baseline. Une IA peut se tromper, chaque chiffre reste à confirmer à la source.",
+      "fallbackNote": "« Dernier relevé daté » signifie que la re-vérification en direct est momentanément indisponible (quota d'extraction ou page non lisible) : le prix affiché est le dernier relevé sourcé et daté — ce n'est pas une erreur, ni un coût caché.",
+      "error": "Extraction impossible pour le moment. Les coûts affichés restent ceux du dernier relevé sourcé et daté.",
+      "loadingMsg": "Extraction des prix en cours…",
+      "statusLive": "Vérifié en direct",
+      "statusFlagged": "À revérifier",
+      "statusFallback": "Dernier relevé daté"
+    },
+    "freshness": {
+      "title": "Fraîcheur des prix",
+      "refresh": "Rafraîchir les prix",
+      "refreshing": "Vérification…",
+      "intro": "Prix re-vérifiés en direct sur les pages vendor (Firecrawl), comparés à un instantané daté. Une IA peut se tromper, chaque chiffre reste à confirmer à la source.",
+      "error": "Vérification impossible pour le moment. Les coûts affichés restent ceux du dernier instantané daté.",
+      "loadingMsg": "Vérification des sources en cours…",
+      "statusVerified": "Vérifié",
+      "statusChanged": "À revérifier",
+      "statusUnavailable": "Re-vérif. indisponible"
+    }
   },
   "Metadata": {
     "title": "Strate, infrastructure de base mémorielle souveraine",

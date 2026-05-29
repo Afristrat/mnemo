@@ -86,7 +86,30 @@
     "disclaimer": "Costs are sourced projections (±30%), not commitments. AI can be wrong — check every source before deciding.",
     "exportTitle": "Take this plan with you",
     "exportDesc": "Full export: profile, stack, scores, sourced costs, ensemble and disclaimer. Markdown reads anywhere; the PDF keeps clickable sources.",
-    "editProfile": "Edit my profile"
+    "editProfile": "Edit my profile",
+    "livePrices": {
+      "title": "Live infra prices",
+      "refresh": "Re-extract",
+      "refreshing": "Extracting…",
+      "intro": "Figures extracted live from vendor pages (Firecrawl), then validated against a sourced baseline: an outlier value is rejected in favour of the baseline. AI can be wrong — confirm every figure at the source.",
+      "fallbackNote": "“Last dated figure” means live re-verification is momentarily unavailable (extraction quota or unreadable page): the displayed price is the last sourced, dated figure — not an error, nor a hidden cost.",
+      "error": "Extraction unavailable right now. Displayed costs remain the last sourced, dated figure.",
+      "loadingMsg": "Extracting prices…",
+      "statusLive": "Verified live",
+      "statusFlagged": "To recheck",
+      "statusFallback": "Last dated figure"
+    },
+    "freshness": {
+      "title": "Price freshness",
+      "refresh": "Refresh prices",
+      "refreshing": "Checking…",
+      "intro": "Prices re-verified live on vendor pages (Firecrawl), compared to a dated snapshot. AI can be wrong — confirm every figure at the source.",
+      "error": "Check unavailable right now. Displayed costs remain the last dated snapshot.",
+      "loadingMsg": "Checking sources…",
+      "statusVerified": "Verified",
+      "statusChanged": "To recheck",
+      "statusUnavailable": "Recheck unavailable"
+    }
   },
   "Metadata": {
     "title": "Strate, sovereign memory-base infrastructure",
