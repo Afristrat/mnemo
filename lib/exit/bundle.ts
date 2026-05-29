@@ -6,7 +6,7 @@
 // Raison d'être : garantir au client qu'il peut TOUT réinstaller ailleurs, sans nous.
 // Anti vendor lock-in par construction (cf. docs/MOAT-HUNT.md).
 
-import type { BackupPlan, Layer, Preset, Profile, Recommendation, Zone } from "@/lib/engine";
+import type { BackupPlan, Layer, Preset, Profile, Recommendation, ResidencyPlan, Zone } from "@/lib/engine";
 import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 
@@ -37,6 +37,8 @@ export type BundleManifest = {
   modules: { id: string; name: string; level: number; maxLevel: number }[];
   /** Plan de sauvegarde réel (source de vérité du runbook + backup.sh ; cohérence manifest↔plan). */
   backup: BackupPlan;
+  /** Plan résidence/DR réel (source de vérité du runbook DR + terraform multi-région). Spec n°2 §8. */
+  residency: ResidencyPlan;
   /** Catalogue retenu (provenance + sources + assembledAt) — présent si la veille a été branchée. */
   catalog?: BundleManifestCatalog;
   sources: { label: string; url: string; checkedAt: string }[];
@@ -118,6 +120,7 @@ function manifestOf(
       maxLevel: m.maxLevel,
     })),
     backup: reco.backup,
+    residency: reco.residency,
     ...(catalog !== undefined ? { catalog: catalogManifest(catalog) } : {}),
     sources: collectSources(reco),
     disclaimer: DISCLAIMER,
@@ -172,6 +175,83 @@ function backupSection(b: BackupPlan): string {
 3. \`bash scripts/re-embed.sh\` ${b.vector.strategy === "reembed" ? "(stratégie vecteurs = ré-embed : index reconstruit depuis le vault, RTO plus long)" : "si l'index doit être reconstruit depuis le vault"}.`;
 }
 
+const TRANSFER_STATUS_LABEL: Record<ResidencyPlan["transfers"][number]["status"], string> = {
+  ok: "✅ ok",
+  restricted: "⚠️ restreint",
+  forbidden: "⛔ interdit",
+};
+
+/** Section « Résidence & continuité régionale (DR) » du runbook, DÉRIVÉE du plan réel (spec n°2 §8). */
+function residencySection(r: ResidencyPlan): string {
+  const replicas = r.regions.filter((reg) => reg.role !== "primary");
+  if (r.drTier === "none" && !r.activeActive && replicas.length === 0) {
+    return `## Résidence & continuité régionale (DR)
+- **Résidence** : données en région « ${r.primaryRegion} », mono-région.
+- **DR régional** : aucun (RTO régional = restauration de sauvegarde, voir ci-dessus). Pas de réplica inter-région dimensionné.`;
+  }
+
+  const drLabel = r.activeActive ? "actif-actif" : r.drTier;
+  const regionOrder = r.regions
+    .map((reg, i) => `${i + 1}. **${reg.region}** (${reg.role})${reg.monthlyCost > 0 ? ` — ≈ ${reg.monthlyCost} €/mois` : ""}`)
+    .join("\n");
+  const transferLines =
+    r.transfers.length === 0
+      ? "- Aucun flux inter-juridiction (réplication intra-juridiction)."
+      : r.transfers
+          .map((t) => `- ${t.from} → ${t.to} : ${TRANSFER_STATUS_LABEL[t.status]} — ${t.legalBasis}`)
+          .join("\n");
+  const conflictBlock = r.conflict.hasConflict
+    ? `\n\n> ⚠️ **Conflit résidence × DR à arbitrer** : ${r.conflict.reason}\n${r.conflict.levers.map((l) => `> - ${l}`).join("\n")}`
+    : "";
+
+  return `## Résidence & continuité régionale (DR « ${drLabel} »)
+- **Région primaire** : ${r.primaryRegion}.
+- **RPO régional** : ${fmtMinutes(r.rpoMinutes)} · **RTO régional (bascule)** : ${fmtMinutes(r.rtoMinutes)}.
+- **Topologie / ordre de priorité des régions** :
+${regionOrder}
+- **Coût résidence/DR** : ≈ ${Math.round(r.monthlyCost)} €/mois récurrent + ${Math.round(r.setupCost)} € de mise en route (amorçage des réplicas).
+
+### Conformité des transferts inter-région
+${transferLines}
+> Orientation d'ingénierie, PAS un avis juridique : faites valider chaque base légale par votre conseil.${conflictBlock}
+
+### Procédure de bascule régionale (failover, RTO cible ${fmtMinutes(r.rtoMinutes)})
+1. Constater l'indisponibilité de la région primaire « ${r.primaryRegion} » (sonde santé + alerte).
+2. ${r.activeActive ? "Retirer la région en défaut du pool actif-actif (le trafic continue sur les régions saines)." : "Promouvoir la région en attente la plus prioritaire (voir topologie) en primaire."}
+3. Repointer le DNS / l'entrée d'ingress vers la nouvelle région primaire.
+4. Vérifier la réplication (RPO ${fmtMinutes(r.rpoMinutes)}) puis rouvrir les écritures.
+5. Reconstruire/rétablir la région en défaut, puis la réintégrer comme réplica (voir \`terraform/dr.tf\`).`;
+}
+
+/** IaC multi-région (réplication inter-région) — généré quand le plan DR dimensionne des réplicas. */
+function drTerraform(r: ResidencyPlan): string {
+  const replicas = r.regions.filter((reg) => reg.role !== "primary");
+  const regionsList = r.regions.map((reg) => `"${reg.region}/${reg.role}"`).join(", ");
+  return `# terraform/dr.tf, squelette multi-région (résidence/DR « ${r.activeActive ? "actif-actif" : r.drTier} »)
+# Topologie : ${regionsList}
+# Région primaire : ${r.primaryRegion} · RPO régional ${fmtMinutes(r.rpoMinutes)} · RTO ${fmtMinutes(r.rtoMinutes)}.
+# Adaptez le provider à votre hébergeur souverain ; respectez les bases légales de transfert (voir runbook.md).
+
+variable "primary_region"  { type = string, default = "${r.primaryRegion}" }
+variable "replica_regions" {
+  type    = list(string)
+  default = [${replicas.map((reg) => `"${reg.region}"`).join(", ")}]
+}
+
+# Pour chaque région en attente : déployer un nœud (Postgres réplica + objet) et configurer la
+# réplication depuis la primaire. ${r.activeActive ? "Actif-actif : synchronisation bidirectionnelle." : "Actif-passif : la réplique est promue à la bascule."}
+# resource "..._instance" "replica" {
+#   for_each = toset(var.replica_regions)
+#   region   = each.value
+#   tags     = ["mnemo", "dr", "${r.activeActive ? "active" : "standby"}"]
+# }
+
+output "dr_topology" {
+  value = "primaire ${r.primaryRegion} + ${replicas.length} région(s) en attente (${r.activeActive ? "actif-actif" : r.drTier})"
+}
+`;
+}
+
 function readme(m: BundleManifest, reco: Recommendation): string {
   const layerLines = reco.layers
     .map((l) => `| C${l.id} | ${l.name} | ${l.choice} | ${l.cost > 0 ? `${l.cost} €/mois` : "inclus"} |`)
@@ -188,9 +268,9 @@ C'est la matérialisation de la promesse « zéro vendor lock-in » : la recette
 
 - \`manifest.json\`, description machine de la stack (source de vérité).
 - \`docker-compose.yml\`, services auto-hébergeables (vector DB, Postgres, orchestrateur).
-- \`terraform/\`, squelette de provisioning de l'infra (C6).
+- \`terraform/\`, squelette de provisioning de l'infra (C6)${reco.residency.regions.some((r) => r.role !== "primary") ? " + `dr.tf` (multi-région : réplication inter-région)" : ""}.
 - \`vault/\`, squelette du coffre à secrets (noms de variables, **jamais** de valeur).
-- \`runbook.md\`, exploitation : déploiement, backup 3-2-1, restauration, MEL, incident.
+- \`runbook.md\`, exploitation : déploiement, backup 3-2-1, restauration, **résidence & bascule régionale (DR)**, MEL, incident.
 - \`scripts/re-embed.sh\`, ré-embedding du vault vers la base vectorielle.
 - \`scripts/backup.sh\`, sauvegarde chiffrée (Restic).
 
@@ -340,6 +420,8 @@ function runbook(reco: Recommendation): string {
 
 ${backupSection(reco.backup)}
 
+${residencySection(reco.residency)}
+
 ## MEL, Minimum Equipment List (dégradation)
 | Composant | En panne → | Mode dégradé | Délai max réparation |
 |---|---|---|---|
@@ -436,6 +518,10 @@ export function buildExitBundle(
     "scripts/re-embed.sh": reEmbedScript(reco),
     "scripts/backup.sh": backupScript(reco),
   };
+  // IaC multi-région générée seulement si le plan DR dimensionne des réplicas (cohérence manifest↔plan).
+  if (reco.residency.regions.some((r) => r.role !== "primary")) {
+    files["terraform/dr.tf"] = drTerraform(reco.residency);
+  }
   // Catalogue retenu figé à part (rejouable) : composants + provenance + sources + date d'assemblage.
   if (manifest.catalog !== undefined) {
     files["catalog.json"] = JSON.stringify(manifest.catalog, null, 2) + "\n";
