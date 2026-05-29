@@ -4,6 +4,7 @@ import { useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Catalog } from "@/lib/catalog";
 import type { Ensemble, Profile, Recommendation } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 import { buildDeliverable } from "@/lib/export/model";
 import { renderMarkdown } from "@/lib/export/markdown";
 
@@ -28,9 +29,10 @@ function triggerDownload(filename: string, blob: Blob): void {
 
 export function ExportButtons({ profile, recommendation, ensemble, catalog }: ExportButtonsProps): ReactElement {
   const [busy, setBusy] = useState(false);
+  const resolveEngine = useEngineText();
 
   const exportMarkdown = (): void => {
-    const deliverable = buildDeliverable(profile, recommendation, ensemble, undefined, catalog);
+    const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, undefined, catalog);
     const blob = new Blob([renderMarkdown(deliverable)], { type: "text/markdown;charset=utf-8" });
     triggerDownload(`mnemo-plan-${deliverable.generatedAt}.md`, blob);
   };
@@ -40,7 +42,7 @@ export function ExportButtons({ profile, recommendation, ensemble, catalog }: Ex
     try {
       // Import dynamique : jsPDF (~135 ko) reste hors du bundle initial de /resultats.
       const { pdfBlob } = await import("@/lib/export/pdf");
-      const deliverable = buildDeliverable(profile, recommendation, ensemble, undefined, catalog);
+      const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, undefined, catalog);
       triggerDownload(`mnemo-plan-${deliverable.generatedAt}.pdf`, pdfBlob(deliverable));
     } finally {
       setBusy(false);

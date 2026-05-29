@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@/test/render";
 import { ResultsView } from "@/components/results/ResultsView";
 import { VerdictView } from "@/components/results/VerdictView";
 import type { Verdict } from "@/lib/engine";

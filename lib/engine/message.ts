@@ -23,3 +23,10 @@ export type Message = {
 export function msg(id: string, values?: MessageValues): Message {
   return values && Object.keys(values).length > 0 ? { id, values } : { id };
 }
+
+/**
+ * Résolveur d'un descripteur en chaîne localisée. Type PUR (pas de dépendance intl) : permet aux
+ * fonctions pures non-UI (ex. `buildDeliverable`) d'accepter une fonction de résolution injectée
+ * (fournie par l'UI via next-intl, ou un stub dans les tests). Le moteur ne le consomme jamais lui-même.
+ */
+export type EngineResolver = (message: Message) => string;

@@ -1,8 +1,19 @@
 import { describe, it, expect } from "vitest";
 import type { Preset, Profile } from "@/lib/engine/types";
-import { computeScores } from "@/lib/engine/scores";
 import { computeKMChecks, computeRisks, computeCompliance } from "@/lib/engine/diagnostics";
 import { seedCatalog } from "@/lib/catalog";
+import frMessages from "@/messages/fr.json";
+
+/** Aplati récursivement toutes les feuilles chaîne d'un objet de messages i18n. */
+function stringLeaves(value: unknown, out: string[]): void {
+  if (typeof value === "string") {
+    out.push(value);
+    return;
+  }
+  if (value !== null && typeof value === "object") {
+    for (const v of Object.values(value)) stringLeaves(v, out);
+  }
+}
 
 // S-063, garde DÉFCON 1 : aucun codename perso/interne (« Xavier », « Chris », « Meydeey », « Amine »)
 // ne doit fuiter dans une chaîne user-facing (catalogue recommandé, labels de score, diagnostics KM).
@@ -53,10 +64,11 @@ function catalogStrings(preset: Preset, p: Profile): string[] {
   return out;
 }
 
+// i18n (S-058) : le texte des scores ne vit plus dans le moteur (descripteurs Message) mais dans le
+// catalogue — scanné séparément ci-dessous. Ici : catalogue de composants + diagnostics (encore prose).
 function userFacingStrings(preset: Preset, p: Profile): string[] {
-  const scores = computeScores(preset, p, 100).flatMap((d) => [d.label, d.why]);
   const km = computeKMChecks(preset, p).flatMap((c) => [c.cause, c.coverage]);
-  return [...catalogStrings(preset, p), ...scores, ...km, ...computeRisks(preset, p, 100), ...computeCompliance(p)];
+  return [...catalogStrings(preset, p), ...km, ...computeRisks(preset, p, 100), ...computeCompliance(p)];
 }
 
 describe("garde anti-codename perso (S-063)", () => {
@@ -67,6 +79,15 @@ describe("garde anti-codename perso (S-063)", () => {
           expect(s, `codename perso détecté dans : « ${s} »`).not.toMatch(PERSONAL_CODENAMES);
         }
       }
+    }
+  });
+
+  it("aucun message i18n du moteur (catalogue fr) ne contient de codename perso (S-058)", () => {
+    const leaves: string[] = [];
+    stringLeaves(frMessages.Engine, leaves);
+    expect(leaves.length).toBeGreaterThan(0);
+    for (const s of leaves) {
+      expect(s, `codename perso détecté dans : « ${s} »`).not.toMatch(PERSONAL_CODENAMES);
     }
   });
 

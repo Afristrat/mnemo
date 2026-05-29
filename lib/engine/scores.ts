@@ -1,17 +1,11 @@
 import { type BackupCore, deriveBackupPlan } from "./backup";
+import { msg, type Message } from "./message";
 import { deriveResidencyPlan } from "./residency";
 import type { BackupCriticality, Preset, Profile, ResidencyPlan, ScoreDimension } from "./types";
 
 function hasMultimodal(p: Profile): boolean {
   return p.contentTypes.some((t) => t === "audio" || t === "video" || t === "images");
 }
-
-const CRITICALITY_LABEL: Record<BackupCriticality, string> = {
-  none: "aucune",
-  standard: "standard",
-  high: "élevée",
-  critical: "critique",
-};
 
 const RESILIENCE_BASE: Record<BackupCriticality, number> = { none: 1, standard: 5, high: 7, critical: 8 };
 
@@ -20,12 +14,14 @@ const RESILIENCE_BASE: Record<BackupCriticality, number> = { none: 1, standard: 
  * restauration testée + immutabilité + érasure conforme), avec **pénalité** si RPO/RTO sont incohérents
  * avec la criticité déclarée (override expert trop laxiste). Synergie « Plan de panne » = pendant
  * opérationnel (non scoré ici, le module reste indépendant). Échelle 0-10.
+ * i18n (S-058) : renvoie un descripteur `Message` (ICU), pas de prose ; le suffixe DR est fusionné
+ * dans les `values` par `computeScores` (clé `dr`). Discriminants `select` = chaînes "yes"/"no"/énum.
  */
-function resilienceScore(core: BackupCore): { score: number; why: string } {
+function resilienceScore(core: BackupCore): { score: number; why: Message } {
   if (core.criticality === "none") {
     return {
       score: RESILIENCE_BASE.none,
-      why: "Aucune sauvegarde modélisée — risque de perte de données et de non-conformité. Définissez une criticité dans le Bloc ② Infra.",
+      why: msg("scores.resilience.whyNone", { dr: "no" }),
     };
   }
 
@@ -44,15 +40,18 @@ function resilienceScore(core: BackupCore): { score: number; why: string } {
   if (incoherent) s -= 2;
 
   const score = Math.max(0, Math.min(10, s));
-  const parts = [`${core.copies} copie${core.copies > 1 ? "s" : ""}`];
-  if (core.offsite) parts.push("hors-site");
-  if (core.airgap) parts.push("air-gap");
-  if (core.immutable) parts.push("immuable (WORM)");
-  const why = `Criticité « ${CRITICALITY_LABEL[core.criticality]} » : ${parts.join(", ")}. Restauration ${
-    core.restoreTestsPerYear > 0 ? `testée ${core.restoreTestsPerYear}×/an` : "non testée"
-  }${core.erasurePolicy === "crypto-shred" ? ", érasure crypto-shred" : ""}.${
-    incoherent ? " ⚠️ RPO/RTO incohérents avec la criticité déclarée." : ""
-  }`;
+  const why = msg("scores.resilience.whyActive", {
+    crit: core.criticality,
+    copies: core.copies,
+    offsite: core.offsite ? "yes" : "no",
+    airgap: core.airgap ? "yes" : "no",
+    immutable: core.immutable ? "yes" : "no",
+    tested: core.restoreTestsPerYear > 0 ? "yes" : "no",
+    restoreTests: core.restoreTestsPerYear,
+    cryptoShred: core.erasurePolicy === "crypto-shred" ? "yes" : "no",
+    incoherent: incoherent ? "yes" : "no",
+    dr: "no",
+  });
   return { score, why };
 }
 
@@ -116,77 +115,93 @@ export function computeScores(
   const resilienceBase = resilienceScore(backupCore);
   const drBonus = residencyPlan.activeActive ? 1.5 : residencyPlan.drTier === "hot" ? 1 : residencyPlan.drTier === "warm" ? 0.5 : 0;
   const resilienceScoreFinal = Math.max(0, Math.min(10, resilienceBase.score + drBonus));
-  const resilienceWhy =
+  const resilienceWhy: Message =
     drBonus > 0
-      ? `${resilienceBase.why} + DR régional ${residencyPlan.activeActive ? "actif-actif" : residencyPlan.drTier} (RTO ${residencyPlan.rtoMinutes} min).`
+      ? {
+          id: resilienceBase.why.id,
+          values: {
+            ...resilienceBase.why.values,
+            dr: "yes",
+            drKind: residencyPlan.activeActive ? "active" : residencyPlan.drTier,
+            rto: residencyPlan.rtoMinutes,
+          },
+        }
       : resilienceBase.why;
 
   return [
     {
       key: "conf",
-      label: "Conformité juridique (RGPD/CNDP/AI Act)",
+      label: msg("scores.conf.label"),
       score: conf,
-      why: `Couvre les ${regCount} régimes cochés. ${preset === "LIGHT" && p.audit ? "⚠️ Audit obligatoire mal couvert en LIGHT." : ""}`.trim(),
+      why: msg("scores.conf.why", { regCount, auditWarn: preset === "LIGHT" && p.audit ? "yes" : "no" }),
     },
     {
       key: "audit",
-      label: "Auditabilité bitemporelle (qui savait quoi quand)",
+      label: msg("scores.audit.label"),
       score: audit,
-      why: `Choix bitemporel : ${p.bitemporal ? "Oui" : "Non"}. ${preset === "LIGHT" && p.bitemporal ? "Incompatible, passer en MEDIUM." : "OK"}`,
+      why: msg("scores.audit.why", {
+        bitemporal: p.bitemporal ? "yes" : "no",
+        incompat: preset === "LIGHT" && p.bitemporal ? "yes" : "no",
+      }),
     },
     {
       key: "stress",
-      label: "Stress-testabilité empirique",
+      label: msg("scores.stress.label"),
       score: stress,
-      why: "Dataset 7 axes × votre métier toujours applicable. Score plafonne à 9 par défaut, +1 si stack supporte les 4 adaptateurs RAG.",
+      why: msg("scores.stress.why"),
     },
     {
       key: "sov",
-      label: "Souveraineté & zéro vendor lock-in (portabilité)",
+      label: msg("scores.sov.label"),
       score: sov,
-      why: `Preset ${preset}. Vault markdown + bundle Exit Escrow = portabilité, zéro lock-in (la résidence géographique est notée séparément).`,
+      why: msg("scores.sov.why", { preset }),
     },
     {
       key: "adapt",
-      label: "Adaptativité multi-métier / multi-perspective",
+      label: msg("scores.adapt.label"),
       score: adapt,
-      why: `${p.contentTypes.length} type${p.contentTypes.length > 1 ? "s" : ""} de contenu, ${p.voices === "solo" ? "solo" : p.voices === "multi" ? "multi (2-5)" : "many (>5) voices"}. Plus c'est varié, plus la combinatoire 12 vecteurs (V1+) paie.`,
+      why: msg("scores.adapt.why", { count: p.contentTypes.length, voices: p.voices }),
     },
     {
       key: "ttv",
-      label: "Time-to-V1 (mise en route)",
+      label: msg("scores.ttv.label"),
       score: ttv,
-      why: `Compétences ${p.techLevel}. Preset ${preset}. ${preset === "LIGHT" ? "Démarrable en 1 jour." : preset === "MEDIUM" ? "Démarrable en 1 semaine." : "Démarrable en 1 mois (POC)."}`,
+      why: msg("scores.ttv.why", { techLevel: p.techLevel, preset }),
     },
     {
       key: "mm",
-      label: "Multimodalité native (texte + audio + image)",
+      label: msg("scores.mm.label"),
       score: mm,
-      why: wantsMultimodal
-        ? `${multimodalTypes.join(" / ")} détectés. ${preset !== "LIGHT" ? "Embeddings multimodaux unifiés." : "API multimodale, OK pour démarrer."}`
-        : "Texte uniquement. Score moyen par défaut.",
+      why: msg("scores.mm.why", {
+        wants: wantsMultimodal ? "yes" : "no",
+        types: multimodalTypes.join(" / "),
+        preset,
+      }),
     },
     {
       key: "cost",
-      label: "Coût opérationnel mensuel",
+      label: msg("scores.cost.label"),
       score: cost,
-      why: `≈ ${totalCost} €/mois. ${cost >= 8 ? "Très soutenable." : cost >= 6 ? "Soutenable, surveiller la croissance." : "Investissement notable, vérifier ROI."}`,
+      why: msg("scores.cost.why", {
+        totalCost,
+        band: cost >= 8 ? "sustainable" : cost >= 6 ? "watch" : "notable",
+      }),
     },
     {
       key: "resilience",
-      label: "Résilience & continuité (sauvegarde + DR régional)",
+      label: msg("scores.resilience.label"),
       score: resilienceScoreFinal,
       why: resilienceWhy,
     },
     {
       key: "geosov",
-      label: "Souveraineté géographique (résidence & transferts conformes)",
+      label: msg("scores.geosov.label"),
       score: residencyPlan.geoSovScore,
-      why: `Données en « ${residencyPlan.primaryRegion} ». ${
-        residencyPlan.transfers.length === 0
-          ? "Aucun transfert inter-juridiction."
-          : `${residencyPlan.transfers.length} flux inter-région (voir conformité des transferts).`
-      }${residencyPlan.conflict.hasConflict ? " ⚠️ Conflit résidence × DR à arbitrer." : ""}`,
+      why: msg("scores.geosov.why", {
+        region: residencyPlan.primaryRegion,
+        transferCount: residencyPlan.transfers.length,
+        conflict: residencyPlan.conflict.hasConflict ? "yes" : "no",
+      }),
     },
   ];
 }

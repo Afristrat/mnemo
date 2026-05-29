@@ -1,5 +1,64 @@
 {
-  "Engine": {},
+  "Engine": {
+    "scores": {
+      "conf": {
+        "label": "Conformité juridique (RGPD/CNDP/AI Act)",
+        "why": "Couvre les {regCount} régimes cochés.{auditWarn, select, yes { ⚠️ Audit obligatoire mal couvert en LIGHT.} other {}}"
+      },
+      "audit": {
+        "label": "Auditabilité bitemporelle (qui savait quoi quand)",
+        "why": "Choix bitemporel : {bitemporal, select, yes {Oui} other {Non}}. {incompat, select, yes {Incompatible, passer en MEDIUM.} other {OK}}"
+      },
+      "stress": {
+        "label": "Stress-testabilité empirique",
+        "why": "Dataset 7 axes × votre métier toujours applicable. Score plafonne à 9 par défaut, +1 si stack supporte les 4 adaptateurs RAG."
+      },
+      "sov": {
+        "label": "Souveraineté & zéro vendor lock-in (portabilité)",
+        "why": "Preset {preset}. Vault markdown + bundle Exit Escrow = portabilité, zéro lock-in (la résidence géographique est notée séparément)."
+      },
+      "adapt": {
+        "label": "Adaptativité multi-métier / multi-perspective",
+        "why": "{count, plural, one {# type de contenu} other {# types de contenu}}, {voices, select, solo {solo} multi {multi (2-5)} other {many (>5) voices}}. Plus c'est varié, plus la combinatoire 12 vecteurs (V1+) paie."
+      },
+      "ttv": {
+        "label": "Time-to-V1 (mise en route)",
+        "why": "Compétences {techLevel}. Preset {preset}. {preset, select, LIGHT {Démarrable en 1 jour.} MEDIUM {Démarrable en 1 semaine.} other {Démarrable en 1 mois (POC).}}"
+      },
+      "mm": {
+        "label": "Multimodalité native (texte + audio + image)",
+        "why": "{wants, select, yes {{types} détectés. {preset, select, LIGHT {API multimodale, OK pour démarrer.} other {Embeddings multimodaux unifiés.}}} other {Texte uniquement. Score moyen par défaut.}}"
+      },
+      "cost": {
+        "label": "Coût opérationnel mensuel",
+        "why": "≈ {totalCost} €/mois. {band, select, sustainable {Très soutenable.} watch {Soutenable, surveiller la croissance.} other {Investissement notable, vérifier ROI.}}"
+      },
+      "resilience": {
+        "label": "Résilience & continuité (sauvegarde + DR régional)",
+        "whyNone": "Aucune sauvegarde modélisée — risque de perte de données et de non-conformité. Définissez une criticité dans le Bloc ② Infra.{dr, select, yes { + DR régional {drKind, select, active {actif-actif} warm {tiède} other {chaude}} (RTO {rto} min).} other {}}",
+        "whyActive": "Criticité « {crit, select, standard {standard} high {élevée} critical {critique} other {aucune}} » : {copies, plural, one {# copie} other {# copies}}{offsite, select, yes {, hors-site} other {}}{airgap, select, yes {, air-gap} other {}}{immutable, select, yes {, immuable (WORM)} other {}}. Restauration {tested, select, yes {testée {restoreTests}×/an} other {non testée}}{cryptoShred, select, yes {, érasure crypto-shred} other {}}.{incoherent, select, yes { ⚠️ RPO/RTO incohérents avec la criticité déclarée.} other {}}{dr, select, yes { + DR régional {drKind, select, active {actif-actif} warm {tiède} other {chaude}} (RTO {rto} min).} other {}}"
+      },
+      "geosov": {
+        "label": "Souveraineté géographique (résidence & transferts conformes)",
+        "why": "Données en « {region} ». {transferCount, plural, =0 {Aucun transfert inter-juridiction.} other {# flux inter-région (voir conformité des transferts).}}{conflict, select, yes { ⚠️ Conflit résidence × DR à arbitrer.} other {}}"
+      },
+      "moduleBonus": "« {modName} » niv. {level}/{maxLevel} (+{bonus})"
+    }
+  },
+  "Results": {
+    "scoreShort": {
+      "conf": "Conformité",
+      "audit": "Audit",
+      "stress": "Stress-test",
+      "sov": "Souveraineté",
+      "adapt": "Adaptativité",
+      "ttv": "Time-to-V1",
+      "mm": "Multimodal",
+      "cost": "Coût",
+      "resilience": "Résilience",
+      "geosov": "Géo-souv."
+    }
+  },
   "Metadata": {
     "title": "Strate, infrastructure de base mémorielle souveraine",
     "description": "Choisissez, déployez et exploitez votre base mémorielle IA souveraine, sans migration, sans verrouillage, sans coûts cachés."
