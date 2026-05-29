@@ -1129,14 +1129,15 @@
       "id": "S-070",
       "title": "Remplacer Firecrawl par un backend auto-heberge (Crawl4AI + SearXNG + Ollama)",
       "feature": "pricing",
-      "passes": false,
+      "passes": true,
       "deps": [],
-      "note": "Credits Firecrawl epuises (HTTP 402). PHASE CODE FAITE + poussee : scraper.ts (SearXNG search + Crawl4AI /md + extraction LLM local), 15 imports rebascules, env-configurable, repli gracieux, 449 tests verts. PHASE INFRA : conteneurs searxng-strate + crawl4ai-strate sur reseau coolify (joints par app, HTTP 200). RESTE : reinstaller en Coolify manage ; crawl4ai.ai-mpower.com public + token via tunnel config-nahda.yml ; searxng interne.",
+      "note": "Credits Firecrawl epuises (HTTP 402). PHASE CODE FAITE + poussee : scraper.ts (SearXNG search + Crawl4AI /md + extraction LLM local), 15 imports rebascules, env-configurable, repli gracieux, 449 tests verts. PHASE INFRA : conteneurs searxng-strate + crawl4ai-strate sur reseau coolify (joints par app, HTTP 200). RESTE : reinstaller en Coolify manage ; crawl4ai.ai-mpower.com public + token via tunnel config-nahda.yml ; searxng interne. FAIT + VERIFIE end-to-end (5 live/1 flagged/2 fallback). Crawl4AI = app Coolify manage (a12v92dlfhvnna5f14j1qoza) + domaine public crawl4ai.ai-mpower.com + token ; app appelle via le domaine (DNS interne Coolify instable). SearXNG = conteneur brut interne searxng-strate (PAS Coolify : DNS instable + pas de repli public + montage settings). Tunnel cloudflared recharge par restart (SIGHUP ne recharge pas lingress). Conteneur brut crawl4ai-strate supprime.",
       "acceptance": [
         "app utilise les backends auto-heberges (defaut conteneurs internes)",
         "services Coolify-manage + crawl4ai public token + tunnel",
         "typecheck 0 / lint 0 / tests verts / build OK"
-      ]
+      ],
+      "completedAt": "2026-05-29"
     }
   ]
 }
