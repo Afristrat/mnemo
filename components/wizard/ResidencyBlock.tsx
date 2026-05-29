@@ -19,7 +19,7 @@ import {
 } from "@/lib/engine";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
-import { DR_TIER_OPTIONS, REGION_OPTIONS } from "@/lib/wizard/options";
+import { useOptions } from "@/lib/wizard/useOptions";
 import { cn } from "@/lib/utils/cn";
 
 type ResidencyBlockProps = {
@@ -86,6 +86,7 @@ export function ResidencyBlock({
   residencyPrices = getResidencyPrices(),
   computePrices = getComputePrices(),
 }: ResidencyBlockProps): ReactElement {
+  const opts = useOptions();
   const r: Residency = profile.residency ?? {};
   const update = (patch: Partial<Residency>): void => onChange({ ...r, ...patch });
 
@@ -112,7 +113,7 @@ export function ResidencyBlock({
         </legend>
         <RadioCards
           value={plan.drTier}
-          options={DR_TIER_OPTIONS}
+          options={opts.drTier}
           onChange={(drTier: DrTier) => update({ drTier })}
         />
       </fieldset>
@@ -125,7 +126,7 @@ export function ResidencyBlock({
               <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">Région primaire</legend>
               <RadioCards
                 value={plan.primaryRegion}
-                options={REGION_OPTIONS}
+                options={opts.region}
                 onChange={(primaryRegion: Region) => update({ primaryRegion })}
               />
             </fieldset>
@@ -134,7 +135,7 @@ export function ResidencyBlock({
                 Régions autorisées (multi-région / multi-continent)
                 <InfoBubble label="Régions autorisées" why={INFO_REGIONS.why} consequence={INFO_REGIONS.consequence} />
               </legend>
-              <CheckboxCards values={allowed} options={REGION_OPTIONS} onToggle={toggleRegion} />
+              <CheckboxCards values={allowed} options={opts.region} onToggle={toggleRegion} />
             </fieldset>
 
             <div className="grid gap-3 sm:grid-cols-2">

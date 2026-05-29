@@ -162,6 +162,125 @@
     "refine": "Refine my profile (configurator)",
     "expert": "See detail (expert)"
   },
+  "Options": {
+    "activity": {
+      "freelance": "Freelancer / independent",
+      "cabinet-regule": "Regulated practice",
+      "cabinet-reguleHint": "Lawyer, healthcare, wealth advisor, professional secrecy",
+      "particulier": "Individual",
+      "agence": "Agency / support programme",
+      "pme-startup": "SME / tech startup",
+      "recherche": "Research / academic",
+      "other": "Other"
+    },
+    "zone": {
+      "ue": "European Union",
+      "maroc": "Morocco",
+      "us": "United States",
+      "other": "Other"
+    },
+    "region": {
+      "eu": "European Union",
+      "maroc": "Morocco",
+      "us": "United States",
+      "other": "Other"
+    },
+    "drTier": {
+      "none": "None",
+      "noneHint": "Recovery = restore from backup",
+      "warm": "Warm",
+      "warmHint": "Reduced standby replica · RTO ~ hours",
+      "hot": "Hot",
+      "hotHint": "Hot replica · RTO ~ minutes"
+    },
+    "volume": {
+      "lt1": "< 1 GB",
+      "lt1Hint": "≈ hundreds of documents",
+      "1to10": "1 – 10 GB",
+      "1to10Hint": "≈ thousands of documents",
+      "10to100": "10 – 100 GB",
+      "10to100Hint": "≈ tens of thousands",
+      "100to1000": "100 GB – 1 TB",
+      "100to1000Hint": "large corpus / media",
+      "gt1000": "> 1 TB",
+      "gt1000Hint": "very large multimedia corpus"
+    },
+    "growth": {
+      "low": "Low",
+      "lowHint": "stable, few additions",
+      "medium": "Moderate",
+      "mediumHint": "steady growth",
+      "high": "High",
+      "highHint": "rapid scale-up"
+    },
+    "contentType": {
+      "text": "Text / documents",
+      "audio": "Audio",
+      "audioHint": "Transcripts, recordings",
+      "video": "Video",
+      "images": "Images",
+      "code": "Code",
+      "structured": "Structured data"
+    },
+    "regulation": {
+      "rgpd": "GDPR",
+      "rgpdHint": "European Union",
+      "cndp": "CNDP",
+      "cndpHint": "Morocco, law 09-08",
+      "aiact": "AI Act",
+      "aiactHint": "European Union",
+      "hipaa": "HIPAA",
+      "hipaaHint": "Healthcare (US)",
+      "secret-pro": "Professional secrecy",
+      "none": "None"
+    },
+    "sensitivity": {
+      "public": "Public",
+      "publicHint": "Shareable without risk",
+      "internal": "Internal",
+      "internalHint": "Circulates internally, leak is awkward",
+      "confidential": "Confidential",
+      "confidentialHint": "Restricted access, leak is harmful",
+      "secret": "Secret / ultra-sensitive",
+      "secretHint": "Critical leak (professional secrecy, healthcare, defence)"
+    },
+    "techLevel": {
+      "none": "Non-technical",
+      "dev": "Developer",
+      "hybrid": "Hybrid",
+      "hybridHint": "Dev + light ops",
+      "devops": "Seasoned DevOps"
+    },
+    "budget": {
+      "lt50": "< €50/month",
+      "50to200": "€50 – 200/month",
+      "200to500": "€200 – 500/month",
+      "500to2k": "€500 – 2,000/month",
+      "gt2k": "> €2,000/month"
+    },
+    "reqPerDay": {
+      "lt100": "< 100 / day",
+      "lt1k": "< 1,000 / day",
+      "lt10k": "< 10,000 / day",
+      "gt10k": "> 10,000 / day"
+    },
+    "latency": {
+      "fast": "Fast",
+      "fastHint": "< 2 s",
+      "acceptable": "Acceptable",
+      "acceptableHint": "2 – 5 s",
+      "relaxed": "Relaxed",
+      "relaxedHint": "> 5 s"
+    },
+    "voices": {
+      "solo": "Solo",
+      "soloHint": "One voice",
+      "multi": "Multi",
+      "multiHint": "2 – 5 voices",
+      "many": "Many",
+      "manyHint": "> 5 voices"
+    }
+  },
   "Home": {
     "hero": {
       "eyebrow": "Sovereign AI memory infrastructure",

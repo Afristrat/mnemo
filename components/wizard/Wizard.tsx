@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState, type ReactElement, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
@@ -26,20 +27,7 @@ import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { buildChoiceRecap } from "@/lib/wizard/recap";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
-import {
-  ACTIVITY_OPTIONS,
-  BUDGET_OPTIONS,
-  CONTENT_TYPE_OPTIONS,
-  GROWTH_OPTIONS,
-  LATENCY_OPTIONS,
-  REGULATION_OPTIONS,
-  REQ_PER_DAY_OPTIONS,
-  SENSITIVITY_OPTIONS,
-  TECH_LEVEL_OPTIONS,
-  VOICES_OPTIONS,
-  VOLUME_OPTIONS,
-  ZONE_OPTIONS,
-} from "@/lib/wizard/options";
+import { useOptions } from "@/lib/wizard/useOptions";
 
 // Les 4 blocs (spec §6). Le bloc ④ Médias est structurel ici ; son contenu détaillé
 // (besoins par modalité + budget-mètre) est ajouté en S-020.
@@ -261,6 +249,8 @@ export function Wizard(): ReactElement {
     loadProfile,
   } = useWizardProfile();
   const [step, setStep] = useState(0);
+  const opts = useOptions();
+  const tOptions = useTranslations("Options");
 
   if (!hydrated) {
     return <p className="p-8 text-center text-on-surface-variant">Chargement…</p>;
@@ -321,25 +311,25 @@ export function Wizard(): ReactElement {
           {block.id === "profil" ? (
             <>
               <Field label="Activité">
-                <RadioCards value={profile.activity} options={ACTIVITY_OPTIONS} onChange={(v) => setField("activity", v)} />
+                <RadioCards value={profile.activity} options={opts.activity} onChange={(v) => setField("activity", v)} />
               </Field>
               <Field label="Zone d'hébergement" info={INFO.zone}>
-                <RadioCards value={profile.zone} options={ZONE_OPTIONS} onChange={(v) => setField("zone", v)} />
+                <RadioCards value={profile.zone} options={opts.zone} onChange={(v) => setField("zone", v)} />
               </Field>
               <Field label="Nombre d'utilisateurs">
                 <NumberStepper label="Nombre d'utilisateurs" value={profile.users} onChange={(v) => setField("users", v)} />
               </Field>
               <Field label="Régimes applicables (au moins un)" info={INFO.regulations}>
-                <CheckboxCards values={profile.regulations} options={REGULATION_OPTIONS} onToggle={toggleRegulation} />
+                <CheckboxCards values={profile.regulations} options={opts.regulation} onToggle={toggleRegulation} />
               </Field>
               <Field label="Sensibilité des données" info={INFO.sensitivity}>
-                <RadioCards value={profile.sensitivity} options={SENSITIVITY_OPTIONS} onChange={(v) => setField("sensitivity", v)} />
+                <RadioCards value={profile.sensitivity} options={opts.sensitivity} onChange={(v) => setField("sensitivity", v)} />
               </Field>
               <Field label="Niveau technique" info={INFO.techLevel}>
-                <RadioCards value={profile.techLevel} options={TECH_LEVEL_OPTIONS} onChange={(v) => setField("techLevel", v)} />
+                <RadioCards value={profile.techLevel} options={opts.techLevel} onChange={(v) => setField("techLevel", v)} />
               </Field>
               <Field label="Budget mensuel" info={INFO.budget}>
-                <RadioCards value={profile.budget} options={BUDGET_OPTIONS} onChange={(v) => setField("budget", v)} />
+                <RadioCards value={profile.budget} options={opts.budget} onChange={(v) => setField("budget", v)} />
               </Field>
               <NoteField
                 block="profil"
@@ -354,16 +344,16 @@ export function Wizard(): ReactElement {
           {block.id === "infra" ? (
             <>
               <Field label="Volume de données" info={INFO.volume}>
-                <ContinuousSlider label="Volume" options={VOLUME_OPTIONS} value={profile.volume} onChange={(v) => setField("volume", v)} />
+                <ContinuousSlider label="Volume" options={opts.volume} value={profile.volume} onChange={(v) => setField("volume", v)} />
               </Field>
               <Field label="Débit de requêtes" info={INFO.reqPerDay}>
-                <ContinuousSlider label="Débit" options={REQ_PER_DAY_OPTIONS} value={profile.reqPerDay} onChange={(v) => setField("reqPerDay", v)} />
+                <ContinuousSlider label="Débit" options={opts.reqPerDay} value={profile.reqPerDay} onChange={(v) => setField("reqPerDay", v)} />
               </Field>
               <Field label="Latence tolérée">
-                <RadioCards value={profile.latency} options={LATENCY_OPTIONS} onChange={(v) => setField("latency", v)} />
+                <RadioCards value={profile.latency} options={opts.latency} onChange={(v) => setField("latency", v)} />
               </Field>
               <Field label="Croissance attendue">
-                <RadioCards value={profile.growth} options={GROWTH_OPTIONS} onChange={(v) => setField("growth", v)} />
+                <RadioCards value={profile.growth} options={opts.growth} onChange={(v) => setField("growth", v)} />
               </Field>
               <div className="border-t border-outline-variant pt-6">
                 <h3 className="font-display text-body-lg text-on-surface">Sauvegarde &amp; résilience</h3>
@@ -405,10 +395,10 @@ export function Wizard(): ReactElement {
           {block.id === "memoire" ? (
             <>
               <Field label="À qui sert cette mémoire ?" info={INFO.voices}>
-                <RadioCards value={profile.voices} options={VOICES_OPTIONS} onChange={(v) => setField("voices", v)} />
+                <RadioCards value={profile.voices} options={opts.voices} onChange={(v) => setField("voices", v)} />
               </Field>
               <Field label="Que mémoriser ? (au moins un)" info={INFO.contentTypes}>
-                <CheckboxCards values={profile.contentTypes} options={CONTENT_TYPE_OPTIONS} onToggle={toggleContentType} />
+                <CheckboxCards values={profile.contentTypes} options={opts.contentType} onToggle={toggleContentType} />
               </Field>
               <Field label="Audit (traçabilité signée)" info={INFO.audit}>
                 <YesNo ariaLabel="Audit (traçabilité signée)" value={profile.audit} onChange={(v) => setField("audit", v)} />
@@ -508,7 +498,7 @@ export function Wizard(): ReactElement {
           sizing={result.sizing}
           backupMonthlyCost={result.backup.monthlyCost}
         />
-        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result)} />
+        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result, tOptions)} />
       </aside>
     </div>
   );

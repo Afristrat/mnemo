@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@/test/render";
 import { ResidencyBlock } from "@/components/wizard/ResidencyBlock";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
