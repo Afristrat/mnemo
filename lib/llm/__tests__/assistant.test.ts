@@ -34,20 +34,20 @@ const WEB: WebSearchResult[] = [
 describe("serializeRecoFacts", () => {
   it("expose les chiffres autoritatifs affichés (preset, coût total, setup, score, couches)", () => {
     const reco = recommend(baseProfile());
-    const facts = serializeRecoFacts(reco);
+    const facts = serializeRecoFacts(reco, (m) => m.id);
     expect(facts).toContain(`Preset retenu : ${reco.preset}`);
     expect(facts).toContain(`${reco.totalCost} €/mois`);
     expect(facts).toContain(`${reco.setupCost} €`);
     expect(facts).toContain(`${reco.scoreAvg}/10`);
     // Chaque couche de la stack est listée avec son coût.
-    for (const layer of reco.layers) expect(facts).toContain(layer.name);
+    for (const layer of reco.layers) expect(facts).toContain(layer.name.id);
   });
 });
 
 describe("buildChatMessages", () => {
   it("injecte les FAITS + résultats web + règles DÉFCON 1 ; historique puis question en dernier", () => {
     const reco = recommend(baseProfile());
-    const facts = serializeRecoFacts(reco);
+    const facts = serializeRecoFacts(reco, (m) => m.id);
     const history: ChatTurn[] = [
       { role: "user", content: "Bonjour" },
       { role: "assistant", content: "Bonjour, comment puis-je aider ?" },
@@ -66,13 +66,13 @@ describe("buildChatMessages", () => {
 
   it("sans résultat web → consigne de répondre à partir des seuls FAITS", () => {
     const reco = recommend(baseProfile());
-    const messages = buildChatMessages("Une question", [], serializeRecoFacts(reco), []);
+    const messages = buildChatMessages("Une question", [], serializeRecoFacts(reco, (m) => m.id), []);
     expect(messages[0].content).toContain("aucun résultat web fourni");
   });
 
   it("utilise un gabarit personnalisé (override admin S-053)", () => {
     const reco = recommend(baseProfile());
-    const messages = buildChatMessages("q", [], serializeRecoFacts(reco), [], "ADMIN PERSO\n{{recoFacts}}");
+    const messages = buildChatMessages("q", [], serializeRecoFacts(reco, (m) => m.id), [], "ADMIN PERSO\n{{recoFacts}}");
     expect(messages[0].content).toContain("ADMIN PERSO");
     expect(messages[0].content).not.toContain("Tu es l'assistant de Strate");
   });

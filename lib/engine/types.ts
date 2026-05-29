@@ -318,7 +318,8 @@ export type ActiveModule = {
 
 export type Layer = {
   id: number;
-  name: string;
+  /** Titre de la couche (prose moteur → descripteur i18n, S-058). `choice`/`note`/`alternatives` viennent du catalogue (données : noms de produits + notes sourcées) et restent des chaînes. */
+  name: Message;
   color: string;
   choice: string;
   cost: number;

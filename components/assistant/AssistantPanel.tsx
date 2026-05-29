@@ -4,6 +4,7 @@ import { useCallback, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { Recommendation } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 import { serializeRecoFacts, type ChatTurn } from "@/lib/llm/assistant";
 import type { WebSearchResult } from "@/lib/pricing/firecrawl";
 
@@ -19,6 +20,7 @@ export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const resolveEngine = useEngineText();
 
   const send = useCallback(async (): Promise<void> => {
     const question = input.trim();
@@ -31,7 +33,7 @@ export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement
       const res = await fetch("/api/llm/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, history, recoFacts: serializeRecoFacts(reco) }),
+        body: JSON.stringify({ question, history, recoFacts: serializeRecoFacts(reco, resolveEngine) }),
       });
       const data: ChatResponse = await res.json();
       if (res.ok && data.ok === true && typeof data.answer === "string") {
@@ -53,7 +55,7 @@ export function AssistantPanel({ reco }: { reco: Recommendation }): ReactElement
       ]);
     }
     setBusy(false);
-  }, [input, busy, messages, reco]);
+  }, [input, busy, messages, reco, resolveEngine]);
 
   return (
     <Card>

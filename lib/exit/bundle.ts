@@ -6,7 +6,7 @@
 // Raison d'être : garantir au client qu'il peut TOUT réinstaller ailleurs, sans nous.
 // Anti vendor lock-in par construction (cf. docs/MOAT-HUNT.md).
 
-import type { BackupPlan, Layer, Preset, Profile, Recommendation, ResidencyPlan, Zone } from "@/lib/engine";
+import type { BackupPlan, EngineResolver, Layer, Preset, Profile, Recommendation, ResidencyPlan, Zone } from "@/lib/engine";
 import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 
@@ -96,6 +96,7 @@ function manifestOf(
   profile: Profile,
   reco: Recommendation,
   generatedAt: string,
+  resolve: EngineResolver,
   catalog?: Catalog,
 ): BundleManifest {
   return {
@@ -107,7 +108,7 @@ function manifestOf(
     scoreAvg: reco.scoreAvg,
     layers: reco.layers.map((l) => ({
       id: l.id,
-      name: l.name,
+      name: resolve(l.name),
       choice: l.choice,
       cost: l.cost,
       note: l.note,
@@ -261,7 +262,8 @@ output "dr_topology" {
 }
 
 function readme(m: BundleManifest, reco: Recommendation): string {
-  const layerLines = reco.layers
+  // Noms de couche déjà résolus (localisés) dans le manifest → réutilisés ici (pas de re-résolution).
+  const layerLines = m.layers
     .map((l) => `| C${l.id} | ${l.name} | ${l.choice} | ${l.cost > 0 ? `${l.cost} €/mois` : "inclus"} |`)
     .join("\n");
   return `# Bundle de déploiement Strate, Exit Escrow
@@ -512,8 +514,11 @@ export function buildExitBundle(
   reco: Recommendation,
   now: Date = new Date(),
   catalog?: Catalog,
+  // Résout les descripteurs i18n du moteur (S-058). Défaut = l'identifiant brut (tests/headless) ;
+  // l'UI (ExitEscrow) injecte le résolveur localisé.
+  resolve: EngineResolver = (m) => m.id,
 ): ExitBundle {
-  const manifest = manifestOf(profile, reco, now.toISOString().slice(0, 10), catalog);
+  const manifest = manifestOf(profile, reco, now.toISOString().slice(0, 10), resolve, catalog);
   const files: Record<string, string> = {
     "manifest.json": JSON.stringify(manifest, null, 2) + "\n",
     "README.md": readme(manifest, reco),

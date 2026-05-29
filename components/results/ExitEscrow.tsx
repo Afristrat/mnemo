@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { Catalog } from "@/lib/catalog";
 import type { Profile, Recommendation } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 
 type ExitEscrowProps = {
   profile: Profile;
@@ -20,6 +21,7 @@ type ExitEscrowProps = {
  */
 export function ExitEscrow({ profile, recommendation, catalog }: ExitEscrowProps): ReactElement {
   const [busy, setBusy] = useState(false);
+  const resolveEngine = useEngineText();
 
   const download = async (): Promise<void> => {
     setBusy(true);
@@ -28,7 +30,7 @@ export function ExitEscrow({ profile, recommendation, catalog }: ExitEscrowProps
         import("@/lib/exit/bundle"),
         import("@/lib/exit/zip"),
       ]);
-      const bundle = buildExitBundle(profile, recommendation, undefined, catalog);
+      const bundle = buildExitBundle(profile, recommendation, undefined, catalog, resolveEngine);
       // Uint8Array.from → vue adossée à un ArrayBuffer concret (BlobPart valide, sans `as`).
       const blob = new Blob([Uint8Array.from(zipBundle(bundle))], { type: "application/zip" });
       const url = URL.createObjectURL(blob);
