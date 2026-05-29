@@ -120,7 +120,8 @@ describe("computeScores — résilience (9ᵉ dimension, S-027)", () => {
   it("absence de backup => score plancher + libellé d'alerte (pas de sauvegarde)", () => {
     const dim = computeScores("MEDIUM", baseProfile(), 100).find((d) => d.key === "resilience");
     expect(dim?.score).toBe(1);
-    expect(dim?.why).toMatch(/Aucune sauvegarde/i);
+    // i18n (S-058) : le « pourquoi » est un descripteur Message — on asserte l'id (le texte vit dans le catalogue).
+    expect(dim?.why.id).toBe("scores.resilience.whyNone");
   });
 
   it("pénalise un RPO incohérent avec la criticité déclarée (override expert laxiste)", () => {

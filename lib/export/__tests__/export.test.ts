@@ -26,7 +26,7 @@ const PROFILE: Profile = {
 
 function deliverable() {
   const reco = recommend(PROFILE);
-  return buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), new Date("2026-05-25T08:00:00Z"));
+  return buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), (m) => m.id, new Date("2026-05-25T08:00:00Z"));
 }
 
 describe("buildDeliverable", () => {
@@ -59,7 +59,7 @@ describe("buildDeliverable avec catalogue figé (S-037)", () => {
   it("ajoute la section provenance (7 couches) + les sources du catalogue", () => {
     const reco = recommend(PROFILE);
     const catalog = seedCatalog(decidePreset(PROFILE).preset, PROFILE);
-    const d = buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), new Date("2026-05-25T08:00:00Z"), catalog);
+    const d = buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), (m) => m.id, new Date("2026-05-25T08:00:00Z"), catalog);
     const section = d.sections.find((s) => s.heading.startsWith("Catalogue retenu"));
     expect(section).toBeDefined();
     expect(section?.rows).toHaveLength(7);

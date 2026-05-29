@@ -2,6 +2,7 @@
 // Porté de design-reference/.../simulator-archi-base-memorielle-v2.html (logique pure, sans UI).
 
 import type { ComputeSizing } from "./compute";
+import type { Message } from "./message";
 import type { TransferRegion, TransferStatus } from "@/lib/legal/transfers";
 
 export const PRESETS = ["LIGHT", "MEDIUM", "HARD"] as const;
@@ -327,9 +328,11 @@ export type Layer = {
 
 export type ScoreDimension = {
   key: ScoreKey;
-  label: string;
+  label: Message;
   score: number;
-  why: string;
+  why: Message;
+  /** Annotations de bonus apportées par les modules actifs (S-058 : descripteurs, plus de prose concaténée). */
+  bonuses?: Message[];
 };
 
 export type KMCheck = {

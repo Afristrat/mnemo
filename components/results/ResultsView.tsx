@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
@@ -19,6 +20,7 @@ import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { seedCatalog, type Catalog } from "@/lib/catalog";
+import { useEngineText } from "@/lib/i18n/engine";
 import { mergeVerdictNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import {
   buildEnsemble,
@@ -28,7 +30,6 @@ import {
   type EnsembleVariantId,
   type MultimodalPriceTable,
   type Profile,
-  type ScoreKey,
   type Volume,
 } from "@/lib/engine";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
@@ -37,19 +38,6 @@ import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { VOLUME_OPTIONS } from "@/lib/wizard/options";
-
-const SHORT_LABELS: Record<ScoreKey, string> = {
-  conf: "Conformité",
-  audit: "Audit",
-  stress: "Stress-test",
-  sov: "Souveraineté",
-  adapt: "Adaptativité",
-  ttv: "Time-to-V1",
-  mm: "Multimodal",
-  cost: "Coût",
-  resilience: "Résilience",
-  geosov: "Géo-souv.",
-};
 
 const VOLUME_ORDER: Volume[] = ["lt1", "1to10", "10to100", "100to1000", "gt1000"];
 
@@ -145,6 +133,10 @@ export function ResultsView(): ReactElement {
       /* pas d'URL exploitable : vue expert. */
     }
   }, []);
+
+  // i18n (S-058) : résolveur des descripteurs du moteur + libellés courts du radar.
+  const resolveEngine = useEngineText();
+  const tScoreShort = useTranslations("Results.scoreShort");
 
   const projected = useMemo<Profile | null>(() => {
     if (base === null) return null;
@@ -257,7 +249,7 @@ export function ResultsView(): ReactElement {
   const exportCatalog = activeVariant === null ? effectiveCatalog : undefined;
 
   const factorsCost = profileCostFactors(activeProfile);
-  const radarData = activeResult.scores.map((s) => ({ label: SHORT_LABELS[s.key], score: s.score }));
+  const radarData = activeResult.scores.map((s) => ({ label: tScoreShort(s.key), score: s.score }));
   const projectionChanged = base !== null && (projected.volume !== base.volume || projected.users !== base.users);
 
   // Décomposition de l'apport multimédia (déjà compris dans les couches) pour la CostMap.
@@ -355,7 +347,7 @@ export function ResultsView(): ReactElement {
             {result.scores.map((s) => (
               <li key={s.key}>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-body-sm text-on-surface">{s.label}</span>
+                  <span className="text-body-sm text-on-surface">{resolveEngine(s.label)}</span>
                   <span className="font-mono text-body-sm text-primary">{s.score}/10</span>
                 </div>
                 <div className="mt-1 h-1.5 w-full rounded-full bg-surface-container">

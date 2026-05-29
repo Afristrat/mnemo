@@ -1,5 +1,64 @@
 {
-  "Engine": {},
+  "Engine": {
+    "scores": {
+      "conf": {
+        "label": "Legal compliance (GDPR/CNDP/AI Act)",
+        "why": "Covers the {regCount} selected regimes.{auditWarn, select, yes { ⚠️ Mandatory audit poorly covered in LIGHT.} other {}}"
+      },
+      "audit": {
+        "label": "Bitemporal auditability (who knew what, when)",
+        "why": "Bitemporal option: {bitemporal, select, yes {Yes} other {No}}. {incompat, select, yes {Incompatible — switch to MEDIUM.} other {OK}}"
+      },
+      "stress": {
+        "label": "Empirical stress-testability",
+        "why": "The 7-axis dataset × your domain always applies. Score caps at 9 by default, +1 if the stack supports all 4 RAG adapters."
+      },
+      "sov": {
+        "label": "Sovereignty & zero vendor lock-in (portability)",
+        "why": "{preset} preset. Markdown vault + Exit Escrow bundle = portability, zero lock-in (geographic residency is scored separately)."
+      },
+      "adapt": {
+        "label": "Multi-domain / multi-perspective adaptability",
+        "why": "{count, plural, one {# content type} other {# content types}}, {voices, select, solo {solo} multi {multi (2-5)} other {many (>5) voices}}. The more varied, the more the 12-vector combinatorics (V1+) pay off."
+      },
+      "ttv": {
+        "label": "Time-to-V1 (ramp-up)",
+        "why": "{techLevel} skills. {preset} preset. {preset, select, LIGHT {Up and running in 1 day.} MEDIUM {Up and running in 1 week.} other {Up and running in 1 month (POC).}}"
+      },
+      "mm": {
+        "label": "Native multimodality (text + audio + image)",
+        "why": "{wants, select, yes {{types} detected. {preset, select, LIGHT {Multimodal API, fine to start.} other {Unified multimodal embeddings.}}} other {Text only. Default mid score.}}"
+      },
+      "cost": {
+        "label": "Monthly operating cost",
+        "why": "≈ €{totalCost}/month. {band, select, sustainable {Very sustainable.} watch {Sustainable — watch growth.} other {Notable investment — check ROI.}}"
+      },
+      "resilience": {
+        "label": "Resilience & continuity (backup + regional DR)",
+        "whyNone": "No backup modelled — risk of data loss and non-compliance. Set a criticality level in Block ② Infra.{dr, select, yes { + regional DR {drKind, select, active {active-active} warm {warm} other {hot}} (RTO {rto} min).} other {}}",
+        "whyActive": "Criticality “{crit, select, standard {standard} high {high} critical {critical} other {none}}”: {copies, plural, one {# copy} other {# copies}}{offsite, select, yes {, offsite} other {}}{airgap, select, yes {, air-gapped} other {}}{immutable, select, yes {, immutable (WORM)} other {}}. Restore {tested, select, yes {tested {restoreTests}×/yr} other {untested}}{cryptoShred, select, yes {, crypto-shred erasure} other {}}.{incoherent, select, yes { ⚠️ RPO/RTO inconsistent with the declared criticality.} other {}}{dr, select, yes { + regional DR {drKind, select, active {active-active} warm {warm} other {hot}} (RTO {rto} min).} other {}}"
+      },
+      "geosov": {
+        "label": "Geographic sovereignty (residency & compliant transfers)",
+        "why": "Data in “{region}”. {transferCount, plural, =0 {No cross-jurisdiction transfer.} other {# cross-region flow(s) (see transfer compliance).}}{conflict, select, yes { ⚠️ Residency × DR conflict to arbitrate.} other {}}"
+      },
+      "moduleBonus": "“{modName}” lvl {level}/{maxLevel} (+{bonus})"
+    }
+  },
+  "Results": {
+    "scoreShort": {
+      "conf": "Compliance",
+      "audit": "Audit",
+      "stress": "Stress-test",
+      "sov": "Sovereignty",
+      "adapt": "Adaptability",
+      "ttv": "Time-to-V1",
+      "mm": "Multimodal",
+      "cost": "Cost",
+      "resilience": "Resilience",
+      "geosov": "Geo-sov."
+    }
+  },
   "Metadata": {
     "title": "Strate, sovereign memory-base infrastructure",
     "description": "Choose, deploy and run your sovereign AI memory base — no migration, no lock-in, no hidden costs."

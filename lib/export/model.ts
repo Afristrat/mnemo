@@ -1,7 +1,7 @@
 // Modèle de livrable (F6) : structure pure et neutre de présentation, partagée par
 // les rendus Markdown et PDF. Aucune dépendance UI ni I/O → entièrement testable.
 
-import { costBand, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
+import { costBand, type EngineResolver, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
 import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
@@ -129,11 +129,15 @@ function catalogSources(catalog: Catalog): DeliverableSource[] {
 /**
  * Construit le livrable structuré à partir de la recommandation et de l'ensemble.
  * `catalog` (optionnel) fige les choix de composants retenus + leur provenance (S-037, rejouable).
+ * `resolve` (S-058) résout les descripteurs `Message` du moteur (scores, et progressivement les
+ * autres champs) en chaîne localisée. La localisation des EN-TÊTES propres au livrable et du
+ * disclaimer relève de S-059 (ils restent en français ici).
  */
 export function buildDeliverable(
   profile: Profile,
   reco: Recommendation,
   ensemble: Ensemble,
+  resolve: EngineResolver,
   now: Date = new Date(),
   catalog?: Catalog,
 ): Deliverable {
@@ -152,7 +156,7 @@ export function buildDeliverable(
   const scores: DeliverableSection = {
     heading: "Scores (10 dimensions)",
     bullets: [],
-    rows: reco.scores.map((s) => ({ left: s.label, right: `${s.score}/10` })),
+    rows: reco.scores.map((s) => ({ left: resolve(s.label), right: `${s.score}/10` })),
   };
 
   const costRows: DeliverableRow[] = reco.layers

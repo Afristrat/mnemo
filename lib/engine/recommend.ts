@@ -5,6 +5,7 @@ import { deriveResidencyPlan, hostingClassForProfile, NEUTRAL_RESIDENCY_PRICES, 
 import { applyBackup, applyCompute, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
+import { msg } from "./message";
 import { MODULES } from "./modules";
 import { decidePreset } from "./preset";
 import { computeScores } from "./scores";
@@ -169,7 +170,14 @@ export function recommend(
       const previous = dim.score;
       dim.score = Math.min(10, Math.round((dim.score + bonusAmount) * 10) / 10);
       if (dim.score > previous || bonusAmount >= 0.3) {
-        dim.why += ` · « ${mod.name} » niv. ${mod.level}/${mod.maxLevel} (+${bonusAmount.toFixed(1)})`;
+        (dim.bonuses ??= []).push(
+          msg("scores.moduleBonus", {
+            modName: mod.name,
+            level: mod.level,
+            maxLevel: mod.maxLevel,
+            bonus: bonusAmount.toFixed(1),
+          }),
+        );
       }
     }
   }
