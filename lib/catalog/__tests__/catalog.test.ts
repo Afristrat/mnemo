@@ -67,7 +67,7 @@ describe("buildLayers via catalogue — identité avec l'historique (caractéris
     expect(layers[4].name).toBe("Embeddings multimodaux");
     expect(layers[4].choice).toBe("LCO-Embedding-Omni-7B local (GPU)");
     expect(layers[5].name).toBe("Stockage polyglotte bitemporel");
-    expect(layers[5].choice).toBe("Postgres + Apache AGE (option Amine ADR-011) OU Graphiti+Neo4j");
+    expect(layers[5].choice).toBe("Postgres + Apache AGE (graphe, ADR-011) OU Graphiti+Neo4j");
     expect(layers[2].note).toBe("T1 = Mistral Small, T2 = Claude Sonnet sur escalade");
   });
 

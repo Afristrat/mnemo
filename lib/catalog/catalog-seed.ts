@@ -47,7 +47,7 @@ export function seedCatalog(preset: Preset, profile: Profile): Catalog {
   const c0: CatalogSlot = {
     slot: "c0",
     recommended: cand(
-      "Frontmatter universel Xavier v1.0.0",
+      "Contrat de métadonnées (frontmatter YAML + JSON Schema)",
       "contrat commun (frontmatter YAML)",
       "sovereign",
       "JSON Schema, triple validation, champ circle pivot RLS",
@@ -174,15 +174,15 @@ export function seedCatalog(preset: Preset, profile: Profile): Catalog {
           ? "Postgres 16 + pgvector + colonnes valid_from/recorded_at"
           : "Postgres 16 + pgvector (Supabase free tier)",
         bitemporal
-          ? "Postgres + Apache AGE (option Amine ADR-011) OU Graphiti+Neo4j"
-          : "Postgres + pgvector + Graphiti (option Meydeey)",
-        "XTDB + Graphiti hybride (option C Chris) OU Postgres+AGE on-prem",
+          ? "Postgres + Apache AGE (graphe, ADR-011) OU Graphiti+Neo4j"
+          : "Postgres + pgvector + Graphiti",
+        "XTDB + Graphiti hybride OU Postgres+AGE on-prem",
       ),
       c5Role,
       "sovereign",
       byPreset(
         preset,
-        "vault markdown source de vérité (Amine) recommandé",
+        "vault markdown source de vérité recommandé",
         "vault markdown source de vérité + projections rejouables",
         "fact-store bitemporel natif, audit signé PL/pgSQL",
       ),
@@ -191,7 +191,7 @@ export function seedCatalog(preset: Preset, profile: Profile): Catalog {
       byPreset(
         preset,
         ["SQLite + Chroma (déconseillé production)"],
-        ["XTDB hybride (option Chris)", "DuckDB+VSS"],
+        ["XTDB hybride", "DuckDB+VSS"],
         ["Datomic Pro", "TerminusDB"],
       ),
       c5Role,
@@ -215,7 +215,7 @@ export function seedCatalog(preset: Preset, profile: Profile): Catalog {
         preset,
         "tout managé, démarrage en 2h",
         "souveraineté UE/FR, cascade T1/T2 économise ~70 % LLM",
-        "souveraineté N4 + backup multi-continental P4 (Meydeey)",
+        "souveraineté maximale + backup multi-continental",
       ),
     ),
     alternatives: alts(

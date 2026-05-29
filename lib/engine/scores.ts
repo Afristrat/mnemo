@@ -125,7 +125,7 @@ export function computeScores(
     },
     {
       key: "stress",
-      label: "Stress-testabilité empirique (méthode Meydeey)",
+      label: "Stress-testabilité empirique",
       score: stress,
       why: "Dataset 7 axes × votre métier toujours applicable. Score plafonne à 9 par défaut, +1 si stack supporte les 4 adaptateurs RAG.",
     },
