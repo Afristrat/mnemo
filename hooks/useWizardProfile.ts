@@ -57,12 +57,18 @@ export function useWizardProfile(): UseWizardProfile {
   }, []);
 
   const toggleRegulation = useCallback((value: Regulation) => {
-    setProfile((prev) => ({
-      ...prev,
-      regulations: prev.regulations.includes(value)
+    setProfile((prev) => {
+      const has = prev.regulations.includes(value);
+      // « Aucun » est MUTUELLEMENT EXCLUSIF : le cocher vide tout le reste ; cocher un régime
+      // concret retire « Aucun ». On ne peut pas avoir « Aucun » ET un régime en même temps.
+      if (value === "none") {
+        return { ...prev, regulations: has ? [] : ["none"] };
+      }
+      const regulations = has
         ? prev.regulations.filter((v) => v !== value)
-        : [...prev.regulations, value],
-    }));
+        : [...prev.regulations.filter((v) => v !== "none"), value];
+      return { ...prev, regulations };
+    });
   }, []);
 
   const setModuleLevel = useCallback((id: ModuleId, level: number) => {

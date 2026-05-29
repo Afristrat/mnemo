@@ -46,4 +46,30 @@ describe("useWizardProfile — hydratation & persistance", () => {
     const { result } = renderHook(() => useWizardProfile());
     expect(result.current.profile.otherText).toBeUndefined();
   });
+
+  describe("toggleRegulation — « Aucun » mutuellement exclusif (S-069)", () => {
+    it("cocher « Aucun » vide tous les autres régimes", () => {
+      const { result } = renderHook(() => useWizardProfile());
+      // Défaut = ["rgpd"] ; on ajoute un 2ᵉ régime concret.
+      act(() => result.current.toggleRegulation("aiact"));
+      expect(result.current.profile.regulations).toEqual(["rgpd", "aiact"]);
+      act(() => result.current.toggleRegulation("none"));
+      expect(result.current.profile.regulations).toEqual(["none"]);
+    });
+
+    it("cocher un régime concret retire « Aucun »", () => {
+      const { result } = renderHook(() => useWizardProfile());
+      act(() => result.current.toggleRegulation("none"));
+      expect(result.current.profile.regulations).toEqual(["none"]);
+      act(() => result.current.toggleRegulation("cndp"));
+      expect(result.current.profile.regulations).toEqual(["cndp"]);
+    });
+
+    it("re-cliquer « Aucun » le retire (état vide, bloqué par « au moins un »)", () => {
+      const { result } = renderHook(() => useWizardProfile());
+      act(() => result.current.toggleRegulation("none"));
+      act(() => result.current.toggleRegulation("none"));
+      expect(result.current.profile.regulations).toEqual([]);
+    });
+  });
 });
