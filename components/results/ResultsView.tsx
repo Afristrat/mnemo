@@ -15,6 +15,7 @@ import { LayerStack } from "@/components/results/LayerStack";
 import { LivePriceStatus } from "@/components/results/LivePriceStatus";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
+import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { seedCatalog, type Catalog } from "@/lib/catalog";
@@ -33,6 +34,7 @@ import {
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
+import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { VOLUME_OPTIONS } from "@/lib/wizard/options";
 
@@ -162,14 +164,14 @@ export function ResultsView(): ReactElement {
     () =>
       projected === null
         ? null
-        : recommend(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices()),
+        : recommend(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices()),
     [projected, prices, effectiveCatalog],
   );
   const ensemble = useMemo(
     () =>
       projected === null
         ? null
-        : buildEnsemble(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices()),
+        : buildEnsemble(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices()),
     [projected, prices, effectiveCatalog],
   );
 
@@ -177,7 +179,7 @@ export function ResultsView(): ReactElement {
   // mouvement de slider ; recalculé seulement si le profil/les prix/le catalogue changent.
   const narrationContext = useMemo<NarrationContext | null>(() => {
     if (base === null) return null;
-    const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices());
+    const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices());
     // Notes libres saisies au configurateur (S-052) → contexte de personnalisation du ton (jamais
     // un chiffre : le garde-fou `isCleanNarration` rejette toute réintroduction de montant/score).
     const notes = Object.values(base.freeNotes ?? {}).filter(
@@ -383,7 +385,11 @@ export function ResultsView(): ReactElement {
         setupCost={activeResult.setupCost}
         media={media}
         backup={activeResult.backup}
+        residency={activeResult.residency}
       />
+
+      {/* Résidence & transferts (S-048) : topologie régions + conformité des flux + RTO + conflit. */}
+      <ResidencyPanel plan={activeResult.residency} />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
       <LivePriceStatus />

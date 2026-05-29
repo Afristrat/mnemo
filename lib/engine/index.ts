@@ -46,6 +46,7 @@ export {
 export {
   deriveResidencyPlan,
   deriveResidencyTopology,
+  hostingClassForProfile,
   costResidency,
   selectEgressVector,
   vectorsForClass,

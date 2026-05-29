@@ -46,6 +46,25 @@ test("profil critique régulé → ligne backup + radar 10 axes + érasure crypt
   await expect(page.getByRole("img", { name: /Radar des 10 dimensions/ })).toBeVisible();
 });
 
+test("profil régulé multi-région → ligne réplication + transfert encadré + radar 10 axes", async ({ page }) => {
+  await page.goto("/configurateur");
+  // Bloc ② Infra (1 « Suivant ») : section Résidence & continuité.
+  await page.getByRole("button", { name: "Suivant" }).click();
+  // Continuité régionale « Chaude » (DR hot) → l'affinage expert résidence apparaît.
+  await page.getByRole("button", { name: /Chaude/ }).click();
+  await page.getByText("Affinage expert", { exact: true }).click();
+  // Autoriser une 2ᵉ région sur un autre continent (finding C4) → flux UE → États-Unis.
+  await page.getByRole("checkbox", { name: "États-Unis" }).click();
+
+  await page.goto("/resultats");
+  // Panneau Résidence & transferts : flux UE → US « Encadré » avec base légale.
+  await expect(page.getByRole("heading", { name: "Résidence & transferts" })).toBeVisible();
+  await expect(page.getByText(/Encadré/)).toBeVisible();
+  await expect(page.getByText(/RGPD chap\. V/)).toBeVisible();
+  // Radar à 10 axes (résilience + géo-souveraineté).
+  await expect(page.getByRole("img", { name: /Radar des 10 dimensions/ })).toBeVisible();
+});
+
 test("intake libre : décrire son besoin pré-remplit le configurateur", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel(/décrivez votre besoin/i).fill(

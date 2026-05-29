@@ -3,6 +3,7 @@ import { render, screen, fireEvent, within } from "@testing-library/react";
 import { ResultsView } from "@/components/results/ResultsView";
 import { VerdictView } from "@/components/results/VerdictView";
 import type { Verdict } from "@/lib/engine";
+import { STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 
 describe("ResultsView", () => {
   beforeEach(() => {
@@ -16,6 +17,13 @@ describe("ResultsView", () => {
     expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
     expect(screen.getByText("Carte de coûts")).toBeInTheDocument();
     expect(screen.getByText("Stack recommandée")).toBeInTheDocument();
+  });
+
+  it("profil avec continuité régionale (backup critique → DR hot) : panneau Résidence & transferts visible", async () => {
+    // backup critique → drTier hot dérivé → réplica en attente → panneau résidence rendu (S-048).
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ backup: { criticality: "critical" } }));
+    render(<ResultsView />);
+    expect(await screen.findByText("Résidence & transferts")).toBeInTheDocument();
   });
 
   it("?mode=verdict : affiche la vue verdict (chemin 90 s)", async () => {
