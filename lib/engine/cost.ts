@@ -1,6 +1,6 @@
 import type { ComputeSizing } from "./compute";
 import type { MultimodalPriceTable } from "./sizing";
-import type { BackupPlan, Layer, Profile, ReqPerDay, Sizing, Volume } from "./types";
+import type { BackupPlan, Layer, Profile, ReqPerDay, ResidencyPlan, Sizing, Volume } from "./types";
 
 const VOLUME_FACTOR: Record<Volume, number> = {
   lt1: 0,
@@ -101,6 +101,27 @@ export function applyBackup(layers: Layer[], backup: BackupPlan): Layer[] {
           ...layer,
           cost: layer.cost + monthly,
           note: `${layer.note} · +${monthly} €/mois sauvegarde (criticité ${backup.criticality}, ${backup.copies} copies${backup.offsite ? ", hors-site" : ""})`,
+        }
+      : layer,
+  );
+}
+
+/**
+ * Injecte le coût récurrent de résidence/DR (réplication inter-région + régions en attente) **dans**
+ * la couche C6 (infra), spec n°2 §6. Pure. `drTier none` + mono-région (ou prix neutres) → coût 0 →
+ * couches inchangées (invariant `totalCost = baseCost + moduleCost` préservé). Le one-time va dans `setupCost`.
+ */
+export function applyResidency(layers: Layer[], residency: ResidencyPlan): Layer[] {
+  const monthly = Math.round(residency.monthlyCost);
+  if (monthly <= 0) return layers;
+  const replicas = residency.regions.filter((r) => r.role !== "primary").length;
+  const drLabel = residency.activeActive ? "actif-actif" : residency.drTier;
+  return layers.map((layer) =>
+    layer.id === 6
+      ? {
+          ...layer,
+          cost: layer.cost + monthly,
+          note: `${layer.note} · +${monthly} €/mois résidence/DR (${drLabel}, ${replicas} région${replicas > 1 ? "s" : ""} en attente)`,
         }
       : layer,
   );

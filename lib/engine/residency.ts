@@ -22,12 +22,57 @@ import type {
 import { decidePreset } from "./preset";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { lookupTransferBasis, type TransferContext } from "@/lib/legal/transfers";
-import {
-  NEUTRAL_RESIDENCY_PRICES,
-  selectEgressVector,
-  type HostingClass,
-  type ResidencyPriceTable,
-} from "@/lib/pricing/residency-seed";
+import type { MultimodalPriceEntry } from "./sizing";
+
+// --- Contrat de prix résidence (DANS le moteur ; le SEED sourcé vit dans lib/pricing/residency-seed,
+// comme BackupPriceTable/backup-seed). Prix INJECTÉS, le moteur reste pur (zéro import lib/pricing). --
+
+/** Profil d'hébergement d'un vecteur d'egress. `sovereign` = false uniquement pour les hyperscalers. */
+export type HostingClass = "self-hosted" | "sovereign-eu" | "secnumcloud" | "hyperscaler";
+
+/** Vecteur d'egress inter-région sourcé pour un fournisseur (first-class, multi-segment). */
+export type EgressVector = {
+  provider: string;
+  hostingClass: HostingClass;
+  sovereign: boolean;
+  /** Egress inter-région, devise native, montant **par Go** (unité native rappelée en `note`). */
+  interRegionEgress: MultimodalPriceEntry;
+};
+
+/** Table résidence injectée : vecteurs d'egress + sécurisation inter-site. */
+export type ResidencyPriceTable = {
+  egressVectors: EgressVector[];
+  interSiteSecurityPerMonth: MultimodalPriceEntry;
+};
+
+/** Table neutre (un vecteur 0 €/Go par classe) : défaut d'injection, invariant `totalCost` préservé. */
+export const NEUTRAL_RESIDENCY_PRICES: ResidencyPriceTable = {
+  egressVectors: (["self-hosted", "sovereign-eu", "secnumcloud", "hyperscaler"] as const).map((hostingClass) => ({
+    provider: "neutre",
+    hostingClass,
+    sovereign: hostingClass !== "hyperscaler",
+    interRegionEgress: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
+  })),
+  interSiteSecurityPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
+};
+
+/** Vecteurs d'egress d'une classe d'hébergement (préserve l'ordre). */
+export function vectorsForClass(table: ResidencyPriceTable, hostingClass: HostingClass): EgressVector[] {
+  return table.egressVectors.filter((v) => v.hostingClass === hostingClass);
+}
+
+/** Vecteur représentatif d'une classe (1ᵉʳ du table) ; repli sur le 1ᵉʳ disponible, sinon vecteur neutre. */
+export function selectEgressVector(table: ResidencyPriceTable, hostingClass: HostingClass): EgressVector {
+  const first = vectorsForClass(table, hostingClass)[0] ?? table.egressVectors[0];
+  return (
+    first ?? {
+      provider: "neutre",
+      hostingClass,
+      sovereign: hostingClass !== "hyperscaler",
+      interRegionEgress: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
+    }
+  );
+}
 
 // --- Hypothèses de modélisation (±30 %, documentées — mêmes conventions que backup S-026) ---------
 

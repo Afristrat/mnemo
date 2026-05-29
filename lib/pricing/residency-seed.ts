@@ -13,29 +13,14 @@
 // ⚠ Ne JAMAIS éditer un montant ici sans mettre à jour `docs/pricing/residency-cost-sources.md`.
 // Sourcing : recherche web réelle, pages officielles (relevé 2026-05-29).
 
-import type { Currency, MultimodalPriceEntry } from "@/lib/engine";
+// Le CONTRAT (types + table neutre + sélecteurs) vit DANS le moteur (lib/engine/residency), comme
+// `BackupPriceTable` vit dans lib/engine/backup. Ici = le SEED sourcé (repli daté + baseline) + le
+// garde-fou de réconciliation live. Le moteur reste pur (il n'importe jamais lib/pricing).
+import type { EgressVector, MultimodalPriceEntry, ResidencyPriceTable } from "@/lib/engine";
 import { reconcilePrice, type PriceStatus } from "./reconcile";
 
-export type { Currency, MultimodalPriceEntry } from "@/lib/engine";
-
-/** Profil d'hébergement d'un vecteur d'egress. `sovereign` = false uniquement pour les hyperscalers. */
-export type HostingClass = "self-hosted" | "sovereign-eu" | "secnumcloud" | "hyperscaler";
-
-/** Un vecteur d'egress inter-région sourcé pour un fournisseur donné (first-class, multi-segment). */
-export type EgressVector = {
-  provider: string;
-  hostingClass: HostingClass;
-  sovereign: boolean;
-  /** Egress inter-région, devise native, montant **par Go** (sauf unité native rappelée en `note`). */
-  interRegionEgress: MultimodalPriceEntry;
-};
-
-/** Table résidence injectée dans le moteur (S-044) : vecteurs d'egress + sécurisation inter-site. */
-export type ResidencyPriceTable = {
-  egressVectors: EgressVector[];
-  /** Sécurisation de la liaison inter-site (self-hosted). Chiffrage détaillé = story sécurité S-061. */
-  interSiteSecurityPerMonth: MultimodalPriceEntry;
-};
+export type { EgressVector, HostingClass, ResidencyPriceTable } from "@/lib/engine";
+export { NEUTRAL_RESIDENCY_PRICES, selectEgressVector, vectorsForClass } from "@/lib/engine";
 
 const CHECKED_AT = "2026-05-29";
 
@@ -155,45 +140,9 @@ export const RESIDENCY_PRICE_SEED: ResidencyPriceTable = {
   interSiteSecurityPerMonth: INTER_SITE_SECURITY_SEED,
 };
 
-/** Table neutre (un vecteur 0 €/Go par classe) : injectée par défaut, invariant `totalCost` préservé. */
-export const NEUTRAL_RESIDENCY_PRICES: ResidencyPriceTable = {
-  egressVectors: (["self-hosted", "sovereign-eu", "secnumcloud", "hyperscaler"] as const).map((hostingClass) => ({
-    provider: "neutre",
-    hostingClass,
-    sovereign: hostingClass !== "hyperscaler",
-    interRegionEgress: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
-  })),
-  interSiteSecurityPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
-};
-
 /** Prix résidence (seed = repli/baseline daté). Le live arrive via la veille (réutilise `live-feed`). */
 export function getResidencyPrices(): ResidencyPriceTable {
   return RESIDENCY_PRICE_SEED;
-}
-
-// --- Sélection & garde-fou (purs, pour S-044/S-046) --------------------------------------------
-
-/** Vecteurs d'egress d'une classe d'hébergement (préserve l'ordre du seed). */
-export function vectorsForClass(table: ResidencyPriceTable, hostingClass: HostingClass): EgressVector[] {
-  return table.egressVectors.filter((v) => v.hostingClass === hostingClass);
-}
-
-/**
- * Vecteur représentatif d'une classe (1ᵉʳ du seed, ordre = défaut documenté). Repli sur le 1ᵉʳ
- * vecteur disponible si la classe est absente (table neutre incluse → toujours total).
- */
-export function selectEgressVector(table: ResidencyPriceTable, hostingClass: HostingClass): EgressVector {
-  const inClass = vectorsForClass(table, hostingClass);
-  const first = inClass[0] ?? table.egressVectors[0];
-  if (first === undefined) {
-    return {
-      provider: "neutre",
-      hostingClass,
-      sovereign: hostingClass !== "hyperscaler",
-      interRegionEgress: { amount: 0, currency: "EUR", unit: "Go", confidence: "low", source: null },
-    };
-  }
-  return first;
 }
 
 /**
