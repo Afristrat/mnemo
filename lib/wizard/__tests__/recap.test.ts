@@ -35,7 +35,7 @@ describe("buildChoiceRecap (S-050)", () => {
   it("couvre les champs clés + valeurs effectives dérivées (preset, serveurs, sauvegarde)", () => {
     const p = prof();
     const reco = recommend(p);
-    const groups = buildChoiceRecap(p, reco);
+    const groups = buildChoiceRecap(p, reco, (k) => k);
     const labels = allItems(groups).map((i) => i.label);
     for (const expected of ["Preset retenu", "Volume de données", "Croissance", "Latence visée", "Sauvegarde", "Modules", "Médias"]) {
       expect(labels).toContain(expected);
@@ -44,7 +44,7 @@ describe("buildChoiceRecap (S-050)", () => {
   });
 
   it("marque la transparence coût : charge = ●, souveraineté/conformité = ○", () => {
-    const groups = buildChoiceRecap(prof(), recommend(prof()));
+    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k);
     // Influencent directement le coût mensuel
     for (const l of ["Utilisateurs", "Volume de données", "Croissance", "Latence visée"]) {
       expect(item(groups, l)?.impactsCost).toBe(true);
@@ -56,7 +56,7 @@ describe("buildChoiceRecap (S-050)", () => {
   });
 
   it("résume modules et médias inactifs sans rien inventer", () => {
-    const groups = buildChoiceRecap(prof(), recommend(prof()));
+    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k);
     expect(item(groups, "Modules")?.value).toBe("Aucun module activé");
     expect(item(groups, "Médias")?.value).toBe("Aucun besoin média actif");
   });
@@ -64,7 +64,7 @@ describe("buildChoiceRecap (S-050)", () => {
   it("reporte les modules actifs et leur niveau", () => {
     const p = prof({ modules: { bisect: 0, reversal: 1, prereg: 0, mel: 0, conflict: 0 } });
     const reco = recommend(p);
-    const value = item(buildChoiceRecap(p, reco), "Modules")?.value ?? "";
+    const value = item(buildChoiceRecap(p, reco, (k) => k), "Modules")?.value ?? "";
     expect(value).not.toBe("Aucun module activé");
     expect(value).toContain(reco.activeModules[0]?.name ?? "—");
   });

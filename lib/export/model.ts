@@ -11,6 +11,7 @@ import {
   CONTENT_TYPE_OPTIONS,
   GROWTH_OPTIONS,
   LATENCY_OPTIONS,
+  optionLabelKey,
   REGULATION_OPTIONS,
   REQ_PER_DAY_OPTIONS,
   SENSITIVITY_OPTIONS,
@@ -18,8 +19,11 @@ import {
   VOICES_OPTIONS,
   VOLUME_OPTIONS,
   ZONE_OPTIONS,
-  type Option,
+  type OptionDef,
 } from "@/lib/wizard/options";
+
+/** Résout la clé de libellé d'une option (namespace `Options`) — injecté (UI) ou stub (tests). */
+export type OptionLabel = (key: string) => string;
 
 export type DeliverableRow = { left: string; right: string };
 export type DeliverableSection = { heading: string; rows: DeliverableRow[]; bullets: string[] };
@@ -38,34 +42,34 @@ export type Deliverable = {
 export const DISCLAIMER =
   "Une IA peut se tromper. Ces coûts sont des projections sourcées (±30 %), pas des engagements. Vérifiez chaque source avant toute décision.";
 
-function labelOf<T extends string>(options: Option<T>[], value: T): string {
-  return options.find((o) => o.value === value)?.label ?? value;
+function labelOf<T extends string>(defs: OptionDef<T>[], value: T, optionLabel: OptionLabel): string {
+  return optionLabel(optionLabelKey(defs, value));
 }
 
-function labelsOf<T extends string>(options: Option<T>[], values: T[]): string {
-  return values.map((v) => labelOf(options, v)).join(", ");
+function labelsOf<T extends string>(defs: OptionDef<T>[], values: T[], optionLabel: OptionLabel): string {
+  return values.map((v) => labelOf(defs, v, optionLabel)).join(", ");
 }
 
-function profileSection(p: Profile): DeliverableSection {
+function profileSection(p: Profile, optionLabel: OptionLabel): DeliverableSection {
   return {
     heading: "Profil",
     bullets: [],
     rows: [
-      { left: "Activité", right: labelOf(ACTIVITY_OPTIONS, p.activity) },
-      { left: "Zone d'hébergement", right: labelOf(ZONE_OPTIONS, p.zone) },
+      { left: "Activité", right: labelOf(ACTIVITY_OPTIONS, p.activity, optionLabel) },
+      { left: "Zone d'hébergement", right: labelOf(ZONE_OPTIONS, p.zone, optionLabel) },
       { left: "Utilisateurs", right: String(p.users) },
-      { left: "Types de contenu", right: labelsOf(CONTENT_TYPE_OPTIONS, p.contentTypes) },
-      { left: "Volume de données", right: labelOf(VOLUME_OPTIONS, p.volume) },
-      { left: "Croissance", right: labelOf(GROWTH_OPTIONS, p.growth) },
-      { left: "Régimes réglementaires", right: labelsOf(REGULATION_OPTIONS, p.regulations) },
-      { left: "Sensibilité", right: labelOf(SENSITIVITY_OPTIONS, p.sensitivity) },
+      { left: "Types de contenu", right: labelsOf(CONTENT_TYPE_OPTIONS, p.contentTypes, optionLabel) },
+      { left: "Volume de données", right: labelOf(VOLUME_OPTIONS, p.volume, optionLabel) },
+      { left: "Croissance", right: labelOf(GROWTH_OPTIONS, p.growth, optionLabel) },
+      { left: "Régimes réglementaires", right: labelsOf(REGULATION_OPTIONS, p.regulations, optionLabel) },
+      { left: "Sensibilité", right: labelOf(SENSITIVITY_OPTIONS, p.sensitivity, optionLabel) },
       { left: "Audit", right: p.audit ? "Oui" : "Non" },
       { left: "Bitemporel", right: p.bitemporal ? "Oui" : "Non" },
-      { left: "Compétences techniques", right: labelOf(TECH_LEVEL_OPTIONS, p.techLevel) },
-      { left: "Budget", right: labelOf(BUDGET_OPTIONS, p.budget) },
-      { left: "Requêtes / jour", right: labelOf(REQ_PER_DAY_OPTIONS, p.reqPerDay) },
-      { left: "Latence", right: labelOf(LATENCY_OPTIONS, p.latency) },
-      { left: "Voix / perspectives", right: labelOf(VOICES_OPTIONS, p.voices) },
+      { left: "Compétences techniques", right: labelOf(TECH_LEVEL_OPTIONS, p.techLevel, optionLabel) },
+      { left: "Budget", right: labelOf(BUDGET_OPTIONS, p.budget, optionLabel) },
+      { left: "Requêtes / jour", right: labelOf(REQ_PER_DAY_OPTIONS, p.reqPerDay, optionLabel) },
+      { left: "Latence", right: labelOf(LATENCY_OPTIONS, p.latency, optionLabel) },
+      { left: "Voix / perspectives", right: labelOf(VOICES_OPTIONS, p.voices, optionLabel) },
     ],
   };
 }
@@ -138,6 +142,7 @@ export function buildDeliverable(
   reco: Recommendation,
   ensemble: Ensemble,
   resolve: EngineResolver,
+  optionLabel: OptionLabel,
   now: Date = new Date(),
   catalog?: Catalog,
 ): Deliverable {
@@ -178,7 +183,7 @@ export function buildDeliverable(
   };
 
   const sections: DeliverableSection[] = [
-    profileSection(profile),
+    profileSection(profile, optionLabel),
     { heading: "Pourquoi ce preset", rows: [], bullets: [reco.presetReason] },
     stack,
     ...(catalog !== undefined ? [catalogSection(catalog)] : []),

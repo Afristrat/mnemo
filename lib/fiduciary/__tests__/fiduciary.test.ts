@@ -37,7 +37,7 @@ describe("Charte fiduciaire", () => {
   });
 
   it("est intégrée au livrable exporté", () => {
-    const d = buildDeliverable(PROFILE, recommend(PROFILE), buildEnsemble(PROFILE), (m) => m.id);
+    const d = buildDeliverable(PROFILE, recommend(PROFILE), buildEnsemble(PROFILE), (m) => m.id, (k) => k);
     const charter = d.sections.find((s) => s.heading === "Charte fiduciaire");
     expect(charter).toBeDefined();
     expect(charter?.bullets.join(" ")).toMatch(/commission/i);

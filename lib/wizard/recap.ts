@@ -10,6 +10,7 @@ import {
   CONTENT_TYPE_OPTIONS,
   GROWTH_OPTIONS,
   LATENCY_OPTIONS,
+  optionLabelKey,
   REGULATION_OPTIONS,
   REQ_PER_DAY_OPTIONS,
   SENSITIVITY_OPTIONS,
@@ -17,17 +18,20 @@ import {
   VOICES_OPTIONS,
   VOLUME_OPTIONS,
   ZONE_OPTIONS,
-  type Option,
+  type OptionDef,
 } from "./options";
 
 export type RecapItem = { label: string; value: string; impactsCost: boolean };
 export type RecapGroup = { heading: string; items: RecapItem[] };
 
-function labelOf<T extends string>(options: Option<T>[], value: T): string {
-  return options.find((o) => o.value === value)?.label ?? value;
+/** Résout la clé de libellé d'une option (namespace `Options`) — injecté par l'appelant (UI/test). */
+export type OptionLabel = (key: string) => string;
+
+function labelOf<T extends string>(defs: OptionDef<T>[], value: T, optionLabel: OptionLabel): string {
+  return optionLabel(optionLabelKey(defs, value));
 }
-function labelsOf<T extends string>(options: Option<T>[], values: T[]): string {
-  return values.length === 0 ? "—" : values.map((v) => labelOf(options, v)).join(", ");
+function labelsOf<T extends string>(defs: OptionDef<T>[], values: T[], optionLabel: OptionLabel): string {
+  return values.length === 0 ? "—" : values.map((v) => labelOf(defs, v, optionLabel)).join(", ");
 }
 
 const MODALITY_LABEL = { audio: "Audio", video: "Vidéo", images: "Images" } as const;
@@ -49,7 +53,7 @@ function modulesSummary(reco: Recommendation): string {
  * conformité / gouvernance (zone, régimes, sensibilité, audit, bitemporel, compétences, voix, budget)
  * orientent la stack/les scores mais n'ajoutent pas de ligne de coût directe → `false` (transparence).
  */
-export function buildChoiceRecap(profile: Profile, reco: Recommendation): RecapGroup[] {
+export function buildChoiceRecap(profile: Profile, reco: Recommendation, optionLabel: OptionLabel): RecapGroup[] {
   const serverCount = reco.compute.instances.reduce((sum, i) => sum + i.count, 0);
   return [
     {
@@ -67,10 +71,10 @@ export function buildChoiceRecap(profile: Profile, reco: Recommendation): RecapG
     {
       heading: "Profil & conformité",
       items: [
-        { label: "Activité", value: labelOf(ACTIVITY_OPTIONS, profile.activity), impactsCost: false },
-        { label: "Zone d'hébergement", value: labelOf(ZONE_OPTIONS, profile.zone), impactsCost: false },
-        { label: "Sensibilité", value: labelOf(SENSITIVITY_OPTIONS, profile.sensitivity), impactsCost: false },
-        { label: "Régimes", value: labelsOf(REGULATION_OPTIONS, profile.regulations), impactsCost: false },
+        { label: "Activité", value: labelOf(ACTIVITY_OPTIONS, profile.activity, optionLabel), impactsCost: false },
+        { label: "Zone d'hébergement", value: labelOf(ZONE_OPTIONS, profile.zone, optionLabel), impactsCost: false },
+        { label: "Sensibilité", value: labelOf(SENSITIVITY_OPTIONS, profile.sensitivity, optionLabel), impactsCost: false },
+        { label: "Régimes", value: labelsOf(REGULATION_OPTIONS, profile.regulations, optionLabel), impactsCost: false },
         { label: "Audit", value: profile.audit ? "Oui" : "Non", impactsCost: false },
         { label: "Bitemporel", value: profile.bitemporal ? "Oui" : "Non", impactsCost: false },
       ],
@@ -79,19 +83,19 @@ export function buildChoiceRecap(profile: Profile, reco: Recommendation): RecapG
       heading: "Charge & échelle",
       items: [
         { label: "Utilisateurs", value: String(profile.users), impactsCost: true },
-        { label: "Volume de données", value: labelOf(VOLUME_OPTIONS, profile.volume), impactsCost: true },
-        { label: "Croissance", value: labelOf(GROWTH_OPTIONS, profile.growth), impactsCost: true },
-        { label: "Requêtes / jour", value: labelOf(REQ_PER_DAY_OPTIONS, profile.reqPerDay), impactsCost: true },
-        { label: "Latence visée", value: labelOf(LATENCY_OPTIONS, profile.latency), impactsCost: true },
-        { label: "Compétences techniques", value: labelOf(TECH_LEVEL_OPTIONS, profile.techLevel), impactsCost: false },
-        { label: "Budget (plafond)", value: labelOf(BUDGET_OPTIONS, profile.budget), impactsCost: false },
+        { label: "Volume de données", value: labelOf(VOLUME_OPTIONS, profile.volume, optionLabel), impactsCost: true },
+        { label: "Croissance", value: labelOf(GROWTH_OPTIONS, profile.growth, optionLabel), impactsCost: true },
+        { label: "Requêtes / jour", value: labelOf(REQ_PER_DAY_OPTIONS, profile.reqPerDay, optionLabel), impactsCost: true },
+        { label: "Latence visée", value: labelOf(LATENCY_OPTIONS, profile.latency, optionLabel), impactsCost: true },
+        { label: "Compétences techniques", value: labelOf(TECH_LEVEL_OPTIONS, profile.techLevel, optionLabel), impactsCost: false },
+        { label: "Budget (plafond)", value: labelOf(BUDGET_OPTIONS, profile.budget, optionLabel), impactsCost: false },
       ],
     },
     {
       heading: "Usage & contenu",
       items: [
-        { label: "Types de contenu", value: labelsOf(CONTENT_TYPE_OPTIONS, profile.contentTypes), impactsCost: true },
-        { label: "Voix / perspectives", value: labelOf(VOICES_OPTIONS, profile.voices), impactsCost: false },
+        { label: "Types de contenu", value: labelsOf(CONTENT_TYPE_OPTIONS, profile.contentTypes, optionLabel), impactsCost: true },
+        { label: "Voix / perspectives", value: labelOf(VOICES_OPTIONS, profile.voices, optionLabel), impactsCost: false },
         { label: "Médias", value: mediaSummary(profile), impactsCost: true },
         { label: "Modules", value: modulesSummary(reco), impactsCost: reco.activeModules.length > 0 },
       ],

@@ -37,7 +37,7 @@ import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
-import { VOLUME_OPTIONS } from "@/lib/wizard/options";
+import { useOptions } from "@/lib/wizard/useOptions";
 
 const VOLUME_ORDER: Volume[] = ["lt1", "1to10", "10to100", "100to1000", "gt1000"];
 
@@ -138,6 +138,7 @@ export function ResultsView(): ReactElement {
   const resolveEngine = useEngineText();
   const tScoreShort = useTranslations("Results.scoreShort");
   const tR = useTranslations("Results");
+  const opts = useOptions();
 
   const projected = useMemo<Profile | null>(() => {
     if (base === null) return null;
@@ -304,7 +305,7 @@ export function ResultsView(): ReactElement {
         <div className="mt-4 grid gap-6 sm:grid-cols-2">
           <div>
             <label htmlFor="vol" className="text-label-caps uppercase text-on-surface-variant">
-              {tR("volumeLabel", { label: VOLUME_OPTIONS[volIndex].label })}
+              {tR("volumeLabel", { label: opts.volume[volIndex].label })}
             </label>
             <input
               id="vol"
