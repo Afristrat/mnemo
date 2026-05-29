@@ -444,7 +444,8 @@
     },
     {
       "id": "S-046", "title": "Intégration résidence/DR dans recommend (+ ensemble)", "feature": "residence",
-      "passes": false, "deps": ["S-044", "S-045"],
+      "passes": true, "completedAt": "2026-05-29", "deps": ["S-044", "S-045"],
+      "note": "recommend(profile, prices, catalog?, backupPrices, computePrices, residencyPrices=NEUTRAL) calcule deriveResidencyPlan(profile, residencyPrices, computePrices, preset) → Recommendation.residency (REQUIS) rempli. cost.ts applyResidency : coût récurrent résidence/DR (réplication egress + régions en attente) injecté DANS C6 (ordre : applyCompute→applyMultimodalSizing→applyBackup→applyResidency) ; monthlyCost 0 → couches inchangées (invariant totalCost = baseCost+moduleCost). setupCost += residency.setupCost (amorçage réplicas). computeScores reçoit le plan → geosov réel + resilience étendu DR. costSources += residency.costSources. ensemble.ts threade residencyPrices (baseline + 3 variants). REFACTO ZÉRO-DETTE : le CONTRAT (ResidencyPriceTable/EgressVector/HostingClass/NEUTRAL_RESIDENCY_PRICES/selectEgressVector/vectorsForClass) déplacé de lib/pricing vers lib/engine/residency (le moteur reste PUR, n'importe jamais lib/pricing — comme BackupPriceTable) ; residency-seed.ts importe le contrat du moteur + re-exporte (RESIDENCY_PRICE_SEED + reconcileEgressVector restent côté pricing). +6 tests recommend-residency (champ rempli, coût C6, invariant neutre, geosov, sources, ensemble threadé) → 395. typecheck 0, lint 0/0, build OK. Reste epic Résidence : S-047 (Exit Escrow DR), S-048 (UI Bloc ② + radar 10 + transferts + e2e).",
       "acceptance": ["spec n°2 §6 : Recommendation.residency rempli ; coût réplication + régions repli dans les couches ; none+mono-région → neutre (invariant totalCost) ; ensemble threade ; tests recommend étendus verts"]
     },
     {

@@ -329,6 +329,8 @@ export type Recommendation = {
   backup: BackupPlan;
   /** Compute souverain dimensionné (serveurs self-hosted, S-041) ; remplace le forfait C6 si injecté. */
   compute: ComputeSizing;
+  /** Plan résidence/DR déduit du profil (spec n°2, intégré en S-046). `none` + mono-région → neutre. */
+  residency: ResidencyPlan;
   /** Synthèse « verdict » pour le chemin 90 s (douleur/risque/gain/prix ferme/coûts/next step). */
   verdict: Verdict;
 };

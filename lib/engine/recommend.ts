@@ -1,7 +1,8 @@
 import type { Catalog } from "@/lib/catalog/types";
 import { buildBackupPlan, NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
-import { applyBackup, applyCompute, applyMultimodalSizing, costBand, layersBaseCost, profileCostFactors } from "./cost";
+import { deriveResidencyPlan, NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency";
+import { applyBackup, applyCompute, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
 import { MODULES } from "./modules";
@@ -117,6 +118,7 @@ export function recommend(
   catalog?: Catalog,
   backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
   computePrices: ComputePriceTable = NEUTRAL_COMPUTE_PRICES,
+  residencyPrices: ResidencyPriceTable = NEUTRAL_RESIDENCY_PRICES,
 ): Recommendation {
   const { preset, reason } = decidePreset(profile);
   // Paramètres de dimensionnement « vivants » (S-056) : un composant sourcé du catalogue (C6 GPU,
@@ -127,20 +129,27 @@ export function recommend(
   const backup = buildBackupPlan(profile, sizing, prices.storagePerGbMonth, backupPrices);
   // Serveurs souverains dimensionnés (remplacent le forfait C6 si prix injectés ; sinon neutre → forfait).
   const compute = computeSovereignCompute(profile, preset, computePrices);
+  // Plan résidence/DR (spec n°2) : none + mono-région (ou prix neutres) → plan neutre, coûts 0 (invariant).
+  const residency = deriveResidencyPlan(profile, residencyPrices, computePrices, preset);
 
   // Choix des composants = `catalog` injecté (défaut seed = sortie identique, spec n°3). Coûts dans les
-  // couches : compute remplace le forfait C6, puis GPU/stockage multimédias (C4/C5/C6), puis backup (C6).
-  const layers = applyBackup(
-    applyMultimodalSizing(applyCompute(buildLayers(preset, profile, catalog), compute), sizing, prices),
-    backup,
+  // couches : compute remplace le forfait C6, puis GPU/stockage multimédias (C4/C5/C6), puis backup (C6),
+  // puis résidence/DR (réplication + régions en attente, C6).
+  const layers = applyResidency(
+    applyBackup(
+      applyMultimodalSizing(applyCompute(buildLayers(preset, profile, catalog), compute), sizing, prices),
+      backup,
+    ),
+    residency,
   );
   const baseCost = layersBaseCost(layers) + profileCostFactors(profile);
   const activeModules = computeActiveModules(profile);
   const moduleCost = activeModules.reduce((sum, m) => sum + m.cost, 0);
   const totalCost = baseCost + moduleCost;
 
-  // Le plan backup alimente la dimension `resilience` (S-027) de façon cohérente avec le coût injecté.
-  const scores = computeScores(preset, profile, totalCost, backup);
+  // Le plan backup alimente `resilience` (S-027) ; le plan résidence alimente `geosov` + étend
+  // `resilience` au DR régional (S-045), de façon cohérente avec les coûts injectés.
+  const scores = computeScores(preset, profile, totalCost, backup, residency);
 
   // Bonus modules, proportionnels au niveau d'intensité choisi.
   for (const mod of activeModules) {
@@ -160,8 +169,8 @@ export function recommend(
   for (const dim of scores) dim.score = Math.round(dim.score);
   const scoreAvg = Number((scores.reduce((sum, x) => sum + x.score, 0) / scores.length).toFixed(1));
 
-  // Mise en route = backlog multimédia + premier full de sauvegarde (one-time).
-  const setupCost = computeSetupCost(profile, prices) + Math.round(backup.setupCost);
+  // Mise en route = backlog multimédia + premier full de sauvegarde + amorçage des réplicas (one-time).
+  const setupCost = computeSetupCost(profile, prices) + Math.round(backup.setupCost) + Math.round(residency.setupCost);
   const risks = computeRisks(preset, profile, totalCost);
 
   return {
@@ -183,11 +192,13 @@ export function recommend(
       ...mediaCostSources(profile, sizing, prices),
       ...backup.costSources,
       ...compute.sources,
+      ...residency.costSources,
       // Sources des facteurs de dimensionnement sourcés effectivement appliqués (S-056, traçabilité).
       ...derivedParams.applied.map((a) => a.source),
     ]),
     backup,
     compute,
+    residency,
     verdict: buildVerdict(profile, totalCost, setupCost, risks),
   };
 }

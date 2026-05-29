@@ -47,8 +47,14 @@ export {
   deriveResidencyPlan,
   deriveResidencyTopology,
   costResidency,
+  selectEgressVector,
+  vectorsForClass,
+  NEUTRAL_RESIDENCY_PRICES,
   type ResidencyTopology,
   type ResidencyCost,
+  type EgressVector,
+  type HostingClass,
+  type ResidencyPriceTable,
 } from "./residency";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";
