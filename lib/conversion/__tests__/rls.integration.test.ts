@@ -6,7 +6,7 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createClient, type SupabaseClient, type User } from "@supabase/supabase-js";
-import { buildLeadCapture, buildSimulationLog } from "@/lib/conversion/log";
+import { buildLead, buildLeadCapture, buildSimulationLog } from "@/lib/conversion/log";
 import { recommend } from "@/lib/engine";
 
 const URL = process.env.SUPABASE_TEST_URL;
@@ -134,5 +134,17 @@ describe.skipIf(!ready)("RLS conversion/data (Supabase local)", () => {
     const leads = await anonClient.from("lead_capture").select("*");
     expect(sims.data?.length).toBe(0);
     expect(leads.data?.length).toBe(0);
+  });
+
+  it("lead gate : anon peut INSERT dans `leads` mais ne lit jamais la table en masse (PII)", async () => {
+    const anonClient = createClient(url, anonKey, { auth: { persistSession: false } });
+    const { error } = await anonClient
+      .from("leads")
+      .insert(buildLead({ name: "Amine", email: `lead_${stamp}@mnemo.test`, preset: "HARD" }));
+    expect(error).toBeNull();
+
+    // Aucune lecture publique : la policy SELECT n'autorise pas anon → 0 ligne, jamais la table entière.
+    const { data: leak } = await anonClient.from("leads").select("*");
+    expect(leak?.length ?? 0).toBe(0);
   });
 });

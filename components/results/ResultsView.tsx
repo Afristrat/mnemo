@@ -13,6 +13,7 @@ import { EnsembleView } from "@/components/results/EnsembleView";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
 import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
+import { LeadGate } from "@/components/results/LeadGate";
 import { LivePriceStatus } from "@/components/results/LivePriceStatus";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
@@ -357,6 +358,12 @@ export function ResultsView(): ReactElement {
         </div>
       ) : null}
 
+      {/* Lead gate (S-068) : la recette EXPERTE (projection, ensemble, radar, stack, coûts, partage,
+          export, Exit Escrow, assistant) ne se déverrouille qu'après saisie nom + e-mail. Le verdict
+          90 s (mode="verdict", retour plus haut) reste LIBRE — le bouton « Voir le verdict » ci-dessus
+          et le lien « Affiner » ci-dessous restent hors du gate. Décision (S-067) : le partage reste
+          DANS la zone gatée (c'est un livrable expert, comme l'export et l'Exit Escrow). */}
+      <LeadGate preset={activeResult.preset}>
       {/* Projection */}
       <Card>
         <h2 className="font-display text-headline-md text-on-surface">{tR("project")}</h2>
@@ -508,6 +515,7 @@ export function ResultsView(): ReactElement {
               : undefined,
         }}
       />
+      </LeadGate>
 
       <Link
         href="/configurateur"

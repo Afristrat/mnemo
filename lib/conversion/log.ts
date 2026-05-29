@@ -4,7 +4,7 @@
 // et l'e2e (S-024). Pattern aligné sur `lib/network/consent.ts` (builder pur).
 
 import type { Profile, Recommendation } from "@/lib/engine";
-import type { LeadCaptureInsert, LeadContext, SimulationLogInsert } from "@/lib/supabase/types";
+import type { LeadCaptureInsert, LeadContext, LeadInsert, SimulationLogInsert } from "@/lib/supabase/types";
 
 /**
  * Construit la ligne `simulation_log` à partir d'un profil et de sa recommandation.
@@ -49,5 +49,31 @@ export function buildLeadCapture(args: {
     simulation_id: args.simulationId ?? null,
     circle_id: args.circleId ?? null,
     context: args.context ?? "exit_intent",
+  };
+}
+
+/** Validation minimale d'un nom (l'UI valide aussi ; la base ne fait pas confiance). */
+export function isValidName(name: string): boolean {
+  const trimmed = name.trim();
+  return trimmed.length >= 2 && trimmed.length <= 120;
+}
+
+/**
+ * Construit la ligne `leads` (lead gate S-068 : nom + e-mail avant la recette experte).
+ * E-mail normalisé (trim + minuscules), nom trimé. `preset` facultatif (preset courant). Pur.
+ */
+export function buildLead(args: {
+  name: string;
+  email: string;
+  preset?: string | null;
+  circleId?: string | null;
+  createdBy?: string | null;
+}): LeadInsert {
+  return {
+    name: args.name.trim(),
+    email: args.email.trim().toLowerCase(),
+    preset: args.preset ?? null,
+    circle_id: args.circleId ?? null,
+    created_by: args.createdBy ?? null,
   };
 }

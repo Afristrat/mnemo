@@ -181,6 +181,25 @@ export type SharedRecoInsert = {
   encoded: string;
 };
 
+// Lead gate (S-068) : capture nom + e-mail avant la recette experte. `preset` = preset courant
+// au moment de la capture (facultatif). PII → aucune lecture publique (anon INSERT uniquement).
+export type LeadRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  name: string;
+  email: string;
+  preset: string | null;
+  created_at: string;
+};
+export type LeadInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  name: string;
+  email: string;
+  preset: string | null;
+};
+
 // Console admin super-admin (S-053) : prompts système versionnés + table des super-admins globaux.
 export type SuperAdminRow = { user_id: string; created_at: string };
 export type PromptRow = {
@@ -219,6 +238,7 @@ export type Database = {
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;
+      leads: TableShape<LeadRow, LeadInsert>;
     };
     Views: Record<string, never>;
     Functions: {

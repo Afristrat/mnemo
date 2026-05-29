@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { recommend, type Profile } from "@/lib/engine";
-import { buildLeadCapture, buildSimulationLog, isValidEmail } from "@/lib/conversion/log";
+import { buildLead, buildLeadCapture, buildSimulationLog, isValidEmail, isValidName } from "@/lib/conversion/log";
 
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
@@ -64,6 +64,33 @@ describe("buildLeadCapture", () => {
     const row = buildLeadCapture({ email: "a@b.co", simulationId: "sim-1", context: "report" });
     expect(row.simulation_id).toBe("sim-1");
     expect(row.context).toBe("report");
+  });
+});
+
+describe("isValidName", () => {
+  it("accepte un nom plausible et rejette le trop court", () => {
+    expect(isValidName("Amine")).toBe(true);
+    expect(isValidName("  Jo ")).toBe(true);
+    expect(isValidName("A")).toBe(false);
+    expect(isValidName(" ")).toBe(false);
+    expect(isValidName("x".repeat(121))).toBe(false);
+  });
+});
+
+describe("buildLead", () => {
+  it("normalise nom (trim) + e-mail (trim + minuscules) et reste anonyme par défaut", () => {
+    const row = buildLead({ name: "  Amine  ", email: "  Amine@Example.COM " });
+    expect(row.name).toBe("Amine");
+    expect(row.email).toBe("amine@example.com");
+    expect(row.preset).toBeNull();
+    expect(row.circle_id).toBeNull();
+    expect(row.created_by).toBeNull();
+  });
+
+  it("joint le preset et l'auteur quand fournis", () => {
+    const row = buildLead({ name: "Jo", email: "jo@b.co", preset: "HARD", createdBy: "user-1" });
+    expect(row.preset).toBe("HARD");
+    expect(row.created_by).toBe("user-1");
   });
 });
 

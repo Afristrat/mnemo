@@ -121,6 +121,19 @@
       "shortHint": "Lien court via nos serveurs, pratique à partager (e-mail, message).",
       "copyShort": "Copier",
       "shortError": "Création du lien court impossible pour le moment. Le lien copié ci-dessus fonctionne déjà."
+    },
+    "leadGate": {
+      "title": "Accédez à la recette complète",
+      "desc": "Votre verdict est ci-dessus, librement. Pour dérouler la recette complète — stack 7 couches, carte de coûts sourcée, scénarios d’incertitude, radar, export et bundle de redéploiement — indiquez votre nom et votre e-mail.",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Votre nom",
+      "nameError": "Indiquez votre nom (au moins 2 caractères).",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "vous@organisation.fr",
+      "emailError": "Indiquez une adresse e-mail valide.",
+      "submit": "Voir le détail (expert)",
+      "submitting": "Ouverture…",
+      "hint": "Sourcée et exportable. Nous ne vous redemanderons rien sur cet appareil."
     }
   },
   "Metadata": {

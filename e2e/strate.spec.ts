@@ -1,7 +1,19 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 // Parcours critiques de la refonte Strate (S-024), desktop + mobile.
 // Le parcours « wizard 4 blocs → résultats expert » est couvert par parcours.spec.ts.
+
+// Lead gate (S-068) : la recette experte est gatée derrière nom + e-mail. Pour les parcours qui
+// vérifient le DÉTAIL expert, on simule un lead déjà fourni (clé localStorage « débloqué »).
+async function unlockExpert(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem("strate.leadUnlocked.v1", "1");
+    } catch {
+      /* localStorage indisponible : sans effet. */
+    }
+  });
+}
 
 test("chemin 90 s → verdict", async ({ page }) => {
   await page.goto("/");
@@ -11,6 +23,21 @@ test("chemin 90 s → verdict", async ({ page }) => {
   await expect(page).toHaveURL(/\/resultats\?mode=verdict/);
   await expect(page.getByText("Votre verdict")).toBeVisible();
   await expect(page.getByRole("button", { name: "Voir le détail (expert)" })).toBeVisible();
+});
+
+test("lead gate : le verdict est libre ; le détail expert ne s'ouvre qu'après nom + e-mail", async ({ page }) => {
+  await page.goto("/resultats");
+  // Le détail expert est verrouillé : le formulaire de capture s'affiche, pas la stack.
+  await expect(page.getByRole("heading", { name: /recette complète/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Stack recommandée" })).toHaveCount(0);
+
+  // Saisir nom + e-mail valides → déverrouille la recette experte.
+  await page.getByLabel("Nom", { exact: true }).fill("Amine");
+  await page.getByLabel("E-mail", { exact: true }).fill("amine@example.com");
+  await page.getByRole("button", { name: "Voir le détail (expert)" }).click();
+
+  await expect(page.getByRole("heading", { name: "Stack recommandée" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Carte de coûts" })).toBeVisible();
 });
 
 test("bloc Médias : génération vidéo souveraine → budget rouge + levier", async ({ page }) => {
@@ -31,6 +58,7 @@ test("bloc Médias : génération vidéo souveraine → budget rouge + levier", 
 });
 
 test("profil critique régulé → ligne backup + radar 10 axes + érasure crypto-shred", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/configurateur");
   // Bloc ① : sensibilité « secret » → surcharge conformité (crypto-shred + immutable).
   await page.getByRole("button", { name: /Secret/ }).click();
@@ -47,6 +75,7 @@ test("profil critique régulé → ligne backup + radar 10 axes + érasure crypt
 });
 
 test("profil régulé multi-région → ligne réplication + transfert encadré + radar 10 axes", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/configurateur");
   // Bloc ② Infra (1 « Suivant ») : section Résidence & continuité.
   await page.getByRole("button", { name: "Suivant" }).click();
@@ -91,6 +120,7 @@ test("note libre par bloc : « Intégrer » ajuste le profil (repli gracieux si 
 });
 
 test("assistant Q&A : poser une question renvoie une réponse (ou repli gracieux), sans crash", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/resultats");
   await expect(page.getByRole("heading", { name: "Poser une question" })).toBeVisible();
   await page.getByPlaceholder(/pourquoi ce preset/i).fill("Pourquoi ce preset ?");
@@ -100,6 +130,7 @@ test("assistant Q&A : poser une question renvoie une réponse (ou repli gracieux
 });
 
 test("reco vivante : la provenance des choix techniques est affichée (repli seed immédiat)", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/resultats");
   await expect(page.getByText("Provenance des choix techniques")).toBeVisible();
   // Repli seed immédiat (ou live si la veille répond) : chaque couche porte une provenance.
@@ -107,6 +138,7 @@ test("reco vivante : la provenance des choix techniques est affichée (repli see
 });
 
 test("ensemble : basculer sur un scénario recalcule la page puis revenir à la recommandation", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/resultats");
   const ensemble = page.getByRole("region", { name: "Ensemble de configurations" });
   await expect(ensemble).toBeVisible();
@@ -119,6 +151,7 @@ test("ensemble : basculer sur un scénario recalcule la page puis revenir à la 
 });
 
 test("round-trip /configurateur → /resultats : la génération souveraine se retrouve dans les coûts", async ({ page }) => {
+  await unlockExpert(page);
   await page.goto("/configurateur");
   for (let i = 0; i < 3; i += 1) {
     await page.getByRole("button", { name: "Suivant" }).click();

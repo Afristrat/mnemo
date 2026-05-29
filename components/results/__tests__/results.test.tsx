@@ -5,22 +5,39 @@ import { VerdictView } from "@/components/results/VerdictView";
 import type { Verdict } from "@/lib/engine";
 import { STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 
+// Lead gate (S-068) : la recette experte est gatée derrière nom + e-mail. Pour les assertions sur le
+// détail expert, on simule un lead déjà fourni (clé localStorage « débloqué »). Un test dédié vérifie
+// le gate lui-même.
+const UNLOCK_KEY = "strate.leadUnlocked.v1";
+
 describe("ResultsView", () => {
   beforeEach(() => {
     localStorage.clear();
     window.history.replaceState({}, "", "/");
   });
 
-  it("vue expert par défaut : preset + carte de coûts + stack", async () => {
+  it("vue expert (lead fourni) : preset + carte de coûts + stack", async () => {
     // DEFAULT_PROFILE (confidentiel + corpus 1–10 Go) → MEDIUM sous le modèle scoré (S-051, ADR-020).
+    localStorage.setItem(UNLOCK_KEY, "1");
     render(<ResultsView />);
     expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
     expect(screen.getByText("Carte de coûts")).toBeInTheDocument();
     expect(screen.getByText("Stack recommandée")).toBeInTheDocument();
   });
 
+  it("lead gate : sans lead, le détail expert est masqué et le formulaire nom + e-mail s'affiche", async () => {
+    render(<ResultsView />);
+    // L'en-tête (teaser) reste libre…
+    expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
+    // …mais la recette experte est verrouillée derrière le gate.
+    expect(screen.getByRole("heading", { name: /recette complète/i })).toBeInTheDocument();
+    expect(screen.queryByText("Carte de coûts")).not.toBeInTheDocument();
+    expect(screen.queryByText("Stack recommandée")).not.toBeInTheDocument();
+  });
+
   it("profil avec continuité régionale (backup critique → DR hot) : panneau Résidence & transferts visible", async () => {
     // backup critique → drTier hot dérivé → réplica en attente → panneau résidence rendu (S-048).
+    localStorage.setItem(UNLOCK_KEY, "1");
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ backup: { criticality: "critical" } }));
     render(<ResultsView />);
     expect(await screen.findByText("Résidence & transferts")).toBeInTheDocument();
@@ -34,6 +51,7 @@ describe("ResultsView", () => {
   });
 
   it("basculer sur un scénario recalcule la page et affiche le bandeau de retour", async () => {
+    localStorage.setItem(UNLOCK_KEY, "1");
     render(<ResultsView />);
     // La référence est affichée tant qu'aucun scénario n'est choisi.
     expect(await screen.findByText("Preset : MEDIUM")).toBeInTheDocument();
