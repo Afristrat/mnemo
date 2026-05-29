@@ -9,8 +9,14 @@
 > est juridiquement instable. Preuve de l'instabilité au relevé : le **DPF UE-US est valide mais sous
 > pourvoi CJUE (C-703/25 P)** — deux cadres transatlantiques ont déjà été invalidés (Safe Harbor 2015,
 > Privacy Shield 2020) ; le **Maroc n'a pas d'adéquation UE à ce jour** mais cela peut évoluer. La
-> **veille live** des statuts (LLM + sources officielles, via le registre de prompts S-053) =
-> **story dédiée (S-062)**. Ce tableau est le **repli daté**.
+> **veille live** des statuts est désormais BRANCHÉE (S-062) : `lib/legal/live-transfers.ts` rafraîchit
+> les flux `volatile` (DPF UE-US, adéquation Maroc) depuis les **sources officielles** (Firecrawl + LLM
+> via le prompt éditable `legal-veille`, S-053, clé serveur jamais exposée) ; route `GET /api/legal/transfers`.
+> **Garde-fou (`reconcileTransferBasis`)** : un signal live qui **diverge** de ce repli daté n'est **jamais
+> adopté en silence** → statut conservé, confiance abaissée, flag **« à revérifier par un conseil »**
+> (provenance `flagged`) ; concordant → confirmé (provenance `live`, fraîcheur rafraîchie) ; veille indispo
+> → repli seed. Audit trail RLS `transfer_status_observations` (pivot `circle`). **Ce tableau reste le repli
+> daté + la baseline de réconciliation.**
 >
 > **Relevé le** : 2026-05-29 (sources primaires/officielles : EUR-Lex, gdpr-info, Commission
 > européenne, Bulletin Officiel marocain publié par la CNDP, Cornell LII).

@@ -34,6 +34,11 @@ describe("DEFAULT_PROMPTS (les clauses DÉFCON 1 sont dans le gabarit par défau
   it("veille : URL obligatoirement issue des résultats web", () => {
     expect(DEFAULT_PROMPTS["catalog-veille"]).toContain("n'invente JAMAIS d'URL");
   });
+  it("veille juridique : statut sourcé, jamais un avis juridique, URL non inventée (S-062)", () => {
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("PAS un conseil juridique");
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("n'invente JAMAIS d'URL");
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("N'INVENTE AUCUN fait");
+  });
 });
 
 describe("isPromptKey", () => {

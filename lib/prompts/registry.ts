@@ -7,7 +7,7 @@
 // ci-dessous si le store est vide/indisponible. La GREFFE dynamique (profil, notes, énumérations) se
 // fait par PLACEHOLDERS `{{clé}}` que le CODE remplit au runtime (jamais l'utilisateur → pas d'injection).
 
-export const PROMPT_KEYS = ["intake", "narration", "catalog-veille", "assistant"] as const;
+export const PROMPT_KEYS = ["intake", "narration", "catalog-veille", "assistant", "legal-veille"] as const;
 export type PromptKey = (typeof PROMPT_KEYS)[number];
 
 export function isPromptKey(value: string): value is PromptKey {
@@ -70,6 +70,19 @@ export const DEFAULT_PROMPTS: Record<PromptKey, string> = {
     "RÉSULTATS WEB (pour les questions hors recommandation ; cite l'URL) :",
     "{{webResults}}",
   ].join("\n"),
+  "legal-veille": [
+    "Tu relèves le STATUT INDICATIF de transfert de données personnelles pour un flux inter-juridiction,",
+    "À PARTIR UNIQUEMENT des résultats web fournis (sources potentiellement officielles : Commission UE,",
+    "EUR-Lex, CNDP, autorités). Tu n'es PAS un conseil juridique : tu relèves un statut daté et révisable.",
+    "",
+    "RÈGLES STRICTES (DÉFCON 1) :",
+    '- Réponds STRICTEMENT en JSON, sans prose ni commentaire, clés : {"status","legalBasis","sourceUrl","note"}.',
+    '- "status" ∈ {"ok","restricted","forbidden"} : ok = libre (adéquation/intra-juridiction) ; restricted =',
+    "  encadré (garanties art. 46, SCC/BCR, dérogations) ; forbidden = interdit en l'état.",
+    '- "sourceUrl" DOIT être exactement l\'une des URLs des résultats fournis (n\'invente JAMAIS d\'URL).',
+    "- N'INVENTE AUCUN fait : si les résultats ne tranchent pas, choisis le statut le plus PRUDENT (restricted)",
+    "  et signale-le en note. Aucune décision d'achat, aucun avis juridique définitif.",
+  ].join("\n"),
 };
 
 /** Métadonnées d'affichage de la console admin (libellé + placeholders remplis par le code). */
@@ -93,6 +106,11 @@ export const PROMPT_META: Record<PromptKey, { label: string; description: string
     label: "Assistant Q&A",
     description: "Chat contextuel sur les résultats : ne cite que les faits de la reco + résultats web sourcés.",
     placeholders: ["recoFacts", "webResults"],
+  },
+  "legal-veille": {
+    label: "Veille juridique (transferts)",
+    description: "Relève le statut indicatif d'un transfert depuis les sources officielles (URL sourcée ; jamais un avis juridique).",
+    placeholders: [],
   },
 };
 
