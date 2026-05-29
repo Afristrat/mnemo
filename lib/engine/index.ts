@@ -48,6 +48,7 @@ export {
   deriveResidencyTopology,
   hostingClassForProfile,
   costResidency,
+  costInterSiteSecurity,
   selectEgressVector,
   vectorsForClass,
   NEUTRAL_RESIDENCY_PRICES,
@@ -56,6 +57,7 @@ export {
   type EgressVector,
   type HostingClass,
   type ResidencyPriceTable,
+  type InterSiteSecurityPrices,
 } from "./residency";
 export { computeCompliance, computeRisks, computeKMChecks } from "./diagnostics";
 export { recommend } from "./recommend";

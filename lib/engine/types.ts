@@ -195,6 +195,37 @@ export type Residency = {
   activeActive?: boolean;
   drRpoMinutes?: number;
   drRtoMinutes?: number;
+  /**
+   * Infrastructure auto-hébergée (bare-metal / VM propres) — la vraie souveraineté, mais introduit
+   * une **liaison inter-site à sécuriser** (S-061). Absent ⇒ hébergement souverain managé/hyperscaler
+   * dérivé de la zone (pas de poste de sécurisation inter-site). Choix EXPLICITE d'infrastructure.
+   */
+  selfHosted?: boolean;
+};
+
+// --- Sécurisation de la liaison inter-site self-hosted (spec n°2 « surface à sécuriser », S-061) ---
+
+/** Approche retenue pour sécuriser la liaison inter-site. */
+export type InterSiteSecurityApproach = "self-hosted" | "managed";
+
+/** Variante chiffrée d'une approche de sécurisation inter-site (€/$ natifs portés par les sources). */
+export type InterSiteSecurityVariant = {
+  approach: InterSiteSecurityApproach;
+  monthlyCost: number; // récurrent
+  setupCost: number; // one-time
+  note: string;
+};
+
+/**
+ * Poste de sécurisation inter-site (self-hosted multi-région, S-061). Présent uniquement si
+ * `Profile.residency.selfHosted` ET ≥ 2 sites (réplica). Le coût retenu = l'approche `self-hosted`
+ * (cohérent avec l'infra choisie) ; `alternative` chiffre le managé pour comparaison (avis NON
+ * orienté, décision Amine) — JAMAIS imposée. Supervision/durcissement = OPEX flaggé, non chiffré.
+ */
+export type InterSiteSecurity = InterSiteSecurityVariant & {
+  securedSites: number; // nombre de sites reliés à sécuriser (primaire + réplicas)
+  alternative: InterSiteSecurityVariant;
+  costSources: CostSource[]; // DÉFCON 1
 };
 
 /**
@@ -211,9 +242,11 @@ export type ResidencyPlan = {
   transfers: TransferFlag[];
   /** Tension résidence × DR exposée, JAMAIS résolue en douce (décision Amine #6 « honnêteté brutale »). */
   conflict: { hasConflict: boolean; reason: string; levers: string[] };
-  monthlyCost: number; // réplication (egress inter-région) + régions en attente
+  monthlyCost: number; // réplication (egress inter-région) + régions en attente + sécurisation inter-site
   setupCost: number; // amorçage des réplicas (premier transfert complet)
   geoSovScore: number; // alimente la 10ᵉ dimension `geosov` (câblée en S-045)
+  /** Poste de sécurisation inter-site (self-hosted multi-région, S-061). Absent ⇒ pas de liaison à sécuriser. */
+  interSiteSecurity?: InterSiteSecurity;
   costSources: CostSource[]; // DÉFCON 1
 };
 

@@ -42,7 +42,10 @@ const residencyPrices: ResidencyPriceTable = {
       },
     },
   ],
-  interSiteSecurityPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
+  interSiteSecurity: {
+    selfHostedGatewayPerMonth: { amount: 0, currency: "EUR", unit: "mois", confidence: "low", source: null },
+    managedPerUserPerMonth: { amount: 0, currency: "EUR", unit: "utilisateur·mois", confidence: "low", source: null },
+  },
 };
 const computePrices: ComputePriceTable = {
   glue: { name: "glue", vcpu: 2, ramGb: 4, pricePerHourEur: 0.01, source: { label: "c", url: "https://compute.test", checkedAt: "2026-05-29" } },
