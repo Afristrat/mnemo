@@ -129,6 +129,62 @@ describe("Exit Escrow piloté par le BackupPlan (S-029)", () => {
   });
 });
 
+describe("Exit Escrow piloté par le plan résidence/DR (S-047)", () => {
+  const DR_CRITICAL: Profile = {
+    ...PROFILE,
+    sensitivity: "secret",
+    regulations: ["rgpd", "secret-pro"],
+    backup: { criticality: "critical" }, // → DR hot dérivé
+  };
+
+  it("le manifeste porte le plan résidence réel (cohérence manifest↔plan)", () => {
+    const reco = recommend(DR_CRITICAL);
+    const { manifest } = buildExitBundle(DR_CRITICAL, reco);
+    expect(manifest.residency.drTier).toBe(reco.residency.drTier);
+    expect(manifest.residency.primaryRegion).toBe(reco.residency.primaryRegion);
+    expect(manifest.residency.drTier).toBe("hot");
+  });
+
+  it("profil avec DR : terraform/dr.tf généré + runbook avec procédure de bascule régionale", () => {
+    const reco = recommend(DR_CRITICAL);
+    const bundle = buildExitBundle(DR_CRITICAL, reco);
+    expect(Object.keys(bundle.files)).toContain("terraform/dr.tf");
+    expect(bundle.files["terraform/dr.tf"]).toContain("multi-région");
+    const runbook = bundle.files["runbook.md"];
+    expect(runbook).toContain("Résidence & continuité régionale (DR « hot »)");
+    expect(runbook).toContain("Procédure de bascule régionale");
+    expect(runbook).toContain("RTO régional");
+  });
+
+  it("profil sans DR : pas de dr.tf, runbook signale l'absence de DR régional", () => {
+    const reco = recommend(PROFILE); // backup none → DR none
+    const bundle = buildExitBundle(PROFILE, reco);
+    expect(Object.keys(bundle.files)).not.toContain("terraform/dr.tf");
+    expect(bundle.files["runbook.md"]).toContain("DR régional** : aucun");
+  });
+
+  it("transfert inter-région : le runbook liste le flux + son statut + disclaimer juridique", () => {
+    const cross: Profile = { ...PROFILE, residency: { allowedRegions: ["us"], drTier: "warm" } };
+    const runbook = buildExitBundle(cross, recommend(cross)).files["runbook.md"];
+    expect(runbook).toContain("eu → us");
+    expect(runbook).toContain("restreint");
+    expect(runbook).toContain("PAS un avis juridique");
+  });
+
+  it("conflit résidence × DR (Maroc strict + DR) : runbook expose le conflit + des leviers", () => {
+    const conflict: Profile = {
+      ...PROFILE,
+      zone: "maroc",
+      sensitivity: "secret",
+      backup: { criticality: "critical" },
+    };
+    const reco = recommend(conflict);
+    expect(reco.residency.conflict.hasConflict).toBe(true);
+    const runbook = buildExitBundle(conflict, reco).files["runbook.md"];
+    expect(runbook).toContain("Conflit résidence × DR à arbitrer");
+  });
+});
+
 describe("Catalogue retenu figé (S-037)", () => {
   it("manifest.catalog + catalog.json gèlent composants, provenance et source (rejouable)", () => {
     const reco = recommend(PROFILE);

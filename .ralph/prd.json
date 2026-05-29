@@ -450,7 +450,8 @@
     },
     {
       "id": "S-047", "title": "Exit Escrow DR (runbook bascule + IaC multi-région)", "feature": "residence",
-      "passes": false, "deps": ["S-046"],
+      "passes": true, "completedAt": "2026-05-29", "deps": ["S-046"],
+      "note": "bundle.ts lit recommendation.residency. BundleManifest.residency (ResidencyPlan) ajouté (source de vérité, cohérence manifest↔plan). runbook.md : section `residencySection` DÉRIVÉE du plan réel — région primaire, RPO/RTO régionaux, ordre de priorité des régions (topologie), coût récurrent+mise en route, table de conformité des transferts (✅ok/⚠️restreint/⛔interdit + base légale + disclaimer « ingénierie pas juridique »), bloc conflit+leviers si hasConflict, procédure de bascule régionale en 5 étapes (RTO cible). terraform/dr.tf (multi-région : variables primary_region/replica_regions + réplication actif-actif/actif-passif) généré SEULEMENT si des réplicas existent (cohérence manifest↔plan ; profil sans DR → pas de dr.tf, EXPECTED_FILES inchangé). README maj (dr.tf + runbook DR). +5 tests bundle (manifest↔plan, dr.tf+procédure bascule, sans-DR→pas de dr.tf, transfert inter-région listé+disclaimer, conflit Maroc+leviers) → 400. typecheck 0, lint 0/0, build OK. Reste epic Résidence : S-048 (UI Bloc ② + radar 10 visible + transferts + e2e + nettoyage).",
       "acceptance": ["spec n°2 §8 : buildExitBundle lit recommendation.residency → runbook DR (bascule régionale, ordre régions, RTO) + terraform multi-région ; cohérence manifest↔plan ; tests bundle étendus"]
     },
     {
