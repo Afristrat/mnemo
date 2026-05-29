@@ -66,7 +66,27 @@
       "cost": "Coût",
       "resilience": "Résilience",
       "geosov": "Géo-souv."
-    }
+    },
+    "loading": "Chargement de votre profil…",
+    "preset": "Preset : {preset}",
+    "score": "Score {avg}/10",
+    "viewVerdict": "Vue verdict",
+    "scenarioActive": "Vous explorez le scénario <b>{label}</b>. Toute la page (coûts, stack, export, bundle) suit ce scénario — votre profil enregistré n’est pas modifié.",
+    "backToReco": "Revenir à ma recommandation",
+    "project": "Se projeter",
+    "projectDesc": "Faites varier l’échelle pour voir l’impact sur le coût. C’est une projection, pas une facture.",
+    "volumeLabel": "Volume de données, {label}",
+    "usersLabel": "Nombre d’utilisateurs",
+    "projectionActive": "Projection active, coût recalculé en direct. Le profil enregistré n’est pas modifié.",
+    "profile10": "Profil sur 10 dimensions",
+    "scoreDetail": "Détail des scores",
+    "stack": "Stack recommandée",
+    "compliance": "Actions de conformité",
+    "risks": "Risques détectés",
+    "disclaimer": "Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper, vérifiez chaque source avant décision.",
+    "exportTitle": "Emporter ce plan",
+    "exportDesc": "Export complet, profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown se relit partout ; le PDF garde les sources cliquables.",
+    "editProfile": "Modifier mon profil"
   },
   "Metadata": {
     "title": "Strate, infrastructure de base mémorielle souveraine",
@@ -122,6 +142,25 @@
     "listening": "● Écoute… (arrêter)",
     "error": "Analyse indisponible pour le moment. Vous pouvez remplir le configurateur manuellement, c’est toujours possible.",
     "disclaimer": "Une IA lit votre description et pré-remplit le configurateur (valeurs bornées, aucun coût inventé). Vous ajustez tout ensuite. Une IA peut se tromper, vérifiez le profil proposé."
+  },
+  "VerdictView": {
+    "presetRetained": "Preset retenu : {preset}",
+    "narrated": "Texte adapté à votre profil par IA, chiffres inchangés",
+    "synthesis": "Synthèse, le détail complet est sous « Voir le détail ».",
+    "title": "Votre verdict",
+    "pain": "Le besoin",
+    "risk": "Le risque sans rien faire",
+    "gain": "Le gain",
+    "firmPrice": "Service Strate (prix ferme)",
+    "firmPriceNote": "prix de vente, sondage en cours",
+    "infraCost": "Coût d'infrastructure (payé aux fournisseurs)",
+    "infraCostNote": "±30 %, transparent, sourcé",
+    "setup": "Mise en route (une fois)",
+    "setupNote": "ingestion du backlog et premier full de sauvegarde",
+    "nextStep": "Prochaine étape",
+    "disclaimer": "Coûts variables ±30 % selon volume et fournisseur, demandez un devis avant le go. Une IA peut se tromper : chaque coût est sourcé et daté dans le détail.",
+    "refine": "Affiner mon profil (configurateur)",
+    "expert": "Voir le détail (expert)"
   },
   "Home": {
     "hero": {
