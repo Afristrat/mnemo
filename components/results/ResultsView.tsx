@@ -17,9 +17,11 @@ import { LivePriceStatus } from "@/components/results/LivePriceStatus";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
+import { SharePanel } from "@/components/results/SharePanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { seedCatalog, type Catalog } from "@/lib/catalog";
+import { decodeProfileFromParam } from "@/lib/share";
 import { useEngineText } from "@/lib/i18n/engine";
 import { mergeVerdictNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import {
@@ -121,17 +123,58 @@ export function ResultsView(): ReactElement {
     };
   }, [base]);
 
+  // Partage (S-067) : un profil reçu par lien est PRIORITAIRE sur le localStorage.
+  //   ?p=<base64>  → lien ENCODÉ stateless : décodage immédiat (rejoue exactement le profil).
+  //   ?s=<uuid>    → lien COURT Supabase : fetch /api/share/[id] → chaîne encodée → décodage.
+  // ?p/?s invalides ou absents → repli gracieux sur le localStorage (jamais de crash).
   useEffect(() => {
-    const profile = loadProfile();
-    setBase(profile);
-    setVolIndex(Math.max(0, VOLUME_ORDER.indexOf(profile.volume)));
-    setUsers(profile.users);
-    // Le chemin 90 s arrive avec ?mode=verdict ; sinon vue expert par défaut.
+    let cancelled = false;
+
+    const apply = (profile: Profile): void => {
+      if (cancelled) return;
+      setBase(profile);
+      setVolIndex(Math.max(0, VOLUME_ORDER.indexOf(profile.volume)));
+      setUsers(profile.users);
+    };
+
+    let params: URLSearchParams | null = null;
     try {
-      if (new URLSearchParams(window.location.search).get("mode") === "verdict") setMode("verdict");
+      params = new URLSearchParams(window.location.search);
+      if (params.get("mode") === "verdict") setMode("verdict");
     } catch {
-      /* pas d'URL exploitable : vue expert. */
+      /* pas d'URL exploitable : vue expert + repli localStorage. */
     }
+
+    const encodedParam = params?.get("p") ?? null;
+    const shortId = params?.get("s") ?? null;
+    const sharedNow = encodedParam !== null ? decodeProfileFromParam(encodedParam) : null;
+
+    if (sharedNow !== null) {
+      apply(sharedNow);
+    } else if (shortId !== null) {
+      void (async () => {
+        try {
+          const res = await fetch(`/api/share/${encodeURIComponent(shortId)}`, { cache: "no-store" });
+          if (res.ok) {
+            const data: { encoded?: string } = await res.json();
+            const shared = typeof data.encoded === "string" ? decodeProfileFromParam(data.encoded) : null;
+            if (shared !== null) {
+              apply(shared);
+              return;
+            }
+          }
+        } catch {
+          /* repli : profil local ci-dessous. */
+        }
+        apply(loadProfile());
+      })();
+    } else {
+      apply(loadProfile());
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // i18n (S-058) : résolveur des descripteurs du moteur + libellés courts du radar + chrome résultats.
@@ -444,6 +487,10 @@ export function ResultsView(): ReactElement {
           />
         </div>
       </Card>
+
+      {/* Partage de la recommandation (S-067) : lien encodé instantané + lien court Supabase.
+          Le profil partagé est celui AFFICHÉ (projection courante) → l'autre session le rejoue. */}
+      <SharePanel profile={activeProfile} />
 
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
       <ExitEscrow profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />

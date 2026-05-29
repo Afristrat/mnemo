@@ -167,6 +167,20 @@ export type TransferObservationInsert = {
   note: string | null;
 };
 
+// Partage de la recommandation par lien court (S-067) : profil encodé derrière un id imprévisible.
+export type SharedRecoRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  encoded: string;
+  created_at: string;
+};
+export type SharedRecoInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  encoded: string;
+};
+
 // Console admin super-admin (S-053) : prompts système versionnés + table des super-admins globaux.
 export type SuperAdminRow = { user_id: string; created_at: string };
 export type PromptRow = {
@@ -204,10 +218,12 @@ export type Database = {
       transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
+      shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;
     };
     Views: Record<string, never>;
     Functions: {
       get_simulation_by_token: { Args: { token: string }; Returns: SimulationLogRow[] };
+      get_shared_reco: { Args: { reco_id: string }; Returns: SharedRecoRow[] };
       is_super_admin: { Args: Record<string, never>; Returns: boolean };
     };
   };

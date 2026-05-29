@@ -1090,12 +1090,13 @@
       "id": "S-067",
       "title": "Partage de la recommandation : lien encodé URL (stateless) + lien court Supabase",
       "feature": "results",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-30",
       "deps": [],
-      "note": "Demande Amine : aucun lien de partage. Implémenter (1) lien stateless /resultats?p=<profil encodé> et (2) lien court /r/<id> persistant Supabase (RLS, lecture publique encadrée).",
+      "note": "Livré : (1) lien ENCODÉ stateless /resultats?p=<base64 URL-safe du Profile> — fonctions PURES encode/decode dans lib/share/encode.ts (round-trip exact, UTF-8 préservé, profil corrompu → null, repli localStorage), lues prioritairement par ResultsView. (2) lien COURT Supabase /resultats?s=<uuid> — table shared_reco (RLS : anon INSERT, SELECT direct fermé, lecture publique par id imprévisible via RPC SECURITY DEFINER get_shared_reco, jumeau de get_simulation_by_token) + route POST /api/share (valide que la chaîne décode en Profile avant de stocker, DÉFCON 1) + GET /api/share/[id]. UI : section « Partager ce plan » (SharePanel) sur la vue experte, « Copier le lien » instantané + « Créer un lien court », accessible, i18n Results.share.* fr/en (EN natif). Migration + types Supabase + test RLS-gated (skip si pas de DB) ; route NON appliquée en prod (cf. S-036/S-062). Note : URL retenue /resultats?s=<id> (brief détaillé) plutôt que /r/<id>.",
       "acceptance": [
         "bouton « copier le lien » → URL encodée du profil rejouable",
-        "lien court Supabase (table RLS) /r/<id>",
+        "lien court Supabase (table RLS) /resultats?s=<id>",
         "typecheck 0 / lint 0/0 / tests verts / build OK"
       ]
     },
