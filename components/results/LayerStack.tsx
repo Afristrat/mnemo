@@ -1,11 +1,13 @@
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import type { Layer } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 
 type LayerStackProps = { layers: Layer[] };
 
 /** Affiche la stack recommandée, une carte par couche C0→C6. */
 export function LayerStack({ layers }: LayerStackProps): ReactElement {
+  const resolveEngine = useEngineText();
   return (
     <div className="space-y-3">
       {layers.map((layer) => (
@@ -20,7 +22,7 @@ export function LayerStack({ layers }: LayerStackProps): ReactElement {
                 C{layer.id}
               </span>
               <div>
-                <h3 className="font-display text-headline-md text-on-surface">{layer.name}</h3>
+                <h3 className="font-display text-headline-md text-on-surface">{resolveEngine(layer.name)}</h3>
                 <p className="mt-1 font-mono text-code-md text-secondary">{layer.choice}</p>
               </div>
             </div>

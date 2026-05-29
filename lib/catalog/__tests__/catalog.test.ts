@@ -53,9 +53,9 @@ describe("buildLayers via catalogue — identité avec l'historique (caractéris
     expect(layers[1].alternatives).toBe(
       "UI custom React (effort dev), ChatGPT (non recommandé : pas de MCP)",
     );
-    expect(layers[4].name).toBe("Embeddings");
+    expect(layers[4].name).toEqual({ id: "layers.c4.name", values: { mm: "no" } });
     expect(layers[4].choice).toBe("Mistral embed API");
-    expect(layers[5].name).toBe("Stockage polyglotte");
+    expect(layers[5].name).toEqual({ id: "layers.c5.name", values: { bitemporal: "no" } });
     expect(layers[5].choice).toBe("Postgres 16 + pgvector (Supabase free tier)");
     expect(layers[6].choice).toBe(
       "Mistral La Plateforme (API directe) + Scaleway FR (VPS €10) + Restic vers Backblaze B2",
@@ -64,9 +64,9 @@ describe("buildLayers via catalogue — identité avec l'historique (caractéris
 
   it("MEDIUM, multimodal + bitemporel", () => {
     const layers = buildLayers("MEDIUM", prof({ contentTypes: ["text", "audio"], bitemporal: true }));
-    expect(layers[4].name).toBe("Embeddings multimodaux");
+    expect(layers[4].name).toEqual({ id: "layers.c4.name", values: { mm: "yes" } });
     expect(layers[4].choice).toBe("LCO-Embedding-Omni-7B local (GPU)");
-    expect(layers[5].name).toBe("Stockage polyglotte bitemporel");
+    expect(layers[5].name).toEqual({ id: "layers.c5.name", values: { bitemporal: "yes" } });
     expect(layers[5].choice).toBe("Postgres + Apache AGE (graphe, ADR-011) OU Graphiti+Neo4j");
     expect(layers[2].note).toBe("T1 = Mistral Small, T2 = Claude Sonnet sur escalade");
   });

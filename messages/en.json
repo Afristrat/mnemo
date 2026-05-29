@@ -43,6 +43,15 @@
         "why": "Data in “{region}”. {transferCount, plural, =0 {No cross-jurisdiction transfer.} other {# cross-region flow(s) (see transfer compliance).}}{conflict, select, yes { ⚠️ Residency × DR conflict to arbitrate.} other {}}"
       },
       "moduleBonus": "“{modName}” lvl {level}/{maxLevel} (+{bonus})"
+    },
+    "layers": {
+      "c0": { "name": "Common contract (YAML frontmatter)" },
+      "c1": { "name": "User surface (MCP)" },
+      "c2": { "name": "RAG orchestrator (+ LLM cascade)" },
+      "c3": { "name": "Retrieval + reranking" },
+      "c4": { "name": "{mm, select, yes {Multimodal embeddings} other {Embeddings}}" },
+      "c5": { "name": "{bitemporal, select, yes {Bitemporal polyglot storage} other {Polyglot storage}}" },
+      "c6": { "name": "Infra (LLM Gateway + inference + backup)" }
     }
   },
   "Results": {

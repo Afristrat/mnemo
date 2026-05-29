@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer, type ResidencyPlan } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 import { pricingForLayer } from "@/lib/pricing/sources";
 
 /** Décomposition de l'apport multimédia (déjà inclus dans les couches C4/C5/C6), pour la transparence. */
@@ -38,6 +39,7 @@ const REGION_LABEL: Record<ResidencyPlan["primaryRegion"], string> = {
 
 /** Carte de coûts transparente : chaque poste avec confiance + source datée, total avec bande ±30 %. */
 export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup, residency }: CostMapProps): ReactElement {
+  const resolveEngine = useEngineText();
   const band = costBand(totalCost);
   const setupBand = costBand(setupCost);
   const hasMedia =
@@ -62,7 +64,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
               <li key={layer.id} className="flex items-center justify-between gap-4 py-2">
                 <span className="flex items-center gap-2">
                   <StatusDot confidence={pricing.confidence} />
-                  <span className="text-body-sm text-on-surface">{layer.name}</span>
+                  <span className="text-body-sm text-on-surface">{resolveEngine(layer.name)}</span>
                   {pricing.source !== null ? (
                     <a
                       href={pricing.source.url}

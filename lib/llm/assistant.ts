@@ -8,7 +8,7 @@
 // doit s'appuyer sur des RÉSULTATS WEB fournis, avec URL citée (jamais inventée) ; (3) disclaimer IA
 // visible. Le prompt est éditable par le super-admin (S-053) ; les FAITS/web sont greffés par le code.
 
-import type { Recommendation } from "@/lib/engine";
+import type { EngineResolver, Recommendation } from "@/lib/engine";
 import type { WebSearchResult } from "@/lib/pricing/firecrawl";
 import { composePrompt, DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import type { LlmMessage } from "./types";
@@ -20,8 +20,8 @@ export type ChatTurn = { role: "user" | "assistant"; content: string };
  * Bloc de FAITS autoritatifs = les chiffres EXACTEMENT affichés à l'utilisateur (sa recommandation).
  * Ce sont les SEULS montants/scores que l'assistant a le droit de citer. Pur, déterministe.
  */
-export function serializeRecoFacts(reco: Recommendation): string {
-  const layers = reco.layers.map((l) => `  - ${l.name} : ${l.choice} (${l.cost} €/mois)`).join("\n");
+export function serializeRecoFacts(reco: Recommendation, resolve: EngineResolver): string {
+  const layers = reco.layers.map((l) => `  - ${resolve(l.name)} : ${l.choice} (${l.cost} €/mois)`).join("\n");
   return [
     `Preset retenu : ${reco.preset}`,
     `Coût d'infrastructure total : ${reco.totalCost} €/mois (±30 %, payé aux fournisseurs)`,

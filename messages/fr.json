@@ -43,6 +43,15 @@
         "why": "Données en « {region} ». {transferCount, plural, =0 {Aucun transfert inter-juridiction.} other {# flux inter-région (voir conformité des transferts).}}{conflict, select, yes { ⚠️ Conflit résidence × DR à arbitrer.} other {}}"
       },
       "moduleBonus": "« {modName} » niv. {level}/{maxLevel} (+{bonus})"
+    },
+    "layers": {
+      "c0": { "name": "Contrat commun (frontmatter YAML)" },
+      "c1": { "name": "Surface utilisateur (MCP)" },
+      "c2": { "name": "Orchestrateur RAG (+ cascade LLM)" },
+      "c3": { "name": "Retrieval + reranking" },
+      "c4": { "name": "Embeddings{mm, select, yes { multimodaux} other {}}" },
+      "c5": { "name": "Stockage polyglotte{bitemporal, select, yes { bitemporel} other {}}" },
+      "c6": { "name": "Infra (LLM Gateway + inference + backup)" }
     }
   },
   "Results": {

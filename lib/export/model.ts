@@ -148,7 +148,7 @@ export function buildDeliverable(
     heading: "Stack recommandée (7 couches)",
     bullets: [],
     rows: reco.layers.map((l) => ({
-      left: `${l.name}, ${l.choice}`,
+      left: `${resolve(l.name)}, ${l.choice}`,
       right: l.cost > 0 ? `${l.cost} €/mois` : "inclus",
     })),
   };
@@ -161,7 +161,7 @@ export function buildDeliverable(
 
   const costRows: DeliverableRow[] = reco.layers
     .filter((l) => l.cost > 0)
-    .map((l) => ({ left: l.name, right: `${l.cost} €` }));
+    .map((l) => ({ left: resolve(l.name), right: `${l.cost} €` }));
   for (const m of reco.activeModules) {
     costRows.push({ left: `${m.name} (niv. ${m.level}/${m.maxLevel})`, right: `${m.cost} €` });
   }

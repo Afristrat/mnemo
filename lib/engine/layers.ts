@@ -1,5 +1,6 @@
 import { seedCatalog } from "@/lib/catalog/catalog-seed";
 import type { Catalog, CatalogSlot, SlotId } from "@/lib/catalog/types";
+import { msg } from "./message";
 import type { Layer, Preset, Profile } from "./types";
 
 const COLORS = ["#312e81", "#4338ca", "#6366f1", "#8b5cf6", "#a855f7", "#d946ef", "#ec4899"] as const;
@@ -32,7 +33,7 @@ export function buildLayers(
 
   const c0: Layer = {
     id: 0,
-    name: "Contrat commun (frontmatter YAML)",
+    name: msg("layers.c0.name"),
     color: COLORS[0],
     choice: s("c0").recommended.name,
     cost: 0,
@@ -42,7 +43,7 @@ export function buildLayers(
 
   const c1: Layer = {
     id: 1,
-    name: "Surface utilisateur (MCP)",
+    name: msg("layers.c1.name"),
     color: COLORS[1],
     choice: s("c1").recommended.name,
     cost: preset === "LIGHT" ? 20 : preset === "HARD" ? 100 : 40,
@@ -52,7 +53,7 @@ export function buildLayers(
 
   const c2: Layer = {
     id: 2,
-    name: "Orchestrateur RAG (+ cascade LLM)",
+    name: msg("layers.c2.name"),
     color: COLORS[2],
     choice: s("c2").recommended.name,
     cost: 0,
@@ -62,7 +63,7 @@ export function buildLayers(
 
   const c3: Layer = {
     id: 3,
-    name: "Retrieval + reranking",
+    name: msg("layers.c3.name"),
     color: COLORS[3],
     choice: s("c3").recommended.name,
     cost: 0,
@@ -72,7 +73,7 @@ export function buildLayers(
 
   const c4: Layer = {
     id: 4,
-    name: "Embeddings" + (wantsMultimodal ? " multimodaux" : ""),
+    name: msg("layers.c4.name", { mm: wantsMultimodal ? "yes" : "no" }),
     color: COLORS[4],
     choice: s("c4").recommended.name,
     cost:
@@ -93,7 +94,7 @@ export function buildLayers(
 
   const c5: Layer = {
     id: 5,
-    name: "Stockage polyglotte" + (wantsBitemporal ? " bitemporel" : ""),
+    name: msg("layers.c5.name", { bitemporal: wantsBitemporal ? "yes" : "no" }),
     color: COLORS[5],
     choice: s("c5").recommended.name,
     cost: preset === "LIGHT" ? (wantsBitemporal ? 10 : 0) : preset === "MEDIUM" ? 15 : 40,
@@ -103,7 +104,7 @@ export function buildLayers(
 
   const c6: Layer = {
     id: 6,
-    name: "Infra (LLM Gateway + inference + backup)",
+    name: msg("layers.c6.name"),
     color: COLORS[6],
     choice: s("c6").recommended.name,
     cost: preset === "LIGHT" ? 30 : preset === "MEDIUM" ? 100 : 400,
