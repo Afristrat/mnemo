@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildChatMessages, serializeRecoFacts, type ChatTurn } from "@/lib/llm/assistant";
 import { recommend, type Profile } from "@/lib/engine";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 
 // S-040 : l'assistant ne cite que les FAITS de la reco (chiffres affichés) + résultats web sourcés.
 

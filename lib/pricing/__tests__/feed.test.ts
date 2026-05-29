@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { extractMoneyTokens, figuresFingerprint, detectVariation } from "@/lib/pricing/extract";
 import { TtlCache } from "@/lib/pricing/cache";
-import { scrapePricingMarkdown } from "@/lib/pricing/firecrawl";
+import { scrapePricingMarkdown } from "@/lib/pricing/scraper";
 import { buildObservation, refreshAllPricing, feedSources, type FeedSource } from "@/lib/pricing/feed";
 
 const SOURCE: FeedSource = { layerId: 99, label: "Vendor, pricing", url: "https://vendor.test/pricing" };
 
 function okResponse(markdown: string): Response {
-  return { ok: true, json: async () => ({ success: true, data: { markdown } }) } as unknown as Response;
+  // Forme Crawl4AI /md : { markdown, success } (S-070, remplace Firecrawl).
+  return { ok: true, json: async () => ({ markdown, success: true }) } as unknown as Response;
 }
 
 describe("extractMoneyTokens", () => {
@@ -59,10 +60,9 @@ describe("TtlCache", () => {
 });
 
 describe("scrapePricingMarkdown", () => {
-  it("retourne null sans clé API (jamais d'appel)", async () => {
-    const fetchImpl = vi.fn();
-    expect(await scrapePricingMarkdown(SOURCE.url, { apiKey: undefined, fetchImpl })).toBeNull();
-    expect(fetchImpl).not.toHaveBeenCalled();
+  it("fonctionne sans token (Crawl4AI ne requiert pas d'auth)", async () => {
+    const fetchImpl = vi.fn(async () => okResponse("# Pricing $25/mo"));
+    expect(await scrapePricingMarkdown(SOURCE.url, { apiKey: undefined, fetchImpl })).toContain("$25/mo");
   });
 
   it("retourne le markdown sur succès", async () => {
@@ -129,8 +129,8 @@ describe("refreshAllPricing", () => {
     expect(fetchImpl.mock.calls.length).toBe(calls); // servi par le cache
   });
 
-  it("tombe en repli (unavailable) quand la clé manque", async () => {
-    const fetchImpl = vi.fn();
+  it("tombe en repli (unavailable) quand le scrape échoue", async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 500 }) as unknown as Response);
     const observations = await refreshAllPricing({
       apiKey: undefined,
       fetchImpl,
@@ -138,6 +138,5 @@ describe("refreshAllPricing", () => {
       cache: new TtlCache(60_000),
     });
     expect(observations.every((o) => o.status === "unavailable")).toBe(true);
-    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

@@ -1,15 +1,32 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { getLivePrices } from "@/lib/pricing/live-feed";
 import { MEDIA_PRICE_SEED } from "@/lib/pricing/media-seed";
 import { BACKUP_PRICE_SEED } from "@/lib/pricing/backup-seed";
 
-// S-025, feed LIVE : extraction structurée + garde-fou. fetchImpl routé (Frankfurter + 3 pages
-// Firecrawl distinguées par l'URL du body). Jamais de réseau réel.
+// S-025/S-070, feed LIVE : extraction structurée + garde-fou. Backend auto-hébergé : Crawl4AI `/md`
+// (markdown) PUIS extraction JSON par le LLM local (LiteLLM `/v1/chat/completions`). fetchImpl routé
+// (Frankfurter + Crawl4AI par l'URL ciblée du body + LiteLLM par le marqueur markdown). Jamais de réseau réel.
 
 type FcJson = Record<string, unknown>;
 
-function firecrawl(json: FcJson): Response {
-  return { ok: true, json: async () => ({ success: true, data: { json } }) } as unknown as Response;
+// callLLM cible LITELLM_BASE_URL — on doit le configurer pour que l'extraction ne court-circuite pas.
+beforeAll(() => {
+  process.env.LITELLM_BASE_URL = "http://litellm.test";
+  process.env.LITELLM_API_KEY = "test-key";
+});
+afterAll(() => {
+  delete process.env.LITELLM_BASE_URL;
+  delete process.env.LITELLM_API_KEY;
+});
+
+function md(marker: string): Response {
+  return { ok: true, json: async () => ({ markdown: marker, success: true }) } as unknown as Response;
+}
+function llm(json: FcJson): Response {
+  return {
+    ok: true,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify(json) } }] }),
+  } as unknown as Response;
 }
 function frankfurter(eur: number): Response {
   return { ok: true, json: async () => ({ date: "2026-05-27", rates: { EUR: eur } }) } as unknown as Response;
@@ -18,22 +35,40 @@ function notOk(): Response {
   return { ok: false, status: 500, json: async () => ({}) } as unknown as Response;
 }
 
-function router(handlers: {
-  gpu?: FcJson | null;
-  h100?: FcJson | null;
-  storage?: FcJson | null;
-  fx?: number;
-}): typeof fetch {
+type Handlers = { gpu?: FcJson | null; h100?: FcJson | null; storage?: FcJson | null; fx?: number; llmDown?: boolean };
+
+function userContent(init: RequestInit | undefined): string {
+  try {
+    const body: { messages?: { role?: string; content?: string }[] } = JSON.parse(
+      typeof init?.body === "string" ? init.body : "{}",
+    );
+    return (body.messages ?? []).filter((m) => m.role === "user").map((m) => m.content ?? "").join(" ");
+  } catch {
+    return "";
+  }
+}
+
+function router(handlers: Handlers): typeof fetch {
   const fn = vi.fn(async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = typeof input === "string" ? input : input.toString();
     if (url.includes("frankfurter")) return frankfurter(handlers.fx ?? 0.9);
-    if (url.includes("firecrawl")) {
-      const raw = typeof init?.body === "string" ? init.body : "{}";
-      const body: { url?: string } = JSON.parse(raw);
+    // Étape 1 : Crawl4AI /md → markdown marqueur identifiant la page (ou indispo).
+    if (url.includes("/md")) {
+      const body: { url?: string } = JSON.parse(typeof init?.body === "string" ? init.body : "{}");
       const target = body.url ?? "";
-      if (target.includes("/h100/")) return handlers.h100 == null ? notOk() : firecrawl(handlers.h100);
-      if (target.includes("/pricing/gpu/")) return handlers.gpu == null ? notOk() : firecrawl(handlers.gpu);
-      if (target.includes("/pricing/storage/")) return handlers.storage == null ? notOk() : firecrawl(handlers.storage);
+      if (target.includes("/h100/")) return handlers.h100 == null ? notOk() : md("PAGE_H100");
+      if (target.includes("/pricing/gpu/")) return handlers.gpu == null ? notOk() : md("PAGE_GPU");
+      if (target.includes("/pricing/storage/")) return handlers.storage == null ? notOk() : md("PAGE_STORAGE");
+      return notOk();
+    }
+    // Étape 2 : extraction LLM → JSON structuré, routé par le marqueur présent dans le message user.
+    if (url.includes("/chat/completions")) {
+      if (handlers.llmDown === true) return notOk();
+      const content = userContent(init);
+      if (content.includes("PAGE_H100")) return handlers.h100 == null ? notOk() : llm(handlers.h100);
+      if (content.includes("PAGE_GPU")) return handlers.gpu == null ? notOk() : llm(handlers.gpu);
+      if (content.includes("PAGE_STORAGE")) return handlers.storage == null ? notOk() : llm(handlers.storage);
+      return notOk();
     }
     return notOk();
   });
@@ -97,7 +132,7 @@ describe("getLivePrices", () => {
     expect(feed.media.storagePerGbMonth.amount).toBe(MEDIA_PRICE_SEED.storagePerGbMonth.amount);
   });
 
-  it("Firecrawl indisponible partout → tout en repli seed (jamais de throw)", async () => {
+  it("Crawl4AI indisponible partout → tout en repli seed (jamais de throw)", async () => {
     const fetchImpl = router({ gpu: null, h100: null, storage: null, fx: 0.9 });
     const feed = await getLivePrices({ apiKey: "k", fetchImpl, now: FIXED_NOW });
     expect(feed.items.every((i) => i.status === "fallback")).toBe(true);
@@ -105,9 +140,10 @@ describe("getLivePrices", () => {
     expect(feed.backup.egressPerGb.amount).toBe(BACKUP_PRICE_SEED.egressPerGb.amount);
   });
 
-  it("clé Firecrawl absente → extraction nulle → repli seed", async () => {
-    const fetchImpl = router({ gpu: GPU_OK, h100: H100_OK, storage: STORAGE_OK, fx: 0.9 });
-    const feed = await getLivePrices({ apiKey: undefined, fetchImpl, now: FIXED_NOW });
+  it("LLM d'extraction indisponible → extraction nulle → repli seed", async () => {
+    // Crawl4AI rend bien le markdown, mais l'extraction LLM échoue → aucune valeur promue (DÉFCON 1).
+    const fetchImpl = router({ gpu: GPU_OK, h100: H100_OK, storage: STORAGE_OK, fx: 0.9, llmDown: true });
+    const feed = await getLivePrices({ apiKey: "k", fetchImpl, now: FIXED_NOW });
     expect(feed.items.every((i) => i.status === "fallback")).toBe(true);
   });
 });

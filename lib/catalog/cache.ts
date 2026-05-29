@@ -7,7 +7,7 @@
 
 import type { Profile } from "@/lib/engine";
 import { callLLM, type LlmMessage, type LlmResult } from "@/lib/llm";
-import { searchWeb, type WebSearchResult } from "@/lib/pricing/firecrawl";
+import { searchWeb, type WebSearchResult } from "@/lib/pricing/scraper";
 import { TtlCache } from "@/lib/pricing/cache";
 import { assembleLiveCatalog, proposeForSlotLive, type ProposeForSlot } from "./live-catalog";
 import type { Catalog } from "./types";

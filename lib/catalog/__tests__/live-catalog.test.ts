@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import type { Profile } from "@/lib/engine";
 import type { LlmMessage, LlmResult } from "@/lib/llm";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { seedCatalog } from "@/lib/catalog/catalog-seed";
 import { assembleLiveCatalog, proposeForSlotLive, type ProposeForSlot } from "@/lib/catalog/live-catalog";
 import type { CatalogSlot, ComponentCandidate, SlotId } from "@/lib/catalog/types";
