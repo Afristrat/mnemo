@@ -66,7 +66,27 @@
       "cost": "Cost",
       "resilience": "Resilience",
       "geosov": "Geo-sov."
-    }
+    },
+    "loading": "Loading your profile…",
+    "preset": "Preset: {preset}",
+    "score": "Score {avg}/10",
+    "viewVerdict": "Verdict view",
+    "scenarioActive": "You're exploring the <b>{label}</b> scenario. The whole page (costs, stack, export, bundle) follows it — your saved profile is unchanged.",
+    "backToReco": "Back to my recommendation",
+    "project": "Project ahead",
+    "projectDesc": "Vary the scale to see the cost impact. It's a projection, not a bill.",
+    "volumeLabel": "Data volume, {label}",
+    "usersLabel": "Number of users",
+    "projectionActive": "Projection active, cost recalculated live. Your saved profile is unchanged.",
+    "profile10": "Profile across 10 dimensions",
+    "scoreDetail": "Score detail",
+    "stack": "Recommended stack",
+    "compliance": "Compliance actions",
+    "risks": "Detected risks",
+    "disclaimer": "Costs are sourced projections (±30%), not commitments. AI can be wrong — check every source before deciding.",
+    "exportTitle": "Take this plan with you",
+    "exportDesc": "Full export: profile, stack, scores, sourced costs, ensemble and disclaimer. Markdown reads anywhere; the PDF keeps clickable sources.",
+    "editProfile": "Edit my profile"
   },
   "Metadata": {
     "title": "Strate, sovereign memory-base infrastructure",
@@ -122,6 +142,25 @@
     "listening": "● Listening… (stop)",
     "error": "Analysis unavailable right now. You can fill in the configurator manually — that's always possible.",
     "disclaimer": "An AI reads your description and pre-fills the configurator (bounded values, no invented cost). You adjust everything afterwards. AI can be wrong — check the proposed profile."
+  },
+  "VerdictView": {
+    "presetRetained": "Preset chosen: {preset}",
+    "narrated": "Text adapted to your profile by AI, figures unchanged",
+    "synthesis": "Summary — full detail under “See detail”.",
+    "title": "Your verdict",
+    "pain": "The need",
+    "risk": "The risk of doing nothing",
+    "gain": "The gain",
+    "firmPrice": "Strate service (firm price)",
+    "firmPriceNote": "sale price, survey in progress",
+    "infraCost": "Infrastructure cost (paid to vendors)",
+    "infraCostNote": "±30%, transparent, sourced",
+    "setup": "Setup (one-off)",
+    "setupNote": "backlog ingestion and first full backup",
+    "nextStep": "Next step",
+    "disclaimer": "Variable costs ±30% depending on volume and vendor — request a quote before go. AI can be wrong: every cost is sourced and dated in the detail.",
+    "refine": "Refine my profile (configurator)",
+    "expert": "See detail (expert)"
   },
   "Home": {
     "hero": {

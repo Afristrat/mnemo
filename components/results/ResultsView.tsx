@@ -134,9 +134,10 @@ export function ResultsView(): ReactElement {
     }
   }, []);
 
-  // i18n (S-058) : résolveur des descripteurs du moteur + libellés courts du radar.
+  // i18n (S-058) : résolveur des descripteurs du moteur + libellés courts du radar + chrome résultats.
   const resolveEngine = useEngineText();
   const tScoreShort = useTranslations("Results.scoreShort");
+  const tR = useTranslations("Results");
 
   const projected = useMemo<Profile | null>(() => {
     if (base === null) return null;
@@ -219,7 +220,7 @@ export function ResultsView(): ReactElement {
   }, [narrationContext]);
 
   if (projected === null || result === null || ensemble === null || effectiveCatalog === undefined) {
-    return <p className="p-8 text-center text-on-surface-variant">Chargement de votre profil…</p>;
+    return <p className="p-8 text-center text-on-surface-variant">{tR("loading")}</p>;
   }
 
   // Mode verdict (chemin 90 s) : synthèse compacte de la recommandation de référence.
@@ -269,12 +270,12 @@ export function ResultsView(): ReactElement {
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <Chip tone="primary">Preset : {activeResult.preset}</Chip>
-          <Chip tone="neutral">Score {activeResult.scoreAvg}/10</Chip>
+          <Chip tone="primary">{tR("preset", { preset: activeResult.preset })}</Chip>
+          <Chip tone="neutral">{tR("score", { avg: String(activeResult.scoreAvg) })}</Chip>
           <span className="font-mono text-body-md text-on-surface-variant">≈ {activeResult.totalCost} €/mois</span>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setMode("verdict")}>
-          Vue verdict
+          {tR("viewVerdict")}
         </Button>
       </div>
       <p className="max-w-2xl text-body-md text-on-surface-variant">
@@ -285,25 +286,25 @@ export function ResultsView(): ReactElement {
       {activeVariantData !== null ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-primary/40 bg-primary/5 px-4 py-3">
           <p className="text-body-sm text-on-surface">
-            Vous explorez le scénario <strong>{activeVariantData.label}</strong>. Toute la page (coûts,
-            stack, export, bundle) suit ce scénario — votre profil enregistré n’est pas modifié.
+            {tR.rich("scenarioActive", {
+              label: activeVariantData.label,
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
           <Button variant="secondary" size="sm" onClick={() => setActiveVariant(null)}>
-            Revenir à ma recommandation
+            {tR("backToReco")}
           </Button>
         </div>
       ) : null}
 
       {/* Projection */}
       <Card>
-        <h2 className="font-display text-headline-md text-on-surface">Se projeter</h2>
-        <p className="mt-1 text-body-sm text-on-surface-variant">
-          Faites varier l’échelle pour voir l’impact sur le coût. C’est une projection, pas une facture.
-        </p>
+        <h2 className="font-display text-headline-md text-on-surface">{tR("project")}</h2>
+        <p className="mt-1 text-body-sm text-on-surface-variant">{tR("projectDesc")}</p>
         <div className="mt-4 grid gap-6 sm:grid-cols-2">
           <div>
             <label htmlFor="vol" className="text-label-caps uppercase text-on-surface-variant">
-              Volume de données, {VOLUME_OPTIONS[volIndex].label}
+              {tR("volumeLabel", { label: VOLUME_OPTIONS[volIndex].label })}
             </label>
             <input
               id="vol"
@@ -318,15 +319,13 @@ export function ResultsView(): ReactElement {
           </div>
           <div>
             <span className="mb-2 block text-label-caps uppercase text-on-surface-variant">
-              Nombre d’utilisateurs
+              {tR("usersLabel")}
             </span>
-            <NumberStepper label="Nombre d'utilisateurs" value={users} onChange={setUsers} />
+            <NumberStepper label={tR("usersLabel")} value={users} onChange={setUsers} />
           </div>
         </div>
         {projectionChanged ? (
-          <p className="mt-3 text-body-sm text-primary">
-            Projection active, coût recalculé en direct. Le profil enregistré n’est pas modifié.
-          </p>
+          <p className="mt-3 text-body-sm text-primary">{tR("projectionActive")}</p>
         ) : null}
       </Card>
 
@@ -336,13 +335,13 @@ export function ResultsView(): ReactElement {
       {/* Radar + scores */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="font-display text-headline-md text-on-surface">Profil sur 10 dimensions</h2>
+          <h2 className="font-display text-headline-md text-on-surface">{tR("profile10")}</h2>
           <div className="mt-4 flex justify-center">
             <RadarChart data={radarData} />
           </div>
         </Card>
         <Card>
-          <h2 className="font-display text-headline-md text-on-surface">Détail des scores</h2>
+          <h2 className="font-display text-headline-md text-on-surface">{tR("scoreDetail")}</h2>
           <ul className="mt-4 space-y-3">
             {result.scores.map((s) => (
               <li key={s.key}>
@@ -361,7 +360,7 @@ export function ResultsView(): ReactElement {
 
       {/* Stack */}
       <section>
-        <h2 className="mb-4 font-display text-headline-lg text-on-surface">Stack recommandée</h2>
+        <h2 className="mb-4 font-display text-headline-lg text-on-surface">{tR("stack")}</h2>
         <LayerStack layers={activeResult.layers} />
       </section>
 
@@ -393,7 +392,7 @@ export function ResultsView(): ReactElement {
       <div className="grid gap-6 lg:grid-cols-2">
         {activeResult.compliance.length > 0 ? (
           <Card>
-            <h2 className="font-display text-headline-md text-on-surface">Actions de conformité</h2>
+            <h2 className="font-display text-headline-md text-on-surface">{tR("compliance")}</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
               {activeResult.compliance.map((action) => (
                 <li key={action}>{action}</li>
@@ -403,7 +402,7 @@ export function ResultsView(): ReactElement {
         ) : null}
         {activeResult.risks.length > 0 ? (
           <Card>
-            <h2 className="font-display text-headline-md text-on-surface">Risques détectés</h2>
+            <h2 className="font-display text-headline-md text-on-surface">{tR("risks")}</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
               {activeResult.risks.map((risk) => (
                 <li key={risk}>{risk}</li>
@@ -413,18 +412,12 @@ export function ResultsView(): ReactElement {
         ) : null}
       </div>
 
-      <p className="text-body-sm text-on-surface-variant">
-        Les coûts sont des projections sourcées (±30 %), pas des engagements. Une IA peut se tromper,
-        vérifiez chaque source avant décision.
-      </p>
+      <p className="text-body-sm text-on-surface-variant">{tR("disclaimer")}</p>
 
       {/* Livrable exportable (F6) */}
       <Card>
-        <h2 className="font-display text-headline-md text-on-surface">Emporter ce plan</h2>
-        <p className="mt-1 text-body-sm text-on-surface-variant">
-          Export complet, profil, stack, scores, coûts sourcés, ensemble et disclaimer. Le Markdown
-          se relit partout ; le PDF garde les sources cliquables.
-        </p>
+        <h2 className="font-display text-headline-md text-on-surface">{tR("exportTitle")}</h2>
+        <p className="mt-1 text-body-sm text-on-surface-variant">{tR("exportDesc")}</p>
         <div className="mt-4">
           <ExportButtons
             profile={activeProfile}
@@ -445,7 +438,7 @@ export function ResultsView(): ReactElement {
         href="/configurateur"
         className="inline-flex items-center justify-center rounded-full border border-outline-variant px-5 py-2.5 text-body-md font-medium text-on-surface transition-colors hover:bg-surface-container"
       >
-        Modifier mon profil
+        {tR("editProfile")}
       </Link>
     </div>
   );

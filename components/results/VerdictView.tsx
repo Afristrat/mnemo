@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactElement, ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
@@ -43,55 +44,53 @@ function CostLine({ label, value, note }: { label: string; value: string; note?:
  * route, prochaine étape. Neutre : présente des faits + une fourchette, pas une injonction d'achat.
  */
 export function VerdictView({ verdict, preset, onExpert, narrated = false }: VerdictViewProps): ReactElement {
+  const t = useTranslations("VerdictView");
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Chip tone="primary">Preset retenu : {preset}</Chip>
+        <Chip tone="primary">{t("presetRetained", { preset })}</Chip>
         {narrated ? (
-          <Chip tone="neutral">Texte adapté à votre profil par IA, chiffres inchangés</Chip>
+          <Chip tone="neutral">{t("narrated")}</Chip>
         ) : (
-          <span className="text-body-sm text-on-surface-variant">Synthèse, le détail complet est sous « Voir le détail ».</span>
+          <span className="text-body-sm text-on-surface-variant">{t("synthesis")}</span>
         )}
       </div>
 
-      <h2 className="mt-4 font-display text-headline-lg text-on-surface">Votre verdict</h2>
+      <h2 className="mt-4 font-display text-headline-lg text-on-surface">{t("title")}</h2>
 
       <dl className="mt-4 grid gap-3 sm:grid-cols-3">
-        <Box label="Le besoin">{verdict.pain}</Box>
-        <Box label="Le risque sans rien faire">{verdict.risk}</Box>
-        <Box label="Le gain">{verdict.gain}</Box>
+        <Box label={t("pain")}>{verdict.pain}</Box>
+        <Box label={t("risk")}>{verdict.risk}</Box>
+        <Box label={t("gain")}>{verdict.gain}</Box>
       </dl>
 
       <div className="mt-6 divide-y divide-outline-variant">
-        <CostLine label="Service Strate (prix ferme)" value={verdict.firmPriceTier} note="prix de vente, sondage en cours" />
+        <CostLine label={t("firmPrice")} value={verdict.firmPriceTier} note={t("firmPriceNote")} />
         <CostLine
-          label="Coût d'infrastructure (payé aux fournisseurs)"
+          label={t("infraCost")}
           value={`${verdict.variableCostBand.low} – ${verdict.variableCostBand.high} €/mois`}
-          note="±30 %, transparent, sourcé"
+          note={t("infraCostNote")}
         />
         <CostLine
-          label="Mise en route (une fois)"
+          label={t("setup")}
           value={`${verdict.setupCostBand.low} – ${verdict.setupCostBand.high} €`}
-          note="ingestion du backlog et premier full de sauvegarde"
+          note={t("setupNote")}
         />
       </div>
 
       <div className="mt-6 rounded-card bg-primary/5 p-4">
-        <span className="text-label-caps uppercase text-primary">Prochaine étape</span>
+        <span className="text-label-caps uppercase text-primary">{t("nextStep")}</span>
         <p className="mt-1 text-body-md text-on-surface">{verdict.nextStep}</p>
       </div>
 
-      <p className="mt-4 text-body-sm text-on-surface-variant">
-        Coûts variables ±30 % selon volume et fournisseur, demandez un devis avant le go. Une IA peut se tromper :
-        chaque coût est sourcé et daté dans le détail.
-      </p>
+      <p className="mt-4 text-body-sm text-on-surface-variant">{t("disclaimer")}</p>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <Link href="/configurateur" className="text-body-sm text-secondary underline decoration-dotted">
-          Affiner mon profil (configurateur)
+          {t("refine")}
         </Link>
         <Button variant="secondary" onClick={onExpert}>
-          Voir le détail (expert)
+          {t("expert")}
         </Button>
       </div>
     </Card>
