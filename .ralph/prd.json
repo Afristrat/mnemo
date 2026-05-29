@@ -1057,6 +1057,59 @@
         "i18n fr/en (Wizard.other.*) ; typecheck 0 / lint 0/0 / tests verts / build OK"
       ],
       "completedAt": "2026-05-29"
+    },
+    {
+      "id": "S-065",
+      "title": "Prix : clarifier les états repli/indisponible (UI + i18n) + vérifier la clé Firecrawl serveur",
+      "feature": "pricing",
+      "passes": true,
+      "deps": [],
+      "note": "Demande Amine : les états « Repli (dernier relevé) »/« Indisponible » paraissent dégradés et opaques. Clarifier en UI (le prix reste le dernier relevé sourcé et daté, pas une erreur ; repli = feed live indispo) + migrer PriceFreshness/LivePriceStatus en i18n fr/en. Vérifier que FIRECRAWL_API_KEY est bien présent dans l_env Coolify déployé (sinon repli permanent). LIVRÉ : PriceFreshness + LivePriceStatus migrés i18n (Results.livePrices/freshness fr/en) + libellés clarifiés (« Repli (dernier relevé) » → « Dernier relevé daté » + note explicite : pas une erreur, le feed live est momentanément indispo). DIAGNOSTIC SERVEUR (SSH) : clé FIRECRAWL_API_KEY PRÉSENTE et valide (fc-, 35 car.) dans le conteneur Coolify by7kdehyeieujf6oxzzt1r0m ; cause racine du repli = Firecrawl HTTP 402 « Insufficient credits » (quota épuisé) → 8/8 lignes en repli. ACTION AMINE : recharger les crédits Firecrawl (firecrawl.dev/pricing). Pas un bug code.",
+      "acceptance": [
+        "libellés UI explicites (repli = dernier relevé sourcé+daté, pas une erreur) ; i18n fr/en",
+        "cause racine prix dégradés en prod diagnostiquée (clé Firecrawl)",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ],
+      "completedAt": "2026-05-29"
+    },
+    {
+      "id": "S-066",
+      "title": "Souveraineté : toggle « open-source d_abord » + biais réel de la reco vers self-hosted/open-source",
+      "feature": "engine",
+      "passes": false,
+      "deps": [],
+      "note": "Demande Amine : choisir « Souveraineté » ne rend pas la stack plus souveraine. Ajouter un toggle explicite ET faire que le moteur privilégie réellement les composants open-source/auto-hébergés quand activé (catalogue : préférer les alternatives OSS ; +preset), testé, moteur pur. DÉFCON 1 : pas de coût inventé.",
+      "acceptance": [
+        "toggle « privilégier open-source/souverain » dans le configurateur",
+        "reco/catalogue biaisés vers OSS/self-hosted quand activé, expliqué ; moteur pur testé",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-067",
+      "title": "Partage de la recommandation : lien encodé URL (stateless) + lien court Supabase",
+      "feature": "results",
+      "passes": false,
+      "deps": [],
+      "note": "Demande Amine : aucun lien de partage. Implémenter (1) lien stateless /resultats?p=<profil encodé> et (2) lien court /r/<id> persistant Supabase (RLS, lecture publique encadrée).",
+      "acceptance": [
+        "bouton « copier le lien » → URL encodée du profil rejouable",
+        "lien court Supabase (table RLS) /r/<id>",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-068",
+      "title": "Lead gate : verrouiller la recette experte complète derrière nom + email (verdict 90 s libre)",
+      "feature": "results",
+      "passes": false,
+      "deps": [],
+      "note": "Demande Amine : capter le lead avant de révéler la recette experte. Le verdict 90 s reste libre ; le détail expert complet (stack, coûts, ensemble) n_apparaît qu_après saisie nom+email. Persister le lead (Supabase RLS + lib/conversion/log).",
+      "acceptance": [
+        "verdict libre ; détail expert gaté derrière nom+email",
+        "lead persisté (RLS) ; pas de régression du verdict",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
     }
   ]
 }
