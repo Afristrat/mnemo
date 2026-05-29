@@ -1124,6 +1124,19 @@
         "revue des autres champs : aucune autre incohérence d_exclusivité",
         "typecheck 0 / lint 0/0 / tests verts / build OK"
       ]
+    },
+    {
+      "id": "S-070",
+      "title": "Remplacer Firecrawl par un backend auto-heberge (Crawl4AI + SearXNG + Ollama)",
+      "feature": "pricing",
+      "passes": false,
+      "deps": [],
+      "note": "Credits Firecrawl epuises (HTTP 402). PHASE CODE FAITE + poussee : scraper.ts (SearXNG search + Crawl4AI /md + extraction LLM local), 15 imports rebascules, env-configurable, repli gracieux, 449 tests verts. PHASE INFRA : conteneurs searxng-strate + crawl4ai-strate sur reseau coolify (joints par app, HTTP 200). RESTE : reinstaller en Coolify manage ; crawl4ai.ai-mpower.com public + token via tunnel config-nahda.yml ; searxng interne.",
+      "acceptance": [
+        "app utilise les backends auto-heberges (defaut conteneurs internes)",
+        "services Coolify-manage + crawl4ai public token + tunnel",
+        "typecheck 0 / lint 0 / tests verts / build OK"
+      ]
     }
   ]
 }
