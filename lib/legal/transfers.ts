@@ -22,6 +22,9 @@ export const TRANSFER_REGIONS: readonly TransferRegion[] = ["eu", "maroc", "us",
 /** Statut d'un flux de transfert. Canonique ici (S-043) ; S-044 (`ResidencyPlan`) l'importe. */
 export type TransferStatus = "ok" | "restricted" | "forbidden";
 
+/** Provenance d'un statut après veille (S-062) : repli daté, confirmé live, ou divergence flaggée. */
+export type TransferProvenance = "seed" | "live" | "flagged";
+
 /** Contexte du flux, dérivé du `Profile` par S-044 (résidence stricte, données régulées). */
 export type TransferContext = {
   noTransfer?: boolean;
@@ -46,8 +49,20 @@ export type TransferBasis = {
   /** Exposition US CLOUD Act (flag de risque, distinct du statut RGPD). */
   cloudAct: boolean;
   disclaimer: string;
+  /** Provenance après veille (S-062) : `seed` par défaut (repli daté), `live` (confirmé), `flagged` (divergence). */
+  provenance?: TransferProvenance;
   note?: string;
 };
+
+/**
+ * Flux dont le statut est juridiquement INSTABLE → cible de la veille live (S-062). Ce sont exactement
+ * les paires `volatile` du repli daté (DPF UE-US sous pourvoi CJUE ; adéquation Maroc absente/évolutive).
+ * Les flux stables (même juridiction, RGPD chap. V générique) ne déclenchent pas de veille.
+ */
+export const WATCHED_TRANSFER_FLOWS: readonly { from: TransferRegion; to: TransferRegion }[] = [
+  { from: "eu", to: "us" },
+  { from: "eu", to: "maroc" },
+] as const;
 
 export const TRANSFER_DISCLAIMER =
   "Orientation d'ingénierie, PAS un avis juridique — à valider par un conseil qualifié.";

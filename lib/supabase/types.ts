@@ -130,6 +130,43 @@ export type CatalogObservationInsert = {
   assembled_at: string;
 };
 
+// Veille juridique (S-062) : audit trail des révisions de statut de transfert (live/seed/flagged).
+// Les unions (status/provenance/confidence/régions) sont garanties par les CHECK SQL ; côté TS on
+// conserve `string` pour ne pas coupler les types base aux types de lib/legal (le builder injecte les
+// valeurs typées). `source_url` nullable : un statut de résidence stricte (forbidden) n'a pas d'URL.
+export type TransferObservationRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  from_region: string;
+  to_region: string;
+  status: string;
+  legal_basis: string;
+  provenance: string;
+  confidence: string;
+  volatile: boolean;
+  source_url: string | null;
+  source_label: string | null;
+  checked_at: string;
+  note: string | null;
+  created_at: string;
+};
+export type TransferObservationInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  from_region: string;
+  to_region: string;
+  status: string;
+  legal_basis: string;
+  provenance: string;
+  confidence: string;
+  volatile: boolean;
+  source_url: string | null;
+  source_label: string | null;
+  checked_at: string;
+  note: string | null;
+};
+
 // Console admin super-admin (S-053) : prompts système versionnés + table des super-admins globaux.
 export type SuperAdminRow = { user_id: string; created_at: string };
 export type PromptRow = {
@@ -164,6 +201,7 @@ export type Database = {
       simulation_log: TableShape<SimulationLogRow, SimulationLogInsert>;
       lead_capture: TableShape<LeadCaptureRow, LeadCaptureInsert>;
       catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
+      transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
     };
