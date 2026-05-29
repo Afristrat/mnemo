@@ -120,6 +120,16 @@ function zoneToRegion(zone: Zone): Region {
   return zone === "ue" ? "eu" : zone;
 }
 
+/**
+ * Classe d'hébergement par défaut dérivée de la zone (choix du vecteur d'egress sourcé, S-048).
+ * Souverains UE/Maroc → `sovereign-eu` (vecteurs souverains sourcés) ; US/autre → `hyperscaler`
+ * (egress facturé par les hyperscalers). `self-hosted`/`secnumcloud` restent des choix EXPLICITES
+ * (jamais imposés par dérivation — ils relèvent d'une décision d'infrastructure, pas de la zone).
+ */
+export function hostingClassForProfile(p: Profile): HostingClass {
+  return p.zone === "us" || p.zone === "other" ? "hyperscaler" : "sovereign-eu";
+}
+
 /** Données régulées (déclenche la résidence stricte par défaut + le flag Cloud Act vers les US). */
 function isRegulatedData(p: Profile): boolean {
   return (

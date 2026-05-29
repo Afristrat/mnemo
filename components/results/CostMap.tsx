@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatusDot } from "@/components/ui/StatusDot";
-import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer } from "@/lib/engine";
+import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer, type ResidencyPlan } from "@/lib/engine";
 import { pricingForLayer } from "@/lib/pricing/sources";
 
 /** Décomposition de l'apport multimédia (déjà inclus dans les couches C4/C5/C6), pour la transparence. */
@@ -25,15 +25,26 @@ type CostMapProps = {
   media?: MediaBreakdown;
   /** Plan de sauvegarde (coût récurrent déjà compris dans C6) — ligne backup + sources (S-031). */
   backup?: BackupPlan;
+  /** Plan de résidence/DR (coût réplication déjà compris dans C6) — ligne réplication + sources (S-048). */
+  residency?: ResidencyPlan;
+};
+
+const REGION_LABEL: Record<ResidencyPlan["primaryRegion"], string> = {
+  eu: "UE",
+  maroc: "Maroc",
+  us: "États-Unis",
+  other: "Autre",
 };
 
 /** Carte de coûts transparente : chaque poste avec confiance + source datée, total avec bande ±30 %. */
-export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup }: CostMapProps): ReactElement {
+export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup, residency }: CostMapProps): ReactElement {
   const band = costBand(totalCost);
   const setupBand = costBand(setupCost);
   const hasMedia =
     media !== undefined && (media.gpuCost > 0 || media.storageCost > 0 || media.embeddingsCost > 0 || media.apiLines.length > 0);
   const hasBackup = backup !== undefined && backup.criticality !== "none" && backup.monthlyCost > 0;
+  const hasResidency = residency !== undefined && residency.monthlyCost > 0;
+  const replicaRegions = residency?.regions.filter((r) => r.role !== "primary") ?? [];
 
   return (
     <Card>
@@ -165,6 +176,44 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
         </div>
       ) : null}
 
+      {hasResidency && residency !== undefined ? (
+        <div className="mt-4 rounded-card bg-surface-container p-3">
+          <p className="text-label-caps uppercase text-on-surface-variant">
+            Résidence &amp; continuité régionale <span className="normal-case">(déjà comprise dans C6)</span>
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            <li className="flex items-center justify-between gap-3 text-body-sm">
+              <span>
+                🟢 Réplication {residency.activeActive ? "actif-actif" : `DR ${residency.drTier}`} ·{" "}
+                {replicaRegions.length} région{replicaRegions.length > 1 ? "s" : ""} en attente (
+                {replicaRegions.map((r) => REGION_LABEL[r.region]).join(", ") || REGION_LABEL[residency.primaryRegion]}) ·
+                RTO ≈ {residency.rtoMinutes} min
+              </span>
+              <span className="font-mono text-on-surface">{Math.round(residency.monthlyCost)} €/mois</span>
+            </li>
+          </ul>
+          {residency.costSources.length > 0 ? (
+            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-body-sm">
+              {residency.costSources.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary underline decoration-dotted"
+                >
+                  {s.label} ({s.checkedAt})
+                </a>
+              ))}
+            </p>
+          ) : null}
+          <p className="mt-2 text-body-sm text-on-surface-variant">
+            Réplication inter-région + région(s) en attente. La conformité des transferts est détaillée ci-dessous.
+            Orientation d’ingénierie, pas un avis juridique.
+          </p>
+        </div>
+      ) : null}
+
       <div className="mt-4 flex items-center justify-between border-t border-outline-variant pt-4">
         <span className="font-display font-semibold text-on-surface">Total estimé (récurrent)</span>
         <span className="text-right">
@@ -180,6 +229,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
           <span className="text-body-sm text-on-surface-variant">
             Mise en route (une fois), ingestion du backlog
             {backup !== undefined && backup.setupCost > 0 ? " + premier full de sauvegarde" : ""}
+            {residency !== undefined && residency.setupCost > 0 ? " + amorçage des réplicas" : ""}
           </span>
           <span className="text-right">
             <span className="block font-mono text-body-md text-on-surface">{setupCost} €</span>

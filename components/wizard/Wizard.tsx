@@ -13,6 +13,7 @@ import { ContinuousSlider } from "@/components/wizard/ContinuousSlider";
 import { InfoBubble } from "@/components/wizard/InfoBubble";
 import { MediaNeedsBlock } from "@/components/wizard/MediaNeedsBlock";
 import { ModuleSlider } from "@/components/wizard/ModuleSlider";
+import { ResidencyBlock } from "@/components/wizard/ResidencyBlock";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
@@ -21,6 +22,7 @@ import { applyIntakeFields } from "@/lib/llm/intake";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
+import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { buildChoiceRecap } from "@/lib/wizard/recap";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
@@ -275,8 +277,9 @@ export function Wizard(): ReactElement {
   // Prix médias + backup réels injectés → coût et budget-mètre reflètent multimédia ET sauvegarde.
   const prices = getMediaPricesEur();
   const backupPrices = getBackupPrices();
+  const residencyPrices = getResidencyPrices();
   const decision = decidePreset(profile);
-  const result = recommend(profile, prices, undefined, backupPrices, getComputePrices());
+  const result = recommend(profile, prices, undefined, backupPrices, getComputePrices(), residencyPrices);
 
   return (
     <div className="w-full lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
@@ -373,6 +376,20 @@ export function Wizard(): ReactElement {
                   prices={prices}
                   backupPrices={backupPrices}
                   onChange={(backup) => setField("backup", backup)}
+                />
+              </div>
+              <div className="border-t border-outline-variant pt-6">
+                <h3 className="font-display text-body-lg text-on-surface">Résidence &amp; continuité</h3>
+                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">
+                  Où vivent les données (juridiction primaire dérivée de votre zone) et que se passe-t-il si une région
+                  tombe. Vous pouvez héberger dans plusieurs régions, y compris sur plusieurs continents. La conformité
+                  des transferts inter-juridiction est détaillée sur la page résultats.
+                </p>
+                <ResidencyBlock
+                  profile={profile}
+                  residencyPrices={residencyPrices}
+                  computePrices={getComputePrices()}
+                  onChange={(residency) => setField("residency", residency)}
                 />
               </div>
               <NoteField

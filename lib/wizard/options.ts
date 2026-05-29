@@ -2,8 +2,10 @@ import type {
   Activity,
   Budget,
   ContentType,
+  DrTier,
   Growth,
   Latency,
+  Region,
   Regulation,
   ReqPerDay,
   Sensitivity,
@@ -30,6 +32,21 @@ export const ZONE_OPTIONS: Option<Zone>[] = [
   { value: "maroc", label: "Maroc" },
   { value: "us", label: "États-Unis" },
   { value: "other", label: "Autre" },
+];
+
+/** Régions (juridictions) pour la résidence + le DR multi-région (S-048, finding C4). */
+export const REGION_OPTIONS: Option<Region>[] = [
+  { value: "eu", label: "Union européenne" },
+  { value: "maroc", label: "Maroc" },
+  { value: "us", label: "États-Unis" },
+  { value: "other", label: "Autre" },
+];
+
+/** Paliers de continuité régionale (DR/failover, spec n°2 §3). */
+export const DR_TIER_OPTIONS: Option<DrTier>[] = [
+  { value: "none", label: "Aucune", hint: "Reprise = restauration de la sauvegarde" },
+  { value: "warm", label: "Tiède", hint: "Réplica réduit en attente · RTO ~ heures" },
+  { value: "hot", label: "Chaude", hint: "Réplica chaud · RTO ~ minutes" },
 ];
 
 export const VOLUME_OPTIONS: Option<Volume>[] = [

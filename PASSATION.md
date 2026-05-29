@@ -34,7 +34,7 @@ Puis : story LLM tokens (prix live) ; backlog test P2 (U5/U7/U8).
 - **Aucune option collectée ne doit rester sans effet** (DÉFCON 1) : growth/latency intégrés au compute (S-049) ; test de garde anti-dette.
 - Trio de moats : ① Exit Escrow ② Fiduciary (zéro commission cachée) ③ Intelligence Network.
 - **Honnêteté brutale** : tensions exposées, jamais résolues en douce (ex. résidence stricte × DR hot, spec n°2).
-- Scoring : 9 dimensions (resilience ajoutée S-027) ; spec n°2 prévoit la 10ᵉ `geosov`.
+- Scoring : 10 dimensions (`resilience` ajoutée S-027, `geosov` — souveraineté géographique : résidence + transferts conformes — ajoutée S-045, intégrée S-046 et exposée à l'UI S-048).
 - **Multilingue (décision 2026-05-28)** : l'app était FR-only par convention ; Amine OUVRE l'i18n (épic S-057→060). next-intl, **locale en cookie sans préfixe d'URL**, **fr (défaut) + en** puis **ar (RTL)**. Garde-fou « zéro chaîne en dur ». Les prompts seront réécrits niveau natif + localisés (S-059), en conservant les garde-fous DÉFCON 1.
 
 ## POINTEURS

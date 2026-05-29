@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { ComputePriceTable, Profile } from "@/lib/engine";
-import { deriveResidencyPlan, deriveResidencyTopology } from "@/lib/engine";
+import { deriveResidencyPlan, deriveResidencyTopology, hostingClassForProfile } from "@/lib/engine";
 import type { ResidencyPriceTable } from "@/lib/pricing/residency-seed";
 
 // S-044, moteur résidence/DR pur (spec n°2 §3-§7). Prix INJECTÉS (DÉFCON 1), défaut neutre.
@@ -69,6 +69,15 @@ describe("dérivation profil → topologie/plan (spec §4)", () => {
     expect(deriveResidencyTopology(prof({ backup: { criticality: "none" } })).drTier).toBe("none");
     // latence fast + > 50 users → relève d'un cran (warm → hot)
     expect(deriveResidencyTopology(prof({ backup: { criticality: "high" }, users: 60 })).drTier).toBe("hot");
+  });
+});
+
+describe("hostingClassForProfile (dérivation zone → vecteur d'egress, S-048)", () => {
+  it("zones souveraines UE/Maroc → sovereign-eu ; US/autre → hyperscaler", () => {
+    expect(hostingClassForProfile(prof({ zone: "ue" }))).toBe("sovereign-eu");
+    expect(hostingClassForProfile(prof({ zone: "maroc" }))).toBe("sovereign-eu");
+    expect(hostingClassForProfile(prof({ zone: "us" }))).toBe("hyperscaler");
+    expect(hostingClassForProfile(prof({ zone: "other" }))).toBe("hyperscaler");
   });
 });
 

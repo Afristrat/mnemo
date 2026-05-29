@@ -1,7 +1,7 @@
 import type { Catalog } from "@/lib/catalog/types";
 import { buildBackupPlan, NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
-import { deriveResidencyPlan, NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency";
+import { deriveResidencyPlan, hostingClassForProfile, NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency";
 import { applyBackup, applyCompute, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
@@ -130,7 +130,14 @@ export function recommend(
   // Serveurs souverains dimensionnés (remplacent le forfait C6 si prix injectés ; sinon neutre → forfait).
   const compute = computeSovereignCompute(profile, preset, computePrices);
   // Plan résidence/DR (spec n°2) : none + mono-région (ou prix neutres) → plan neutre, coûts 0 (invariant).
-  const residency = deriveResidencyPlan(profile, residencyPrices, computePrices, preset);
+  // hostingClass dérivée de la zone (S-048) → sélectionne le vecteur d'egress sourcé correspondant.
+  const residency = deriveResidencyPlan(
+    profile,
+    residencyPrices,
+    computePrices,
+    preset,
+    hostingClassForProfile(profile),
+  );
 
   // Choix des composants = `catalog` injecté (défaut seed = sortie identique, spec n°3). Coûts dans les
   // couches : compute remplace le forfait C6, puis GPU/stockage multimédias (C4/C5/C6), puis backup (C6),

@@ -111,7 +111,7 @@ Logique existante (cf. `simulator-archi-base-memorielle-v2.html`) à porter côt
 1. **Décision preset** : `needsHard` (secret/cabinet régulé/audit+bitemporel requis) ; `fitsLight` (faible volume + sensibilité modérée + budget bas) ; sinon MEDIUM.
 2. **buildLayers** : C0 contrat YAML → C1 surface MCP → C2 orchestrateur RAG+cascade → C3 retrieval/rerank → C4 embeddings → C5 stockage bitemporel → C6 infra. Chaque couche : choix + coût + alternatives + note.
 3. **computeCost** : `base + volumeFactor + reqFactor + userFactor + moduleCost`.
-4. **computeScores** : 9 dimensions (conformité, auditabilité, stress-test, souveraineté, adaptativité, time-to-V1, multimodalité, coût, **résilience & sauvegarde**).
+4. **computeScores** : 10 dimensions (conformité, auditabilité, stress-test, souveraineté, adaptativité, time-to-V1, multimodalité, coût, **résilience & sauvegarde**, **souveraineté géographique** — résidence + transferts conformes).
 5. **Modules avancés** : variables d'entrée (sliders d'intensité) qui ajustent coût + score + plan — **sans** que la plateforme implémente ces features de la base du client.
 
 > Convergences techniques à intégrer comme défauts (verdicts genèse, pas débats) : frontmatter YAML pivot, bi-temporalité 4 timestamps, nomic-embed par défaut, Presidio (PII), Contextual Retrieval, **vault markdown = source de vérité** (clé de l'Exit Escrow).
