@@ -10,7 +10,7 @@
 // throw côté réseau (repli systématique). La clé Firecrawl reste serveur (jamais exposée au client).
 
 import type { GpuTier, MultimodalPriceEntry, MultimodalPriceTable } from "@/lib/engine";
-import { scrapePricingMarkdown } from "./firecrawl";
+import { scrapePricingMarkdown } from "./scraper";
 import { MEDIA_PRICE_SEED, SEED_FX_SOURCE, SEED_USD_TO_EUR } from "./media-seed";
 
 const FRANKFURTER_URL = "https://api.frankfurter.app/latest?from=USD&to=EUR";

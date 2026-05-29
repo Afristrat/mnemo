@@ -10,7 +10,7 @@
 
 import type { LlmMessage, LlmResult } from "@/lib/llm";
 import { DEFAULT_PROMPTS } from "@/lib/prompts/registry";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { reconcileTransferBasis, type LiveTransferSignal } from "./reconcile";
 import {
   lookupTransferBasis,

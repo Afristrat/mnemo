@@ -14,7 +14,7 @@
 
 import type { MultimodalPriceEntry, MultimodalPriceTable } from "@/lib/engine";
 import type { Confidence } from "@/components/ui/StatusDot";
-import { scrapeStructuredJson, type ScrapeDeps } from "./firecrawl";
+import { scrapeStructuredJson, type ScrapeDeps } from "./scraper";
 import { fetchUsdToEur, getMediaPricesEur, type FxDeps, type FxRate } from "./media-feed";
 import { BACKUP_PRICE_SEED, type BackupPriceTable } from "./backup-seed";
 import { reconcilePrice, type PriceStatus } from "./reconcile";

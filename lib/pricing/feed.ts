@@ -6,7 +6,7 @@ import type { Confidence } from "@/components/ui/StatusDot";
 import { baselineForLayer, type PriceBaseline } from "./baseline";
 import { TtlCache } from "./cache";
 import { detectVariation, extractMoneyTokens } from "./extract";
-import { scrapePricingMarkdown } from "./firecrawl";
+import { scrapePricingMarkdown } from "./scraper";
 import { LAYER_PRICING, pricingForLayer } from "./sources";
 
 export type PriceFeedStatus = "verified" | "changed" | "unavailable";

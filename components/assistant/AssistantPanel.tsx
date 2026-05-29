@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import type { Recommendation } from "@/lib/engine";
 import { useEngineText } from "@/lib/i18n/engine";
 import { serializeRecoFacts, type ChatTurn, type OtherPrecisions } from "@/lib/llm/assistant";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 
 // Assistant Q&A contextuel (S-040). Le panneau envoie la question + l'historique + les FAITS de la
 // recommandation AFFICHÉE (chiffres autoritatifs) à /api/llm/chat. DÉFCON 1 : l'assistant ne cite que

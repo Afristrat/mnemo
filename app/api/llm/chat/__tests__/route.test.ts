@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // callLLM + searchWeb mockés → test déterministe, sans réseau ni clé.
 const { callLLMMock, searchWebMock } = vi.hoisted(() => ({ callLLMMock: vi.fn(), searchWebMock: vi.fn() }));
 vi.mock("@/lib/llm/client", () => ({ callLLM: callLLMMock }));
-vi.mock("@/lib/pricing/firecrawl", () => ({ searchWeb: searchWebMock }));
+vi.mock("@/lib/pricing/scraper", () => ({ searchWeb: searchWebMock }));
 
 import { POST } from "@/app/api/llm/chat/route";
 

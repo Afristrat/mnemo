@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { LlmMessage, LlmResult } from "@/lib/llm";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { proposeTransferLive, refreshTransferBases, type ProposeTransferDeps } from "@/lib/legal/live-transfers";
 import type { LiveTransferSignal } from "@/lib/legal/reconcile";
 

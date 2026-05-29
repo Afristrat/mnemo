@@ -4,7 +4,7 @@
 // relancer une veille identique à chaque requête. Les clés restent SERVEUR ; `now`/I/O injectables.
 
 import { callLLM, type LlmMessage, type LlmResult } from "@/lib/llm";
-import { searchWeb, type WebSearchResult } from "@/lib/pricing/firecrawl";
+import { searchWeb, type WebSearchResult } from "@/lib/pricing/scraper";
 import { TtlCache } from "@/lib/pricing/cache";
 import { refreshTransferBases, type RefreshDeps, type TransferFlow } from "./live-transfers";
 import { WATCHED_TRANSFER_FLOWS, type TransferBasis } from "./transfers";

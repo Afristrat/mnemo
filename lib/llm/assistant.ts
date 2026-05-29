@@ -9,7 +9,7 @@
 // visible. Le prompt est éditable par le super-admin (S-053) ; les FAITS/web sont greffés par le code.
 
 import type { EngineResolver, Recommendation } from "@/lib/engine";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { composePrompt, DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import type { LlmMessage } from "./types";
 

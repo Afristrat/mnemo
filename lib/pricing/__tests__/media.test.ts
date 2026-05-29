@@ -162,11 +162,11 @@ describe("fraîcheur des sources (feed Firecrawl, repli seed)", () => {
     expect(new Set(urls).size).toBe(urls.length);
   });
 
-  it("repli (unavailable) sans clé Firecrawl, sans jamais lever", async () => {
-    const fetchImpl = vi.fn();
+  it("repli (unavailable) quand le scrape échoue, sans jamais lever", async () => {
+    // S-070 : le backend (Crawl4AI) ne requiert pas de clé ; le repli vient d'un échec d'extraction.
+    const fetchImpl = vi.fn(async () => ({ ok: false, status: 500 }) as unknown as Response);
     const fresh = await refreshMediaPriceFreshness({ apiKey: undefined, fetchImpl, now: () => 0 });
     expect(fresh.length).toBe(mediaPriceSources().length);
     expect(fresh.every((f) => f.status === "unavailable")).toBe(true);
-    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

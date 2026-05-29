@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildChatMessages, type ChatTurn } from "@/lib/llm/assistant";
 import { callLLM } from "@/lib/llm/client";
-import { searchWeb, type WebSearchResult } from "@/lib/pricing/firecrawl";
+import { searchWeb, type WebSearchResult } from "@/lib/pricing/scraper";
 import { loadActivePrompt } from "@/lib/prompts/store";
 
 // Assistant Q&A contextuel (S-040). POST { question, history?, recoFacts? } → recherche web Firecrawl

@@ -9,7 +9,7 @@
 import { decidePreset, type Profile } from "@/lib/engine";
 import type { LlmMessage, LlmResult } from "@/lib/llm";
 import { DEFAULT_PROMPTS } from "@/lib/prompts/registry";
-import type { WebSearchResult } from "@/lib/pricing/firecrawl";
+import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { seedCatalog } from "./catalog-seed";
 import { reconcileCatalog } from "./reconcile";
 import type { Catalog, CatalogSlot, ComponentCandidate, ComponentSovereignty, SlotId } from "./types";
