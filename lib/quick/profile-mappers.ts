@@ -85,5 +85,7 @@ export function mapQuickAnswersToProfile(answers: QuickAnswers): Profile {
     voices: who === "team" ? "multi" : who === "research" ? "multi" : "solo",
     modules: defaultModuleLevels(),
     freeNotes: {},
+    // Priorité « souveraineté & contrôle » → biaise réellement la reco vers l'open-source/self-host (S-066).
+    preferSovereign: priority === "sovereignty",
   };
 }

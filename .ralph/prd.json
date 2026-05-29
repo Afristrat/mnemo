@@ -1076,14 +1076,15 @@
       "id": "S-066",
       "title": "Souveraineté : toggle « open-source d_abord » + biais réel de la reco vers self-hosted/open-source",
       "feature": "engine",
-      "passes": false,
+      "passes": true,
       "deps": [],
-      "note": "Demande Amine : choisir « Souveraineté » ne rend pas la stack plus souveraine. Ajouter un toggle explicite ET faire que le moteur privilégie réellement les composants open-source/auto-hébergés quand activé (catalogue : préférer les alternatives OSS ; +preset), testé, moteur pur. DÉFCON 1 : pas de coût inventé.",
+      "note": "Demande Amine (les solutions paraissaient toutes vendor-lock). Decision : toggle + biaiser reellement le moteur. LIVRE : Profile.preferSovereign (optionnel) ; decidePreset bump le preset dun cran (LIGHT->MEDIUM->HARD, jamais au-dela ; la souverainete de la stack est portee par le preset dans le seed catalogue : MEDIUM/HARD = self-host/OSS) avec raison explicite (surcout=prix souverainete, signale par budget-metre, jamais masque). Toggle YesNo dans le bloc Profil + priorite 90s sovereignty -> preferSovereign=true. +5 tests (preset bump LIGHT->MEDIUM, MEDIUM->HARD, HARD stable, invariant ; mapper). typecheck 0, lint 0, 454 tests, build OK. NOTE : libelle toggle en FR (cohérent chrome wizard non encore i18n=S-058).",
       "acceptance": [
         "toggle « privilégier open-source/souverain » dans le configurateur",
         "reco/catalogue biaisés vers OSS/self-hosted quand activé, expliqué ; moteur pur testé",
         "typecheck 0 / lint 0/0 / tests verts / build OK"
-      ]
+      ],
+      "completedAt": "2026-05-30"
     },
     {
       "id": "S-067",

@@ -47,6 +47,12 @@ describe("mapQuickAnswersToProfile", () => {
     expect(mapQuickAnswersToProfile(answers({ priority: "sovereignty" })).zone).toBe("ue");
   });
 
+  it("priorité souveraineté → biaise réellement la reco (preferSovereign) (S-066)", () => {
+    expect(mapQuickAnswersToProfile(answers({ priority: "sovereignty" })).preferSovereign).toBe(true);
+    expect(mapQuickAnswersToProfile(answers({ priority: "cost" })).preferSovereign).toBe(false);
+    expect(mapQuickAnswersToProfile(answers({ priority: "speed" })).preferSovereign).toBe(false);
+  });
+
   it("« media » ajoute audio/vidéo/images ; « text » reste au texte", () => {
     expect(mapQuickAnswersToProfile(answers({ media: "media" })).contentTypes).toEqual([
       "text",

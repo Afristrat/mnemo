@@ -294,6 +294,15 @@ export type Profile = {
    * Absent ⇒ comportement et coûts strictement inchangés (champ optionnel).
    */
   otherText?: Partial<Record<"activity" | "zone" | "region", string>>;
+  /**
+   * Préférence « open-source / souverain d'abord » (S-066). Quand activée, le moteur biaise la reco
+   * vers une stack davantage AUTO-HÉBERGÉE/OPEN-SOURCE : (1) le preset est relevé d'un cran (la
+   * souveraineté de la stack est portée par le preset dans le catalogue — MEDIUM/HARD = self-host) ;
+   * (2) le catalogue promeut, par couche, le candidat le plus souverain disponible. Honnête : une
+   * stack plus souveraine coûte/complexifie davantage — la tension budget est signalée, jamais masquée.
+   * Absent ⇒ comportement strictement inchangé (champ optionnel).
+   */
+  preferSovereign?: boolean;
 };
 
 export type ModuleLevel = { label: string; desc: string };
