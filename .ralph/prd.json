@@ -426,7 +426,8 @@
     },
     {
       "id": "S-043", "title": "Pricing egress inter-région + table conformité transferts (sourcés)", "feature": "residence",
-      "passes": false, "deps": ["S-025"],
+      "passes": true, "completedAt": "2026-05-29", "deps": ["S-025"],
+      "note": "Recadrage Amine (2026-05-29) : (1) MULTI-SEGMENT, pas de référent unique → `lib/pricing/residency-seed.ts` couvre le spectre des profils d'hébergement first-class (self-hosted/Hetzner, souverains UE Scaleway/OVH/IONOS, secnumcloud Outscale, hyperscalers GCP/AWS en repères), chaque vecteur sourcé en devise native (`EgressVector`/`ResidencyPriceTable`). (2) DOCTRINE « tout vivant + filet » étendue au pricing egress ET au JURIDIQUE : le seed est un REPLI DATÉ + baseline, jamais une décision gravée — `reconcileEgressVector` (garde-fou ±60 %, réutilise `reconcile.ts`) ; Scaleway egress déjà live via `live-feed.ts`. (3) self-hosted = surface à sécuriser : `INTER_SITE_SECURITY_SEED` flague + fourchette (WireGuard 0 € → managé 7-18 $/u/mois), chiffrage détaillé = S-061. (4) `lib/legal/transfers.ts` : `lookupTransferBasis(from,to,ctx)` pur/total → état DATÉ + RÉVISABLE (flag `volatile` sur DPF UE-US sous pourvoi CJUE C-703/25 P et adéquation Maroc), `cloudAct` flag, disclaimer « ingénierie pas juridique » TOUJOURS ; `TransferStatus`/`TransferRegion` canoniques ici (S-044 importe). Veille live des statuts = S-062. Docs : `docs/pricing/residency-cost-sources.md` + `docs/legal/transfer-bases.md` (audit trail, sources officielles relevées 2026-05-29, NON CONFIRMÉ assumés : Azure, intra-EU GCP). +19 tests (seed multi-segment+garde-fou ; lookup datés/volatile/cloudAct/total). typecheck 0, lint 0/0, 375 tests, build OK.",
       "acceptance": ["spec n°2 §5/§6 : egress inter-région sourcé (Scaleway/OVH/AWS, URL+date+confiance) + table bases légales de transfert (UE/Maroc/US, RGPD chap.V/CNDP/Cloud Act) ; disclaimer « ingénierie, pas juridique » ; DÉFCON 1"]
     },
     {
@@ -579,6 +580,37 @@
         "ajouter la locale ar (messages/ar.json, traduction native) ; `<html dir>` = rtl quand ar ; tokens/layout miroités (logical properties : ms-/me-, text-start/end ; vérifier wizard, résultats, radar)",
         "police arabe lisible (fallback système ou web font) ; nombres/€ et données mono restent LTR dans le flux RTL",
         "e2e ar (RTL appliqué + bascule) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-063", "title": "Purger les codenames perso du catalogue seed + diagnostics (composants reconnaissables + sourcés)", "feature": "llm",
+      "passes": false, "deps": ["S-035", "S-036"],
+      "note": "Remontée Amine (2026-05-29) : le seed catalogue propose « Frontmatter universel Xavier v1.0.0 » (catalog-seed.ts C0) et diagnostics.ts cite « Xavier v1.0.0 »/« Chris » — codenames PERSO d'Amine, inconnus d'un client, gravés en dur avec pour seule source la calibration interne. Faute DÉFCON 1 + « tout vivant + filet » : un composant recommandé doit être RECONNAISSABLE + SOURCÉ (issu de la veille live), pas un nom privé figé. Décision Amine : PURGER (story dédiée, après S-043).",
+      "acceptance": [
+        "auditer tout le seed catalogue (catalog-seed.ts) + diagnostics.ts (kmChecks) : lister chaque libellé qui est un codename perso/interne (Xavier, Chris, toute référence à la méthodo KB privée d'Amine) non reconnaissable par un tiers",
+        "remplacer par des descriptions GÉNÉRIQUES reconnaissables (ex. « Contrat de métadonnées (frontmatter YAML + JSON Schema) ») OU router vers la veille live (composant réel sourcé URL+date), sans casser le round-trip buildLayers (caractérisation d'identité S-035)",
+        "zéro codename perso résiduel (grep de garde) ; le seed reste calibration interne datée (confiance medium) mais NEUTRE/générique ; la veille live (S-036) apporte les vrais composants sourcés",
+        "tests catalogue/diagnostics mis à jour ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-061", "title": "Sécurisation inter-site self-hosted (coût VPN/WireGuard/mTLS + supervision, sourcé)", "feature": "securite",
+      "passes": false, "deps": ["S-043", "S-041"],
+      "note": "Décision Amine (2026-05-29, « les 3 ») : le self-hosted est la vraie souveraineté MAIS introduit une liaison inter-site à sécuriser. S-043 a flagué + donné la fourchette (INTER_SITE_SECURITY_SEED : WireGuard 0 € → managé 7-18 $/u/mois) ; ici on CHIFFRE le poste complet.",
+      "acceptance": [
+        "modéliser le coût de sécurisation inter-site self-hosted (passerelle chiffrée WireGuard/IPsec + mTLS + supervision/durcissement), prix INJECTÉS + sourcés (devise native, URL+date+confiance, ±30 %), repli seed",
+        "intégrer dans le coût résidence (S-046) quand le profil est self-hosted multi-région ; alternative managée (Tailscale/Cloudflare) comme variante ; jamais un prix en dur",
+        "tests monotonie + sources sur chaque coût ; typecheck 0 / lint 0/0 / build OK"
+      ]
+    },
+    {
+      "id": "S-062", "title": "Veille live des statuts juridiques de transfert (LLM + sources officielles, réconciliation)", "feature": "legal",
+      "passes": false, "deps": ["S-043", "S-053", "S-036"],
+      "note": "Décision Amine (2026-05-29) : un statut juridique ne se grave pas (DPF sous pourvoi CJUE, adéquation Maroc évolutive). S-043 a posé les états DATÉS + RÉVISABLES (flag volatile) ; ici on branche la VEILLE LIVE qui rafraîchit + réconcilie vs le repli daté (lib/legal/transfers.ts).",
+      "acceptance": [
+        "veille live (Firecrawl sources officielles + LLM via registre de prompts S-053, clé serveur jamais exposée) rafraîchit les statuts volatiles (DPF UE-US, adéquation Maroc…) ; prompt « veille-juridique » éditable en /admin",
+        "réconciliation : statut live divergent du repli daté → flag « à revérifier » + confiance basse ; repli seed si veille indispo ; JAMAIS d'affichage sans date + caractère révisable + disclaimer « ingénierie, pas juridique »",
+        "audit trail (table RLS, pivot circle) des révisions de statut ; tests veille+réconciliation (LLM/Firecrawl mockés) ; typecheck 0 / lint 0/0 / build OK"
       ]
     }
   ]
