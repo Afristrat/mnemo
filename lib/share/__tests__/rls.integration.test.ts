@@ -4,6 +4,7 @@
 // Prouve : anon peut CRÉER un lien ; un anonyme ne lit PAS la table en masse (SELECT direct fermé) ;
 // la lecture par id imprévisible passe par la RPC SECURITY DEFINER get_shared_reco.
 
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { encodeProfileToParam } from "@/lib/share";
@@ -30,15 +31,16 @@ describe.skipIf(!ready)("RLS shared_reco (Supabase local)", () => {
     await admin.from("shared_reco").delete().eq("encoded", encoded);
   });
 
-  it("un anonyme peut CRÉER un lien (insert ouvert)", async () => {
+  it("un anonyme peut CRÉER un lien (insert SANS returning, id fourni)", async () => {
+    // L'id est généré côté client (comme la route le fait côté serveur) : on n'utilise PAS `.select()`,
+    // car un INSERT ... RETURNING est soumis à la politique SELECT (absente pour anon) et échouerait.
     const anon = createClient(url, anonKey, { auth: { persistSession: false } });
-    const { data, error } = await anon
-      .from("shared_reco")
-      .insert({ circle_id: null, created_by: null, encoded })
-      .select("id")
-      .single();
+    const id = randomUUID();
+    const { error } = await anon.from("shared_reco").insert({ id, circle_id: null, created_by: null, encoded });
     expect(error).toBeNull();
-    expect(typeof data?.id).toBe("string");
+    // Vérifié via la clé service (admin) : la ligne existe bien.
+    const { data } = await admin.from("shared_reco").select("id").eq("id", id).single();
+    expect(data?.id).toBe(id);
   });
 
   it("un anonyme ne lit PAS la table en masse (SELECT direct fermé)", async () => {
@@ -49,12 +51,11 @@ describe.skipIf(!ready)("RLS shared_reco (Supabase local)", () => {
 
   it("lecture par id via la RPC SECURITY DEFINER (lien imprévisible)", async () => {
     const anon = createClient(url, anonKey, { auth: { persistSession: false } });
-    const { data: inserted } = await anon
+    const id = randomUUID();
+    const { error: insertError } = await anon
       .from("shared_reco")
-      .insert({ circle_id: null, created_by: null, encoded })
-      .select("id")
-      .single();
-    const id = inserted?.id ?? "";
+      .insert({ id, circle_id: null, created_by: null, encoded });
+    expect(insertError).toBeNull();
     const { data, error } = await anon.rpc("get_shared_reco", { reco_id: id });
     expect(error).toBeNull();
     expect(Array.isArray(data) ? data[0]?.encoded : null).toBe(encoded);

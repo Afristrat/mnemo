@@ -120,6 +120,7 @@
       "creating": "Creating…",
       "shortHint": "Short link via our servers, handy to share (email, chat).",
       "copyShort": "Copy",
+      "qrHint": "Scan this QR code to open the recommendation on a phone.",
       "shortError": "Couldn’t create the short link right now. The link copied above already works."
     },
     "leadGate": {

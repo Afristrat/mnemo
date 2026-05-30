@@ -176,6 +176,7 @@ export type SharedRecoRow = {
   created_at: string;
 };
 export type SharedRecoInsert = {
+  id?: string; // facultatif : la colonne a un default gen_random_uuid() ; la route le fournit (insert sans RETURNING)
   circle_id: string | null;
   created_by: string | null;
   encoded: string;
