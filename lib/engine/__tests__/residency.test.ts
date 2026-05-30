@@ -184,7 +184,7 @@ describe("sécurisation inter-site self-hosted (S-061)", () => {
     expect(two?.alternative.approach).toBe("managed");
     expect(two?.alternative.monthlyCost).toBe(80); // 8 $/u × 10 users
     expect(two?.costSources.length).toBeGreaterThan(0);
-    expect(two?.note).toMatch(/devis/i); // supervision/durcissement = OPEX à chiffrer
+    expect(two?.note.id).toBe("residency.interSite.selfHostedNote"); // supervision/durcissement = OPEX à chiffrer
   });
 
   it("plan self-hosted multi-région : interSiteSecurity présent, intégré au coût résidence + sources", () => {

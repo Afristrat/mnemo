@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
+import { useEngineText } from "@/lib/i18n/engine";
 import type { Region, ResidencyPlan, TransferFlag } from "@/lib/engine";
 
 type ResidencyPanelProps = {
@@ -28,6 +29,7 @@ const STATUS_META: Record<TransferFlag["status"], { icon: string; labelKey: "sta
  */
 export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | null {
   const t = useTranslations("Results.residencyPanel");
+  const resolveEngine = useEngineText();
   const hasDr = plan.drTier !== "none" || plan.activeActive;
   if (!hasDr && plan.transfers.length === 0 && !plan.conflict.hasConflict) return null;
 
@@ -87,11 +89,11 @@ export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | nu
       {plan.conflict.hasConflict ? (
         <div className="mt-4 rounded-card border border-error/40 bg-error/5 p-4 text-body-sm" role="alert">
           <p className="font-medium text-error">{t("conflictTitle")}</p>
-          <p className="mt-1 text-on-surface-variant">{plan.conflict.reason}</p>
+          <p className="mt-1 text-on-surface-variant">{resolveEngine(plan.conflict.reason)}</p>
           <p className="mt-2 text-on-surface">{t("conflictLevers")}</p>
           <ul className="mt-1 list-disc space-y-1 pl-5 text-on-surface-variant">
             {plan.conflict.levers.map((lever) => (
-              <li key={lever}>{lever}</li>
+              <li key={lever.id}>{resolveEngine(lever)}</li>
             ))}
           </ul>
         </div>

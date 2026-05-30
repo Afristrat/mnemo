@@ -21,6 +21,7 @@ import type {
   TransferFlag,
   Zone,
 } from "./types";
+import { msg } from "./message";
 import { decidePreset } from "./preset";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { lookupTransferBasis, type TransferContext } from "@/lib/legal/transfers";
@@ -258,13 +259,13 @@ export function costInterSiteSecurity(
     approach: "self-hosted",
     monthlyCost: round(gateway.amount * securedSites),
     setupCost: 0,
-    note: `${securedSites} sites reliés : passerelle chiffrée par site (WireGuard/IPsec + mTLS open-source, licence 0 €). Supervision + durcissement initial = OPEX / main-d'œuvre interne à chiffrer en devis (non un prix vendeur).`,
+    note: msg("residency.interSite.selfHostedNote", { securedSites }),
   };
   const managed: InterSiteSecurityVariant = {
     approach: "managed",
     monthlyCost: round(managedPerUser.amount * billableUsers),
     setupCost: 0,
-    note: `Alternative managée (mesh/SASE) pour ${billableUsers} utilisateur(s) : exploitation incluse, sans VM passerelle ni durcissement à opérer en interne.`,
+    note: msg("residency.interSite.managedNote", { billableUsers }),
   };
   return {
     ...selfHosted,
@@ -368,15 +369,18 @@ function buildConflict(topo: ResidencyTopology): ResidencyPlan["conflict"] {
   if (topo.noTransfer && hasDr && singleRegionJurisdiction) {
     return {
       hasConflict: true,
-      reason: `Résidence stricte en « ${topo.primaryRegion} » × DR ${topo.activeActive ? "actif-actif" : topo.drTier} : cette juridiction peut ne pas offrir 2 régions distinctes conformes pour la continuité régionale.`,
+      reason: msg("residency.conflict.reason", {
+        region: topo.primaryRegion,
+        dr: topo.activeActive ? "active" : topo.drTier,
+      }),
       levers: [
-        "Région UE secondaire conforme (si un transfert encadré est acceptable).",
-        "Accepter un RTO = restauration backup (DR « none », pas de réplica).",
-        "Actif-passif intra-région chez un 2ᵉ fournisseur souverain.",
+        msg("residency.conflict.lever1"),
+        msg("residency.conflict.lever2"),
+        msg("residency.conflict.lever3"),
       ],
     };
   }
-  return { hasConflict: false, reason: "", levers: [] };
+  return { hasConflict: false, reason: msg("residency.conflict.none"), levers: [] };
 }
 
 function clamp(n: number, lo: number, hi: number): number {

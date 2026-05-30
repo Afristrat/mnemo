@@ -123,6 +123,19 @@
         "autoBackup": "Vector backup is cheaper than re-embedding over the horizon."
       }
     },
+    "residency": {
+      "conflict": {
+        "none": "No residency × DR conflict.",
+        "reason": "Strict residency in “{region, select, eu {EU} maroc {Morocco} us {US} other {out of zone}}” × DR {dr, select, active {active-active} warm {warm} hot {hot} other {none}}: this jurisdiction may not offer 2 distinct compliant regions for regional continuity.",
+        "lever1": "Compliant secondary EU region (if a framed transfer is acceptable).",
+        "lever2": "Accept an RTO = backup restore (DR “none”, no replica).",
+        "lever3": "Active-passive within the region at a second sovereign provider."
+      },
+      "interSite": {
+        "selfHostedNote": "{securedSites} linked sites: encrypted gateway per site (WireGuard/IPsec + mTLS, open-source, €0 license). Supervision + initial hardening = OPEX / in-house labor to quote (not a vendor price).",
+        "managedNote": "Managed alternative (mesh/SASE) for {billableUsers} user(s): operation included, no gateway VM or in-house hardening to run."
+      }
+    },
     "verdict": {
       "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk."
     },
