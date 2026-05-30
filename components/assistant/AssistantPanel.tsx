@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -28,6 +29,7 @@ export function AssistantPanel({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const resolveEngine = useEngineText();
+  const t = useTranslations("Assistant");
 
   const send = useCallback(async (): Promise<void> => {
     const question = input.trim();
@@ -48,29 +50,22 @@ export function AssistantPanel({
       } else {
         setMessages((prev) => [
           ...prev,
-          {
-            role: "assistant",
-            content:
-              "Assistant indisponible pour le moment. Le détail chiffré de votre recommandation reste affiché ci-dessus, et chaque coût y est sourcé.",
-          },
+          { role: "assistant", content: t("unavailable") },
         ]);
       }
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Connexion impossible. Réessayez dans un instant." },
+        { role: "assistant", content: t("connectionError") },
       ]);
     }
     setBusy(false);
-  }, [input, busy, messages, reco, resolveEngine, otherPrecisions]);
+  }, [input, busy, messages, reco, resolveEngine, otherPrecisions, t]);
 
   return (
     <Card>
-      <h2 className="font-display text-headline-md text-on-surface">Poser une question</h2>
-      <p className="mt-1 text-body-sm text-on-surface-variant">
-        L’assistant répond à partir de votre recommandation (chiffres affichés ci-dessus) et de recherches web sourcées.
-        Une IA peut se tromper : aucun montant n’est inventé, chaque source est citée.
-      </p>
+      <h2 className="font-display text-headline-md text-on-surface">{t("title")}</h2>
+      <p className="mt-1 text-body-sm text-on-surface-variant">{t("intro")}</p>
 
       {messages.length > 0 ? (
         <ul className="mt-4 space-y-3">
@@ -84,7 +79,7 @@ export function AssistantPanel({
               }
             >
               <span className="block text-label-caps uppercase text-on-surface-variant">
-                {m.role === "user" ? "Vous" : "Assistant"}
+                {m.role === "user" ? t("you") : t("assistant")}
               </span>
               <p className="mt-1 whitespace-pre-wrap">{m.content}</p>
               {m.sources !== undefined && m.sources.length > 0 ? (
@@ -114,11 +109,11 @@ export function AssistantPanel({
             }
           }}
           rows={2}
-          placeholder="Ex. : pourquoi ce preset ? quel composant pour les embeddings ? combien coûte le stockage ?"
+          placeholder={t("placeholder")}
           className="min-w-0 flex-1 rounded-input bg-surface-container p-3 text-body-md text-on-surface ring-1 ring-outline/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         />
         <Button onClick={() => void send()} disabled={busy || input.trim() === ""}>
-          {busy ? "…" : "Envoyer"}
+          {busy ? t("sending") : t("send")}
         </Button>
       </div>
     </Card>

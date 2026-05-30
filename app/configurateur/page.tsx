@@ -1,24 +1,29 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import type { ReactElement } from "react";
 import { Wizard } from "@/components/wizard/Wizard";
 
-export const metadata: Metadata = {
-  title: "Configurateur, Strate",
-  description: "Profilez votre besoin en quelques étapes pour obtenir une stack de base mémorielle souveraine recommandée.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Configurateur");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function ConfigurateurPage() {
+export default async function ConfigurateurPage(): Promise<ReactElement> {
+  const t = await getTranslations("Configurateur");
   return (
     <main className="mx-auto max-w-[1400px] px-container-margin py-section-padding">
       <header className="mb-8">
         <span className="font-mono text-xs uppercase tracking-widest text-primary">
-          Configurateur
+          {t("eyebrow")}
         </span>
         <h1 className="mt-2 font-display text-headline-lg text-on-surface">
-          Quelle infrastructure pour votre base mémorielle ?
+          {t("title")}
         </h1>
         <p className="mt-2 max-w-2xl text-body-lg text-on-surface-variant">
-          Répondez à quelques questions : Strate recommande une stack souveraine sur 7 couches,
-          avec un coût projeté et des sources vérifiables.
+          {t("subtitle")}
         </p>
       </header>
       <Wizard />

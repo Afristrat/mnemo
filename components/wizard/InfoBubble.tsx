@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useId, useState, type ReactElement } from "react";
 import { cn } from "@/lib/utils/cn";
 
@@ -21,6 +22,7 @@ type InfoBubbleProps = {
 export function InfoBubble({ why, consequence, label, className }: InfoBubbleProps): ReactElement {
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const t = useTranslations("Wizard.infoBubble");
 
   return (
     <span className={cn("relative inline-flex", className)}>
@@ -28,7 +30,7 @@ export function InfoBubble({ why, consequence, label, className }: InfoBubblePro
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        aria-label={`Pourquoi « ${label} » ? Pourquoi et conséquence.`}
+        aria-label={t("trigger", { label })}
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "inline-flex h-5 w-5 items-center justify-center rounded-full text-label-caps",
@@ -48,11 +50,11 @@ export function InfoBubble({ why, consequence, label, className }: InfoBubblePro
           )}
         >
           <span className="block">
-            <strong className="font-medium text-on-surface">Pourquoi : </strong>
+            <strong className="font-medium text-on-surface">{t("why")}</strong>
             {why}
           </span>
           <span className="mt-1 block">
-            <strong className="font-medium text-on-surface">Conséquence : </strong>
+            <strong className="font-medium text-on-surface">{t("consequence")}</strong>
             {consequence}
           </span>
         </span>

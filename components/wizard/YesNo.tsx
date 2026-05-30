@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { cn } from "@/lib/utils/cn";
 
@@ -16,13 +17,14 @@ type YesNoProps = {
 export function YesNo({
   value,
   onChange,
-  yesLabel = "Oui",
-  noLabel = "Non",
+  yesLabel,
+  noLabel,
   ariaLabel,
 }: YesNoProps): ReactElement {
+  const t = useTranslations("Wizard.yesNo");
   const options: { v: boolean; label: string }[] = [
-    { v: true, label: yesLabel },
-    { v: false, label: noLabel },
+    { v: true, label: yesLabel ?? t("yes") },
+    { v: false, label: noLabel ?? t("no") },
   ];
   return (
     <div role="group" aria-label={ariaLabel} className="grid gap-3 sm:grid-cols-2">

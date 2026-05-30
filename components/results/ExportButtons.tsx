@@ -32,6 +32,7 @@ export function ExportButtons({ profile, recommendation, ensemble, catalog }: Ex
   const [busy, setBusy] = useState(false);
   const resolveEngine = useEngineText();
   const tOptions = useTranslations("Options");
+  const t = useTranslations("Results.exportButtons");
 
   const exportMarkdown = (): void => {
     const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, tOptions, undefined, catalog);
@@ -54,10 +55,10 @@ export function ExportButtons({ profile, recommendation, ensemble, catalog }: Ex
   return (
     <div className="flex flex-wrap gap-3">
       <Button variant="primary" onClick={exportMarkdown}>
-        Télécharger le plan (Markdown)
+        {t("markdown")}
       </Button>
       <Button variant="secondary" onClick={() => void exportPdf()} disabled={busy}>
-        {busy ? "Génération…" : "Télécharger le plan (PDF)"}
+        {busy ? t("generating") : t("pdf")}
       </Button>
     </div>
   );

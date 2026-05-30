@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
@@ -8,16 +9,16 @@ import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 
 const SLOT_ORDER: SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
 
-const PROVENANCE_META: Record<Provenance, { tone: "primary" | "error" | "neutral"; label: string }> = {
-  live: { tone: "primary", label: "Vérifié en direct" },
-  seed: { tone: "neutral", label: "Calibration datée" },
-  flagged: { tone: "error", label: "À revérifier (repli)" },
+const PROVENANCE_META: Record<Provenance, { tone: "primary" | "error" | "neutral"; labelKey: "provLive" | "provSeed" | "provFlagged" }> = {
+  live: { tone: "primary", labelKey: "provLive" },
+  seed: { tone: "neutral", labelKey: "provSeed" },
+  flagged: { tone: "error", labelKey: "provFlagged" },
 };
 
-const SOURCE_LABEL: Record<Catalog["source"], string> = {
-  live: "veille en direct",
-  seed: "repli (calibration datée)",
-  mixed: "mixte (live + repli)",
+const SOURCE_LABEL_KEY: Record<Catalog["source"], "sourceLive" | "sourceSeed" | "sourceMixed"> = {
+  live: "sourceLive",
+  seed: "sourceSeed",
+  mixed: "sourceMixed",
 };
 
 type CatalogProvenanceProps = {
@@ -33,24 +34,21 @@ type CatalogProvenanceProps = {
  * catalogue affiché est exactement celui qui a servi à la recommandation (snapshot rejouable).
  */
 export function CatalogProvenance({ catalog, pending }: CatalogProvenanceProps): ReactElement {
+  const t = useTranslations("Results.catalogProvenance");
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-display text-headline-md text-on-surface">Provenance des choix techniques</h3>
-        <Chip tone={catalog.source === "seed" ? "neutral" : "primary"}>{SOURCE_LABEL[catalog.source]}</Chip>
+        <h3 className="font-display text-headline-md text-on-surface">{t("title")}</h3>
+        <Chip tone={catalog.source === "seed" ? "neutral" : "primary"}>{t(SOURCE_LABEL_KEY[catalog.source])}</Chip>
       </div>
       <p className="mt-1 text-body-sm text-on-surface-variant">
-        Les composants recommandés sont issus d’une veille (recherche web Firecrawl + synthèse LLM)
-        validée par un garde-fou : un candidat non vérifiable est rejeté au profit d’une calibration
-        datée. Une IA peut se tromper, chaque choix renvoie à sa source. Catalogue assemblé le{" "}
-        <span className="font-mono">{catalog.assembledAt}</span>.
+        {t.rich("intro", {
+          date: () => <span className="font-mono">{catalog.assembledAt}</span>,
+        })}
       </p>
 
       {pending ? (
-        <p className="mt-3 text-body-sm text-on-surface-variant">
-          Veille en direct en cours… (les choix ci-dessous sont le repli immédiat, ils se mettront à
-          jour si la veille aboutit)
-        </p>
+        <p className="mt-3 text-body-sm text-on-surface-variant">{t("pending")}</p>
       ) : null}
 
       <ul className="mt-4 divide-y divide-outline-variant">
@@ -76,7 +74,7 @@ export function CatalogProvenance({ catalog, pending }: CatalogProvenanceProps):
                 ) : (
                   <span className="text-body-sm text-on-surface">{rec.name}</span>
                 )}
-                <Chip tone={meta.tone}>{meta.label}</Chip>
+                <Chip tone={meta.tone}>{t(meta.labelKey)}</Chip>
               </span>
               <span className="font-mono text-body-sm text-on-surface-variant">{rec.source.checkedAt}</span>
             </li>

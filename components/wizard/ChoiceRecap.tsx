@@ -1,17 +1,19 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import type { RecapGroup } from "@/lib/wizard/recap";
 import { cn } from "@/lib/utils/cn";
 
 /** Récap des choix sous le budget-mètre (S-050) : valeurs effectives + marqueur d'impact coût. */
 export function ChoiceRecap({ groups, className }: { groups: RecapGroup[]; className?: string }): ReactElement {
+  const t = useTranslations("Wizard.recap");
   return (
     <section
       className={cn("rounded-card bg-surface p-4 ring-1 ring-outline-variant/40", className)}
-      aria-label="Récapitulatif de vos choix"
+      aria-label={t("aria")}
     >
-      <h2 className="text-label-caps uppercase text-on-surface-variant">Vos choix</h2>
+      <h2 className="text-label-caps uppercase text-on-surface-variant">{t("title")}</h2>
       <div className="mt-3 space-y-3">
         {groups.map((group) => (
           <div key={group.heading}>
@@ -32,14 +34,18 @@ export function ChoiceRecap({ groups, className }: { groups: RecapGroup[]; class
           </div>
         ))}
         <p className="text-body-sm text-on-surface-variant">
-          <span aria-hidden className="text-primary">
-            ●
-          </span>{" "}
-          influe sur le coût mensuel ·{" "}
-          <span aria-hidden className="text-on-surface-variant/50">
-            ○
-          </span>{" "}
-          oriente la stack, les scores ou la conformité (pas une ligne de coût directe).
+          {t.rich("legend", {
+            dot: () => (
+              <span aria-hidden className="text-primary">
+                ●
+              </span>
+            ),
+            empty: () => (
+              <span aria-hidden className="text-on-surface-variant/50">
+                ○
+              </span>
+            ),
+          })}
         </p>
       </div>
     </section>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +23,7 @@ type ExitEscrowProps = {
 export function ExitEscrow({ profile, recommendation, catalog }: ExitEscrowProps): ReactElement {
   const [busy, setBusy] = useState(false);
   const resolveEngine = useEngineText();
+  const t = useTranslations("Results.exitEscrow");
 
   const download = async (): Promise<void> => {
     setBusy(true);
@@ -48,18 +50,14 @@ export function ExitEscrow({ profile, recommendation, catalog }: ExitEscrowProps
 
   return (
     <Card>
-      <h2 className="font-display text-headline-md text-on-surface">Exit Escrow, emporter toute la stack</h2>
-      <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">
-        Téléchargez un bundle reproductible : IaC (Compose + Terraform), squelette de coffre, runbook,
-        scripts de ré-embedding et de backup. La recette est ouverte, vous pouvez tout redéployer
-        ailleurs, sans Strate. Zéro vendor lock-in, par construction.
-      </p>
+      <h2 className="font-display text-headline-md text-on-surface">{t("title")}</h2>
+      <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">{t("desc")}</p>
       <div className="mt-4 flex flex-wrap items-center gap-4">
         <Button variant="primary" onClick={() => void download()} disabled={busy}>
-          {busy ? "Génération du bundle…" : "Télécharger le bundle (.zip)"}
+          {busy ? t("generating") : t("download")}
         </Button>
         <Link href="/fiduciaire" className="text-body-sm text-secondary underline decoration-dotted">
-          Charte fiduciaire, zéro commission cachée
+          {t("charter")}
         </Link>
       </div>
     </Card>

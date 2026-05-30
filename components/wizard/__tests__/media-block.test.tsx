@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@/test/render";
 import { BudgetMeter } from "@/components/wizard/BudgetMeter";
 import { MediaNeedsBlock } from "@/components/wizard/MediaNeedsBlock";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";

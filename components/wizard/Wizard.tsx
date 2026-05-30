@@ -29,62 +29,7 @@ import { useWizardProfile } from "@/hooks/useWizardProfile";
 import { cn } from "@/lib/utils/cn";
 import { useOptions } from "@/lib/wizard/useOptions";
 
-// Les 4 blocs (spec §6). Le bloc ④ Médias est structurel ici ; son contenu détaillé
-// (besoins par modalité + budget-mètre) est ajouté en S-020.
-const BLOCKS: { id: BlockId; title: string; description: string }[] = [
-  { id: "profil", title: "Profil & contraintes", description: "Qui vous êtes, et vos contraintes : conformité, sensibilité, budget." },
-  { id: "infra", title: "Infra pure", description: "Volume, débit, latence, croissance attendue." },
-  { id: "memoire", title: "Usage-Mémoire", description: "À qui sert cette mémoire, que mémoriser, et les usages avancés." },
-  { id: "medias", title: "Médias", description: "Besoins audio / vidéo / images, à mémoriser et/ou à créer." },
-];
-
-// Infobulles « pourquoi + conséquence », factuelles, non orientées (l'utilisateur tranche).
-const INFO = {
-  zone: {
-    why: "L'emplacement d'hébergement détermine quelles lois s'appliquent (RGPD, CNDP) et l'exposition à des juridictions étrangères (Cloud Act).",
-    consequence: "Une zone hors UE peut soumettre vos données à un droit d'accès étranger.",
-  },
-  regulations: {
-    why: "Chaque régime coché ajoute des obligations concrètes (registre Art. 30, AIPD, déclaration CNDP…).",
-    consequence: "Les actions de conformité correspondantes sont listées dans la recommandation.",
-  },
-  sensitivity: {
-    why: "Le niveau de sensibilité conditionne le chiffrement, l'isolation et l'auditabilité exigés.",
-    consequence: "Plus c'est sensible, plus la stack se durcit, et le coût augmente.",
-  },
-  techLevel: {
-    why: "Vos compétences déterminent ce qui est exploitable en interne, sans prestataire.",
-    consequence: "Un profil non technique oriente vers du managé : mise en route plus rapide.",
-  },
-  budget: {
-    why: "Le budget mensuel borne le champ des choix d'infra (managé vs auto-hébergé).",
-    consequence: "Un dépassement par rapport à ce budget est explicitement signalé.",
-  },
-  volume: {
-    why: "Le volume de données dimensionne le stockage et l'indexation vectorielle.",
-    consequence: "Un volume élevé augmente le coût de stockage et peut imposer une stack plus robuste.",
-  },
-  reqPerDay: {
-    why: "Le débit de requêtes dimensionne l'inférence et la passerelle LLM.",
-    consequence: "Un débit élevé rend l'auto-hébergement (vLLM) plus économique que l'API à l'acte.",
-  },
-  voices: {
-    why: "Le nombre de perspectives détermine la gouvernance des accès et la combinatoire de recherche.",
-    consequence: "Plusieurs voix impliquent une délégation auditée (RLS, multi-tenant).",
-  },
-  contentTypes: {
-    why: "Les types de contenu déterminent le modèle d'embeddings (texte seul vs multimodal).",
-    consequence: "Du multimodal (audio/vidéo/images) ajoute des modèles et du GPU, détaillé au bloc Médias.",
-  },
-  audit: {
-    why: "L'audit signé trace de façon infalsifiable qui a écrit quoi, et quand.",
-    consequence: "Exiger l'audit écarte les presets les plus légers (pas de journal signé).",
-  },
-  bitemporal: {
-    why: "Le bitemporel distingue « quand c'est arrivé » de « quand on l'a su », rejouer l'état des connaissances à une date.",
-    consequence: "Exiger le bitemporel impose un stockage dédié (Postgres+AGE, Graphiti…).",
-  },
-} as const;
+const BLOCK_IDS: BlockId[] = ["profil", "infra", "memoire", "medias"];
 
 function Field({
   label,
@@ -105,25 +50,6 @@ function Field({
     </fieldset>
   );
 }
-
-// Libellés FR des champs d'intake (retour « ce qui a été ajusté » après intégration d'une note).
-const INTAKE_FIELD_LABELS: Record<string, string> = {
-  activity: "activité",
-  zone: "zone",
-  users: "utilisateurs",
-  contentTypes: "contenus à mémoriser",
-  volume: "volume",
-  growth: "croissance",
-  regulations: "régimes",
-  sensitivity: "sensibilité",
-  audit: "audit",
-  bitemporal: "bitemporalité",
-  techLevel: "niveau technique",
-  budget: "budget",
-  reqPerDay: "débit",
-  latency: "latence",
-  voices: "voix",
-};
 
 type IntakeResponse = { profile?: Profile; applied?: string[]; rejected?: string[] };
 type NoteState = { kind: "idle" } | { kind: "busy" } | { kind: "error" } | { kind: "done"; applied: string[] };
@@ -149,6 +75,8 @@ function NoteField({
   onApply: (next: Profile) => void;
 }): ReactElement {
   const [state, setState] = useState<NoteState>({ kind: "idle" });
+  const t = useTranslations("Wizard.note");
+  const tLabels = useTranslations("Wizard.intakeFieldLabels");
 
   const integrate = async (): Promise<void> => {
     if (value.trim() === "") return;
@@ -187,7 +115,7 @@ function NoteField({
   };
 
   return (
-    <Field label="Note libre (facultatif)">
+    <Field label={t("label")}>
       <textarea
         value={value}
         onChange={(e) => {
@@ -195,7 +123,7 @@ function NoteField({
           if (state.kind !== "idle") setState({ kind: "idle" });
         }}
         rows={2}
-        placeholder="Une précision, une contrainte particulière, un contexte à garder en tête…"
+        placeholder={t("placeholder")}
         className={cn(
           "w-full rounded-input bg-surface-container p-3 text-body-md text-on-surface",
           "ring-1 ring-outline/20 placeholder:text-on-surface-variant/60",
@@ -209,30 +137,24 @@ function NoteField({
           onClick={() => void integrate()}
           disabled={state.kind === "busy" || value.trim() === ""}
         >
-          {state.kind === "busy" ? "Intégration…" : "Intégrer cette note"}
+          {state.kind === "busy" ? t("integrating") : t("integrate")}
         </Button>
         {state.kind === "done" ? (
           state.applied.length > 0 ? (
             <span className="text-body-sm text-on-surface-variant">
-              Ajusté : {state.applied.map((f) => INTAKE_FIELD_LABELS[f] ?? f).join(", ")}. Vérifiez les champs, une IA
-              peut se tromper.
+              {t("doneAdjusted", {
+                fields: state.applied.map((f) => (tLabels.has(f) ? tLabels(f) : f)).join(", "),
+              })}
             </span>
           ) : (
-            <span className="text-body-sm text-on-surface-variant">
-              Aucun paramètre à ajuster dans cette note, la saisie manuelle reste possible.
-            </span>
+            <span className="text-body-sm text-on-surface-variant">{t("doneNothing")}</span>
           )
         ) : null}
         {state.kind === "error" ? (
-          <span className="text-body-sm text-error">
-            Intégration indisponible pour le moment. Réglez les champs à la main, c’est toujours possible.
-          </span>
+          <span className="text-body-sm text-error">{t("error")}</span>
         ) : null}
       </div>
-      <p className="mt-1 text-body-sm text-on-surface-variant">
-        Optionnel : « Intégrer » fait lire votre note par une IA qui ajuste les champs ci-dessus (valeurs bornées,
-        aucun coût inventé). Vous gardez la main.
-      </p>
+      <p className="mt-1 text-body-sm text-on-surface-variant">{t("help")}</p>
     </Field>
   );
 }
@@ -290,6 +212,10 @@ export function Wizard(): ReactElement {
   const [step, setStep] = useState(0);
   const opts = useOptions();
   const tOptions = useTranslations("Options");
+  const t = useTranslations("Wizard");
+  const tInfo = useTranslations("Wizard.info");
+  const tFields = useTranslations("Wizard.fields");
+  const tBlocks = useTranslations("Wizard.blocks");
 
   // À chaque changement d'étape (Suivant/Précédent/profil-type), remonter en haut de page :
   // l'utilisateur n'a pas à utiliser l'ascenseur pour retrouver le début du bloc suivant.
@@ -298,17 +224,17 @@ export function Wizard(): ReactElement {
   }, [step]);
 
   if (!hydrated) {
-    return <p className="p-8 text-center text-on-surface-variant">Chargement…</p>;
+    return <p className="p-8 text-center text-on-surface-variant">{t("loading")}</p>;
   }
 
-  const block = BLOCKS[step];
+  const blockId = BLOCK_IDS[step];
   const stepValid =
-    (block.id === "profil" && profile.regulations.length === 0) ||
-    (block.id === "memoire" && profile.contentTypes.length === 0)
+    (blockId === "profil" && profile.regulations.length === 0) ||
+    (blockId === "memoire" && profile.contentTypes.length === 0)
       ? false
       : true;
 
-  const isLast = step === BLOCKS.length - 1;
+  const isLast = step === BLOCK_IDS.length - 1;
   // Prix médias + backup réels injectés → coût et budget-mètre reflètent multimédia ET sauvegarde.
   const prices = getMediaPricesEur();
   const backupPrices = getBackupPrices();
@@ -321,8 +247,8 @@ export function Wizard(): ReactElement {
       <div className="min-w-0">
       {/* Indicateur de blocs */}
       <ol className="mb-6 flex flex-wrap gap-2">
-        {BLOCKS.map((b, i) => (
-          <li key={b.id}>
+        {BLOCK_IDS.map((id, i) => (
+          <li key={id}>
             <span
               className={cn(
                 "rounded-full px-3 py-1 text-label-caps uppercase",
@@ -333,7 +259,7 @@ export function Wizard(): ReactElement {
                     : "bg-surface-container text-on-surface-variant",
               )}
             >
-              {i + 1} · {b.title}
+              {t("stepBadge", { n: i + 1, title: tBlocks(`${id}.title`) })}
             </span>
           </li>
         ))}
@@ -342,20 +268,20 @@ export function Wizard(): ReactElement {
       <Card>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-headline-md text-on-surface">{block.title}</h2>
-            <p className="mt-1 text-body-md text-on-surface-variant">{block.description}</p>
+            <h2 className="font-display text-headline-md text-on-surface">{tBlocks(`${blockId}.title`)}</h2>
+            <p className="mt-1 text-body-md text-on-surface-variant">{tBlocks(`${blockId}.description`)}</p>
           </div>
           {/* Aperçu live, factuel (le budget-mètre détaillé arrive en S-020). */}
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <Chip tone="primary">Preset : {decision.preset}</Chip>
-            <span className="font-mono text-body-sm text-on-surface-variant">≈ {result.totalCost} €/mois</span>
+            <Chip tone="primary">{t("presetChip", { preset: decision.preset })}</Chip>
+            <span className="font-mono text-body-sm text-on-surface-variant">{t("monthlyApprox", { cost: result.totalCost })}</span>
           </div>
         </div>
 
         <div className="mt-6 space-y-6">
-          {block.id === "profil" ? (
+          {blockId === "profil" ? (
             <>
-              <Field label="Activité">
+              <Field label={tFields("activity")}>
                 <RadioCards value={profile.activity} options={opts.activity} onChange={(v) => setField("activity", v)} />
                 {profile.activity === "other" ? (
                   <OtherTextField
@@ -365,7 +291,7 @@ export function Wizard(): ReactElement {
                   />
                 ) : null}
               </Field>
-              <Field label="Zone d'hébergement" info={INFO.zone}>
+              <Field label={tFields("zone")} info={{ why: tInfo("zone.why"), consequence: tInfo("zone.consequence") }}>
                 <RadioCards value={profile.zone} options={opts.zone} onChange={(v) => setField("zone", v)} />
                 {profile.zone === "other" ? (
                   <OtherTextField
@@ -375,30 +301,27 @@ export function Wizard(): ReactElement {
                   />
                 ) : null}
               </Field>
-              <Field label="Nombre d'utilisateurs">
-                <NumberStepper label="Nombre d'utilisateurs" value={profile.users} onChange={(v) => setField("users", v)} />
+              <Field label={tFields("users")}>
+                <NumberStepper label={tFields("users")} value={profile.users} onChange={(v) => setField("users", v)} />
               </Field>
-              <Field label="Régimes applicables (au moins un)" info={INFO.regulations}>
+              <Field label={tFields("regulations")} info={{ why: tInfo("regulations.why"), consequence: tInfo("regulations.consequence") }}>
                 <CheckboxCards values={profile.regulations} options={opts.regulation} onToggle={toggleRegulation} />
               </Field>
-              <Field label="Sensibilité des données" info={INFO.sensitivity}>
+              <Field label={tFields("sensitivity")} info={{ why: tInfo("sensitivity.why"), consequence: tInfo("sensitivity.consequence") }}>
                 <RadioCards value={profile.sensitivity} options={opts.sensitivity} onChange={(v) => setField("sensitivity", v)} />
               </Field>
-              <Field label="Niveau technique" info={INFO.techLevel}>
+              <Field label={tFields("techLevel")} info={{ why: tInfo("techLevel.why"), consequence: tInfo("techLevel.consequence") }}>
                 <RadioCards value={profile.techLevel} options={opts.techLevel} onChange={(v) => setField("techLevel", v)} />
               </Field>
-              <Field label="Budget mensuel" info={INFO.budget}>
+              <Field label={tFields("budget")} info={{ why: tInfo("budget.why"), consequence: tInfo("budget.consequence") }}>
                 <RadioCards value={profile.budget} options={opts.budget} onChange={(v) => setField("budget", v)} />
               </Field>
               <Field
-                label="Privilégier l'open-source / souverain"
-                info={{
-                  why: "Oriente la recommandation vers une stack davantage auto-hébergée et open-source, plutôt que des outils propriétaires qui enferment.",
-                  consequence: "Le preset est relevé d'un cran (composants self-host) : plus de souveraineté, mais coût et complexité plus élevés — la tension éventuelle avec le budget est signalée, jamais masquée.",
-                }}
+                label={tFields("preferSovereign")}
+                info={{ why: tInfo("preferSovereign.why"), consequence: tInfo("preferSovereign.consequence") }}
               >
                 <YesNo
-                  ariaLabel="Privilégier l'open-source / souverain"
+                  ariaLabel={tFields("preferSovereign")}
                   value={profile.preferSovereign ?? false}
                   onChange={(v) => setField("preferSovereign", v)}
                 />
@@ -413,26 +336,23 @@ export function Wizard(): ReactElement {
             </>
           ) : null}
 
-          {block.id === "infra" ? (
+          {blockId === "infra" ? (
             <>
-              <Field label="Volume de données" info={INFO.volume}>
-                <ContinuousSlider label="Volume" options={opts.volume} value={profile.volume} onChange={(v) => setField("volume", v)} />
+              <Field label={tFields("volume")} info={{ why: tInfo("volume.why"), consequence: tInfo("volume.consequence") }}>
+                <ContinuousSlider label={t("sliderLabels.volume")} options={opts.volume} value={profile.volume} onChange={(v) => setField("volume", v)} />
               </Field>
-              <Field label="Débit de requêtes" info={INFO.reqPerDay}>
-                <ContinuousSlider label="Débit" options={opts.reqPerDay} value={profile.reqPerDay} onChange={(v) => setField("reqPerDay", v)} />
+              <Field label={tFields("reqPerDay")} info={{ why: tInfo("reqPerDay.why"), consequence: tInfo("reqPerDay.consequence") }}>
+                <ContinuousSlider label={t("sliderLabels.reqPerDay")} options={opts.reqPerDay} value={profile.reqPerDay} onChange={(v) => setField("reqPerDay", v)} />
               </Field>
-              <Field label="Latence tolérée">
+              <Field label={tFields("latency")}>
                 <RadioCards value={profile.latency} options={opts.latency} onChange={(v) => setField("latency", v)} />
               </Field>
-              <Field label="Croissance attendue">
+              <Field label={tFields("growth")}>
                 <RadioCards value={profile.growth} options={opts.growth} onChange={(v) => setField("growth", v)} />
               </Field>
               <div className="border-t border-outline-variant pt-6">
-                <h3 className="font-display text-body-lg text-on-surface">Sauvegarde &amp; résilience</h3>
-                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">
-                  Choisissez une criticité : le plan (RPO/RTO, copies, hors-site, rétention, effacement) en découle, et
-                  l’affinage expert reste possible. Le coût récurrent entre dans le budget-mètre.
-                </p>
+                <h3 className="font-display text-body-lg text-on-surface">{t("backup.sectionTitle")}</h3>
+                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">{t("backup.sectionDesc")}</p>
                 <BackupBlock
                   profile={profile}
                   prices={prices}
@@ -441,12 +361,8 @@ export function Wizard(): ReactElement {
                 />
               </div>
               <div className="border-t border-outline-variant pt-6">
-                <h3 className="font-display text-body-lg text-on-surface">Résidence &amp; continuité</h3>
-                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">
-                  Où vivent les données (juridiction primaire dérivée de votre zone) et que se passe-t-il si une région
-                  tombe. Vous pouvez héberger dans plusieurs régions, y compris sur plusieurs continents. La conformité
-                  des transferts inter-juridiction est détaillée sur la page résultats.
-                </p>
+                <h3 className="font-display text-body-lg text-on-surface">{t("residency.sectionTitle")}</h3>
+                <p className="mb-3 mt-1 text-body-sm text-on-surface-variant">{t("residency.sectionDesc")}</p>
                 <ResidencyBlock
                   profile={profile}
                   residencyPrices={residencyPrices}
@@ -472,28 +388,26 @@ export function Wizard(): ReactElement {
             </>
           ) : null}
 
-          {block.id === "memoire" ? (
+          {blockId === "memoire" ? (
             <>
-              <Field label="À qui sert cette mémoire ?" info={INFO.voices}>
+              <Field label={tFields("voices")} info={{ why: tInfo("voices.why"), consequence: tInfo("voices.consequence") }}>
                 <RadioCards value={profile.voices} options={opts.voices} onChange={(v) => setField("voices", v)} />
               </Field>
-              <Field label="Que mémoriser ? (au moins un)" info={INFO.contentTypes}>
+              <Field label={tFields("contentTypes")} info={{ why: tInfo("contentTypes.why"), consequence: tInfo("contentTypes.consequence") }}>
                 <CheckboxCards values={profile.contentTypes} options={opts.contentType} onToggle={toggleContentType} />
               </Field>
-              <Field label="Audit (traçabilité signée)" info={INFO.audit}>
-                <YesNo ariaLabel="Audit (traçabilité signée)" value={profile.audit} onChange={(v) => setField("audit", v)} />
+              <Field label={tFields("audit")} info={{ why: tInfo("audit.why"), consequence: tInfo("audit.consequence") }}>
+                <YesNo ariaLabel={tFields("audit")} value={profile.audit} onChange={(v) => setField("audit", v)} />
               </Field>
-              <Field label="Bitemporalité (qui savait quoi quand)" info={INFO.bitemporal}>
+              <Field label={tFields("bitemporal")} info={{ why: tInfo("bitemporal.why"), consequence: tInfo("bitemporal.consequence") }}>
                 <YesNo
-                  ariaLabel="Bitemporalité (qui savait quoi quand)"
+                  ariaLabel={tFields("bitemporal")}
                   value={profile.bitemporal}
                   onChange={(v) => setField("bitemporal", v)}
                 />
               </Field>
-              <Field label="Usages avancés (optionnels)">
-                <p className="mb-3 text-body-sm text-on-surface-variant">
-                  Mécanismes de gouvernance opt-in : chacun ajuste le coût et le plan d’action. Curseur à zéro = non retenu.
-                </p>
+              <Field label={tFields("advancedUses")}>
+                <p className="mb-3 text-body-sm text-on-surface-variant">{t("advancedUsesHint")}</p>
                 <div className="space-y-4">
                   {MODULES.map((mod) => (
                     <ModuleSlider key={mod.id} module={mod} level={profile.modules[mod.id] ?? 0} onChange={(level) => setModuleLevel(mod.id, level)} />
@@ -510,11 +424,10 @@ export function Wizard(): ReactElement {
             </>
           ) : null}
 
-          {block.id === "medias" ? (
+          {blockId === "medias" ? (
             <>
               <p className="text-body-md text-on-surface-variant">
-                Par modalité : ce que vous devez <strong>mémoriser</strong> (traiter l’existant) et ce que votre infra doit
-                <strong> créer</strong>, en souverain 🟢 ou via API 💳. Sans besoin audio/vidéo/images, laissez tout sur « Aucun ».
+                {t.rich("media.intro", { strong: (chunks) => <strong>{chunks}</strong> })}
               </p>
               <MediaNeedsBlock profile={profile} prices={prices} onChange={(mn) => setField("mediaNeeds", mn)} />
               <NoteField
@@ -532,7 +445,7 @@ export function Wizard(): ReactElement {
       {/* Navigation */}
       <div className="mt-6 flex items-center justify-between gap-3">
         <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}>
-          Précédent
+          {t("prev")}
         </Button>
 
         {isLast ? (
@@ -540,18 +453,18 @@ export function Wizard(): ReactElement {
             href="/resultats"
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-body-md font-medium text-on-primary transition-colors hover:bg-primary-container"
           >
-            Voir ma recommandation détaillée
+            {t("seeReco")}
           </Link>
         ) : (
-          <Button onClick={() => setStep((s) => Math.min(BLOCKS.length - 1, s + 1))} disabled={!stepValid}>
-            Suivant
+          <Button onClick={() => setStep((s) => Math.min(BLOCK_IDS.length - 1, s + 1))} disabled={!stepValid}>
+            {t("next")}
           </Button>
         )}
       </div>
 
       {/* Profils-types */}
       <div className="mt-8">
-        <p className="mb-2 text-label-caps uppercase text-on-surface-variant">Ou partir d’un profil-type</p>
+        <p className="mb-2 text-label-caps uppercase text-on-surface-variant">{t("orPreset")}</p>
         <div className="flex flex-wrap gap-2">
           {PRESET_PROFILES.map((preset) => (
             <Button

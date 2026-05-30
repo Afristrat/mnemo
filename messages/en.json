@@ -134,7 +134,204 @@
       "submit": "View the detail (expert)",
       "submitting": "Opening…",
       "hint": "Sourced and exportable. We won’t ask again on this device."
+    },
+    "costMap": {
+      "title": "Cost map",
+      "intro": "Cloud costs exposed, margin laid bare. Projection ±30%, an AI can be wrong.",
+      "factorsLine": "Volume / requests / users",
+      "moduleLevel": "· lvl {level}/{maxLevel}",
+      "mediaTitle": "Multimedia contribution",
+      "mediaIncluded": "(already included in the layers above)",
+      "mediaGpu": "🟢 Sovereign GPU pool ({tier}), counted once",
+      "mediaEmbeddings": "🟢 Multimodal embeddings (C4)",
+      "mediaStorage": "🟢 Media storage (C5), {gb} GB",
+      "mediaApi": "💳 {label}",
+      "mediaPerMonth": "€{cost}/month",
+      "mediaDisclaimer": "These costs vary widely with volume and vendor — request a quote before go.",
+      "backupTitle": "Backup & resilience",
+      "backupIncluded": "(already included in C6)",
+      "backupLine": "🟢 Plan “{criticality}”: {copies} copies{offsite}{airgap}{immutable} · retention {retention} d · vectors {vector}",
+      "offsite": ", off-site",
+      "airgap": ", air-gapped",
+      "immutable": ", immutable",
+      "sourceLink": "{label} ({date})",
+      "backupErasure": "Erasure: {policy}. Engineering guidance, not legal advice.",
+      "erasureCryptoShred": "crypto-shred (key destruction)",
+      "erasureExpiration": "retention expiration",
+      "residencyTitle": "Residency & regional continuity",
+      "residencyIncluded": "(already included in C6)",
+      "residencyLine": "🟢 Replication {dr} · {count, plural, one {# standby region} other {# standby regions}} ({regions}) · RTO ≈ {rto} min",
+      "residencyDisclaimer": "Cross-region replication + standby region(s). Transfer compliance is detailed below. Engineering guidance, not legal advice.",
+      "totalLabel": "Estimated total (recurring)",
+      "totalPerMonth": "€{cost}/month",
+      "band": "range €{low} – €{high}",
+      "setupLabel": "Setup (one-off), backlog ingestion{backup}{residency}",
+      "setupBackup": " + first full backup",
+      "setupResidency": " + replica seeding",
+      "drActiveActive": "active-active",
+      "drTier": "DR {tier}",
+      "regionEu": "EU",
+      "regionMaroc": "Morocco",
+      "regionUs": "United States",
+      "regionOther": "Other"
+    },
+    "ensemble": {
+      "aria": "Configuration ensemble",
+      "title": "Configuration ensemble",
+      "agreement": "Agreement {agreement}",
+      "intro": "Like an ensemble weather forecast: rather than a single answer, we explore several priorities, and the spread of their results is the honest measure of uncertainty. <strong>Click a solution to recompute the whole page on it</strong>; your saved profile is never changed, return to your recommendation whenever you like.",
+      "costRange": "Cost range",
+      "costRangeValue": "€{min} – €{max}/month",
+      "groupAria": "Choose the displayed solution",
+      "kindReco": "Recommendation",
+      "kindScenario": "Scenario",
+      "baselineLabel": "Your recommendation",
+      "baselineIntent": "Your profile as-is, no forced trade-off — the reference solution.",
+      "displayed": "Displayed",
+      "scoreLine": "score {score}/10",
+      "footer": "Scenarios deliberately relax or harden certain assumptions: they don't replace your profile, they bound its consequences. An AI can be wrong, every cost stays a sourced projection (±30%)."
+    },
+    "catalogProvenance": {
+      "title": "Provenance of technical choices",
+      "sourceLive": "live monitoring",
+      "sourceSeed": "fallback (dated calibration)",
+      "sourceMixed": "mixed (live + fallback)",
+      "intro": "Recommended components come from monitoring (Firecrawl web search + LLM synthesis) validated by a safeguard: an unverifiable candidate is rejected in favour of a dated calibration. An AI can be wrong, each choice links to its source. Catalog assembled on <date></date>.",
+      "pending": "Live monitoring in progress… (the choices below are the immediate fallback, they will update if monitoring succeeds)",
+      "provLive": "Verified live",
+      "provSeed": "Dated calibration",
+      "provFlagged": "To re-verify (fallback)"
+    },
+    "residencyPanel": {
+      "title": "Residency & transfers",
+      "intro": "Where the data lives and the compliance of cross-jurisdiction flows. Engineering guidance, not legal advice: check each legal basis with counsel before deciding.",
+      "primaryRegion": "Primary region",
+      "continuity": "Regional continuity",
+      "continuityValue": "{mode} · RPO ≈ {rpo} min · RTO ≈ {rto} min",
+      "modeActiveActive": "Active-active",
+      "modeNone": "None (backup restore)",
+      "modeDr": "DR {tier}",
+      "transfersTitle": "Cross-jurisdiction transfers",
+      "legalBasis": "Legal basis: ",
+      "noTransfers": "No cross-jurisdiction flow: regional continuity stays within the primary jurisdiction (strict residency respected).",
+      "conflictTitle": "Residency × regional continuity tension",
+      "conflictLevers": "Possible levers:",
+      "statusOk": "Allowed",
+      "statusRestricted": "Restricted",
+      "statusForbidden": "Forbidden",
+      "regionEu": "European Union",
+      "regionMaroc": "Morocco",
+      "regionUs": "United States",
+      "regionOther": "Other"
+    },
+    "exportButtons": {
+      "markdown": "Download the plan (Markdown)",
+      "pdf": "Download the plan (PDF)",
+      "generating": "Generating…"
+    },
+    "exitEscrow": {
+      "title": "Exit Escrow, take the whole stack with you",
+      "desc": "Download a reproducible bundle: IaC (Compose + Terraform), vault skeleton, runbook, re-embedding and backup scripts. The recipe is open, you can redeploy everything elsewhere, without Strate. Zero vendor lock-in, by construction.",
+      "download": "Download the bundle (.zip)",
+      "generating": "Generating the bundle…",
+      "charter": "Fiduciary charter, zero hidden commission"
     }
+  },
+  "Assistant": {
+    "title": "Ask a question",
+    "intro": "The assistant answers from your recommendation (figures shown above) and sourced web searches. An AI can be wrong: no amount is invented, every source is cited.",
+    "you": "You",
+    "assistant": "Assistant",
+    "unavailable": "Assistant unavailable right now. The detailed figures of your recommendation remain shown above, and each cost there is sourced.",
+    "connectionError": "Connection failed. Try again in a moment.",
+    "placeholder": "E.g.: why this preset? which component for embeddings? how much does storage cost?",
+    "send": "Send",
+    "sending": "…"
+  },
+  "Configurateur": {
+    "metaTitle": "Configurator, Strate",
+    "metaDescription": "Profile your need in a few steps to get a recommended sovereign memory-base stack.",
+    "eyebrow": "Configurator",
+    "title": "Which infrastructure for your memory base?",
+    "subtitle": "Answer a few questions: Strate recommends a sovereign 7-layer stack, with a projected cost and verifiable sources."
+  },
+  "Fiduciaire": {
+    "metaTitle": "Fiduciary charter, Strate",
+    "metaDescription": "Strate acts in your sole interest: zero hidden vendor commission, open recipe, sourced prices, sovereignty first.",
+    "eyebrow": "Disclosure",
+    "revenueTitle": "How we make a living",
+    "commitmentsTitle": "Our commitments",
+    "lastUpdated": "Last updated: {date}",
+    "configure": "Configure my infrastructure",
+    "backHome": "Back to home"
+  },
+  "Sondage": {
+    "metaTitle": "Strate, your view on a fair price",
+    "metaDescription": "2 minutes to help us set a fair price for the Strate service.",
+    "eyebrow": "Survey · 2 minutes",
+    "title": "Help us set a fair price",
+    "intro": "Strate makes your organisation's memory queryable and sovereign. Before locking our pricing, we'd rather ask than guess. Your answers are anonymous and only used to calibrate the price.",
+    "thanksTitle": "Thank you! 🙏",
+    "thanksBody": "Your feedback helps us set a fair price. No personal data is kept beyond these answers.",
+    "marketLabel": "Your market",
+    "marketMaroc": "Morocco",
+    "marketUe": "European Union",
+    "marketAutre": "Other",
+    "orgSize": "Organisation size",
+    "roleLabel": "Your role (optional)",
+    "rolePlaceholder": "Executive, CIO…",
+    "vwTitle": "The fair price of the service",
+    "vwIntro": "Strate deploys and runs your organisation's memory (infrastructure stays paid to your vendors, separately). For the <b>service subscription</b>, enter an amount ({cur}):",
+    "vwTooExpensive": "From what price is it <b>too expensive</b>?",
+    "vwTooCheap": "At what price is it <b>so low</b> you'd doubt its seriousness?",
+    "vwExpensiveOk": "<b>Expensive</b>, but you'd consider it?",
+    "vwBargain": "A <b>bargain</b>?",
+    "conjointTitle": "What would you choose?",
+    "conjointIntro": "For each pair, the offer you'd prefer (or neither).",
+    "conjointPrice": "{price} {cur}",
+    "conjointNone": "Neither",
+    "error": "Something went wrong. Try again in a moment.",
+    "submit": "Send my answers",
+    "submitting": "Sending…",
+    "curMad": "MAD/month",
+    "curEur": "€/month",
+    "tasks": {
+      "0a": "EU deployment · monitoring · standard support",
+      "0b": "Sovereign on-prem · monitoring + recalibration · priority support",
+      "1a": "Hybrid · deployment only · standard support",
+      "1b": "EU · monitoring + recalibration + vendor negotiation · dedicated support",
+      "2a": "On-prem · monitoring · priority support",
+      "2b": "EU · deployment + monitoring · standard support"
+    }
+  },
+  "Admin": {
+    "loginTitle": "Administration console",
+    "loginDesc": "Reserved for platform super-administrators. Sign in to manage system prompts.",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "signInRefused": "Sign-in refused. Check your credentials.",
+    "authUnavailable": "Authentication unavailable (server configuration).",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "loadError": "Loading failed.",
+    "loading": "Loading…",
+    "promptsTitle": "System prompts",
+    "signOut": "Sign out",
+    "activeVersion": "Active version: v{version}",
+    "noActiveVersion": "No active version (default in effect)",
+    "versionsCount": " · {count} version(s)",
+    "placeholdersIntro": "Placeholders filled by the code:",
+    "saveFail": "Failed: {error}",
+    "saveError": "error",
+    "versionActivated": "Version {version} activated.",
+    "versionUnknown": "?",
+    "networkFail": "Network failure.",
+    "activate": "Activate this version",
+    "activating": "Activating…",
+    "cancelChanges": "Discard changes",
+    "editableNote": "Fully editable, human responsibility: the server validators (extraction, narration, catalog safeguard) always bound the output, but a degraded prompt lowers quality. Automatic fallback to the default if no active version.",
+    "accessDenied": "Access denied",
+    "notSuperAdmin": "Account {email} is not a platform super-administrator."
   },
   "Metadata": {
     "title": "Strate, sovereign memory-base infrastructure",
@@ -219,6 +416,262 @@
       "regionLabel": "Specify the «Other» region(s)",
       "regionPlaceholder": "E.g. Switzerland, UAE, Singapore…",
       "help": "This detail is carried into the recap and the explanation of your recommendation. It does not change any cost directly (the pricing stays conservative by default)."
+    },
+    "loading": "Loading…",
+    "stepBadge": "{n} · {title}",
+    "presetChip": "Preset: {preset}",
+    "monthlyApprox": "≈ €{cost}/month",
+    "prev": "Back",
+    "next": "Next",
+    "seeReco": "See my detailed recommendation",
+    "orPreset": "Or start from a profile template",
+    "blocks": {
+      "profil": { "title": "Profile & constraints", "description": "Who you are, and your constraints: compliance, sensitivity, budget." },
+      "infra": { "title": "Raw infrastructure", "description": "Volume, throughput, latency, expected growth." },
+      "memoire": { "title": "Memory usage", "description": "Who this memory serves, what to memorize, and advanced uses." },
+      "medias": { "title": "Media", "description": "Audio / video / image needs, to memorize and/or to create." }
+    },
+    "fields": {
+      "activity": "Activity",
+      "zone": "Hosting zone",
+      "users": "Number of users",
+      "regulations": "Applicable regimes (at least one)",
+      "sensitivity": "Data sensitivity",
+      "techLevel": "Technical level",
+      "budget": "Monthly budget",
+      "preferSovereign": "Prefer open-source / sovereign",
+      "volume": "Data volume",
+      "reqPerDay": "Request throughput",
+      "latency": "Tolerated latency",
+      "growth": "Expected growth",
+      "voices": "Who does this memory serve?",
+      "contentTypes": "What to memorize? (at least one)",
+      "audit": "Audit (signed traceability)",
+      "bitemporal": "Bitemporality (who knew what, when)",
+      "advancedUses": "Advanced uses (optional)"
+    },
+    "sliderLabels": {
+      "volume": "Volume",
+      "reqPerDay": "Throughput"
+    },
+    "advancedUsesHint": "Opt-in governance mechanisms: each adjusts cost and the action plan. Slider at zero = not selected.",
+    "info": {
+      "zone": {
+        "why": "The hosting location determines which laws apply (GDPR, CNDP) and exposure to foreign jurisdictions (Cloud Act).",
+        "consequence": "A non-EU zone may subject your data to foreign access rights."
+      },
+      "regulations": {
+        "why": "Each regime checked adds concrete obligations (Art. 30 register, DPIA, CNDP filing…).",
+        "consequence": "The matching compliance actions are listed in the recommendation."
+      },
+      "sensitivity": {
+        "why": "The sensitivity level drives the required encryption, isolation and auditability.",
+        "consequence": "The more sensitive, the more the stack hardens, and the cost rises."
+      },
+      "techLevel": {
+        "why": "Your skills determine what can be run in-house, without a provider.",
+        "consequence": "A non-technical profile leans toward managed services: faster ramp-up."
+      },
+      "budget": {
+        "why": "The monthly budget bounds the field of infrastructure choices (managed vs self-hosted).",
+        "consequence": "Any overrun against this budget is explicitly flagged."
+      },
+      "volume": {
+        "why": "Data volume sizes the storage and the vector indexing.",
+        "consequence": "A high volume increases storage cost and may require a more robust stack."
+      },
+      "reqPerDay": {
+        "why": "Request throughput sizes inference and the LLM gateway.",
+        "consequence": "High throughput makes self-hosting (vLLM) more economical than pay-per-call API."
+      },
+      "voices": {
+        "why": "The number of perspectives drives access governance and the search combinatorics.",
+        "consequence": "Several voices imply audited delegation (RLS, multi-tenant)."
+      },
+      "contentTypes": {
+        "why": "Content types determine the embeddings model (text-only vs multimodal).",
+        "consequence": "Multimodal (audio/video/images) adds models and GPU, detailed in the Media block."
+      },
+      "audit": {
+        "why": "Signed audit traces, tamper-proof, who wrote what and when.",
+        "consequence": "Requiring audit rules out the lightest presets (no signed journal)."
+      },
+      "bitemporal": {
+        "why": "Bitemporality distinguishes “when it happened” from “when we learned it”, replaying the state of knowledge at a given date.",
+        "consequence": "Requiring bitemporality mandates dedicated storage (Postgres+AGE, Graphiti…)."
+      },
+      "preferSovereign": {
+        "why": "Steers the recommendation toward a more self-hosted, open-source stack, rather than proprietary tools that lock you in.",
+        "consequence": "The preset is bumped up one notch (self-host components): more sovereignty, but higher cost and complexity — any tension with the budget is flagged, never hidden."
+      }
+    },
+    "intakeFieldLabels": {
+      "activity": "activity",
+      "zone": "zone",
+      "users": "users",
+      "contentTypes": "content to memorize",
+      "volume": "volume",
+      "growth": "growth",
+      "regulations": "regimes",
+      "sensitivity": "sensitivity",
+      "audit": "audit",
+      "bitemporal": "bitemporality",
+      "techLevel": "technical level",
+      "budget": "budget",
+      "reqPerDay": "throughput",
+      "latency": "latency",
+      "voices": "voices"
+    },
+    "note": {
+      "label": "Free note (optional)",
+      "placeholder": "A detail, a particular constraint, some context to keep in mind…",
+      "integrate": "Integrate this note",
+      "integrating": "Integrating…",
+      "doneAdjusted": "Adjusted: {fields}. Double-check the fields — an AI can be wrong.",
+      "doneNothing": "Nothing to adjust in this note; manual entry remains available.",
+      "error": "Integration unavailable right now. Set the fields by hand — that's always possible.",
+      "help": "Optional: “Integrate” has an AI read your note and adjust the fields above (bounded values, no invented cost). You stay in control."
+    },
+    "yesNo": { "yes": "Yes", "no": "No" },
+    "numberStepper": { "decrease": "Decrease", "increase": "Increase" },
+    "module": {
+      "perMonthDelta": "+€{cost}/month",
+      "zeroDelta": "+€0",
+      "intensityAria": "Intensity of “{name}”",
+      "levelLabel": "Level {level}/{maxLevel}, {current}"
+    },
+    "infoBubble": {
+      "trigger": "Why “{label}”? Why and consequence.",
+      "why": "Why: ",
+      "consequence": "Consequence: "
+    },
+    "backup": {
+      "sectionTitle": "Backup & resilience",
+      "sectionDesc": "Pick a criticality: the plan (RPO/RTO, copies, off-site, retention, erasure) follows from it, and expert tuning stays possible. The recurring cost feeds the budget meter.",
+      "criticalityLegend": "Backup criticality",
+      "criticalityInfo": {
+        "why": "Criticality derives the whole plan: backup frequency (RPO), recovery time (RTO), retention, number of copies, immutability and erasure policy.",
+        "consequence": "The more critical, the more backup costs (copies, off-site, archiving), and the higher resilience climbs."
+      },
+      "expert": "Expert tuning",
+      "tierLegend": "Storage destination",
+      "vectorLegend": "Vectors (back up or re-embed)",
+      "vectorDecision": "Decision taken: {strategy}.",
+      "erasureLegend": "Erasure (right to be forgotten)",
+      "rpo": "RPO, max loss (min)",
+      "rto": "RTO, max recovery (min)",
+      "retention": "Retention (days)",
+      "copies": "Copies (3-2-1)",
+      "restoreTests": "Restores tested / year",
+      "offsiteAria": "Off-site copy",
+      "airgapAria": "Air-gapped (offline) copy",
+      "immutableAria": "Immutability (WORM)",
+      "byokAria": "Customer-managed keys (BYOK)",
+      "noneNote": "No managed backup: no extra cost, but a memory base without backup is exposed to data loss.",
+      "previewAdds": "This backup adds ≈ ",
+      "previewPerMonth": "€{cost}/month",
+      "previewSetup": "(+ €{cost} setup, first full)",
+      "previewPlan": "Plan “{criticality}”: {copies} copies{offsite}{airgap}{immutable} · retention {retention} d · vectors {vector}.",
+      "previewOffsite": ", off-site",
+      "previewAirgap": ", air-gapped",
+      "previewImmutable": ", immutable",
+      "previewDisclaimer": "Variable costs ±30%, dated sources on the results page. Engineering guidance, not legal advice.",
+      "criticality": {
+        "none": "None", "noneHint": "No managed backup",
+        "standard": "Standard", "standardHint": "Daily · 30 d · off-site",
+        "high": "High", "highHint": "Hourly · 90 d · air-gapped · PITR",
+        "critical": "Critical", "criticalHint": "≈ continuous · 365 d · WORM"
+      },
+      "tier": {
+        "hot": "Hot", "hotHint": "Immediate access",
+        "cold": "Cold", "coldHint": "Long-term archive, cheaper"
+      },
+      "vector": {
+        "auto": "Auto", "autoHint": "The engine picks the cheapest",
+        "backup": "Back up",
+        "reembed": "Re-embed", "reembedHint": "Rebuilt from source, longer RTO"
+      },
+      "erasure": {
+        "expiration": "Expiration", "expirationHint": "Purge when retention expires",
+        "cryptoShred": "Crypto-shred", "cryptoShredHint": "Key destruction → unreadable data"
+      }
+    },
+    "residency": {
+      "sectionTitle": "Residency & continuity",
+      "sectionDesc": "Where the data lives (primary jurisdiction derived from your zone) and what happens if a region goes down. You can host in several regions, including across continents. Cross-jurisdiction transfer compliance is detailed on the results page.",
+      "drLegend": "Regional continuity (DR)",
+      "drInfo": {
+        "why": "Regional continuity decides whether memory stays available when an entire region goes down: replication to a 2nd region, failover time (RTO) and maximum loss (RPO).",
+        "consequence": "The higher the tier (warm → hot → active-active), the more a standby region and replication cost, but the faster recovery is."
+      },
+      "expert": "Expert tuning",
+      "primaryLegend": "Primary region",
+      "regionsLegend": "Allowed regions (multi-region / multi-continent)",
+      "regionsLabel": "Allowed regions",
+      "regionsInfo": {
+        "why": "Beyond the primary jurisdiction, you can host or replicate across several regions — including across continents (finding C4).",
+        "consequence": "Each distinct region adds a cost (standby compute + replication) and a cross-jurisdiction flow whose compliance is assessed below."
+      },
+      "strictLabel": "Strict residency",
+      "strictInfo": {
+        "why": "Strict residency forbids any copy outside the primary jurisdiction (required for secrecy or certain regimes: CNDP, professional secrecy, HIPAA).",
+        "consequence": "Under strict residency, regional continuity must stay within the same jurisdiction — a tension can arise if it does not offer 2 distinct regions."
+      },
+      "strictAria": "Strict residency (no copy outside jurisdiction)",
+      "activeActiveLabel": "Active-active (multi-region under load)",
+      "activeActiveAria": "Active-active (regions under simultaneous load)",
+      "activeActiveValue": "active-active",
+      "drRpo": "Regional RPO, max loss (min)",
+      "drRto": "Regional RTO, failover (min)",
+      "conflictTitle": "Residency × regional continuity tension",
+      "conflictLevers": "Possible levers:",
+      "noneNote": "No managed regional continuity: recovery relies on restoring the backup (no standby replica, no regional surcharge).",
+      "previewAdds": "Regional continuity adds ≈ ",
+      "previewPerMonth": "€{cost}/month",
+      "previewSetup": "(+ €{cost} setup, seeding the replicas)",
+      "previewPlan": "Primary region “{region}” · DR {dr} · {count, plural, one {# standby region} other {# standby regions}} · RTO ≈ {rto} min.",
+      "previewDisclaimer": "Variable costs ±30%, dated sources on the results page. Engineering guidance, not legal advice."
+    },
+    "media": {
+      "intro": "Per modality: what you need to <strong>memorize</strong> (process the existing) and what your infrastructure must <strong>create</strong>, sovereign 🟢 or via API 💳. Without audio/video/image needs, leave everything on “None”.",
+      "modeAria": "Execution mode",
+      "modeSovereign": "🟢 Sovereign",
+      "modeApi": "💳 API",
+      "tier": { "none": "None", "light": "Light", "medium": "Moderate", "intensive": "Intensive" },
+      "modalityAudio": "Audio",
+      "modalityVideo": "Video",
+      "modalityImages": "Images",
+      "unitMin": "min",
+      "unitImages": "images",
+      "ingest": "To memorize",
+      "generate": "To create / generate",
+      "backlog": "Existing backlog to ingest once ({unit})",
+      "previewAdds": "These needs add ≈ ",
+      "previewPerMonth": "€{cost}/month",
+      "previewInfra": " of infrastructure",
+      "previewGpu": ", of which €{cost} of sovereign GPU ({tier} tier)",
+      "previewStorage": "Media storage ≈ {gb} GB (€{cost}/month)",
+      "previewApi": " · API usage ≈ €{cost}/month",
+      "previewSetup": " · setup ≈ €{cost} (one-off)",
+      "previewDisclaimer": "Variable costs ±30%, a quote is recommended before go (see results page, dated sources).",
+      "noneNote": "No multimedia need declared: no extra infrastructure cost on this account."
+    },
+    "budgetMeter": {
+      "title": "Budget meter",
+      "summary": "≈ €{cost} / {ceiling}",
+      "noCeiling": "no ceiling",
+      "ceilingValue": "€{cost}/month",
+      "statusOk": "Within budget",
+      "statusWarn": "Near the ceiling",
+      "statusOver": "Over budget",
+      "over": "≈ €{over} over the €{ceiling} ceiling (infrastructure cost, not the sale price).",
+      "cause": "Why: ",
+      "lever": "Lever: "
+    },
+    "recap": {
+      "aria": "Summary of your choices",
+      "title": "Your choices",
+      "legend": "<dot></dot> affects monthly cost · <empty></empty> steers the stack, scores or compliance (not a direct cost line)."
     }
   },
   "Options": {

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatusDot } from "@/components/ui/StatusDot";
@@ -30,16 +31,17 @@ type CostMapProps = {
   residency?: ResidencyPlan;
 };
 
-const REGION_LABEL: Record<ResidencyPlan["primaryRegion"], string> = {
-  eu: "UE",
-  maroc: "Maroc",
-  us: "États-Unis",
-  other: "Autre",
+const REGION_KEY: Record<ResidencyPlan["primaryRegion"], "regionEu" | "regionMaroc" | "regionUs" | "regionOther"> = {
+  eu: "regionEu",
+  maroc: "regionMaroc",
+  us: "regionUs",
+  other: "regionOther",
 };
 
 /** Carte de coûts transparente : chaque poste avec confiance + source datée, total avec bande ±30 %. */
 export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup, residency }: CostMapProps): ReactElement {
   const resolveEngine = useEngineText();
+  const t = useTranslations("Results.costMap");
   const band = costBand(totalCost);
   const setupBand = costBand(setupCost);
   const hasMedia =
@@ -50,10 +52,8 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
 
   return (
     <Card>
-      <h3 className="font-display text-headline-md text-on-surface">Carte de coûts</h3>
-      <p className="mt-1 text-body-sm text-on-surface-variant">
-        Coûts cloud exposés, marge à découvert. Projection ±30 %, une IA peut se tromper.
-      </p>
+      <h3 className="font-display text-headline-md text-on-surface">{t("title")}</h3>
+      <p className="mt-1 text-body-sm text-on-surface-variant">{t("intro")}</p>
 
       <ul className="mt-4 divide-y divide-outline-variant">
         {layers
@@ -72,7 +72,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
                       rel="noopener noreferrer"
                       className="text-body-sm text-secondary underline decoration-dotted"
                     >
-                      {pricing.source.label} ({pricing.source.checkedAt})
+                      {t("sourceLink", { label: pricing.source.label, date: pricing.source.checkedAt })}
                     </a>
                   ) : null}
                 </span>
@@ -85,7 +85,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
           <li className="flex items-center justify-between gap-4 py-2">
             <span className="flex items-center gap-2">
               <StatusDot confidence="medium" />
-              <span className="text-body-sm text-on-surface">Volume / requêtes / utilisateurs</span>
+              <span className="text-body-sm text-on-surface">{t("factorsLine")}</span>
             </span>
             <span className="shrink-0 font-mono text-body-sm text-on-surface">{factorsCost} €</span>
           </li>
@@ -96,7 +96,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
             <span className="flex items-center gap-2">
               <StatusDot confidence="medium" />
               <span className="text-body-sm text-on-surface">
-                {mod.name} <span className="text-on-surface-variant">· niv. {mod.level}/{mod.maxLevel}</span>
+                {mod.name} <span className="text-on-surface-variant">{t("moduleLevel", { level: mod.level, maxLevel: mod.maxLevel })}</span>
               </span>
             </span>
             <span className="shrink-0 font-mono text-body-sm text-on-surface">{mod.cost} €</span>
@@ -107,54 +107,57 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
       {hasMedia && media !== undefined ? (
         <div className="mt-4 rounded-card bg-surface-container p-3">
           <p className="text-label-caps uppercase text-on-surface-variant">
-            Apport multimédia <span className="normal-case">(déjà compris dans les couches ci-dessus)</span>
+            {t("mediaTitle")} <span className="normal-case">{t("mediaIncluded")}</span>
           </p>
           <ul className="mt-2 space-y-1.5">
             {media.gpuCost > 0 ? (
               <li className="flex items-center justify-between gap-3 text-body-sm">
-                <span>🟢 Pool GPU souverain ({media.gpuTier}), compté une seule fois</span>
-                <span className="font-mono text-on-surface">{media.gpuCost} €/mois</span>
+                <span>{t("mediaGpu", { tier: media.gpuTier })}</span>
+                <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: media.gpuCost })}</span>
               </li>
             ) : null}
             {media.embeddingsCost > 0 ? (
               <li className="flex items-center justify-between gap-3 text-body-sm">
-                <span>🟢 Embeddings multimodaux (C4)</span>
-                <span className="font-mono text-on-surface">{media.embeddingsCost} €/mois</span>
+                <span>{t("mediaEmbeddings")}</span>
+                <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: media.embeddingsCost })}</span>
               </li>
             ) : null}
             {media.storageCost > 0 ? (
               <li className="flex items-center justify-between gap-3 text-body-sm">
-                <span>🟢 Stockage médias (C5), {media.storageGb} Go</span>
-                <span className="font-mono text-on-surface">{media.storageCost} €/mois</span>
+                <span>{t("mediaStorage", { gb: media.storageGb })}</span>
+                <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: media.storageCost })}</span>
               </li>
             ) : null}
             {media.apiLines.map((line) => (
               <li key={line.label} className="flex items-center justify-between gap-3 text-body-sm">
-                <span>💳 {line.label}</span>
-                <span className="font-mono text-on-surface">{line.cost} €/mois</span>
+                <span>{t("mediaApi", { label: line.label })}</span>
+                <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: line.cost })}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-body-sm text-on-surface-variant">
-            Ces coûts varient fortement selon le volume et le fournisseur, demandez un devis avant le go.
-          </p>
+          <p className="mt-2 text-body-sm text-on-surface-variant">{t("mediaDisclaimer")}</p>
         </div>
       ) : null}
 
       {hasBackup && backup !== undefined ? (
         <div className="mt-4 rounded-card bg-surface-container p-3">
           <p className="text-label-caps uppercase text-on-surface-variant">
-            Sauvegarde &amp; résilience <span className="normal-case">(déjà comprise dans C6)</span>
+            {t("backupTitle")} <span className="normal-case">{t("backupIncluded")}</span>
           </p>
           <ul className="mt-2 space-y-1.5">
             <li className="flex items-center justify-between gap-3 text-body-sm">
               <span>
-                🟢 Plan « {backup.criticality} » : {backup.copies} copies
-                {backup.offsite ? ", hors-site" : ""}
-                {backup.airgap ? ", air-gap" : ""}
-                {backup.immutable ? ", immuable" : ""} · rétention {backup.retentionDays} j · vecteurs {backup.vector.strategy}
+                {t("backupLine", {
+                  criticality: backup.criticality,
+                  copies: backup.copies,
+                  offsite: backup.offsite ? t("offsite") : "",
+                  airgap: backup.airgap ? t("airgap") : "",
+                  immutable: backup.immutable ? t("immutable") : "",
+                  retention: backup.retentionDays,
+                  vector: backup.vector.strategy,
+                })}
               </span>
-              <span className="font-mono text-on-surface">{Math.round(backup.monthlyCost)} €/mois</span>
+              <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: Math.round(backup.monthlyCost) })}</span>
             </li>
           </ul>
           {backup.costSources.length > 0 ? (
@@ -167,13 +170,15 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
                   rel="noopener noreferrer"
                   className="text-secondary underline decoration-dotted"
                 >
-                  {s.label} ({s.checkedAt})
+                  {t("sourceLink", { label: s.label, date: s.checkedAt })}
                 </a>
               ))}
             </p>
           ) : null}
           <p className="mt-2 text-body-sm text-on-surface-variant">
-            Effacement : {backup.erasurePolicy === "crypto-shred" ? "crypto-shred (destruction de clé)" : "expiration de la rétention"}. Orientation d’ingénierie, pas un avis juridique.
+            {t("backupErasure", {
+              policy: backup.erasurePolicy === "crypto-shred" ? t("erasureCryptoShred") : t("erasureExpiration"),
+            })}
           </p>
         </div>
       ) : null}
@@ -181,17 +186,20 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
       {hasResidency && residency !== undefined ? (
         <div className="mt-4 rounded-card bg-surface-container p-3">
           <p className="text-label-caps uppercase text-on-surface-variant">
-            Résidence &amp; continuité régionale <span className="normal-case">(déjà comprise dans C6)</span>
+            {t("residencyTitle")} <span className="normal-case">{t("residencyIncluded")}</span>
           </p>
           <ul className="mt-2 space-y-1.5">
             <li className="flex items-center justify-between gap-3 text-body-sm">
               <span>
-                🟢 Réplication {residency.activeActive ? "actif-actif" : `DR ${residency.drTier}`} ·{" "}
-                {replicaRegions.length} région{replicaRegions.length > 1 ? "s" : ""} en attente (
-                {replicaRegions.map((r) => REGION_LABEL[r.region]).join(", ") || REGION_LABEL[residency.primaryRegion]}) ·
-                RTO ≈ {residency.rtoMinutes} min
+                {t("residencyLine", {
+                  dr: residency.activeActive ? t("drActiveActive") : t("drTier", { tier: residency.drTier }),
+                  count: replicaRegions.length,
+                  regions:
+                    replicaRegions.map((r) => t(REGION_KEY[r.region])).join(", ") || t(REGION_KEY[residency.primaryRegion]),
+                  rto: residency.rtoMinutes,
+                })}
               </span>
-              <span className="font-mono text-on-surface">{Math.round(residency.monthlyCost)} €/mois</span>
+              <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: Math.round(residency.monthlyCost) })}</span>
             </li>
           </ul>
           {residency.costSources.length > 0 ? (
@@ -204,24 +212,21 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
                   rel="noopener noreferrer"
                   className="text-secondary underline decoration-dotted"
                 >
-                  {s.label} ({s.checkedAt})
+                  {t("sourceLink", { label: s.label, date: s.checkedAt })}
                 </a>
               ))}
             </p>
           ) : null}
-          <p className="mt-2 text-body-sm text-on-surface-variant">
-            Réplication inter-région + région(s) en attente. La conformité des transferts est détaillée ci-dessous.
-            Orientation d’ingénierie, pas un avis juridique.
-          </p>
+          <p className="mt-2 text-body-sm text-on-surface-variant">{t("residencyDisclaimer")}</p>
         </div>
       ) : null}
 
       <div className="mt-4 flex items-center justify-between border-t border-outline-variant pt-4">
-        <span className="font-display font-semibold text-on-surface">Total estimé (récurrent)</span>
+        <span className="font-display font-semibold text-on-surface">{t("totalLabel")}</span>
         <span className="text-right">
-          <span className="block font-mono text-headline-md text-primary">{totalCost} €/mois</span>
+          <span className="block font-mono text-headline-md text-primary">{t("totalPerMonth", { cost: totalCost })}</span>
           <span className="block font-mono text-body-sm text-on-surface-variant">
-            fourchette {band.low} – {band.high} €
+            {t("band", { low: band.low, high: band.high })}
           </span>
         </span>
       </div>
@@ -229,14 +234,15 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
       {setupCost > 0 ? (
         <div className="mt-2 flex items-center justify-between">
           <span className="text-body-sm text-on-surface-variant">
-            Mise en route (une fois), ingestion du backlog
-            {backup !== undefined && backup.setupCost > 0 ? " + premier full de sauvegarde" : ""}
-            {residency !== undefined && residency.setupCost > 0 ? " + amorçage des réplicas" : ""}
+            {t("setupLabel", {
+              backup: backup !== undefined && backup.setupCost > 0 ? t("setupBackup") : "",
+              residency: residency !== undefined && residency.setupCost > 0 ? t("setupResidency") : "",
+            })}
           </span>
           <span className="text-right">
             <span className="block font-mono text-body-md text-on-surface">{setupCost} €</span>
             <span className="block font-mono text-body-sm text-on-surface-variant">
-              fourchette {setupBand.low} – {setupBand.high} €
+              {t("band", { low: setupBand.low, high: setupBand.high })}
             </span>
           </span>
         </div>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@/test/render";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { buildEnsemble, type Profile } from "@/lib/engine";
 

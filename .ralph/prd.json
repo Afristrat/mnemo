@@ -948,7 +948,9 @@
       "id": "S-058",
       "title": "Extraction exhaustive des clés i18n de toute l'UI (fr/en complets, zéro chaîne en dur)",
       "feature": "i18n",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-30",
+      "note": "Tranche CHROME livrée : configurateur (Wizard + BLOCKS/INFO/champs/NoteField/nav/profils-types + Field), blocs (BackupBlock, ResidencyBlock chrome, MediaNeedsBlock, ModuleSlider, BudgetMeter, ChoiceRecap, InfoBubble, YesNo, NumberStepper aria), sous-composants résultats (CostMap, EnsembleView, CatalogProvenance, ResidencyPanel chrome, ExportButtons, ExitEscrow, AssistantPanel), pages (configurateur/fiduciaire/sondage/admin + SurveyForm + AdminPrompts). Namespaces Wizard.*/Results.*/Assistant/Configurateur/Fiduciaire/Sondage/Admin ; fr/en parité 699 clés ; FR identique (e2e/tests préservés) ; 4 tests basculés vers @/test/render. typecheck 0 / lint 0/0 / 483 tests verts / build OK. RESTE (épic i18n, hors tranche CHROME) : prose du MOTEUR (lib/engine descripteurs Message : modules/diagnostics/backup/résidence/verdict), garde ESLint « zéro littéral », e2e bascule fr↔en.",
       "deps": [
         "S-057"
       ],

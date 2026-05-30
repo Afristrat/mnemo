@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 
@@ -19,6 +20,7 @@ export function NumberStepper({
   max = 100000,
   label,
 }: NumberStepperProps): ReactElement {
+  const t = useTranslations("Wizard.numberStepper");
   const clamp = (n: number): number => Math.min(max, Math.max(min, n));
 
   return (
@@ -26,7 +28,7 @@ export function NumberStepper({
       <Button
         variant="secondary"
         size="sm"
-        aria-label="Diminuer"
+        aria-label={t("decrease")}
         onClick={() => onChange(clamp(value - 1))}
         disabled={value <= min}
       >
@@ -47,7 +49,7 @@ export function NumberStepper({
       <Button
         variant="secondary"
         size="sm"
-        aria-label="Augmenter"
+        aria-label={t("increase")}
         onClick={() => onChange(clamp(value + 1))}
         disabled={value >= max}
       >

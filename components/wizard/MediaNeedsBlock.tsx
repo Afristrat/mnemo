@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { ContinuousSlider } from "@/components/wizard/ContinuousSlider";
 import {
@@ -23,30 +24,37 @@ type MediaNeedsBlockProps = {
   prices?: MultimodalPriceTable;
 };
 
-const TIER_OPTIONS: Option<MMTier>[] = [
-  { value: "none", label: "Aucun" },
-  { value: "light", label: "Léger" },
-  { value: "medium", label: "Modéré" },
-  { value: "intensive", label: "Intensif" },
-];
+type MediaT = ReturnType<typeof useTranslations<"Wizard.media">>;
 
-const MODALITIES: { id: Modality; label: string; backlogUnit: string }[] = [
-  { id: "audio", label: "Audio", backlogUnit: "min" },
-  { id: "video", label: "Vidéo", backlogUnit: "min" },
-  { id: "images", label: "Images", backlogUnit: "images" },
-];
+function tierOptions(t: MediaT): Option<MMTier>[] {
+  return [
+    { value: "none", label: t("tier.none") },
+    { value: "light", label: t("tier.light") },
+    { value: "medium", label: t("tier.medium") },
+    { value: "intensive", label: t("tier.intensive") },
+  ];
+}
+
+function modalities(t: MediaT): { id: Modality; label: string; backlogUnit: string }[] {
+  return [
+    { id: "audio", label: t("modalityAudio"), backlogUnit: t("unitMin") },
+    { id: "video", label: t("modalityVideo"), backlogUnit: t("unitMin") },
+    { id: "images", label: t("modalityImages"), backlogUnit: t("unitImages") },
+  ];
+}
 
 function emptyNeed(modality: Modality): MediaNeed {
   return { modality, mode: "sovereign", ingest: { tier: "none" }, generate: { tier: "none" }, backlog: 0 };
 }
 
 function ModeToggle({ mode, onChange }: { mode: MMMode; onChange: (m: MMMode) => void }): ReactElement {
+  const t = useTranslations("Wizard.media");
   const opts: { v: MMMode; label: string }[] = [
-    { v: "sovereign", label: "🟢 Souverain" },
-    { v: "api", label: "💳 API" },
+    { v: "sovereign", label: t("modeSovereign") },
+    { v: "api", label: t("modeApi") },
   ];
   return (
-    <div role="group" aria-label="Mode d'exécution" className="inline-flex rounded-full bg-surface-container p-1">
+    <div role="group" aria-label={t("modeAria")} className="inline-flex rounded-full bg-surface-container p-1">
       {opts.map((o) => (
         <button
           key={o.v}
@@ -66,6 +74,7 @@ function ModeToggle({ mode, onChange }: { mode: MMMode; onChange: (m: MMMode) =>
 }
 
 export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur() }: MediaNeedsBlockProps): ReactElement {
+  const t = useTranslations("Wizard.media");
   const needs = profile.mediaNeeds ?? [];
   const getNeed = (modality: Modality): MediaNeed => needs.find((n) => n.modality === modality) ?? emptyNeed(modality);
 
@@ -82,7 +91,7 @@ export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur(
 
   return (
     <div className="space-y-6">
-      {MODALITIES.map((m) => {
+      {modalities(t).map((m) => {
         const need = getNeed(m.id);
         return (
           <fieldset key={m.id} className="rounded-card border border-outline-variant p-4">
@@ -92,20 +101,20 @@ export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur(
             </legend>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <ContinuousSlider
-                label="À mémoriser"
-                options={TIER_OPTIONS}
+                label={t("ingest")}
+                options={tierOptions(t)}
                 value={need.ingest.tier}
                 onChange={(tier) => upsert({ ...need, ingest: { tier } })}
               />
               <ContinuousSlider
-                label="À créer / générer"
-                options={TIER_OPTIONS}
+                label={t("generate")}
+                options={tierOptions(t)}
                 value={need.generate.tier}
                 onChange={(tier) => upsert({ ...need, generate: { tier } })}
               />
             </div>
             <label className="mt-3 flex items-center justify-between gap-3 text-body-sm text-on-surface-variant">
-              <span>Backlog existant à ingérer une fois ({m.backlogUnit})</span>
+              <span>{t("backlog", { unit: m.backlogUnit })}</span>
               <input
                 type="number"
                 min={0}
@@ -126,26 +135,19 @@ export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur(
         {mediaMonthly > 0 || setupCost > 0 ? (
           <>
             <p className="text-on-surface">
-              Ces besoins ajoutent ≈ <strong className="font-mono">{mediaMonthly} €/mois</strong> d’infra
-              {sizing.gpu.monthlyCost > 0 ? (
-                <>
-                  , dont <strong className="font-mono">{sizing.gpu.monthlyCost} €</strong> de GPU souverain (palier{" "}
-                  {sizing.gpu.tier})
-                </>
-              ) : null}
+              {t("previewAdds")}<strong className="font-mono">{t("previewPerMonth", { cost: mediaMonthly })}</strong>{t("previewInfra")}
+              {sizing.gpu.monthlyCost > 0 ? t("previewGpu", { cost: sizing.gpu.monthlyCost, tier: sizing.gpu.tier }) : null}
               .
             </p>
             <p className="mt-1">
-              Stockage médias ≈ {sizing.storageGb} Go ({storageMonthly} €/mois)
-              {apiMonthly > 0 ? <> · usage API ≈ {apiMonthly} €/mois</> : null}
-              {setupCost > 0 ? <> · mise en route ≈ {setupCost} € (une fois)</> : null}.
+              {t("previewStorage", { gb: sizing.storageGb, cost: storageMonthly })}
+              {apiMonthly > 0 ? t("previewApi", { cost: apiMonthly }) : null}
+              {setupCost > 0 ? t("previewSetup", { cost: setupCost }) : null}.
             </p>
-            <p className="mt-1 text-on-surface-variant/80">
-              Coûts variables ±30 %, un devis est recommandé avant le go (cf. page résultats, sources datées).
-            </p>
+            <p className="mt-1 text-on-surface-variant/80">{t("previewDisclaimer")}</p>
           </>
         ) : (
-          <p>Aucun besoin multimédia déclaré : aucun surcoût d’infra à ce titre.</p>
+          <p>{t("noneNote")}</p>
         )}
       </div>
     </div>
