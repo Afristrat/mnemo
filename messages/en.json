@@ -72,7 +72,46 @@
         "secretProAuditTrail": "✍ Signed append-only audit trail (PL/pgSQL triggers)",
         "secretProAnonymization": "👤 k-anonymity (k=5 minimum) on any export beyond the matter’s scope",
         "banProprietaryMemory": "🚫 Ban vendors’ proprietary memory (ChatGPT/Claude Memory) for any structural decision"
+      },
+      "risks": {
+        "noTechHard": "⚠️ HARD preset with non-technical skills: needs a DevOps partner, or downscale to managed MEDIUM.",
+        "auditLight": "🚨 Mandatory audit is incompatible with LIGHT (no signed audit trail). Move up to MEDIUM at least.",
+        "bitemporalLight": "🚨 Mandatory bitemporality is impossible on LIGHT. Switch to MEDIUM (Postgres+AGE or Graphiti).",
+        "volumeLight": "⚠️ Volume > 1 TB on LIGHT: the free tier will saturate within 1-3 months. Provision MEDIUM from the start.",
+        "audioOnly": "📌 Audio only: plan a Whisper large-v3 pipeline (diarization) upstream. +50-100 €/month if self-hosting GPU.",
+        "videoLight": "⚠️ Video detected but LIGHT preset: transcription + frames + video embedding burns GPU. Consider MEDIUM.",
+        "marocRgpdNoCndp": "🇲🇦 Morocco zone with GDPR but no CNDP: the CNDP applies on top. Double-check.",
+        "usersLight": "⚠️ {users} users on LIGHT: no strict multi-tenancy (RLS). Switch to MEDIUM (RLS + circle field).",
+        "voicesLight": "⚠️ Multi-perspective on LIGHT: no governance of voices. Move to MEDIUM or V1+ soon.",
+        "budgetOverflow": "💰 Budget < 50 € but estimated cost {totalCost} €: over by {over} €. Reduce scope or raise the budget.",
+        "manyContentLight": "🔄 4+ content types on LIGHT: ingestion complexity exceeds what LIGHT supports. Switch to MEDIUM.",
+        "reqLight": "📈 > 10k requests/day: direct LIGHT API gets expensive. Self-hosting vLLM (MEDIUM/HARD) pays off.",
+        "latencyLight": "⚡ Low latency expected but LIGHT preset (third-party managed API, no latency guarantee): move to MEDIUM (self-host to control latency).",
+        "growthLight": "🌱 High growth anticipated but LIGHT: provision MEDIUM from the start to absorb the ramp-up without an emergency migration.",
+        "noRegSensitive": "⚖️ No legal regime checked but non-public sensitivity: almost always a mistake (GDPR applies as soon as personal data is involved)."
+      },
+      "km": {
+        "cause1": "1. False premise “storing = knowing”",
+        "cov1": "Frontmatter qualifies every atom (metadata contract) + decision/method/postmortem types",
+        "cause2": "2. Rigidity of frozen snapshots",
+        "cov2Bitemp": "Bitemporal active on facts; V1+ adds bi-temp on edges",
+        "cov2None": "No bitemporality requested → flat archive, risk of freezing",
+        "cause3": "3. Operational drift (the base isn’t maintained)",
+        "cov3": "Markdown vault = writing = ingestion. No separate data entry to maintain.",
+        "cause4": "4. Defensive silos (knowledge hoarding)",
+        "cov4Solo": "Solo: not applicable. If the team grows → V1+ multi-voice",
+        "cov4Multi": "Multi-voice active → plan audited append-only delegation (V1+)",
+        "cause5": "5. Tech-first approach (tool ≠ use)",
+        "cov5": "Use-case-oriented DoD (profile questionnaire, not technical criteria)",
+        "cause6": "6. Loss of strategic context",
+        "cov6Light": "Basic transclusion (markdown links). Limited for complex archives",
+        "cov6Full": "Transclusion + anchored use cases possible (master-note pattern)",
+        "cause7": "7. Repeated failure cycles (KM scrapped every 5 years)",
+        "cov7": "Portable markdown vault + frozen ADRs → zero vendor lock-in. Stack replaceable without losing the material."
       }
+    },
+    "verdict": {
+      "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk."
     }
   },
   "Results": {

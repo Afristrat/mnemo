@@ -7,8 +7,22 @@
 // Module PUR (aucun appel réseau) ; la route `app/api/llm/narrate` orchestre callLLM.
 
 import { composePrompt, DEFAULT_PROMPTS } from "@/lib/prompts/registry";
-import type { Verdict } from "@/lib/engine";
 import type { LlmMessage } from "./types";
+
+/**
+ * Verdict « affichable » (S-058) : forme RÉSOLUE du `Verdict` moteur, tous champs en chaînes localisées.
+ * La présentation (ResultsView) résout les descripteurs `Message` du verdict moteur vers ce type avant
+ * la fusion/narration ; `VerdictView` et `mergeVerdictNarration` n'opèrent que sur des chaînes.
+ */
+export type DisplayVerdict = {
+  pain: string;
+  risk: string;
+  gain: string;
+  firmPriceTier: string;
+  variableCostBand: { low: number; high: number };
+  setupCostBand: { low: number; high: number };
+  nextStep: string;
+};
 
 /** Textes narratifs de base (repli) + contexte de profil pour personnaliser le ton. */
 export type NarrationContext = {
@@ -119,7 +133,7 @@ export function parseNarration(content: string, base: NarrationTexts): Narration
  * Applique la narration au verdict : ne réécrit QUE les 4 textes ; les bandes de coût, le prix ferme
  * et tout champ numérique restent ceux de la recommandation (invariant DÉFCON 1, prouvé en test).
  */
-export function mergeVerdictNarration(verdict: Verdict, texts: NarrationTexts): Verdict {
+export function mergeVerdictNarration(verdict: DisplayVerdict, texts: NarrationTexts): DisplayVerdict {
   return {
     ...verdict,
     pain: texts.pain,

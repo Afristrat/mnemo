@@ -5,7 +5,7 @@ import { deriveResidencyPlan, hostingClassForProfile, NEUTRAL_RESIDENCY_PRICES, 
 import { applyBackup, applyCompute, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
-import { msg } from "./message";
+import { msg, type Message } from "./message";
 import { MODULES } from "./modules";
 import { decidePreset } from "./preset";
 import { computeScores } from "./scores";
@@ -86,12 +86,11 @@ const PAIN_BY_ACTIVITY: Partial<Record<Activity, string>> = {
 const PAIN_DEFAULT =
   "Votre mémoire d'organisation est dispersée et dépend d'outils que vous ne maîtrisez pas (souveraineté, portabilité, auditabilité).";
 
-function buildVerdict(profile: Profile, totalCost: number, setupCost: number, risks: string[]): Verdict {
+function buildVerdict(profile: Profile, totalCost: number, setupCost: number, risks: Message[]): Verdict {
   return {
     pain: PAIN_BY_ACTIVITY[profile.activity] ?? PAIN_DEFAULT,
-    risk:
-      risks[0] ??
-      "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage.",
+    // Risque saillant = 1er risque détecté (descripteur i18n), sinon risque générique de souveraineté.
+    risk: risks[0] ?? msg("verdict.defaultRisk"),
     // « Prouvé » uniquement pour « −risques » (Exit Escrow + Fiduciary livrés) ; jamais de stat inventée (spec §11).
     gain:
       "« −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",

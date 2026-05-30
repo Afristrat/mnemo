@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent, within } from "@/test/render";
 import { ResultsView } from "@/components/results/ResultsView";
 import { VerdictView } from "@/components/results/VerdictView";
-import type { Verdict } from "@/lib/engine";
+import type { DisplayVerdict } from "@/lib/llm/narrate";
 import { STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 
 // Lead gate (S-068) : la recette experte est gatée derrière nom + e-mail. Pour les assertions sur le
@@ -75,7 +75,7 @@ describe("ResultsView", () => {
 });
 
 describe("VerdictView", () => {
-  const verdict: Verdict = {
+  const verdict: DisplayVerdict = {
     pain: "Douleur test",
     risk: "Risque test",
     gain: "Gain test",

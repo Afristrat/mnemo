@@ -4,9 +4,9 @@ import {
   isCleanNarration,
   mergeVerdictNarration,
   parseNarration,
+  type DisplayVerdict,
   type NarrationTexts,
 } from "@/lib/llm/narrate";
-import type { Verdict } from "@/lib/engine";
 
 const BASE: NarrationTexts = {
   pain: "Douleur de base.",
@@ -16,7 +16,7 @@ const BASE: NarrationTexts = {
   presetReason: "Raison de base.",
 };
 
-const VERDICT: Verdict = {
+const VERDICT: DisplayVerdict = {
   pain: "Douleur de base.",
   risk: "Risque de base.",
   gain: "Gain de base.",

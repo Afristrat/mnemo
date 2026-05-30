@@ -24,7 +24,7 @@ import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { seedCatalog, type Catalog } from "@/lib/catalog";
 import { decodeProfileFromParam } from "@/lib/share";
 import { useEngineText } from "@/lib/i18n/engine";
-import { mergeVerdictNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
+import { mergeVerdictNarration, type DisplayVerdict, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import {
   buildEnsemble,
   decidePreset,
@@ -248,13 +248,14 @@ export function ResultsView(): ReactElement {
       notes,
       base: {
         pain: r.verdict.pain,
-        risk: r.verdict.risk,
+        // verdict.risk est un descripteur i18n (S-058) → résolu en chaîne localisée avant d'alimenter le LLM.
+        risk: resolveEngine(r.verdict.risk),
         gain: r.verdict.gain,
         nextStep: r.verdict.nextStep,
         presetReason: r.presetReason,
       },
     };
-  }, [base, prices, effectiveCatalog]);
+  }, [base, prices, effectiveCatalog, resolveEngine]);
 
   useEffect(() => {
     if (narrationContext === null) return;
@@ -287,7 +288,10 @@ export function ResultsView(): ReactElement {
   // Mode verdict (chemin 90 s) : synthèse compacte de la recommandation de référence.
   // Narration LLM appliquée aux 4 textes seulement ; les bandes de coût restent celles de la reco.
   if (mode === "verdict") {
-    const verdictToShow = narration === null ? result.verdict : mergeVerdictNarration(result.verdict, narration);
+    // Résout le verdict moteur (risk = descripteur i18n) vers sa forme affichable (chaînes), puis applique
+    // éventuellement la narration LLM. VerdictView et la fusion n'opèrent que sur des chaînes.
+    const displayVerdict: DisplayVerdict = { ...result.verdict, risk: resolveEngine(result.verdict.risk) };
+    const verdictToShow = narration === null ? displayVerdict : mergeVerdictNarration(displayVerdict, narration);
     return (
       <div className="space-y-8">
         <VerdictView
@@ -472,7 +476,7 @@ export function ResultsView(): ReactElement {
             <h2 className="font-display text-headline-md text-on-surface">{tR("risks")}</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
               {activeResult.risks.map((risk) => (
-                <li key={risk}>{risk}</li>
+                <li key={risk.id}>{resolveEngine(risk)}</li>
               ))}
             </ul>
           </Card>

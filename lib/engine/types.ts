@@ -92,7 +92,8 @@ export type Sizing = {
 };
 export type Verdict = {
   pain: string;
-  risk: string;
+  /** Risque saillant (descripteur i18n, S-058) = le 1er risque détecté, ou un risque générique par défaut. */
+  risk: Message;
   gain: string;
   firmPriceTier: string; // prix ferme service Strate ([PLACEHOLDER])
   variableCostBand: { low: number; high: number };
@@ -354,8 +355,9 @@ export type ScoreDimension = {
 };
 
 export type KMCheck = {
-  cause: string;
-  coverage: string;
+  /** Cause d'échec + couverture (descripteurs i18n, S-058). */
+  cause: Message;
+  coverage: Message;
   ok: boolean;
   warn: boolean;
 };
@@ -372,7 +374,8 @@ export type Recommendation = {
   activeModules: ActiveModule[];
   /** Actions de conformité (descripteurs i18n, S-058 : résolus en fr/en par la présentation). */
   compliance: Message[];
-  risks: string[];
+  /** Risques détectés (descripteurs i18n, S-058). */
+  risks: Message[];
   kmChecks: KMCheck[];
   /** Dimensionnement multimédia déduit des besoins (refonte Strate, S-018). */
   sizing: Sizing;
