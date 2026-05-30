@@ -112,6 +112,35 @@
     },
     "verdict": {
       "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk."
+    },
+    "preset": {
+      "reasonHard": "Maximum level of need — trigger(s): {drivers}. Maximum sovereignty, on-prem preferred, strong isolation.",
+      "reasonLight": "Light need (score {score} ≤ {max}): {drivers}. Simplified API-first stack that gets started in a few hours.",
+      "reasonMedium": "Intermediate need (score {score} > {max}): {drivers}. Balances sovereignty (controlled hosting) and pragmatism (API cascade + self-host).",
+      "reasonSovereignBump": "“Open-source / sovereign” preference enabled → preset raised to {bumped} for a more self-hosted stack (open-source self-host components); the associated extra cost and complexity are reflected in the budget meter.",
+      "trigger": {
+        "secret": "secret / ultra-sensitive data",
+        "cabinet": "regulated practice",
+        "hipaa": "HIPAA",
+        "secretPro": "professional secrecy",
+        "auditBitemp": "audit AND bitemporality both mandatory"
+      },
+      "driver": {
+        "volume_1to10": "volume 1–10 GB (+{points})",
+        "volume_10to100": "volume 10–100 GB (+{points})",
+        "volume_100to1000": "volume 100 GB–1 TB (+{points})",
+        "volume_gt1000": "volume > 1 TB (+{points})",
+        "sensitivity_confidential": "confidential sensitivity (+{points})",
+        "sensitivity_internal": "internal sensitivity (+{points})",
+        "req": "request throughput (+{points})",
+        "users": "{users, plural, one {# user} other {# users}} (+{points})",
+        "voices": "multi-voice (+{points})",
+        "growth": "high growth (+{points})",
+        "budget": "substantial budget (+{points})",
+        "activity": "organizational use (+{points})",
+        "lightDefault": "low volume, personal use, few constraints",
+        "sovereign": "sovereignty/open-source preference (+1 level)"
+      }
     }
   },
   "Results": {

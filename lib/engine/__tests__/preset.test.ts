@@ -36,7 +36,7 @@ describe("decidePreset — déclencheurs durs → HARD (S-051)", () => {
   ])("HARD si %s (indépendant de la charge)", (_label, p) => {
     const d = decidePreset(p);
     expect(d.preset).toBe("HARD");
-    expect(d.drivers.length).toBeGreaterThan(0); // le déclencheur est explicité
+    expect(d.reason.drivers.length).toBeGreaterThan(0); // le déclencheur est explicité
   });
 });
 
@@ -63,11 +63,15 @@ describe("decidePreset — score de besoin LIGHT/MEDIUM (S-051)", () => {
     expect(decidePreset(prof({ sensitivity: "internal", volume: "1to10" })).preset).toBe("MEDIUM");
   });
 
-  it("preset « expliqué » : la raison cite le score et le seuil", () => {
+  it("preset « expliqué » : la raison porte le gabarit, le score et le seuil (descripteurs i18n)", () => {
     const light = decidePreset(prof({ volume: "lt1" }));
-    expect(light.reason).toContain(`score ${light.score}`);
+    expect(light.reason.template.id).toBe("preset.reasonLight");
+    expect(light.reason.template.values?.score).toBe(light.score);
+    expect(light.reason.template.values?.max).toBe(3);
     const medium = decidePreset(prof({ volume: "10to100" }));
-    expect(medium.reason).toMatch(/score \d+ > 3/);
+    expect(medium.reason.template.id).toBe("preset.reasonMedium");
+    expect(medium.reason.template.values?.max).toBe(3);
+    expect(medium.score).toBeGreaterThan(3);
   });
 });
 
@@ -86,7 +90,8 @@ describe("decidePreset — préférence souveraineté (S-066)", () => {
     const d = decidePreset(prof({ sensitivity: "secret", preferSovereign: true }));
     expect(d.preset).toBe("HARD");
     const bumped = decidePreset(prof({ volume: "lt1", preferSovereign: true }));
-    expect(bumped.reason).toMatch(/open-source\/souverain/i);
+    expect(bumped.reason.suffix?.id).toBe("preset.reasonSovereignBump");
+    expect(bumped.reason.suffix?.values?.bumped).toBe("MEDIUM");
   });
 
   it("invariant : sans préférence, le preset est inchangé", () => {

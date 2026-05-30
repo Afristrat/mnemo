@@ -112,6 +112,35 @@
     },
     "verdict": {
       "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage."
+    },
+    "preset": {
+      "reasonHard": "Niveau de besoin maximal — déclencheur(s) : {drivers}. Souveraineté maximale, on-prem privilégié, isolation forte.",
+      "reasonLight": "Besoin léger (score {score} ≤ {max}) : {drivers}. Stack simplifiée API-first qui démarre en quelques heures.",
+      "reasonMedium": "Besoin intermédiaire (score {score} > {max}) : {drivers}. Équilibre souveraineté (hébergement contrôlé) et pragmatisme (cascade API + self-host).",
+      "reasonSovereignBump": "Préférence « open-source/souverain » activée → preset relevé à {bumped} pour une stack davantage auto-hébergée (composants open-source self-host) ; le surcoût/la complexité associés sont reflétés dans le budget-mètre.",
+      "trigger": {
+        "secret": "données secrètes / ultra-sensibles",
+        "cabinet": "cabinet régulé",
+        "hipaa": "HIPAA",
+        "secretPro": "secret professionnel",
+        "auditBitemp": "audit ET bitemporel obligatoires"
+      },
+      "driver": {
+        "volume_1to10": "volume 1–10 Go (+{points})",
+        "volume_10to100": "volume 10–100 Go (+{points})",
+        "volume_100to1000": "volume 100 Go–1 To (+{points})",
+        "volume_gt1000": "volume > 1 To (+{points})",
+        "sensitivity_confidential": "sensibilité confidentielle (+{points})",
+        "sensitivity_internal": "sensibilité interne (+{points})",
+        "req": "débit de requêtes (+{points})",
+        "users": "{users, plural, one {# utilisateur} other {# utilisateurs}} (+{points})",
+        "voices": "multi-voix (+{points})",
+        "growth": "croissance forte (+{points})",
+        "budget": "budget conséquent (+{points})",
+        "activity": "usage d’organisation (+{points})",
+        "lightDefault": "faible volume, usage personnel, peu de contraintes",
+        "sovereign": "préférence souveraineté/open-source (+1 cran)"
+      }
     }
   },
   "Results": {

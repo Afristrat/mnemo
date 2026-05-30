@@ -1,4 +1,5 @@
-import type { Activity, Budget, Growth, Preset, Profile, ReqPerDay, Sensitivity, Voices, Volume } from "./types";
+import { msg, type EngineResolver, type Message, type MessageValues } from "./message";
+import type { Activity, Budget, Growth, Preset, PresetReason, Profile, ReqPerDay, Sensitivity, Voices, Volume } from "./types";
 
 // Décision de preset (S-051, refonte « scoré + explicable » — décision Amine, lève l'incohérence
 // historique où l'étiquette `expected` des profils-types divergeait du résultat des règles, ex.
@@ -13,7 +14,10 @@ import type { Activity, Budget, Growth, Preset, Profile, ReqPerDay, Sensitivity,
 //     le budget et la nature de l'activité. Seuil LIGHT = score ≤ 4.
 // Le score est EXPOSÉ (reason + champs) → preset « expliqué », pas une boîte noire.
 
-export type PresetDecision = { preset: Preset; reason: string; score: number; drivers: string[] };
+// i18n (S-058) : la « raison » du preset n'est plus de la prose mais un gabarit `Message` + une liste
+// de descripteurs (déclencheurs en HARD, contributions de score en LIGHT/MEDIUM) résolus et joints par
+// `formatPresetReason`. Le moteur reste pur ; la composition localisée se fait à la présentation.
+export type PresetDecision = { preset: Preset; reason: PresetReason; score: number };
 
 const VOLUME_W: Record<Volume, number> = { lt1: 0, "1to10": 4, "10to100": 6, "100to1000": 8, gt1000: 10 };
 const REQ_W: Record<ReqPerDay, number> = { lt100: 0, lt1k: 1, lt10k: 3, gt10k: 5 };
@@ -33,20 +37,6 @@ const ACTIVITY_W: Record<Activity, number> = {
   other: 0,
 };
 
-const VOLUME_LABEL: Record<Volume, string> = {
-  lt1: "< 1 Go",
-  "1to10": "1–10 Go",
-  "10to100": "10–100 Go",
-  "100to1000": "100 Go–1 To",
-  gt1000: "> 1 To",
-};
-const SENS_LABEL: Record<Sensitivity, string> = {
-  public: "public",
-  confidential: "confidentiel",
-  internal: "interne",
-  secret: "secret",
-};
-
 /** Seuil : un score de besoin ≤ 3 (hors déclencheur dur) reste sur la stack légère. Calibré pour que
  * les profils-types calculent leur étiquette `expected` (réconciliation S-051) et qu'un corpus
  * d'organisation (volume ≥ 1–10 Go = +4) bascule en MEDIUM. */
@@ -59,34 +49,34 @@ function usersWeight(users: number): number {
   return 0;
 }
 
-/** Déclencheurs durs → HARD (souveraineté/conformité). Renvoie les libellés des déclencheurs actifs. */
-function hardTriggers(p: Profile): string[] {
-  const triggers: string[] = [];
-  if (p.sensitivity === "secret") triggers.push("données secrètes / ultra-sensibles");
-  if (p.activity === "cabinet-regule") triggers.push("cabinet régulé");
-  if (p.regulations.includes("hipaa")) triggers.push("HIPAA");
-  if (p.regulations.includes("secret-pro")) triggers.push("secret professionnel");
-  if (p.audit && p.bitemporal) triggers.push("audit ET bitemporel obligatoires");
+/** Déclencheurs durs → HARD (souveraineté/conformité). Descripteurs i18n des déclencheurs actifs. */
+function hardTriggers(p: Profile): Message[] {
+  const triggers: Message[] = [];
+  if (p.sensitivity === "secret") triggers.push(msg("preset.trigger.secret"));
+  if (p.activity === "cabinet-regule") triggers.push(msg("preset.trigger.cabinet"));
+  if (p.regulations.includes("hipaa")) triggers.push(msg("preset.trigger.hipaa"));
+  if (p.regulations.includes("secret-pro")) triggers.push(msg("preset.trigger.secretPro"));
+  if (p.audit && p.bitemporal) triggers.push(msg("preset.trigger.auditBitemp"));
   return triggers;
 }
 
-/** Score de besoin (départage LIGHT/MEDIUM hors HARD) + libellés des contributions non nulles. */
-function needScore(p: Profile): { score: number; drivers: string[] } {
-  const parts: { label: string; points: number }[] = [
-    { label: `volume ${VOLUME_LABEL[p.volume]}`, points: VOLUME_W[p.volume] },
-    { label: `sensibilité ${SENS_LABEL[p.sensitivity]}`, points: SENS_W[p.sensitivity] },
-    { label: "débit de requêtes", points: REQ_W[p.reqPerDay] },
-    { label: `${p.users} utilisateurs`, points: usersWeight(p.users) },
-    { label: "multi-voix", points: VOICES_W[p.voices] },
-    { label: "croissance forte", points: GROWTH_W[p.growth] },
-    { label: "budget conséquent", points: BUDGET_W[p.budget] },
-    { label: "usage d'organisation", points: ACTIVITY_W[p.activity] },
+/** Score de besoin (départage LIGHT/MEDIUM hors HARD) + descripteurs des contributions non nulles, triés. */
+function needScore(p: Profile): { score: number; drivers: Message[] } {
+  const parts: { id: string; values: MessageValues; points: number }[] = [
+    { id: `preset.driver.volume_${p.volume}`, values: {}, points: VOLUME_W[p.volume] },
+    { id: `preset.driver.sensitivity_${p.sensitivity}`, values: {}, points: SENS_W[p.sensitivity] },
+    { id: "preset.driver.req", values: {}, points: REQ_W[p.reqPerDay] },
+    { id: "preset.driver.users", values: { users: p.users }, points: usersWeight(p.users) },
+    { id: "preset.driver.voices", values: {}, points: VOICES_W[p.voices] },
+    { id: "preset.driver.growth", values: {}, points: GROWTH_W[p.growth] },
+    { id: "preset.driver.budget", values: {}, points: BUDGET_W[p.budget] },
+    { id: "preset.driver.activity", values: {}, points: ACTIVITY_W[p.activity] },
   ];
   const score = parts.reduce((sum, x) => sum + x.points, 0);
   const drivers = parts
     .filter((x) => x.points > 0)
     .sort((a, b) => b.points - a.points)
-    .map((x) => `${x.label} (+${x.points})`);
+    .map((x) => msg(x.id, { ...x.values, points: x.points }));
   return { score, drivers };
 }
 
@@ -96,29 +86,22 @@ function baseDecision(p: Profile): PresetDecision {
   const { score, drivers } = needScore(p);
 
   if (triggers.length > 0) {
-    return {
-      preset: "HARD",
-      score,
-      drivers: triggers,
-      reason: `Niveau de besoin maximal — déclencheur(s) : ${triggers.join(", ")}. Souveraineté maximale, on-prem privilégié, isolation forte.`,
-    };
+    return { preset: "HARD", score, reason: { template: msg("preset.reasonHard"), drivers: triggers, suffix: null } };
   }
 
   if (score <= LIGHT_MAX) {
-    const why = drivers.length > 0 ? drivers.join(", ") : "faible volume, usage personnel, peu de contraintes";
+    const ds = drivers.length > 0 ? drivers : [msg("preset.driver.lightDefault")];
     return {
       preset: "LIGHT",
       score,
-      drivers,
-      reason: `Besoin léger (score ${score} ≤ ${LIGHT_MAX}) : ${why}. Stack simplifiée API-first qui démarre en quelques heures.`,
+      reason: { template: msg("preset.reasonLight", { score, max: LIGHT_MAX }), drivers: ds, suffix: null },
     };
   }
 
   return {
     preset: "MEDIUM",
     score,
-    drivers,
-    reason: `Besoin intermédiaire (score ${score} > ${LIGHT_MAX}) : ${drivers.join(", ")}. Équilibre souveraineté (hébergement contrôlé) et pragmatisme (cascade API + self-host).`,
+    reason: { template: msg("preset.reasonMedium", { score, max: LIGHT_MAX }), drivers, suffix: null },
   };
 }
 
@@ -132,12 +115,18 @@ export function decidePreset(p: Profile): PresetDecision {
   const base = baseDecision(p);
   if (p.preferSovereign === true && base.preset !== "HARD") {
     const bumped: Preset = base.preset === "LIGHT" ? "MEDIUM" : "HARD";
-    return {
-      preset: bumped,
-      score: base.score,
-      drivers: [...base.drivers, "préférence souveraineté/open-source (+1 cran)"],
-      reason: `${base.reason} Préférence « open-source/souverain » activée → preset relevé à ${bumped} pour une stack davantage auto-hébergée (composants open-source self-host) ; le surcoût/la complexité associés sont reflétés dans le budget-mètre.`,
-    };
+    return { preset: bumped, score: base.score, reason: { ...base.reason, suffix: msg("preset.reasonSovereignBump", { bumped }) } };
   }
   return base;
+}
+
+/**
+ * Compose la raison du preset en chaîne localisée (S-058). Pure : prend un résolveur injecté (UI via
+ * next-intl, ou stub de test). Résout chaque déclencheur/driver, les joint, puis remplit le gabarit
+ * (placeholder `{drivers}` + valeurs score/seuil/preset), et ajoute la phrase de relèvement si présente.
+ */
+export function formatPresetReason(reason: PresetReason, resolve: EngineResolver): string {
+  const drivers = reason.drivers.map(resolve).join(", ");
+  const base = resolve({ id: reason.template.id, values: { ...reason.template.values, drivers } });
+  return reason.suffix === null ? base : `${base} ${resolve(reason.suffix)}`;
 }
