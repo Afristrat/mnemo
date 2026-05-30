@@ -228,7 +228,8 @@ export type InterSiteSecurityVariant = {
   approach: InterSiteSecurityApproach;
   monthlyCost: number; // récurrent
   setupCost: number; // one-time
-  note: string;
+  /** Note d'ingénierie (descripteur i18n, S-058). */
+  note: Message;
 };
 
 /**
@@ -255,8 +256,8 @@ export type ResidencyPlan = {
   rpoMinutes: number;
   rtoMinutes: number;
   transfers: TransferFlag[];
-  /** Tension résidence × DR exposée, JAMAIS résolue en douce (décision Amine #6 « honnêteté brutale »). */
-  conflict: { hasConflict: boolean; reason: string; levers: string[] };
+  /** Tension résidence × DR exposée, JAMAIS résolue en douce (décision Amine #6 « honnêteté brutale »). Descripteurs i18n (S-058). */
+  conflict: { hasConflict: boolean; reason: Message; levers: Message[] };
   monthlyCost: number; // réplication (egress inter-région) + régions en attente + sécurisation inter-site
   setupCost: number; // amorçage des réplicas (premier transfert complet)
   geoSovScore: number; // alimente la 10ᵉ dimension `geosov` (câblée en S-045)

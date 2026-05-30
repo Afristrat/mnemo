@@ -12,7 +12,7 @@ function plan(overrides: Partial<ResidencyPlan> = {}): ResidencyPlan {
     rpoMinutes: 1440,
     rtoMinutes: 480,
     transfers: [],
-    conflict: { hasConflict: false, reason: "", levers: [] },
+    conflict: { hasConflict: false, reason: { id: "residency.conflict.none" }, levers: [] },
     monthlyCost: 0,
     setupCost: 0,
     geoSovScore: 8,
@@ -67,8 +67,8 @@ describe("ResidencyPanel", () => {
           ],
           conflict: {
             hasConflict: true,
-            reason: "Résidence stricte au Maroc × DR hot : juridiction mono-région.",
-            levers: ["Région UE secondaire conforme.", "Accepter un RTO = restauration backup."],
+            reason: { id: "residency.conflict.reason", values: { region: "maroc", dr: "hot" } },
+            levers: [{ id: "residency.conflict.lever1" }, { id: "residency.conflict.lever2" }],
           },
         })}
       />,

@@ -6,6 +6,7 @@ import { CheckboxCards } from "@/components/wizard/CheckboxCards";
 import { InfoBubble } from "@/components/wizard/InfoBubble";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
+import { useEngineText } from "@/lib/i18n/engine";
 import {
   decidePreset,
   deriveResidencyPlan,
@@ -73,6 +74,7 @@ export function ResidencyBlock({
   computePrices = getComputePrices(),
 }: ResidencyBlockProps): ReactElement {
   const t = useTranslations("Wizard.residency");
+  const resolveEngine = useEngineText();
   const opts = useOptions();
   const r: Residency = profile.residency ?? {};
   const update = (patch: Partial<Residency>): void => onChange({ ...r, ...patch });
@@ -159,11 +161,11 @@ export function ResidencyBlock({
       {plan.conflict.hasConflict ? (
         <div className="rounded-card border border-error/40 bg-error/5 p-4 text-body-sm" role="alert">
           <p className="font-medium text-error">{t("conflictTitle")}</p>
-          <p className="mt-1 text-on-surface-variant">{plan.conflict.reason}</p>
+          <p className="mt-1 text-on-surface-variant">{resolveEngine(plan.conflict.reason)}</p>
           <p className="mt-2 text-on-surface">{t("conflictLevers")}</p>
           <ul className="mt-1 list-disc space-y-1 pl-5 text-on-surface-variant">
             {plan.conflict.levers.map((lever) => (
-              <li key={lever}>{lever}</li>
+              <li key={lever.id}>{resolveEngine(lever)}</li>
             ))}
           </ul>
         </div>

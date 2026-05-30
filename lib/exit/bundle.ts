@@ -183,7 +183,7 @@ const TRANSFER_STATUS_LABEL: Record<ResidencyPlan["transfers"][number]["status"]
 };
 
 /** Section « Résidence & continuité régionale (DR) » du runbook, DÉRIVÉE du plan réel (spec n°2 §8). */
-function residencySection(r: ResidencyPlan): string {
+function residencySection(r: ResidencyPlan, resolve: EngineResolver): string {
   const replicas = r.regions.filter((reg) => reg.role !== "primary");
   if (r.drTier === "none" && !r.activeActive && replicas.length === 0) {
     return `## Résidence & continuité régionale (DR)
@@ -202,7 +202,7 @@ function residencySection(r: ResidencyPlan): string {
           .map((t) => `- ${t.from} → ${t.to} : ${TRANSFER_STATUS_LABEL[t.status]} — ${t.legalBasis}`)
           .join("\n");
   const conflictBlock = r.conflict.hasConflict
-    ? `\n\n> ⚠️ **Conflit résidence × DR à arbitrer** : ${r.conflict.reason}\n${r.conflict.levers.map((l) => `> - ${l}`).join("\n")}`
+    ? `\n\n> ⚠️ **Conflit résidence × DR à arbitrer** : ${resolve(r.conflict.reason)}\n${r.conflict.levers.map((l) => `> - ${resolve(l)}`).join("\n")}`
     : "";
   const sec = r.interSiteSecurity;
   const securityBlock =
@@ -210,8 +210,8 @@ function residencySection(r: ResidencyPlan): string {
       ? ""
       : `\n\n### Sécurisation de la liaison inter-site (infrastructure auto-hébergée)
 - **Retenu** : passerelle chiffrée sur ${sec.securedSites} sites (WireGuard/IPsec + mTLS open-source, licence 0 €) — ≈ ${Math.round(sec.monthlyCost)} €/mois récurrent.
-  > ${sec.note}
-- **Alternative managée (à arbitrer, jamais imposée)** : mesh/SASE ≈ ${Math.round(sec.alternative.monthlyCost)} (devise vendeur, voir sources) — ${sec.alternative.note}`;
+  > ${resolve(sec.note)}
+- **Alternative managée (à arbitrer, jamais imposée)** : mesh/SASE ≈ ${Math.round(sec.alternative.monthlyCost)} (devise vendeur, voir sources) — ${resolve(sec.alternative.note)}`;
 
   return `## Résidence & continuité régionale (DR « ${drLabel} »)
 - **Région primaire** : ${r.primaryRegion}.
@@ -430,7 +430,7 @@ function runbook(reco: Recommendation, resolve: EngineResolver): string {
 
 ${backupSection(reco.backup, resolve)}
 
-${residencySection(reco.residency)}
+${residencySection(reco.residency, resolve)}
 
 ## MEL, Minimum Equipment List (dégradation)
 | Composant | En panne → | Mode dégradé | Délai max réparation |

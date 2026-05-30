@@ -123,6 +123,19 @@
         "autoBackup": "Sauvegarde des vecteurs moins chère que le ré-embed sur l’horizon."
       }
     },
+    "residency": {
+      "conflict": {
+        "none": "Aucun conflit résidence × DR.",
+        "reason": "Résidence stricte en « {region, select, eu {UE} maroc {Maroc} us {US} other {hors zone}} » × DR {dr, select, active {actif-actif} warm {tiède} hot {chaude} other {none}} : cette juridiction peut ne pas offrir 2 régions distinctes conformes pour la continuité régionale.",
+        "lever1": "Région UE secondaire conforme (si un transfert encadré est acceptable).",
+        "lever2": "Accepter un RTO = restauration backup (DR « none », pas de réplica).",
+        "lever3": "Actif-passif intra-région chez un 2ᵉ fournisseur souverain."
+      },
+      "interSite": {
+        "selfHostedNote": "{securedSites} sites reliés : passerelle chiffrée par site (WireGuard/IPsec + mTLS open-source, licence 0 €). Supervision + durcissement initial = OPEX / main-d’œuvre interne à chiffrer en devis (non un prix vendeur).",
+        "managedNote": "Alternative managée (mesh/SASE) pour {billableUsers} utilisateur(s) : exploitation incluse, sans VM passerelle ni durcissement à opérer en interne."
+      }
+    },
     "verdict": {
       "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage."
     },
