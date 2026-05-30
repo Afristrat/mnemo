@@ -116,7 +116,7 @@ function manifestOf(
     })),
     modules: reco.activeModules.map((m) => ({
       id: m.id,
-      name: m.name,
+      name: resolve(m.name),
       level: m.level,
       maxLevel: m.maxLevel,
     })),

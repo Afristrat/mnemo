@@ -168,7 +168,7 @@ export function buildDeliverable(
     .filter((l) => l.cost > 0)
     .map((l) => ({ left: resolve(l.name), right: `${l.cost} €` }));
   for (const m of reco.activeModules) {
-    costRows.push({ left: `${m.name} (niv. ${m.level}/${m.maxLevel})`, right: `${m.cost} €` });
+    costRows.push({ left: `${resolve(m.name)} (niv. ${m.level}/${m.maxLevel})`, right: `${m.cost} €` });
   }
   costRows.push({ left: "Total estimé", right: `${reco.totalCost} €/mois` });
   costRows.push({ left: "Fourchette ±30 %", right: `${band.low} – ${band.high} €/mois` });

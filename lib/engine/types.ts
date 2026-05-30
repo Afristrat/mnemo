@@ -320,31 +320,37 @@ export type Profile = {
   preferSovereign?: boolean;
 };
 
-export type ModuleLevel = { label: string; desc: string };
+// i18n (S-058) : la prose user-facing des modules (nom, justification, libellés/descriptions de
+// niveau, tâche d'implémentation) devient descripteur `Message`. `layers`/`effort` restent des
+// codes techniques (« C5 + UI », « M »), pas de la prose à localiser.
+export type ModuleLevel = { label: Message; desc: Message };
 
 export type EngineModule = {
   id: ModuleId;
-  name: string;
-  why: string;
+  name: Message;
+  why: Message;
   layers: string;
   effort: "S" | "M" | "L";
   costFull: number;
   maxLevel: number;
   bonusFull: Partial<Record<ScoreKey, number>>;
   levels: ModuleLevel[];
-  baseTask: string;
+  baseTask: Message;
 };
 
+// La « tâche » du module (plan d'action) n'est plus pré-composée en prose DANS le moteur : on porte
+// les parties (`baseTask` + niveau actif) et la présentation compose via `formatModuleTask` (modèle
+// `formatPresetReason`). Le moteur reste pur — aucune phrase assemblée côté moteur.
 export type ActiveModule = {
   id: ModuleId;
-  name: string;
+  name: Message;
   level: number;
   maxLevel: number;
-  levelLabel: string;
-  levelDesc: string;
+  levelLabel: Message;
+  levelDesc: Message;
+  baseTask: Message;
   fraction: number;
   cost: number;
-  task: string;
   bonusFull: Partial<Record<ScoreKey, number>>;
 };
 

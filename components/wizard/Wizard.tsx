@@ -19,6 +19,7 @@ import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId, type Profile } from "@/lib/engine";
+import { useEngineText } from "@/lib/i18n/engine";
 import { applyIntakeFields } from "@/lib/llm/intake";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
@@ -216,6 +217,7 @@ export function Wizard(): ReactElement {
   const tInfo = useTranslations("Wizard.info");
   const tFields = useTranslations("Wizard.fields");
   const tBlocks = useTranslations("Wizard.blocks");
+  const resolveEngine = useEngineText();
 
   // À chaque changement d'étape (Suivant/Précédent/profil-type), remonter en haut de page :
   // l'utilisateur n'a pas à utiliser l'ascenseur pour retrouver le début du bloc suivant.
@@ -491,7 +493,7 @@ export function Wizard(): ReactElement {
           sizing={result.sizing}
           backupMonthlyCost={result.backup.monthlyCost}
         />
-        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result, tOptions)} />
+        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result, tOptions, resolveEngine)} />
       </aside>
     </div>
   );

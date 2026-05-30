@@ -3,7 +3,7 @@
 // et un marqueur de transparence (influe DIRECTEMENT sur le coût mensuel, ou oriente seulement la
 // stack / les scores / la conformité). Aucune dépendance UI ni I/O → testable.
 
-import type { Profile, Recommendation } from "@/lib/engine";
+import type { EngineResolver, Profile, Recommendation } from "@/lib/engine";
 import {
   ACTIVITY_OPTIONS,
   BUDGET_OPTIONS,
@@ -59,9 +59,9 @@ function mediaSummary(profile: Profile): string {
   return needs.map((n) => `${MODALITY_LABEL[n.modality]} (${n.mode === "sovereign" ? "souverain" : "API"})`).join(", ");
 }
 
-function modulesSummary(reco: Recommendation): string {
+function modulesSummary(reco: Recommendation, resolveEngine: EngineResolver): string {
   if (reco.activeModules.length === 0) return "Aucun module activé";
-  return reco.activeModules.map((m) => `${m.name} (niv. ${m.level}/${m.maxLevel})`).join(", ");
+  return reco.activeModules.map((m) => `${resolveEngine(m.name)} (niv. ${m.level}/${m.maxLevel})`).join(", ");
 }
 
 /**
@@ -70,7 +70,12 @@ function modulesSummary(reco: Recommendation): string {
  * conformité / gouvernance (zone, régimes, sensibilité, audit, bitemporel, compétences, voix, budget)
  * orientent la stack/les scores mais n'ajoutent pas de ligne de coût directe → `false` (transparence).
  */
-export function buildChoiceRecap(profile: Profile, reco: Recommendation, optionLabel: OptionLabel): RecapGroup[] {
+export function buildChoiceRecap(
+  profile: Profile,
+  reco: Recommendation,
+  optionLabel: OptionLabel,
+  resolveEngine: EngineResolver,
+): RecapGroup[] {
   const serverCount = reco.compute.instances.reduce((sum, i) => sum + i.count, 0);
   return [
     {
@@ -114,7 +119,7 @@ export function buildChoiceRecap(profile: Profile, reco: Recommendation, optionL
         { label: "Types de contenu", value: labelsOf(CONTENT_TYPE_OPTIONS, profile.contentTypes, optionLabel), impactsCost: true },
         { label: "Voix / perspectives", value: labelOf(VOICES_OPTIONS, profile.voices, optionLabel), impactsCost: false },
         { label: "Médias", value: mediaSummary(profile), impactsCost: true },
-        { label: "Modules", value: modulesSummary(reco), impactsCost: reco.activeModules.length > 0 },
+        { label: "Modules", value: modulesSummary(reco, resolveEngine), impactsCost: reco.activeModules.length > 0 },
       ],
     },
   ];
