@@ -1,7 +1,7 @@
 // Modèle de livrable (F6) : structure pure et neutre de présentation, partagée par
 // les rendus Markdown et PDF. Aucune dépendance UI ni I/O → entièrement testable.
 
-import { costBand, type EngineResolver, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
+import { costBand, formatPresetReason, type EngineResolver, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
 import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
@@ -184,7 +184,7 @@ export function buildDeliverable(
 
   const sections: DeliverableSection[] = [
     profileSection(profile, optionLabel),
-    { heading: "Pourquoi ce preset", rows: [], bullets: [reco.presetReason] },
+    { heading: "Pourquoi ce preset", rows: [], bullets: [formatPresetReason(reco.presetReason, resolve)] },
     stack,
     ...(catalog !== undefined ? [catalogSection(catalog)] : []),
     scores,

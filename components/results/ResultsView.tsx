@@ -28,6 +28,7 @@ import { mergeVerdictNarration, type DisplayVerdict, type NarrationContext, type
 import {
   buildEnsemble,
   decidePreset,
+  formatPresetReason,
   profileCostFactors,
   recommend,
   type EnsembleVariantId,
@@ -252,7 +253,8 @@ export function ResultsView(): ReactElement {
         risk: resolveEngine(r.verdict.risk),
         gain: r.verdict.gain,
         nextStep: r.verdict.nextStep,
-        presetReason: r.presetReason,
+        // presetReason est un descripteur composé (S-058) → résolu en chaîne localisée avant le LLM.
+        presetReason: formatPresetReason(r.presetReason, resolveEngine),
       },
     };
   }, [base, prices, effectiveCatalog, resolveEngine]);
@@ -344,7 +346,9 @@ export function ResultsView(): ReactElement {
         </Button>
       </div>
       <p className="max-w-2xl text-body-md text-on-surface-variant">
-        {activeVariant === null && narration !== null ? narration.presetReason : activeResult.presetReason}
+        {activeVariant === null && narration !== null
+          ? narration.presetReason
+          : formatPresetReason(activeResult.presetReason, resolveEngine)}
       </p>
 
       {/* Bandeau de scénario actif (bascule depuis l'ensemble) */}

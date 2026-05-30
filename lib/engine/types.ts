@@ -100,6 +100,17 @@ export type Verdict = {
   setupCostBand: { low: number; high: number };
   nextStep: string;
 };
+/**
+ * Raison du preset « expliqué » (S-058) : gabarit i18n `template` (placeholder `{drivers}` + valeurs
+ * score/seuil/preset) + `drivers` (déclencheurs HARD ou contributions de score, déjà triés) + `suffix`
+ * optionnel (phrase de relèvement souveraineté, S-066). Composée en chaîne par `formatPresetReason`.
+ */
+export type PresetReason = {
+  template: Message;
+  drivers: Message[];
+  suffix: Message | null;
+};
+
 export type BlockId = "profil" | "infra" | "memoire" | "medias";
 
 /** Source d'un coût (URL + date), structurellement compatible avec `PriceSource` (`lib/pricing`). */
@@ -364,7 +375,8 @@ export type KMCheck = {
 
 export type Recommendation = {
   preset: Preset;
-  presetReason: string;
+  /** Raison du preset (descripteurs i18n, S-058 : composée en chaîne par `formatPresetReason`). */
+  presetReason: PresetReason;
   layers: Layer[];
   baseCost: number;
   moduleCost: number;
