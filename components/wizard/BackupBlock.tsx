@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { InfoBubble } from "@/components/wizard/InfoBubble";
 import { RadioCards } from "@/components/wizard/RadioCards";
@@ -30,33 +31,38 @@ type BackupBlockProps = {
   backupPrices?: BackupPriceTable;
 };
 
-const CRITICALITY_OPTIONS: Option<BackupCriticality>[] = [
-  { value: "none", label: "Aucune", hint: "Pas de sauvegarde gérée" },
-  { value: "standard", label: "Standard", hint: "Quotidien · 30 j · hors-site" },
-  { value: "high", label: "Élevée", hint: "Horaire · 90 j · air-gap · PITR" },
-  { value: "critical", label: "Critique", hint: "≈ continu · 365 j · WORM" },
-];
+type BackupT = ReturnType<typeof useTranslations<"Wizard.backup">>;
 
-const TIER_OPTIONS: Option<BackupStorageTier>[] = [
-  { value: "hot", label: "Chaud", hint: "Accès immédiat" },
-  { value: "cold", label: "Froid", hint: "Archive longue durée, moins cher" },
-];
+function criticalityOptions(t: BackupT): Option<BackupCriticality>[] {
+  return [
+    { value: "none", label: t("criticality.none"), hint: t("criticality.noneHint") },
+    { value: "standard", label: t("criticality.standard"), hint: t("criticality.standardHint") },
+    { value: "high", label: t("criticality.high"), hint: t("criticality.highHint") },
+    { value: "critical", label: t("criticality.critical"), hint: t("criticality.criticalHint") },
+  ];
+}
 
-const VECTOR_OPTIONS: Option<VectorBackupStrategy>[] = [
-  { value: "auto", label: "Auto", hint: "Le moteur tranche au moindre coût" },
-  { value: "backup", label: "Sauvegarder" },
-  { value: "reembed", label: "Ré-embed", hint: "Reconstruit depuis la source, RTO plus long" },
-];
+function tierOptions(t: BackupT): Option<BackupStorageTier>[] {
+  return [
+    { value: "hot", label: t("tier.hot"), hint: t("tier.hotHint") },
+    { value: "cold", label: t("tier.cold"), hint: t("tier.coldHint") },
+  ];
+}
 
-const ERASURE_OPTIONS: Option<ErasurePolicy>[] = [
-  { value: "expiration", label: "Expiration", hint: "Purge à l'expiration de la rétention" },
-  { value: "crypto-shred", label: "Crypto-shred", hint: "Destruction de clé → donnée illisible" },
-];
+function vectorOptions(t: BackupT): Option<VectorBackupStrategy>[] {
+  return [
+    { value: "auto", label: t("vector.auto"), hint: t("vector.autoHint") },
+    { value: "backup", label: t("vector.backup") },
+    { value: "reembed", label: t("vector.reembed"), hint: t("vector.reembedHint") },
+  ];
+}
 
-const INFO_CRITICALITY = {
-  why: "La criticité dérive tout le plan : fréquence de sauvegarde (RPO), délai de reprise (RTO), rétention, nombre de copies, immutabilité et politique d'effacement.",
-  consequence: "Plus c'est critique, plus la sauvegarde coûte (copies, hors-site, archivage), et plus la résilience monte.",
-};
+function erasureOptions(t: BackupT): Option<ErasurePolicy>[] {
+  return [
+    { value: "expiration", label: t("erasure.expiration"), hint: t("erasure.expirationHint") },
+    { value: "crypto-shred", label: t("erasure.cryptoShred"), hint: t("erasure.cryptoShredHint") },
+  ];
+}
 
 function NumberRow({
   label,
@@ -92,6 +98,7 @@ export function BackupBlock({
   prices = getMediaPricesEur(),
   backupPrices = getBackupPrices(),
 }: BackupBlockProps): ReactElement {
+  const t = useTranslations("Wizard.backup");
   const b: Backup = profile.backup ?? { criticality: "none" };
   const update = (patch: Partial<Backup>): void => onChange({ ...b, ...patch });
 
@@ -106,41 +113,41 @@ export function BackupBlock({
     <div className="space-y-4">
       <fieldset className="border-0 p-0">
         <legend className="mb-2 flex items-center gap-2 text-label-caps uppercase text-on-surface-variant">
-          Criticité de la sauvegarde
-          <InfoBubble label="Criticité de la sauvegarde" why={INFO_CRITICALITY.why} consequence={INFO_CRITICALITY.consequence} />
+          {t("criticalityLegend")}
+          <InfoBubble label={t("criticalityLegend")} why={t("criticalityInfo.why")} consequence={t("criticalityInfo.consequence")} />
         </legend>
-        <RadioCards value={b.criticality} options={CRITICALITY_OPTIONS} onChange={(criticality) => update({ criticality })} />
+        <RadioCards value={b.criticality} options={criticalityOptions(t)} onChange={(criticality) => update({ criticality })} />
       </fieldset>
 
       {!isNone ? (
         <details className="rounded-card border border-outline-variant p-4">
-          <summary className="cursor-pointer text-body-sm font-medium text-on-surface">Affinage expert</summary>
+          <summary className="cursor-pointer text-body-sm font-medium text-on-surface">{t("expert")}</summary>
           <div className="mt-4 space-y-4">
             <fieldset className="border-0 p-0">
-              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">Destination de stockage</legend>
-              <RadioCards value={plan.tier} options={TIER_OPTIONS} onChange={(tier) => update({ tier })} />
+              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">{t("tierLegend")}</legend>
+              <RadioCards value={plan.tier} options={tierOptions(t)} onChange={(tier) => update({ tier })} />
             </fieldset>
             <fieldset className="border-0 p-0">
-              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">Vecteurs (sauvegarder ou ré-embed)</legend>
+              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">{t("vectorLegend")}</legend>
               <RadioCards
                 value={b.vectorStrategy ?? "auto"}
-                options={VECTOR_OPTIONS}
+                options={vectorOptions(t)}
                 onChange={(vectorStrategy) => update({ vectorStrategy })}
               />
-              <p className="mt-1 text-body-sm text-on-surface-variant/80">Décision retenue : {plan.vector.strategy}.</p>
+              <p className="mt-1 text-body-sm text-on-surface-variant/80">{t("vectorDecision", { strategy: plan.vector.strategy })}</p>
             </fieldset>
             <fieldset className="border-0 p-0">
-              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">Effacement (droit à l’oubli)</legend>
-              <RadioCards value={plan.erasurePolicy} options={ERASURE_OPTIONS} onChange={(erasurePolicy) => update({ erasurePolicy })} />
+              <legend className="mb-2 text-label-caps uppercase text-on-surface-variant">{t("erasureLegend")}</legend>
+              <RadioCards value={plan.erasurePolicy} options={erasureOptions(t)} onChange={(erasurePolicy) => update({ erasurePolicy })} />
             </fieldset>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <NumberRow label="RPO, perte max (min)" value={plan.rpoMinutes} min={0} onChange={(rpoMinutes) => update({ rpoMinutes })} />
-              <NumberRow label="RTO, reprise max (min)" value={plan.rtoMinutes} min={0} onChange={(rtoMinutes) => update({ rtoMinutes })} />
-              <NumberRow label="Rétention (jours)" value={plan.retentionDays} min={0} onChange={(retentionDays) => update({ retentionDays })} />
-              <NumberRow label="Copies (3-2-1)" value={plan.copies} min={1} onChange={(copies) => update({ copies })} />
+              <NumberRow label={t("rpo")} value={plan.rpoMinutes} min={0} onChange={(rpoMinutes) => update({ rpoMinutes })} />
+              <NumberRow label={t("rto")} value={plan.rtoMinutes} min={0} onChange={(rtoMinutes) => update({ rtoMinutes })} />
+              <NumberRow label={t("retention")} value={plan.retentionDays} min={0} onChange={(retentionDays) => update({ retentionDays })} />
+              <NumberRow label={t("copies")} value={plan.copies} min={1} onChange={(copies) => update({ copies })} />
               <NumberRow
-                label="Restaurations testées / an"
+                label={t("restoreTests")}
                 value={plan.restoreTestsPerYear}
                 min={0}
                 onChange={(restoreTestsPerYear) => update({ restoreTestsPerYear })}
@@ -148,10 +155,10 @@ export function BackupBlock({
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <YesNo ariaLabel="Copie hors-site" value={plan.offsite} onChange={(offsite) => update({ offsite })} />
-              <YesNo ariaLabel="Copie air-gap (hors-ligne)" value={plan.airgap} onChange={(airgap) => update({ airgap })} />
-              <YesNo ariaLabel="Immutabilité (WORM)" value={plan.immutable} onChange={(immutable) => update({ immutable })} />
-              <YesNo ariaLabel="Clés gérées par le client (BYOK)" value={plan.byok} onChange={(byok) => update({ byok })} />
+              <YesNo ariaLabel={t("offsiteAria")} value={plan.offsite} onChange={(offsite) => update({ offsite })} />
+              <YesNo ariaLabel={t("airgapAria")} value={plan.airgap} onChange={(airgap) => update({ airgap })} />
+              <YesNo ariaLabel={t("immutableAria")} value={plan.immutable} onChange={(immutable) => update({ immutable })} />
+              <YesNo ariaLabel={t("byokAria")} value={plan.byok} onChange={(byok) => update({ byok })} />
             </div>
           </div>
         </details>
@@ -160,30 +167,31 @@ export function BackupBlock({
       {/* Aperçu live, factuel (le détail des coûts est sur la page résultats). */}
       <div className="rounded-card bg-surface-container p-4 text-body-sm text-on-surface-variant" aria-live="polite">
         {isNone ? (
-          <p>
-            Aucune sauvegarde gérée : pas de surcoût, mais une base mémorielle sans sauvegarde est exposée à la perte de données.
-          </p>
+          <p>{t("noneNote")}</p>
         ) : (
           <>
             <p className="text-on-surface">
-              Cette sauvegarde ajoute ≈ <strong className="font-mono">{monthly} €/mois</strong>
+              {t("previewAdds")}<strong className="font-mono">{t("previewPerMonth", { cost: monthly })}</strong>
               {setup > 0 ? (
                 <>
                   {" "}
-                  (+ <strong className="font-mono">{setup} €</strong> de mise en route, premier full)
+                  <strong className="font-mono">{t("previewSetup", { cost: setup })}</strong>
                 </>
               ) : null}
               .
             </p>
             <p className="mt-1">
-              Plan « {plan.criticality} » : {plan.copies} copies
-              {plan.offsite ? ", hors-site" : ""}
-              {plan.airgap ? ", air-gap" : ""}
-              {plan.immutable ? ", immuable" : ""} · rétention {plan.retentionDays} j · vecteurs {plan.vector.strategy}.
+              {t("previewPlan", {
+                criticality: plan.criticality,
+                copies: plan.copies,
+                offsite: plan.offsite ? t("previewOffsite") : "",
+                airgap: plan.airgap ? t("previewAirgap") : "",
+                immutable: plan.immutable ? t("previewImmutable") : "",
+                retention: plan.retentionDays,
+                vector: plan.vector.strategy,
+              })}
             </p>
-            <p className="mt-1 text-on-surface-variant/80">
-              Coûts variables ±30 %, sources datées sur la page résultats. Orientation d’ingénierie, pas un avis juridique.
-            </p>
+            <p className="mt-1 text-on-surface-variant/80">{t("previewDisclaimer")}</p>
           </>
         )}
       </div>

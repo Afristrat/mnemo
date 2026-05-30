@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import type { Region, ResidencyPlan, TransferFlag } from "@/lib/engine";
@@ -6,17 +7,17 @@ type ResidencyPanelProps = {
   plan: ResidencyPlan;
 };
 
-const REGION_LABEL: Record<Region, string> = {
-  eu: "Union européenne",
-  maroc: "Maroc",
-  us: "États-Unis",
-  other: "Autre",
+const REGION_KEY: Record<Region, "regionEu" | "regionMaroc" | "regionUs" | "regionOther"> = {
+  eu: "regionEu",
+  maroc: "regionMaroc",
+  us: "regionUs",
+  other: "regionOther",
 };
 
-const STATUS_META: Record<TransferFlag["status"], { icon: string; label: string; tone: string }> = {
-  ok: { icon: "✅", label: "Autorisé", tone: "text-primary" },
-  restricted: { icon: "⚠️", label: "Encadré", tone: "text-tertiary" },
-  forbidden: { icon: "⛔", label: "Interdit", tone: "text-error" },
+const STATUS_META: Record<TransferFlag["status"], { icon: string; labelKey: "statusOk" | "statusRestricted" | "statusForbidden"; tone: string }> = {
+  ok: { icon: "✅", labelKey: "statusOk", tone: "text-primary" },
+  restricted: { icon: "⚠️", labelKey: "statusRestricted", tone: "text-tertiary" },
+  forbidden: { icon: "⛔", labelKey: "statusForbidden", tone: "text-error" },
 };
 
 /**
@@ -26,68 +27,68 @@ const STATUS_META: Record<TransferFlag["status"], { icon: string; label: string;
  * transferts sont à signaler. Disclaimer « ingénierie, pas un avis juridique » systématique.
  */
 export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | null {
+  const t = useTranslations("Results.residencyPanel");
   const hasDr = plan.drTier !== "none" || plan.activeActive;
   if (!hasDr && plan.transfers.length === 0 && !plan.conflict.hasConflict) return null;
 
+  const continuityMode = plan.activeActive
+    ? t("modeActiveActive")
+    : plan.drTier === "none"
+      ? t("modeNone")
+      : t("modeDr", { tier: plan.drTier });
+
   return (
     <Card>
-      <h3 className="font-display text-headline-md text-on-surface">Résidence &amp; transferts</h3>
-      <p className="mt-1 text-body-sm text-on-surface-variant">
-        Où vivent les données et la conformité des flux inter-juridiction. Orientation d’ingénierie, pas un avis
-        juridique : vérifiez chaque base légale avec un conseil avant décision.
-      </p>
+      <h3 className="font-display text-headline-md text-on-surface">{t("title")}</h3>
+      <p className="mt-1 text-body-sm text-on-surface-variant">{t("intro")}</p>
 
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div>
-          <dt className="text-label-caps uppercase text-on-surface-variant">Région primaire</dt>
-          <dd className="text-body-md text-on-surface">{REGION_LABEL[plan.primaryRegion]}</dd>
+          <dt className="text-label-caps uppercase text-on-surface-variant">{t("primaryRegion")}</dt>
+          <dd className="text-body-md text-on-surface">{t(REGION_KEY[plan.primaryRegion])}</dd>
         </div>
         <div>
-          <dt className="text-label-caps uppercase text-on-surface-variant">Continuité régionale</dt>
+          <dt className="text-label-caps uppercase text-on-surface-variant">{t("continuity")}</dt>
           <dd className="text-body-md text-on-surface">
-            {plan.activeActive ? "Actif-actif" : plan.drTier === "none" ? "Aucune (restauration backup)" : `DR ${plan.drTier}`} ·
-            RPO ≈ {plan.rpoMinutes} min · RTO ≈ {plan.rtoMinutes} min
+            {t("continuityValue", { mode: continuityMode, rpo: plan.rpoMinutes, rto: plan.rtoMinutes })}
           </dd>
         </div>
       </dl>
 
       {plan.transfers.length > 0 ? (
         <div className="mt-4">
-          <p className="text-label-caps uppercase text-on-surface-variant">Transferts inter-juridiction</p>
+          <p className="text-label-caps uppercase text-on-surface-variant">{t("transfersTitle")}</p>
           <ul className="mt-2 space-y-2">
-            {plan.transfers.map((t) => {
-              const meta = STATUS_META[t.status];
+            {plan.transfers.map((transfer) => {
+              const meta = STATUS_META[transfer.status];
               return (
-                <li key={`${t.from}-${t.to}`} className="rounded-card bg-surface-container p-3 text-body-sm">
+                <li key={`${transfer.from}-${transfer.to}`} className="rounded-card bg-surface-container p-3 text-body-sm">
                   <p className="flex items-center gap-2">
                     <span aria-hidden="true">{meta.icon}</span>
                     <span className="text-on-surface">
-                      {REGION_LABEL[t.from]} → {REGION_LABEL[t.to]}
+                      {t(REGION_KEY[transfer.from])} → {t(REGION_KEY[transfer.to])}
                     </span>
-                    <span className={meta.tone}>· {meta.label}</span>
+                    <span className={meta.tone}>· {t(meta.labelKey)}</span>
                   </p>
                   <p className="mt-1 text-on-surface-variant">
-                    <span className="font-medium text-on-surface">Base légale : </span>
-                    {t.legalBasis}
+                    <span className="font-medium text-on-surface">{t("legalBasis")}</span>
+                    {transfer.legalBasis}
                   </p>
-                  {t.note !== "" ? <p className="mt-1 text-on-surface-variant/80">{t.note}</p> : null}
+                  {transfer.note !== "" ? <p className="mt-1 text-on-surface-variant/80">{transfer.note}</p> : null}
                 </li>
               );
             })}
           </ul>
         </div>
       ) : hasDr ? (
-        <p className="mt-4 text-body-sm text-on-surface-variant">
-          Aucun flux inter-juridiction : la continuité régionale reste dans la juridiction primaire (résidence
-          stricte respectée).
-        </p>
+        <p className="mt-4 text-body-sm text-on-surface-variant">{t("noTransfers")}</p>
       ) : null}
 
       {plan.conflict.hasConflict ? (
         <div className="mt-4 rounded-card border border-error/40 bg-error/5 p-4 text-body-sm" role="alert">
-          <p className="font-medium text-error">Tension résidence × continuité régionale</p>
+          <p className="font-medium text-error">{t("conflictTitle")}</p>
           <p className="mt-1 text-on-surface-variant">{plan.conflict.reason}</p>
-          <p className="mt-2 text-on-surface">Leviers possibles :</p>
+          <p className="mt-2 text-on-surface">{t("conflictLevers")}</p>
           <ul className="mt-1 list-disc space-y-1 pl-5 text-on-surface-variant">
             {plan.conflict.levers.map((lever) => (
               <li key={lever}>{lever}</li>

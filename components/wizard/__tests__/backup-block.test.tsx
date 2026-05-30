@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@/test/render";
 import { BackupBlock } from "@/components/wizard/BackupBlock";
 import { BudgetMeter } from "@/components/wizard/BudgetMeter";
 import { BACKUP_PRICE_SEED } from "@/lib/pricing/backup-seed";

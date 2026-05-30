@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/test/render";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import type { ResidencyPlan } from "@/lib/engine";
 

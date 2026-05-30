@@ -1,7 +1,10 @@
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/utils/cn";
 import type { Ensemble, EnsembleAgreement, EnsembleVariantId } from "@/lib/engine";
+
+type EnsembleT = ReturnType<typeof useTranslations<"Results.ensemble">>;
 
 const AGREEMENT_TONE: Record<EnsembleAgreement, "primary" | "tertiary" | "error"> = {
   fort: "primary",
@@ -12,7 +15,7 @@ const AGREEMENT_TONE: Record<EnsembleAgreement, "primary" | "tertiary" | "error"
 /** Une solution sélectionnable : la recommandation de référence (id null) ou un scénario. */
 type SolutionCard = {
   id: EnsembleVariantId | null;
-  kind: "Recommandation" | "Scénario";
+  kind: string;
   label: string;
   intent: string;
   assumptions: string[];
@@ -29,12 +32,12 @@ type EnsembleViewProps = {
   onSelect: (id: EnsembleVariantId | null) => void;
 };
 
-function buildCards(ensemble: Ensemble): SolutionCard[] {
+function buildCards(ensemble: Ensemble, t: EnsembleT): SolutionCard[] {
   const baseline: SolutionCard = {
     id: null,
-    kind: "Recommandation",
-    label: "Votre recommandation",
-    intent: "Votre profil tel quel, sans arbitrage forcé — la solution de référence.",
+    kind: t("kindReco"),
+    label: t("baselineLabel"),
+    intent: t("baselineIntent"),
     assumptions: [],
     preset: ensemble.baseline.preset,
     totalCost: ensemble.baseline.totalCost,
@@ -42,7 +45,7 @@ function buildCards(ensemble: Ensemble): SolutionCard[] {
   };
   const variants = ensemble.variants.map<SolutionCard>((v) => ({
     id: v.id,
-    kind: "Scénario",
+    kind: t("kindScenario"),
     label: v.label,
     intent: v.intent,
     assumptions: v.assumptions,
@@ -60,33 +63,31 @@ function buildCards(ensemble: Ensemble): SolutionCard[] {
  * (couches, radar, coûts, export, Exit Escrow), sans jamais modifier le profil saisi.
  */
 export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps): ReactElement {
+  const t = useTranslations("Results.ensemble");
   const { spread } = ensemble;
   // Bande d'incertitude rapportée au coût le plus élevé de l'ensemble.
   const bandLeft = spread.costMax > 0 ? (spread.costMin / spread.costMax) * 100 : 0;
-  const cards = buildCards(ensemble);
+  const cards = buildCards(ensemble, t);
 
   return (
     <section
-      aria-label="Ensemble de configurations"
+      aria-label={t("aria")}
       className="rounded-card border border-outline-variant bg-surface-container-lowest p-6 shadow-elevation"
     >
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-headline-md text-on-surface">Ensemble de configurations</h2>
-        <Chip tone={AGREEMENT_TONE[spread.agreement]}>Accord {spread.agreement}</Chip>
+        <h2 className="font-display text-headline-md text-on-surface">{t("title")}</h2>
+        <Chip tone={AGREEMENT_TONE[spread.agreement]}>{t("agreement", { agreement: spread.agreement })}</Chip>
       </div>
       <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">
-        Comme une prévision météo d’ensemble : plutôt qu’une seule réponse, on explore plusieurs
-        priorités, et la dispersion de leurs résultats est la mesure honnête de l’incertitude.{" "}
-        <strong>Cliquez une solution pour recalculer toute la page dessus</strong> ; votre profil
-        enregistré n’est jamais modifié, revenez à votre recommandation quand vous voulez.
+        {t.rich("intro", { strong: (chunks) => <strong>{chunks}</strong> })}
       </p>
 
       {/* Bande d'incertitude de coût */}
       <div className="mt-5">
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-label-caps uppercase text-on-surface-variant">Fourchette de coût</span>
+          <span className="text-label-caps uppercase text-on-surface-variant">{t("costRange")}</span>
           <span className="font-mono text-body-md text-on-surface">
-            {spread.costMin} – {spread.costMax} €/mois
+            {t("costRangeValue", { min: spread.costMin, max: spread.costMax })}
           </span>
         </div>
         <div className="mt-2 h-2 w-full rounded-full bg-surface-container">
@@ -101,7 +102,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
       {/* Solutions sélectionnables : référence + scénarios */}
       <div
         role="group"
-        aria-label="Choisir la solution affichée"
+        aria-label={t("groupAria")}
         className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         {cards.map((card) => {
@@ -124,7 +125,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
                 <span className="text-label-caps uppercase text-on-surface-variant/70">{card.kind}</span>
                 {isActive ? (
                   <span className="rounded-full bg-primary px-2 py-0.5 text-label-caps uppercase text-on-primary">
-                    Affichée
+                    {t("displayed")}
                   </span>
                 ) : null}
               </div>
@@ -135,7 +136,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
               <div className="mt-2 flex items-baseline gap-3">
                 <span className="font-mono text-headline-md text-primary">{card.totalCost} €</span>
                 <span className="font-mono text-body-sm text-on-surface-variant">
-                  score {card.scoreAvg}/10
+                  {t("scoreLine", { score: card.scoreAvg })}
                 </span>
               </div>
               <p className="mt-2 text-body-sm text-on-surface-variant">{card.intent}</p>
@@ -154,11 +155,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
         })}
       </div>
 
-      <p className="mt-4 text-body-sm text-on-surface-variant">
-        Les scénarios relâchent ou durcissent volontairement certaines hypothèses : ils ne remplacent
-        pas votre profil, ils en bornent les conséquences. Une IA peut se tromper, chaque coût reste
-        une projection sourcée (±30 %).
-      </p>
+      <p className="mt-4 text-body-sm text-on-surface-variant">{t("footer")}</p>
     </section>
   );
 }

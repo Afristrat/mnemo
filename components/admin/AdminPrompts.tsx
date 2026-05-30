@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -21,6 +22,7 @@ function activeContent(data: AdminData, key: string): string {
 }
 
 function AdminLogin(): ReactElement {
+  const t = useTranslations("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,29 +35,27 @@ function AdminLogin(): ReactElement {
       const supabase = createClient();
       const { error: e } = await supabase.auth.signInWithPassword({ email, password });
       if (e !== null) {
-        setError("Connexion refusée. Vérifiez vos identifiants.");
+        setError(t("signInRefused"));
         setBusy(false);
         return;
       }
       window.location.reload();
     } catch {
-      setError("Authentification indisponible (configuration serveur).");
+      setError(t("authUnavailable"));
       setBusy(false);
     }
-  }, [email, password]);
+  }, [email, password, t]);
 
   return (
     <Card>
-      <h1 className="font-display text-headline-md text-on-surface">Console d’administration</h1>
-      <p className="mt-1 text-body-md text-on-surface-variant">
-        Réservée aux super-administrateurs de la plateforme. Connectez-vous pour gérer les prompts système.
-      </p>
+      <h1 className="font-display text-headline-md text-on-surface">{t("loginTitle")}</h1>
+      <p className="mt-1 text-body-md text-on-surface-variant">{t("loginDesc")}</p>
       <div className="mt-6 space-y-3">
-        <Input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type="email" placeholder={t("emailPlaceholder")} value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="password" placeholder={t("passwordPlaceholder")} value={password} onChange={(e) => setPassword(e.target.value)} />
         {error !== null ? <p className="text-body-sm text-error">{error}</p> : null}
         <Button onClick={() => void signIn()} disabled={busy || email === "" || password === ""}>
-          {busy ? "Connexion…" : "Se connecter"}
+          {busy ? t("signingIn") : t("signIn")}
         </Button>
       </div>
     </Card>
@@ -63,6 +63,7 @@ function AdminLogin(): ReactElement {
 }
 
 function PromptEditor(): ReactElement {
+  const t = useTranslations("Admin");
   const [data, setData] = useState<AdminData | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -72,13 +73,13 @@ function PromptEditor(): ReactElement {
   const load = useCallback(async (): Promise<void> => {
     const res = await fetch("/api/admin/prompts", { cache: "no-store" });
     if (!res.ok) {
-      setStatus("Chargement impossible.");
+      setStatus(t("loadError"));
       return;
     }
     const next: AdminData = await res.json();
     setData(next);
     setSelected((prev) => prev ?? next.keys[0] ?? null);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -100,18 +101,18 @@ function PromptEditor(): ReactElement {
       });
       const body: { version?: number; error?: string } = await res.json();
       if (!res.ok) {
-        setStatus(`Échec : ${body.error ?? "erreur"}`);
+        setStatus(t("saveFail", { error: body.error ?? t("saveError") }));
       } else {
-        setStatus(`Version ${body.version ?? "?"} activée.`);
+        setStatus(t("versionActivated", { version: body.version ?? t("versionUnknown") }));
         await load();
       }
     } catch {
-      setStatus("Échec réseau.");
+      setStatus(t("networkFail"));
     }
     setBusy(false);
-  }, [selected, draft, load]);
+  }, [selected, draft, load, t]);
 
-  if (data === null) return <p className="text-on-surface-variant">Chargement…</p>;
+  if (data === null) return <p className="text-on-surface-variant">{t("loading")}</p>;
 
   const meta = selected !== null ? data.meta[selected] : undefined;
   const versionsForKey = selected !== null ? data.versions.filter((v) => v.promptKey === selected) : [];
@@ -121,9 +122,9 @@ function PromptEditor(): ReactElement {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-headline-md text-on-surface">Prompts système</h1>
+        <h1 className="font-display text-headline-md text-on-surface">{t("promptsTitle")}</h1>
         <Button variant="ghost" size="sm" onClick={() => void createClient().auth.signOut().then(() => window.location.reload())}>
-          Se déconnecter
+          {t("signOut")}
         </Button>
       </div>
 
@@ -140,14 +141,14 @@ function PromptEditor(): ReactElement {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-body-lg text-on-surface">{meta.label}</h2>
             <span className="text-body-sm text-on-surface-variant">
-              {activeVersion !== undefined ? `Version active : v${activeVersion.version}` : "Aucune version active (défaut en vigueur)"}
-              {versionsForKey.length > 0 ? ` · ${versionsForKey.length} version(s)` : ""}
+              {activeVersion !== undefined ? t("activeVersion", { version: activeVersion.version }) : t("noActiveVersion")}
+              {versionsForKey.length > 0 ? t("versionsCount", { count: versionsForKey.length }) : ""}
             </span>
           </div>
           <p className="mt-1 text-body-sm text-on-surface-variant">{meta.description}</p>
           {meta.placeholders.length > 0 ? (
             <p className="mt-2 flex flex-wrap items-center gap-2 text-body-sm text-on-surface-variant">
-              Placeholders remplis par le code :
+              {t("placeholdersIntro")}
               {meta.placeholders.map((p) => (
                 <Chip key={p} tone="neutral">{`{{${p}}}`}</Chip>
               ))}
@@ -161,20 +162,16 @@ function PromptEditor(): ReactElement {
           />
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <Button onClick={() => void save()} disabled={busy || !isDirty || draft.trim() === ""}>
-              {busy ? "Activation…" : "Activer cette version"}
+              {busy ? t("activating") : t("activate")}
             </Button>
             {isDirty ? (
               <Button variant="ghost" size="sm" onClick={() => setDraft(activeContent(data, selected))}>
-                Annuler les modifications
+                {t("cancelChanges")}
               </Button>
             ) : null}
             {status !== null ? <span className="text-body-sm text-on-surface-variant">{status}</span> : null}
           </div>
-          <p className="mt-3 text-body-sm text-on-surface-variant">
-            Tout éditable, responsabilité humaine : les validateurs serveur (extraction, narration, garde-fou catalogue)
-            bornent toujours la sortie, mais un prompt dégradé baisse la qualité. Repli automatique sur le défaut si aucune
-            version active.
-          </p>
+          <p className="mt-3 text-body-sm text-on-surface-variant">{t("editableNote")}</p>
         </Card>
       ) : null}
     </div>
@@ -190,13 +187,14 @@ export function AdminPrompts({
   isSuperAdmin: boolean;
   email: string | null;
 }): ReactElement {
+  const t = useTranslations("Admin");
   if (!authed) return <AdminLogin />;
   if (!isSuperAdmin) {
     return (
       <Card>
-        <h1 className="font-display text-headline-md text-on-surface">Accès refusé</h1>
+        <h1 className="font-display text-headline-md text-on-surface">{t("accessDenied")}</h1>
         <p className="mt-1 text-body-md text-on-surface-variant">
-          Le compte {email ?? ""} n’est pas super-administrateur de la plateforme.
+          {t("notSuperAdmin", { email: email ?? "" })}
         </p>
         <Button
           className="mt-4"
@@ -204,7 +202,7 @@ export function AdminPrompts({
           size="sm"
           onClick={() => void createClient().auth.signOut().then(() => window.location.reload())}
         >
-          Se déconnecter
+          {t("signOut")}
         </Button>
       </Card>
     );
