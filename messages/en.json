@@ -236,7 +236,20 @@
       }
     }
   },
+  "StatusDot": {
+    "high": "Verified against vendor docs",
+    "medium": "Estimate (to confirm)",
+    "low": "Estimate to challenge",
+    "title": "Confidence: {label}"
+  },
   "Results": {
+    "metaTitle": "Recommendation, Strate",
+    "metaDescription": "Your recommended sovereign memory-base stack: 7 layers, a 10-dimension radar and a sourced cost map.",
+    "pageEyebrow": "Recommendation",
+    "pageTitle": "Your sovereign infrastructure",
+    "perMonth": "{cost} €/mo",
+    "included": "included",
+    "alternativesLabel": "Alternatives:",
     "scoreShort": {
       "conf": "Compliance",
       "audit": "Audit",

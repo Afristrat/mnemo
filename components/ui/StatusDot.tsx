@@ -1,13 +1,15 @@
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { cn } from "@/lib/utils/cn";
 
 /** Niveau de confiance d'une donnée chiffrée (cf. calibration ±30 % : 🟢🟡🟠). */
 export type Confidence = "high" | "medium" | "low";
 
-const CONFIDENCE_META: Record<Confidence, { dot: string; label: string }> = {
-  high: { dot: "bg-primary-container", label: "Vérifié sur la doc vendor" },
-  medium: { dot: "bg-tertiary-container", label: "Estimation (à confirmer)" },
-  low: { dot: "bg-error", label: "Estimation à challenger" },
+// La couleur de pastille est de la donnée (pas de prose) ; les libellés sont i18n (namespace `StatusDot`).
+const CONFIDENCE_DOT: Record<Confidence, string> = {
+  high: "bg-primary-container",
+  medium: "bg-tertiary-container",
+  low: "bg-error",
 };
 
 type StatusDotProps = {
@@ -22,14 +24,15 @@ export function StatusDot({
   showLabel = false,
   className,
 }: StatusDotProps): ReactElement {
-  const meta = CONFIDENCE_META[confidence];
+  const t = useTranslations("StatusDot");
+  const label = t(confidence);
   return (
     <span className={cn("inline-flex items-center gap-1.5", className)}>
-      <span className={cn("h-2.5 w-2.5 rounded-full", meta.dot)} aria-hidden="true" title={`Confiance : ${meta.label}`} />
+      <span className={cn("h-2.5 w-2.5 rounded-full", CONFIDENCE_DOT[confidence])} aria-hidden="true" title={t("title", { label })} />
       {showLabel ? (
-        <span className="text-body-sm text-on-surface-variant">{meta.label}</span>
+        <span className="text-body-sm text-on-surface-variant">{label}</span>
       ) : (
-        <span className="sr-only">{meta.label}</span>
+        <span className="sr-only">{label}</span>
       )}
     </span>
   );

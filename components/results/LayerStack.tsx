@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import type { Layer } from "@/lib/engine";
@@ -8,6 +9,7 @@ type LayerStackProps = { layers: Layer[] };
 /** Affiche la stack recommandée, une carte par couche C0→C6. */
 export function LayerStack({ layers }: LayerStackProps): ReactElement {
   const resolveEngine = useEngineText();
+  const t = useTranslations("Results");
   return (
     <div className="space-y-3">
       {layers.map((layer) => (
@@ -27,12 +29,12 @@ export function LayerStack({ layers }: LayerStackProps): ReactElement {
               </div>
             </div>
             <span className="shrink-0 font-mono text-body-sm text-on-surface-variant">
-              {layer.cost > 0 ? `${layer.cost} €/mois` : "inclus"}
+              {layer.cost > 0 ? t("perMonth", { cost: layer.cost }) : t("included")}
             </span>
           </div>
           <p className="mt-3 text-body-sm text-on-surface-variant">{layer.note}</p>
           <p className="mt-1 text-body-sm text-on-surface-variant">
-            <span className="text-on-surface-variant/70">Alternatives :</span> {layer.alternatives}
+            <span className="text-on-surface-variant/70">{t("alternativesLabel")}</span> {layer.alternatives}
           </p>
         </Card>
       ))}
