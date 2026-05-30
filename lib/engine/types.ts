@@ -80,7 +80,8 @@ export type WorkloadLine = {
   source: "ingest" | "generate";
   modality: Modality;
   mode: MMMode;
-  estimate: string;
+  /** Libellé de charge (descripteur i18n, S-058 : verbe × modalité × unité × mode). */
+  estimate: Message;
   monthlyCost: number;
   contributesTo: ("C4" | "C5" | "C6")[];
 };

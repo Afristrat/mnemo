@@ -329,7 +329,7 @@ export function ResultsView(): ReactElement {
     embeddingsCost: activeResult.sizing.embeddingsMultimodal ? Math.round(prices.multimodalEmbeddings.amount) : 0,
     apiLines: activeResult.sizing.workloads
       .filter((w) => w.mode === "api" && w.monthlyCost > 0)
-      .map((w) => ({ label: w.estimate, cost: w.monthlyCost })),
+      .map((w) => ({ label: resolveEngine(w.estimate), cost: w.monthlyCost })),
   };
 
   return (

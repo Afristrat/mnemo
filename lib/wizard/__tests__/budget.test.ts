@@ -7,7 +7,7 @@ function sizing(gpu: number, apiCosts: number[], storageGb = 0): Sizing {
     source: "generate",
     modality: "video",
     mode: "api",
-    estimate: "x",
+    estimate: { id: "test" },
     monthlyCost: c,
     contributesTo: ["C5", "C6"],
   }));

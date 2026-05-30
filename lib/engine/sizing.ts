@@ -12,6 +12,7 @@
 //, ce ne sont PAS des prix (cf. ADR-010).
 
 import type { Confidence } from "@/components/ui/StatusDot";
+import { msg } from "./message";
 import { BASELINE_SIZING_PARAMS, type SizingParams, type Volet } from "./sizing-params";
 import type { CostSource, GpuTier, MediaNeed, MMTier, Modality, Profile, Sizing, WorkloadLine } from "./types";
 
@@ -56,13 +57,6 @@ export type MultimodalPriceTable = {
 // --- Étiquettes de lignes de charge (non paramétriques) --------------------------------------
 // Les HYPOTHÈSES de dimensionnement (quantités, empreinte stockage, charge GPU, seuils) sont
 // désormais des PARAMÈTRES injectables (S-056) : cf. `SizingParams` / `BASELINE_SIZING_PARAMS`.
-
-const UNIT_LABEL: Record<Modality, string> = { audio: "min/mois", video: "min/mois", images: "images/mois" };
-const VERB_LABEL: Record<Modality, Record<Volet, string>> = {
-  audio: { ingest: "transcription audio", generate: "synthèse vocale" },
-  video: { ingest: "analyse vidéo", generate: "génération vidéo" },
-  images: { ingest: "OCR/vision images", generate: "génération d'images" },
-};
 
 /** Un besoin est ACTIF si au moins un volet a un palier ≠ none (sinon il ne dimensionne rien). */
 function isActive(need: MediaNeed): boolean {
@@ -132,12 +126,12 @@ export function costMultimodalSizing(
         monthlyCost = Math.round(qty * prices.api[need.modality][volet].amount);
       }
 
-      const modeLabel = need.mode === "sovereign" ? "souverain" : "API";
       workloads.push({
         source: volet,
         modality: need.modality,
         mode: need.mode,
-        estimate: `${VERB_LABEL[need.modality][volet]} ≈ ${qty} ${UNIT_LABEL[need.modality]} (${modeLabel})`,
+        // Descripteur i18n (S-058) : verbe (modalité × volet) ≈ quantité unité (mode). Résolu fr/en par l'UI.
+        estimate: msg("sizing.estimate", { vkey: `${need.modality}_${volet}`, qty, modality: need.modality, mode: need.mode }),
         monthlyCost,
         contributesTo: volet === "ingest" ? ["C4", "C5", "C6"] : ["C5", "C6"],
       });
