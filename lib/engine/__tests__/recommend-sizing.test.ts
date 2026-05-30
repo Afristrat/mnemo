@@ -73,8 +73,8 @@ describe("recommend, défaut neutre (moteur pur, sans prix injectés)", () => {
     expect(r.costSources).toEqual([]);
     // sizing calculé mais à coût nul (prix neutres)
     expect(r.sizing.gpu.monthlyCost).toBe(0);
-    // verdict toujours rempli
-    expect(r.verdict.firmPriceTier).toContain("[PLACEHOLDER]");
+    // verdict toujours rempli (descripteur i18n, S-058)
+    expect(r.verdict.firmPriceTier.id).toBe("verdict.firmPriceTier");
     expect(r.layers).toHaveLength(7);
     expect(r.scores).toHaveLength(10);
   });
@@ -107,12 +107,15 @@ describe("recommend, prix injectés (coûts multimédias dans les couches)", () 
     expect(priced.setupCost).toBe(2);
   });
 
-  it("remplit le verdict (prix ferme placeholder, bandes ±30 % coût et setup)", () => {
-    expect(priced.verdict.firmPriceTier).toContain("[PLACEHOLDER]");
+  it("remplit le verdict (descripteurs i18n : prix ferme, douleur par activité, étape suivante, bandes ±30 %)", () => {
+    // Champs textuels = descripteurs Message (S-058) → on asserte l'id/les valeurs, pas la prose.
+    expect(priced.verdict.firmPriceTier.id).toBe("verdict.firmPriceTier");
     expect(priced.verdict.variableCostBand).toEqual(costBand(priced.totalCost));
     expect(priced.verdict.setupCostBand).toEqual(costBand(priced.setupCost));
-    expect(priced.verdict.pain.length).toBeGreaterThan(0);
-    expect(priced.verdict.nextStep).toMatch(/devis/i);
+    expect(priced.verdict.pain.id).toBe("verdict.pain");
+    expect(typeof priced.verdict.pain.values?.activity).toBe("string");
+    expect(priced.verdict.gain.id).toBe("verdict.gain");
+    expect(priced.verdict.nextStep.id).toMatch(/^verdict\.nextStep\.(withSetup|default)$/);
   });
 
   it("trace les sources des coûts mobilisés (dédupliquées, URL + date)", () => {

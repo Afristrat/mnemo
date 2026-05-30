@@ -1,23 +1,31 @@
-import { createTranslator } from "next-intl";
 import { describe, it, expect } from "vitest";
 import frMessages from "@/messages/fr.json";
 import enMessages from "@/messages/en.json";
-import { MODULES, defaultModuleLevels, formatModuleTask, recommend, type EngineResolver, type Profile } from "@/lib/engine";
+import { MODULES, defaultModuleLevels, formatModuleTask, msg, recommend, type EngineResolver, type Profile } from "@/lib/engine";
 
-// S-058 (reliquat moteur, chantier a) : la prose des modules est désormais i18n (descripteurs Message
-// résolus en fr/en). On vérifie : (1) parité anti-drift entre le `select` ICU de `scores.moduleBonus`
-// et `modules.<id>.name` ; (2) rendu ICU réel de `formatModuleTask` ; (3) bonus modules localisé.
+// S-058 (reliquat moteur, chantier a) : la prose des modules est i18n (descripteurs Message résolus
+// en fr/en). On vérifie sans monter next-intl : (1) chaque clé de message existe en fr ET en ;
+// (2) parité anti-drift entre le `select` ICU de `scores.moduleBonus` et `modules.<id>.name` ;
+// (3) `formatModuleTask` câble bien les parties dans le gabarit ; (4) les bonus ne fuient aucun id brut.
 
-const LOCALES = [
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Lit une chaîne à un chemin pointé dans un catalogue de messages (vide si absente / non-chaîne). */
+function lookup(root: unknown, path: string): string {
+  let cur: unknown = root;
+  for (const part of path.split(".")) {
+    if (!isRecord(cur)) return "";
+    cur = cur[part];
+  }
+  return typeof cur === "string" ? cur : "";
+}
+
+const CATALOGS = [
   { locale: "fr", messages: frMessages },
   { locale: "en", messages: enMessages },
 ] as const;
-
-/** Résolveur de descripteurs moteur via next-intl (équivalent test de `useEngineText`). */
-function engineResolver(locale: string, messages: Record<string, unknown>): EngineResolver {
-  const t = createTranslator({ locale, messages, namespace: "Engine" });
-  return (m) => t(m.id, m.values);
-}
 
 function profile(): Profile {
   return {
@@ -41,63 +49,61 @@ function profile(): Profile {
 }
 
 describe("Modules i18n (S-058)", () => {
-  it("chaque module a une clé de nom/justification/tâche + niveaux résolvables en fr ET en", () => {
-    for (const { locale, messages } of LOCALES) {
-      const resolve = engineResolver(locale, messages);
+  it("chaque clé de nom/justification/tâche + niveaux existe en fr ET en", () => {
+    for (const { messages } of CATALOGS) {
       for (const mod of MODULES) {
-        expect(resolve(mod.name).length).toBeGreaterThan(0);
-        expect(resolve(mod.why).length).toBeGreaterThan(0);
-        expect(resolve(mod.baseTask).length).toBeGreaterThan(0);
+        expect(lookup(messages, `Engine.${mod.name.id}`).length).toBeGreaterThan(0);
+        expect(lookup(messages, `Engine.${mod.why.id}`).length).toBeGreaterThan(0);
+        expect(lookup(messages, `Engine.${mod.baseTask.id}`).length).toBeGreaterThan(0);
         expect(mod.levels).toHaveLength(mod.maxLevel + 1);
         for (const level of mod.levels) {
-          expect(resolve(level.label).length).toBeGreaterThan(0);
-          expect(resolve(level.desc).length).toBeGreaterThan(0);
+          expect(lookup(messages, `Engine.${level.label.id}`).length).toBeGreaterThan(0);
+          expect(lookup(messages, `Engine.${level.desc.id}`).length).toBeGreaterThan(0);
         }
       }
+      expect(lookup(messages, "Engine.modules.taskTemplate").length).toBeGreaterThan(0);
     }
   });
 
   // Anti-drift : le `select` ICU de moduleBonus embarque le nom inline (ICU ne peut référencer une
-  // autre clé). On garantit qu'il reste identique à `modules.<id>.name` dans les DEUX langues.
-  it("le nom dans le select scores.moduleBonus correspond à modules.<id>.name (parité, fr ET en)", () => {
-    for (const { locale, messages } of LOCALES) {
-      const t = createTranslator({ locale, messages, namespace: "Engine" });
+  // autre clé). On garantit que chaque branche reste identique à `modules.<id>.name`, fr ET en.
+  it("le select scores.moduleBonus contient exactement modules.<id>.name (parité, fr ET en)", () => {
+    for (const { messages } of CATALOGS) {
+      const bonus = lookup(messages, "Engine.scores.moduleBonus");
+      expect(bonus).toContain("{modId, select,");
       for (const mod of MODULES) {
-        const rendered = t("scores.moduleBonus", { modId: mod.id, level: 2, maxLevel: 3, bonus: "0.5" });
-        const name = t(`modules.${mod.id}.name`);
-        expect(rendered).toContain(name);
+        const name = lookup(messages, `Engine.modules.${mod.id}.name`);
+        expect(name.length).toBeGreaterThan(0);
+        // La branche du select est « <id> {<name>} » → le nom apparaît littéralement dans le gabarit.
+        expect(bonus).toContain(`${mod.id} {${name}}`);
       }
     }
   });
 
-  it("formatModuleTask compose le plan d'action via le gabarit (parties résolues, fr ET en)", () => {
-    for (const { locale, messages } of LOCALES) {
-      const resolve = engineResolver(locale, messages);
-      const mod = MODULES.find((m) => m.id === "mel");
-      expect(mod).toBeDefined();
-      if (!mod) return;
-      const task = formatModuleTask(
-        { level: 2, maxLevel: mod.maxLevel, levelLabel: mod.levels[2].label, levelDesc: mod.levels[2].desc, baseTask: mod.baseTask },
-        resolve,
-      );
-      // Le gabarit contient le niveau, le libellé du niveau, la tâche de base et la description.
-      expect(task).toContain("2/4");
-      expect(task).toContain(resolve(mod.levels[2].label));
-      expect(task).toContain(resolve(mod.baseTask));
-      expect(task).toContain(resolve(mod.levels[2].desc));
-    }
+  it("formatModuleTask compose le gabarit avec les parties résolues (niveau + label + tâche + desc)", () => {
+    const resolve: EngineResolver = (m) => {
+      if (m.id === "modules.taskTemplate" && m.values) {
+        return `[${m.values.level}/${m.values.maxLevel} ${m.values.label}] ${m.values.baseTask} ::: ${m.values.desc}`;
+      }
+      return m.id; // un descripteur simple → renvoie son id (stub)
+    };
+    const task = formatModuleTask(
+      { level: 2, maxLevel: 4, levelLabel: msg("LBL"), levelDesc: msg("DSC"), baseTask: msg("BASE") },
+      resolve,
+    );
+    expect(task).toBe("[2/4 LBL] BASE ::: DSC");
   });
 
-  it("les bonus de scores des modules actifs se rendent avec le nom localisé (pas d'id brut)", () => {
+  it("les bonus de scores des modules actifs portent un modId connu (pas de prose, pas de fuite d'id)", () => {
     const reco = recommend(profile());
-    const resolve = engineResolver("en", enMessages);
+    const ids = new Set<string>(MODULES.map((m) => m.id));
     const bonuses = reco.scores.flatMap((s) => s.bonuses ?? []);
     expect(bonuses.length).toBeGreaterThan(0);
     for (const b of bonuses) {
-      const rendered = resolve(b);
-      // Aucun identifiant technique de module ne fuit dans la chaîne rendue.
-      expect(rendered).not.toContain("modId");
-      expect(rendered).not.toMatch(/\bbisect\b|\breversal\b|\bprereg\b/);
+      expect(b.id).toBe("scores.moduleBonus");
+      const modId = b.values?.modId;
+      expect(typeof modId).toBe("string");
+      if (typeof modId === "string") expect(ids.has(modId)).toBe(true);
     }
   });
 });

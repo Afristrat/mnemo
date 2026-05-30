@@ -197,7 +197,14 @@
       }
     },
     "verdict": {
-      "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk."
+      "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk.",
+      "pain": "{activity, select, cabinet_regule {Reconstructing “who decided what, and when” is costly and exposes you under audit; your sensitive files pass through memories you do not control.} pme_startup {Your team's knowledge scatters (chats, docs, heads); every departure or pivot loses the context behind decisions.} recherche {Your corpora and the history of your hypotheses are fragmented; replaying “what we knew” at a given date is impossible.} agence {Client context is rebuilt on every engagement; account memory lives in third-party, non-sovereign tools.} freelance {Your working memory depends on proprietary tools; you can neither audit it nor take it with you.} particulier {Your notes and recollections are scattered and tied to a vendor; no portability guarantee.} other {Your organisational memory is scattered and depends on tools you do not control (sovereignty, portability, auditability).}}",
+      "gain": "“−Risk” proven: Exit Escrow (reproducible bundle, zero lock-in) + fiduciary charter (no hidden commission). Productivity gains: to be measured on your own corpus, never claimed blindly.",
+      "firmPriceTier": "[PLACEHOLDER], Strate's service price (survey in progress)",
+      "nextStep": {
+        "withSetup": "Confirm the media volumes (remember + create + backlog) and request a firm quote before going live.",
+        "default": "Refine the profile in the configurator, then request a firm quote before going live."
+      }
     },
     "preset": {
       "reasonHard": "Maximum level of need — trigger(s): {drivers}. Maximum sovereignty, on-prem preferred, strong isolation.",

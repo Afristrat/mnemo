@@ -91,15 +91,18 @@ export type Sizing = {
   embeddingsMultimodal: boolean;
   workloads: WorkloadLine[];
 };
+// i18n (S-058) : tous les champs textuels du verdict sont des descripteurs `Message` résolus en fr/en
+// par la présentation (ResultsView → `DisplayVerdict`). Les bandes de coût restent numériques (rendues
+// à part). `pain` porte la valeur `activity` (select ICU) ; `firmPriceTier` = [PLACEHOLDER] (sondage).
 export type Verdict = {
-  pain: string;
+  pain: Message;
   /** Risque saillant (descripteur i18n, S-058) = le 1er risque détecté, ou un risque générique par défaut. */
   risk: Message;
-  gain: string;
-  firmPriceTier: string; // prix ferme service Strate ([PLACEHOLDER])
+  gain: Message;
+  firmPriceTier: Message; // prix ferme service Strate ([PLACEHOLDER])
   variableCostBand: { low: number; high: number };
   setupCostBand: { low: number; high: number };
-  nextStep: string;
+  nextStep: Message;
 };
 /**
  * Raison du preset « expliqué » (S-058) : gabarit i18n `template` (placeholder `{drivers}` + valeurs
