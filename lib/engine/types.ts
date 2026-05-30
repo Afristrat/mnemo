@@ -370,7 +370,8 @@ export type Recommendation = {
   scores: ScoreDimension[];
   scoreAvg: number;
   activeModules: ActiveModule[];
-  compliance: string[];
+  /** Actions de conformité (descripteurs i18n, S-058 : résolus en fr/en par la présentation). */
+  compliance: Message[];
   risks: string[];
   kmChecks: KMCheck[];
   /** Dimensionnement multimédia déduit des besoins (refonte Strate, S-018). */

@@ -190,7 +190,7 @@ export function buildDeliverable(
     scores,
     { heading: "Carte de coûts", rows: costRows, bullets: [] },
     ensembleSection,
-    { heading: "Actions de conformité", rows: [], bullets: reco.compliance },
+    { heading: "Actions de conformité", rows: [], bullets: reco.compliance.map(resolve) },
     { heading: "Risques détectés", rows: [], bullets: reco.risks },
     {
       heading: "Charte fiduciaire",

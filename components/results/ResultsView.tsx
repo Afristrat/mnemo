@@ -462,7 +462,7 @@ export function ResultsView(): ReactElement {
             <h2 className="font-display text-headline-md text-on-surface">{tR("compliance")}</h2>
             <ul className="mt-3 space-y-2 text-body-sm text-on-surface-variant">
               {activeResult.compliance.map((action) => (
-                <li key={action}>{action}</li>
+                <li key={action.id}>{resolveEngine(action)}</li>
               ))}
             </ul>
           </Card>
