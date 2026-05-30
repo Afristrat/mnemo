@@ -113,6 +113,16 @@
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {transcription audio} audio_generate {synthèse vocale} video_ingest {analyse vidéo} video_generate {génération vidéo} images_ingest {OCR/vision images} images_generate {génération d’images} other {charge}} ≈ {qty} {modality, select, audio {min/mois} video {min/mois} images {images/mois} other {/mois}} ({mode, select, sovereign {souverain} api {API} other {}})"
     },
+    "backup": {
+      "vector": {
+        "none": "Aucune sauvegarde (criticité « aucune »).",
+        "forcedBackup": "Sauvegarde des vecteurs imposée (expert).",
+        "forcedReembed": "Ré-embed imposé (expert), RTO plus long, vecteurs reconstruits depuis la source.",
+        "autoReembed": "Ré-embed moins cher sur {months} mois (vecteurs reconstructibles depuis la source), RTO plus long.",
+        "autoBackupCritical": "Sauvegarde des vecteurs (RTO critique : pas de temps pour ré-embed).",
+        "autoBackup": "Sauvegarde des vecteurs moins chère que le ré-embed sur l’horizon."
+      }
+    },
     "verdict": {
       "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage."
     },

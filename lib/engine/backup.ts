@@ -8,6 +8,7 @@
 // Hypothèses de modélisation (±30 %, comme les facteurs média de S-016) : documentées ci-dessous,
 // surchargeables. Les coûts réutilisent les prix stockage (médias) + backup (egress/archive/hors-site).
 
+import { msg, type Message } from "./message";
 import type { MultimodalPriceEntry } from "./sizing";
 import type {
   Backup,
@@ -230,7 +231,7 @@ export function costBackup(
   if (core.criticality === "none") {
     return {
       backupStorageGb: 0,
-      vector: { strategy: "backup", backupMonthlyCost: 0, reembedCost: 0, reason: "Aucune sauvegarde (criticité « aucune »)." },
+      vector: { strategy: "backup", backupMonthlyCost: 0, reembedCost: 0, reason: msg("backup.vector.none") },
       monthlyCost: 0,
       setupCost: 0,
       costSources: [],
@@ -273,22 +274,22 @@ export function costBackup(
   const forced = profile.backup?.vectorStrategy ?? "auto";
   const reembedViable = core.criticality !== "critical"; // RTO critical trop court pour ré-embed
   let vectorStrategy: "backup" | "reembed";
-  let reason: string;
+  let reason: Message;
   if (forced === "backup") {
     vectorStrategy = "backup";
-    reason = "Sauvegarde des vecteurs imposée (expert).";
+    reason = msg("backup.vector.forcedBackup");
   } else if (forced === "reembed") {
     vectorStrategy = "reembed";
-    reason = "Ré-embed imposé (expert), RTO plus long, vecteurs reconstruits depuis la source.";
+    reason = msg("backup.vector.forcedReembed");
   } else if (reembedViable && reembedCost <= vectorBackupMonthly * REEMBED_HORIZON_MONTHS) {
     vectorStrategy = "reembed";
-    reason = `Ré-embed moins cher sur ${REEMBED_HORIZON_MONTHS} mois (vecteurs reconstructibles depuis la source), RTO plus long.`;
+    reason = msg("backup.vector.autoReembed", { months: REEMBED_HORIZON_MONTHS });
   } else {
     vectorStrategy = "backup";
     reason =
       core.criticality === "critical"
-        ? "Sauvegarde des vecteurs (RTO critique : pas de temps pour ré-embed)."
-        : "Sauvegarde des vecteurs moins chère que le ré-embed sur l'horizon.";
+        ? msg("backup.vector.autoBackupCritical")
+        : msg("backup.vector.autoBackup");
   }
   const vector: VectorDecision = {
     strategy: vectorStrategy,

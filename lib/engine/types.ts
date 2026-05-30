@@ -159,7 +159,8 @@ export type VectorDecision = {
   strategy: "backup" | "reembed";
   backupMonthlyCost: number; // coût récurrent si on sauvegarde les vecteurs
   reembedCost: number; // coût one-time (à la restauration) si on ré-embed
-  reason: string;
+  /** Justification de l'arbitrage (descripteur i18n, S-058). */
+  reason: Message;
 };
 
 /** Plan de sauvegarde déduit (ajouté à `Recommendation`). `criticality "none"` → plan neutre, coûts 0. */
