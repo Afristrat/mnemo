@@ -50,7 +50,7 @@ describe("growth + latency intégrés au moteur (S-049)", () => {
       prof({ sensitivity: "public", users: 1, budget: "lt50", volume: "lt1", growth: "low", latency: "fast" }),
     );
     expect(r.preset).toBe("LIGHT");
-    expect(r.risks.some((x) => /latence faible/i.test(x))).toBe(true);
+    expect(r.risks.some((x) => x.id === "diagnostics.risks.latencyLight")).toBe(true);
   });
 
   it("growth=high incohérente avec LIGHT → risque signalé", () => {
@@ -58,6 +58,6 @@ describe("growth + latency intégrés au moteur (S-049)", () => {
       prof({ sensitivity: "public", users: 1, budget: "lt50", volume: "lt1", latency: "relaxed", growth: "high" }),
     );
     expect(r.preset).toBe("LIGHT");
-    expect(r.risks.some((x) => /croissance forte/i.test(x))).toBe(true);
+    expect(r.risks.some((x) => x.id === "diagnostics.risks.growthLight")).toBe(true);
   });
 });

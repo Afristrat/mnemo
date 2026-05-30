@@ -72,7 +72,46 @@
         "secretProAuditTrail": "✍ Audit trail signé append-only (PL/pgSQL triggers)",
         "secretProAnonymization": "👤 Anonymisation k-anonymity k=5 minimum sur tout export hors périmètre dossier",
         "banProprietaryMemory": "🚫 Bannir la mémoire propriétaire des éditeurs (Memory ChatGPT/Claude) pour toute décision structurante"
+      },
+      "risks": {
+        "noTechHard": "⚠️ Preset HARD avec compétences non-techniques : nécessite un partenaire DevOps, ou redimensionner en MEDIUM managé.",
+        "auditLight": "🚨 Audit obligatoire incompatible avec LIGHT (pas d’audit trail signé). Passer en MEDIUM minimum.",
+        "bitemporalLight": "🚨 Bitemporalité obligatoire impossible en LIGHT. Basculer en MEDIUM (Postgres+AGE ou Graphiti).",
+        "volumeLight": "⚠️ Volume > 1 TB avec LIGHT : la free tier saturera en 1-3 mois. Provisionner MEDIUM dès le départ.",
+        "audioOnly": "📌 Audio seul : prévoir pipeline Whisper large-v3 (diarisation) en amont. +50-100 €/mois si self-host GPU.",
+        "videoLight": "⚠️ Vidéo détectée mais preset LIGHT : transcription + frames + embedding vidéo coûte du GPU. Évaluer MEDIUM.",
+        "marocRgpdNoCndp": "🇲🇦 Zone Maroc avec RGPD mais sans CNDP : la CNDP s’applique en plus. Vérifier.",
+        "usersLight": "⚠️ {users} utilisateurs avec LIGHT : pas de multi-tenancy stricte (RLS). Basculer MEDIUM (RLS + champ circle).",
+        "voicesLight": "⚠️ Multi-perspective avec LIGHT : pas de gouvernance des voices. Passer en MEDIUM ou V1+ rapidement.",
+        "budgetOverflow": "💰 Budget < 50 € mais coût estimé {totalCost} € : dépassement de {over} €. Réduire le scope ou augmenter le budget.",
+        "manyContentLight": "🔄 4+ types de contenu en LIGHT : la complexité d’ingestion dépasse ce que LIGHT supporte. Basculer MEDIUM.",
+        "reqLight": "📈 > 10k requêtes/jour : LIGHT API direct coûte cher. Self-host vLLM (MEDIUM/HARD) rentabilise.",
+        "latencyLight": "⚡ Latence faible attendue mais preset LIGHT (API managé tierce, aucune garantie de latence) : passer en MEDIUM (self-host pour maîtriser la latence).",
+        "growthLight": "🌱 Croissance forte anticipée mais LIGHT : provisionner MEDIUM dès le départ pour absorber la montée en charge sans migration en urgence.",
+        "noRegSensitive": "⚖️ Aucun régime juridique coché mais sensibilité non publique : presque toujours une erreur (RGPD s’applique dès qu’il y a des données personnelles)."
+      },
+      "km": {
+        "cause1": "1. Fausse prémisse « stocker = savoir »",
+        "cov1": "Frontmatter qualifie chaque atome (contrat de métadonnées) + types décision/méthode/postmortem",
+        "cause2": "2. Rigidité des instantanés figés",
+        "cov2Bitemp": "Bitemporel actif sur faits, V1+ ajoute bi-temp sur arêtes",
+        "cov2None": "Pas de bitemporel demandé → archive plate, risque de figer",
+        "cause3": "3. Décrochage opérationnel (la base n’est pas maintenue)",
+        "cov3": "Vault markdown = écriture = ingestion. Pas de saisie séparée à entretenir.",
+        "cause4": "4. Silos défensifs (rétention du savoir)",
+        "cov4Solo": "Solo : non applicable. Si croissance équipe → V1+ multi-voix",
+        "cov4Multi": "Multi-voix actif → délégation auditée append-only à prévoir (V1+)",
+        "cause5": "5. Approche tech-first (outil ≠ usage)",
+        "cov5": "DoD orientés usage métier (questionnaire profil, pas critères techniques)",
+        "cause6": "6. Perte de contexte stratégique",
+        "cov6Light": "Transclusion basique (markdown links). Limité pour archives complexes",
+        "cov6Full": "Transclusion + use cases ancrés possible (pattern note-maîtresse)",
+        "cause7": "7. Cycles répétitifs d’échec (KM jeté tous les 5 ans)",
+        "cov7": "Vault markdown portable + ADR figés → zéro vendor lock-in. Stack remplaçable sans perdre la matière."
       }
+    },
+    "verdict": {
+      "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage."
     }
   },
   "Results": {

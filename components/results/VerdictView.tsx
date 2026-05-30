@@ -6,10 +6,11 @@ import type { ReactElement, ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
-import type { Preset, Verdict } from "@/lib/engine";
+import type { Preset } from "@/lib/engine";
+import type { DisplayVerdict } from "@/lib/llm/narrate";
 
 type VerdictViewProps = {
-  verdict: Verdict;
+  verdict: DisplayVerdict;
   preset: Preset;
   /** Bascule vers le détail expert (même recommandation). */
   onExpert: () => void;

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import type { Preset, Profile } from "@/lib/engine/types";
-import { computeKMChecks, computeRisks } from "@/lib/engine/diagnostics";
 import { seedCatalog } from "@/lib/catalog";
 import frMessages from "@/messages/fr.json";
 
@@ -64,12 +63,11 @@ function catalogStrings(preset: Preset, p: Profile): string[] {
   return out;
 }
 
-// i18n (S-058) : le texte des scores ET des actions de conformité ne vit plus dans le moteur
-// (descripteurs Message) mais dans le catalogue — scanné séparément ci-dessous. Ici : catalogue de
-// composants + diagnostics encore en prose (KM checks, risques).
+// i18n (S-058) : le texte des scores, des actions de conformité, des risques et des KM checks ne vit
+// plus dans le moteur (descripteurs Message) mais dans le catalogue — scanné séparément ci-dessous
+// (2ᵉ cas). Ici : restent les chaînes brutes hors-i18n = noms/notes des composants du catalogue seed.
 function userFacingStrings(preset: Preset, p: Profile): string[] {
-  const km = computeKMChecks(preset, p).flatMap((c) => [c.cause, c.coverage]);
-  return [...catalogStrings(preset, p), ...km, ...computeRisks(preset, p, 100)];
+  return catalogStrings(preset, p);
 }
 
 describe("garde anti-codename perso (S-063)", () => {
