@@ -40,7 +40,7 @@ export function serializeRecoFacts(
     `Mise en route (une fois) : ${reco.setupCost} €`,
     `Coût variable estimé : ${reco.verdict.variableCostBand.low}–${reco.verdict.variableCostBand.high} €/mois`,
     `Mise en route estimée : ${reco.verdict.setupCostBand.low}–${reco.verdict.setupCostBand.high} €`,
-    `Prix du service Strate : ${reco.verdict.firmPriceTier}`,
+    `Prix du service Strate : ${resolve(reco.verdict.firmPriceTier)}`,
     `Score moyen : ${reco.scoreAvg}/10`,
     "Couches de la stack recommandée :",
     layers,

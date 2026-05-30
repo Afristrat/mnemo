@@ -20,7 +20,6 @@ import { deriveSizingParams } from "./sizing-params";
 import {
   SCORE_KEYS,
   type ActiveModule,
-  type Activity,
   type CostSource,
   type Profile,
   type Recommendation,
@@ -64,43 +63,23 @@ function computeActiveModules(profile: Profile): ActiveModule[] {
   return active;
 }
 
-// Prix de vente du service Strate : volontairement non figé tant que le sondage Van Westendorp
-// n'a pas de réponses (spec §11). Emplacement d'injection centralisé.
-const FIRM_PRICE_TIER_PLACEHOLDER = "[PLACEHOLDER], prix de vente du service Strate (sondage en cours)";
-
-const PAIN_BY_ACTIVITY: Partial<Record<Activity, string>> = {
-  "cabinet-regule":
-    "Reconstituer « qui a décidé quoi, et quand » coûte cher et vous expose en cas de contrôle ; vos dossiers sensibles transitent par des mémoires que vous ne maîtrisez pas.",
-  "pme-startup":
-    "Le savoir de l'équipe se disperse (conversations, docs, têtes) ; chaque départ ou pivot fait perdre le contexte des décisions.",
-  recherche:
-    "Vos corpus et l'historique de vos hypothèses sont éclatés ; impossible de rejouer « ce que l'on savait » à une date donnée.",
-  agence:
-    "Le contexte client se reconstruit à chaque mission ; la mémoire des comptes vit dans des outils tiers non souverains.",
-  freelance:
-    "Votre mémoire de travail dépend d'outils propriétaires ; vous ne pouvez ni l'auditer ni l'emporter.",
-  particulier:
-    "Vos notes et souvenirs sont dispersés et dépendants d'un éditeur ; aucune garantie de portabilité.",
-};
-
-const PAIN_DEFAULT =
-  "Votre mémoire d'organisation est dispersée et dépend d'outils que vous ne maîtrisez pas (souveraineté, portabilité, auditabilité).";
-
+// i18n (S-058, reliquat moteur chantier b) : le verdict ne porte plus de prose. Chaque champ
+// user-facing est un descripteur `Message` résolu en fr/en par la présentation (ResultsView →
+// DisplayVerdict). `pain` = `select` ICU sur l'activité (`other` couvre le défaut) ; `firmPriceTier`
+// reste le [PLACEHOLDER] tant que le sondage Van Westendorp n'a pas de réponses (spec §11).
 function buildVerdict(profile: Profile, totalCost: number, setupCost: number, risks: Message[]): Verdict {
   return {
-    pain: PAIN_BY_ACTIVITY[profile.activity] ?? PAIN_DEFAULT,
+    // ICU n'autorise pas le tiret dans une clé de `select` → on normalise (`cabinet-regule` → `cabinet_regule`) ;
+    // la branche `other` couvre l'activité « other » ET toute activité non listée (= ancien PAIN_DEFAULT).
+    pain: msg("verdict.pain", { activity: profile.activity.replace(/-/g, "_") }),
     // Risque saillant = 1er risque détecté (descripteur i18n), sinon risque générique de souveraineté.
     risk: risks[0] ?? msg("verdict.defaultRisk"),
     // « Prouvé » uniquement pour « −risques » (Exit Escrow + Fiduciary livrés) ; jamais de stat inventée (spec §11).
-    gain:
-      "« −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",
-    firmPriceTier: FIRM_PRICE_TIER_PLACEHOLDER,
+    gain: msg("verdict.gain"),
+    firmPriceTier: msg("verdict.firmPriceTier"),
     variableCostBand: costBand(totalCost),
     setupCostBand: costBand(setupCost),
-    nextStep:
-      setupCost > 0
-        ? "Validez les volumes médias (mémoriser + créer + backlog) et demandez un devis ferme avant le go."
-        : "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go.",
+    nextStep: setupCost > 0 ? msg("verdict.nextStep.withSetup") : msg("verdict.nextStep.default"),
   };
 }
 

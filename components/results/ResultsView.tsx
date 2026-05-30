@@ -248,11 +248,11 @@ export function ResultsView(): ReactElement {
       regulations: base.regulations,
       notes,
       base: {
-        pain: r.verdict.pain,
-        // verdict.risk est un descripteur i18n (S-058) → résolu en chaîne localisée avant d'alimenter le LLM.
+        // Champs du verdict = descripteurs i18n (S-058) → résolus en chaînes localisées avant d'alimenter le LLM.
+        pain: resolveEngine(r.verdict.pain),
         risk: resolveEngine(r.verdict.risk),
-        gain: r.verdict.gain,
-        nextStep: r.verdict.nextStep,
+        gain: resolveEngine(r.verdict.gain),
+        nextStep: resolveEngine(r.verdict.nextStep),
         // presetReason est un descripteur composé (S-058) → résolu en chaîne localisée avant le LLM.
         presetReason: formatPresetReason(r.presetReason, resolveEngine),
       },
@@ -290,9 +290,17 @@ export function ResultsView(): ReactElement {
   // Mode verdict (chemin 90 s) : synthèse compacte de la recommandation de référence.
   // Narration LLM appliquée aux 4 textes seulement ; les bandes de coût restent celles de la reco.
   if (mode === "verdict") {
-    // Résout le verdict moteur (risk = descripteur i18n) vers sa forme affichable (chaînes), puis applique
-    // éventuellement la narration LLM. VerdictView et la fusion n'opèrent que sur des chaînes.
-    const displayVerdict: DisplayVerdict = { ...result.verdict, risk: resolveEngine(result.verdict.risk) };
+    // Résout le verdict moteur (champs textuels = descripteurs i18n) vers sa forme affichable (chaînes),
+    // puis applique éventuellement la narration LLM. VerdictView et la fusion n'opèrent que sur des chaînes.
+    const displayVerdict: DisplayVerdict = {
+      pain: resolveEngine(result.verdict.pain),
+      risk: resolveEngine(result.verdict.risk),
+      gain: resolveEngine(result.verdict.gain),
+      firmPriceTier: resolveEngine(result.verdict.firmPriceTier),
+      nextStep: resolveEngine(result.verdict.nextStep),
+      variableCostBand: result.verdict.variableCostBand,
+      setupCostBand: result.verdict.setupCostBand,
+    };
     const verdictToShow = narration === null ? displayVerdict : mergeVerdictNarration(displayVerdict, narration);
     return (
       <div className="space-y-8">

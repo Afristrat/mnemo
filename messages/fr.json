@@ -197,7 +197,14 @@
       }
     },
     "verdict": {
-      "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage."
+      "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage.",
+      "pain": "{activity, select, cabinet_regule {Reconstituer « qui a décidé quoi, et quand » coûte cher et vous expose en cas de contrôle ; vos dossiers sensibles transitent par des mémoires que vous ne maîtrisez pas.} pme_startup {Le savoir de l'équipe se disperse (conversations, docs, têtes) ; chaque départ ou pivot fait perdre le contexte des décisions.} recherche {Vos corpus et l'historique de vos hypothèses sont éclatés ; impossible de rejouer « ce que l'on savait » à une date donnée.} agence {Le contexte client se reconstruit à chaque mission ; la mémoire des comptes vit dans des outils tiers non souverains.} freelance {Votre mémoire de travail dépend d'outils propriétaires ; vous ne pouvez ni l'auditer ni l'emporter.} particulier {Vos notes et souvenirs sont dispersés et dépendants d'un éditeur ; aucune garantie de portabilité.} other {Votre mémoire d'organisation est dispersée et dépend d'outils que vous ne maîtrisez pas (souveraineté, portabilité, auditabilité).}}",
+      "gain": "« −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",
+      "firmPriceTier": "[PLACEHOLDER], prix de vente du service Strate (sondage en cours)",
+      "nextStep": {
+        "withSetup": "Validez les volumes médias (mémoriser + créer + backlog) et demandez un devis ferme avant le go.",
+        "default": "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go."
+      }
     },
     "preset": {
       "reasonHard": "Niveau de besoin maximal — déclencheur(s) : {drivers}. Souveraineté maximale, on-prem privilégié, isolation forte.",
