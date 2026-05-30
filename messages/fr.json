@@ -236,7 +236,20 @@
       }
     }
   },
+  "StatusDot": {
+    "high": "Vérifié sur la doc vendor",
+    "medium": "Estimation (à confirmer)",
+    "low": "Estimation à challenger",
+    "title": "Confiance : {label}"
+  },
   "Results": {
+    "metaTitle": "Recommandation, Strate",
+    "metaDescription": "Votre stack de base mémorielle souveraine recommandée : 7 couches, radar 10 dimensions et carte de coûts sourcée.",
+    "pageEyebrow": "Recommandation",
+    "pageTitle": "Votre infrastructure souveraine",
+    "perMonth": "{cost} €/mois",
+    "included": "inclus",
+    "alternativesLabel": "Alternatives :",
     "scoreShort": {
       "conf": "Conformité",
       "audit": "Audit",

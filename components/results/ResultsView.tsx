@@ -25,6 +25,7 @@ import { seedCatalog, type Catalog } from "@/lib/catalog";
 import { decodeProfileFromParam } from "@/lib/share";
 import { useEngineText } from "@/lib/i18n/engine";
 import { mergeVerdictNarration, type DisplayVerdict, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
+import { buildOtherPrecisionNotes } from "@/lib/llm/precision-notes";
 import {
   buildEnsemble,
   decidePreset,
@@ -219,27 +220,13 @@ export function ResultsView(): ReactElement {
   const narrationContext = useMemo<NarrationContext | null>(() => {
     if (base === null) return null;
     const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices());
-    // Notes libres saisies au configurateur (S-052) → contexte de personnalisation du ton (jamais
-    // un chiffre : le garde-fou `isCleanNarration` rejette toute réintroduction de montant/score).
+    // Notes libres saisies au configurateur (S-052) + précisions « Autre » (S-064) → contexte de
+    // personnalisation du ton (jamais un chiffre : le garde-fou `isCleanNarration` rejette tout
+    // montant/score). Les préfixes des précisions vivent dans la couche LLM (`buildOtherPrecisionNotes`).
     const notes = Object.values(base.freeNotes ?? {}).filter(
       (n): n is string => typeof n === "string" && n.trim().length > 0,
     );
-    // Précisions « Autre » (S-064) : même canal CONTEXTE-seulement que les notes libres (jamais un
-    // chiffre). Préfixées pour que le LLM sache à quel champ elles se rapportent.
-    const activityOther = base.otherText?.activity?.trim();
-    if (base.activity === "other" && activityOther !== undefined && activityOther.length > 0) {
-      notes.push(`Activité (précision « Autre ») : ${activityOther}`);
-    }
-    const zoneOther = base.otherText?.zone?.trim();
-    if (base.zone === "other" && zoneOther !== undefined && zoneOther.length > 0) {
-      notes.push(`Zone d'hébergement (précision « Autre ») : ${zoneOther}`);
-    }
-    const regionOther = base.otherText?.region?.trim();
-    const regionIsOther =
-      base.residency?.primaryRegion === "other" || (base.residency?.allowedRegions ?? []).includes("other");
-    if (regionIsOther && regionOther !== undefined && regionOther.length > 0) {
-      notes.push(`Région(s) (précision « Autre ») : ${regionOther}`);
-    }
+    notes.push(...buildOtherPrecisionNotes(base));
     return {
       activity: base.activity,
       preset: r.preset,
