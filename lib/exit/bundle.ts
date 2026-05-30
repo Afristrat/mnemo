@@ -145,7 +145,7 @@ function erasureLabel(policy: BackupPlan["erasurePolicy"]): string {
 }
 
 /** Section « Sauvegarde & résilience » du runbook, DÉRIVÉE du plan réel (spec n°1 §9). */
-function backupSection(b: BackupPlan): string {
+function backupSection(b: BackupPlan, resolve: EngineResolver): string {
   if (b.criticality === "none") {
     return `## Sauvegarde & résilience
 - Criticité « aucune » : **aucune politique de sauvegarde dimensionnée**. Une base mémorielle sans
@@ -165,7 +165,7 @@ function backupSection(b: BackupPlan): string {
 - **Rétention** : ${b.retentionDays} jours${b.legalRetentionYears > 0 ? ` (plancher légal : ${b.legalRetentionYears} an(s))` : ""}.
 - **3-2-1-1-0** : ${threeTwoOne} ; ${b.restoreTestsPerYear} restauration(s) testée(s)/an.
 - **Stockage** : tier ${b.tier}${b.pitr ? " + WAL/PITR Postgres (RPO quasi-continu)" : ""}.
-- **Vecteurs** : stratégie ${b.vector.strategy} — ${b.vector.reason}
+- **Vecteurs** : stratégie ${b.vector.strategy} — ${resolve(b.vector.reason)}
 - **Érasure (droit à l'oubli)** : ${erasureLabel(b.erasurePolicy)}.${b.byok ? " Clés gérées par le client (BYOK)." : ""}
 - Script : \`scripts/backup.sh\` (Restic chiffré, rétention dérivée du plan).
 > Orientation d'ingénierie, pas un avis juridique : faites valider la rétention légale par votre conseil.
@@ -417,7 +417,7 @@ function vaultReadme(): string {
 `;
 }
 
-function runbook(reco: Recommendation): string {
+function runbook(reco: Recommendation, resolve: EngineResolver): string {
   const c6 = layerById(reco, 6);
   return `# Runbook opérationnel, Strate (preset ${reco.preset})
 
@@ -428,7 +428,7 @@ function runbook(reco: Recommendation): string {
 4. \`docker compose up -d\` puis vérifier \`docker compose ps\`.
 5. \`bash scripts/re-embed.sh\` pour constituer l'index.
 
-${backupSection(reco.backup)}
+${backupSection(reco.backup, resolve)}
 
 ${residencySection(reco.residency)}
 
@@ -527,7 +527,7 @@ export function buildExitBundle(
     "terraform/terraform.tfvars": terraformVars(profile, reco),
     "vault/.env.example": vaultEnv(reco),
     "vault/README.md": vaultReadme(),
-    "runbook.md": runbook(reco),
+    "runbook.md": runbook(reco, resolve),
     "scripts/re-embed.sh": reEmbedScript(reco),
     "scripts/backup.sh": backupScript(reco),
   };
