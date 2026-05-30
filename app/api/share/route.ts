@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { decodeProfileFromParam } from "@/lib/share";
 import { createClient } from "@/lib/supabase/server";
 
@@ -41,13 +42,17 @@ export async function POST(req: Request): Promise<Response> {
   const { data: userData } = await supabase.auth.getUser();
   const createdBy = userData.user?.id ?? null;
 
-  const { data, error } = await supabase
+  // On GÉNÈRE l'id côté serveur et on insère SANS clause RETURNING (`.select()`). La table `shared_reco`
+  // n'expose aucune politique SELECT à `anon` (lecture réservée à la RPC SECURITY DEFINER `get_shared_reco`,
+  // par id imprévisible — anti-énumération). Or sous PostgreSQL un `INSERT ... RETURNING` est soumis à la
+  // politique SELECT : réclamer l'id en retour ferait échouer l'insert anonyme (« new row violates RLS
+  // policy »). En fournissant nous-mêmes l'uuid, on n'a plus à relire la ligne — le moat reste intact.
+  const id = randomUUID();
+  const { error } = await supabase
     .from("shared_reco")
-    .insert({ circle_id: null, created_by: createdBy, encoded })
-    .select("id")
-    .single();
-  if (error !== null || data === null) {
+    .insert({ id, circle_id: null, created_by: createdBy, encoded });
+  if (error !== null) {
     return NextResponse.json({ error: "Création du lien impossible" }, { status: 503 });
   }
-  return NextResponse.json({ id: data.id });
+  return NextResponse.json({ id });
 }

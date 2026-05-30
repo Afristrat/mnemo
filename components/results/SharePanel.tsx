@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { QRCodeSVG } from "qrcode.react";
 import { useCallback, useMemo, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -87,13 +88,23 @@ export function SharePanel({ profile }: { profile: Profile }): ReactElement {
             <span className="text-body-sm text-on-surface-variant">{t("shortHint")}</span>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-3">
-            <code className="break-all rounded-card bg-surface-container px-3 py-1.5 font-mono text-body-sm text-on-surface">
-              {shortUrl}
-            </code>
-            <Button variant="secondary" size="sm" onClick={() => void copy(shortUrl, "short")}>
-              {copied === "short" ? t("copied") : t("copyShort")}
-            </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <code className="break-all rounded-card bg-surface-container px-3 py-1.5 font-mono text-body-sm text-on-surface">
+                {shortUrl}
+              </code>
+              <Button variant="secondary" size="sm" onClick={() => void copy(shortUrl, "short")}>
+                {copied === "short" ? t("copied") : t("copyShort")}
+              </Button>
+            </div>
+            {/* QR code du lien COURT uniquement (le lien encodé est trop long pour un QR fiable). Rendu
+                localement (qrcode.react), sans appel externe. Fond blanc + modules sombres = lisibilité. */}
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 rounded-card bg-white p-3">
+                <QRCodeSVG value={shortUrl} size={120} marginSize={0} title={t("qrHint")} />
+              </div>
+              <span className="text-body-sm text-on-surface-variant">{t("qrHint")}</span>
+            </div>
           </div>
         )}
         {shortError ? <p className="mt-2 text-body-sm text-error">{t("shortError")}</p> : null}

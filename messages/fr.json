@@ -120,6 +120,7 @@
       "creating": "Création…",
       "shortHint": "Lien court via nos serveurs, pratique à partager (e-mail, message).",
       "copyShort": "Copier",
+      "qrHint": "Scannez ce QR code pour ouvrir la recommandation sur un téléphone.",
       "shortError": "Création du lien court impossible pour le moment. Le lien copié ci-dessus fonctionne déjà."
     },
     "leadGate": {

@@ -31,19 +31,21 @@ describe("POST /api/share (création du lien court, S-067)", () => {
     expect((await POST(postReq({ encoded: "pas-un-profil" }))).status).toBe(400);
   });
 
-  it("encoded valide → insère et renvoie l'id", async () => {
-    const single = vi.fn().mockResolvedValue({ data: { id: FAKE_ID }, error: null });
-    const select = vi.fn().mockReturnValue({ single });
-    const insert = vi.fn().mockReturnValue({ select });
+  it("encoded valide → insère (id généré côté serveur, SANS returning) et le renvoie", async () => {
+    // L'insert n'appelle PLUS `.select()` : l'id est généré côté serveur (cf. route). On vérifie que
+    // l'id renvoyé est un uuid et qu'il a bien été passé à l'insert (même id en base et en réponse).
+    const insert = vi.fn().mockResolvedValue({ error: null });
     createClientMock.mockResolvedValue({
       auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
       from: vi.fn().mockReturnValue({ insert }),
     });
     const res = await POST(postReq({ encoded: VALID_ENCODED }));
     expect(res.status).toBe(200);
-    expect((await res.json()).id).toBe(FAKE_ID);
-    // circle_id null (anonyme), created_by null (pas de session).
-    expect(insert).toHaveBeenCalledWith({ circle_id: null, created_by: null, encoded: VALID_ENCODED });
+    const returnedId: unknown = (await res.json()).id;
+    expect(typeof returnedId).toBe("string");
+    expect(returnedId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu);
+    // circle_id null (anonyme), created_by null (pas de session), id = celui renvoyé.
+    expect(insert).toHaveBeenCalledWith({ id: returnedId, circle_id: null, created_by: null, encoded: VALID_ENCODED });
   });
 
   it("503 si Supabase indisponible (createClient lève)", async () => {
@@ -54,10 +56,9 @@ describe("POST /api/share (création du lien court, S-067)", () => {
   });
 
   it("503 si l'insert échoue", async () => {
-    const single = vi.fn().mockResolvedValue({ data: null, error: { message: "boom" } });
     createClientMock.mockResolvedValue({
       auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-      from: vi.fn().mockReturnValue({ insert: vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ single }) }) }),
+      from: vi.fn().mockReturnValue({ insert: vi.fn().mockResolvedValue({ error: { message: "boom" } }) }),
     });
     expect((await POST(postReq({ encoded: VALID_ENCODED }))).status).toBe(503);
   });
