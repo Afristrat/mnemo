@@ -52,6 +52,27 @@
       "c4": { "name": "{mm, select, yes {Multimodal embeddings} other {Embeddings}}" },
       "c5": { "name": "{bitemporal, select, yes {Bitemporal polyglot storage} other {Polyglot storage}}" },
       "c6": { "name": "Infra (LLM Gateway + inference + backup)" }
+    },
+    "diagnostics": {
+      "compliance": {
+        "rgpdAipd": "📄 Draft a DPIA (Data Protection Impact Assessment)",
+        "rgpdDpa": "📋 Map your sub-processors (LLM API, host, vector DB) and sign a GDPR Art. 28 DPA with each",
+        "rgpdErasure": "🔁 Implement a scripted right-to-erasure procedure (re-embedding)",
+        "rgpdRegistry": "📚 Keep your GDPR Art. 30 record of processing up to date (activities + purposes)",
+        "rgpdPrivacyPolicy": "📜 Update your privacy policy (AI processing + memory base)",
+        "cndpDeclaration": "🇲🇦 File a CNDP declaration (Morocco Law 09-08), form F211 via cndp.ma",
+        "cndpCorrespondent": "👤 Appoint a CNDP correspondent (DPO equivalent)",
+        "cndpRights": "📞 Document access and rectification rights (Art. 7-8, Law 09-08), 10-day SLA minimum",
+        "aiactClassify": "🤖 Classify the AI system under the AI Act: limited risk (transparency) or high risk (Art. 9-15)",
+        "aiactDeployer": "✅ If you are a deployer (Art. 26-29): complete the conformity checklist",
+        "aiactHighRisk": "📢 If high risk: risk management + human oversight + cybersecurity + automatic logging",
+        "hipaaBaa": "🇺🇸 Business Associate Agreement (BAA) with every sub-processor that handles PHI",
+        "hipaaEncryption": "🔐 AES-256 encryption at rest AND in transit, immutable audit log",
+        "secretProRls": "🔒 Lock access with Postgres RLS (“circle” field); each client matter is its own circle",
+        "secretProAuditTrail": "✍ Signed append-only audit trail (PL/pgSQL triggers)",
+        "secretProAnonymization": "👤 k-anonymity (k=5 minimum) on any export beyond the matter’s scope",
+        "banProprietaryMemory": "🚫 Ban vendors’ proprietary memory (ChatGPT/Claude Memory) for any structural decision"
+      }
     }
   },
   "Results": {

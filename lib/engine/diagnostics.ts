@@ -1,36 +1,44 @@
+import { msg, type Message } from "./message";
 import type { KMCheck, Preset, Profile } from "./types";
 
-/** Actions de conformité déclenchées par les régimes cochés. Fonction pure. */
-export function computeCompliance(p: Profile): string[] {
-  const actions: string[] = [];
+/**
+ * Actions de conformité déclenchées par les régimes cochés. Fonction pure.
+ * i18n (S-058) : renvoie des descripteurs `Message` (clés `Engine.diagnostics.compliance.*`),
+ * jamais de prose — la couche de présentation les résout en fr/en.
+ */
+export function computeCompliance(p: Profile): Message[] {
+  const actions: Message[] = [];
+  const add = (key: string): void => {
+    actions.push(msg(`diagnostics.compliance.${key}`));
+  };
   if (p.regulations.includes("rgpd")) {
-    actions.push("📄 Rédiger une AIPD (Analyse d'Impact Protection Données)");
-    actions.push("📋 Cartographier les sous-processors (LLM API, hébergeur, vector DB) et signer un DPA RGPD Art. 28 avec chacun");
-    actions.push("🔁 Implémenter la procédure droit à l'oubli scriptée (re-embedding)");
-    actions.push("📚 Tenir le registre Art. 30 RGPD à jour (traitements + finalités)");
-    actions.push("📜 Mettre à jour la politique de confidentialité (traitement IA + base mémorielle)");
+    add("rgpdAipd");
+    add("rgpdDpa");
+    add("rgpdErasure");
+    add("rgpdRegistry");
+    add("rgpdPrivacyPolicy");
   }
   if (p.regulations.includes("cndp")) {
-    actions.push("🇲🇦 Déclaration CNDP (Loi 09-08 Maroc), formulaire F211 via cndp.ma");
-    actions.push("👤 Désigner un correspondant CNDP (équivalent DPO)");
-    actions.push("📞 Documenter droits d'accès et de rectification (Art. 7-8 Loi 09-08), SLA 10 jours min.");
+    add("cndpDeclaration");
+    add("cndpCorrespondent");
+    add("cndpRights");
   }
   if (p.regulations.includes("aiact")) {
-    actions.push("🤖 Classer le système IA selon l'AI Act : risque limité (transparency) ou haut risque (Art. 9-15)");
-    actions.push("✅ Si déployeur Art. 26-29 : checklist de conformité");
-    actions.push("📢 Si haut risque : gestion des risques + supervision humaine + cyber + log automatique");
+    add("aiactClassify");
+    add("aiactDeployer");
+    add("aiactHighRisk");
   }
   if (p.regulations.includes("hipaa")) {
-    actions.push("🇺🇸 Business Associate Agreement (BAA) avec tous les sous-processors qui touchent du PHI");
-    actions.push("🔐 Chiffrement AES-256 au repos ET en transit, audit log immuable");
+    add("hipaaBaa");
+    add("hipaaEncryption");
   }
   if (p.regulations.includes("secret-pro")) {
-    actions.push("🔒 Verrouillage accès par RLS Postgres (champ `circle`), chaque dossier client = un circle distinct");
-    actions.push("✍ Audit trail signé append-only (PL/pgSQL triggers)");
-    actions.push("👤 Anonymisation k-anonymity k=5 minimum sur tout export hors périmètre dossier");
+    add("secretProRls");
+    add("secretProAuditTrail");
+    add("secretProAnonymization");
   }
   if (p.sensitivity === "secret" || p.regulations.includes("secret-pro")) {
-    actions.push("🚫 Bannir la mémoire propriétaire des éditeurs (Memory ChatGPT/Claude) pour toute décision structurante");
+    add("banProprietaryMemory");
   }
   return actions;
 }
