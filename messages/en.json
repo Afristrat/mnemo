@@ -42,7 +42,67 @@
         "label": "Geographic sovereignty (residency & compliant transfers)",
         "why": "Data in “{region}”. {transferCount, plural, =0 {No cross-jurisdiction transfer.} other {# cross-region flow(s) (see transfer compliance).}}{conflict, select, yes { ⚠️ Residency × DR conflict to arbitrate.} other {}}"
       },
-      "moduleBonus": "“{modName}” lvl {level}/{maxLevel} (+{bonus})"
+      "moduleBonus": "“{modId, select, bisect {Reversal tracing} reversal {Tamper-proof memory} prereg {Time-stamped decisions} mel {Failure plan} conflict {Conflict detector} other {module}}” lvl {level}/{maxLevel} (+{bonus})"
+    },
+    "modules": {
+      "taskTemplate": "[Level {level}/{maxLevel}, {label}] {baseTask} Level specifics: {desc}",
+      "bisect": {
+        "name": "Reversal tracing",
+        "why": "Binary search through tri-temporal history: “from when did my stance on X change?”. A tool for epistemic meta-reflection.",
+        "baseTask": "Implement the bisect operation in layer C5: select two atoms (good/bad) on the same concept, and the system proposes the pivot atoms to examine by dichotomy.",
+        "level": {
+          "0": { "label": "Disabled", "desc": "No bisect. Classic temporal search." },
+          "1": { "label": "Manual", "desc": "Bisect UI: manual chronological navigation through the tri-temporal history." },
+          "2": { "label": "AI-assisted", "desc": "The agent proposes candidate pivots; you validate at each step." },
+          "3": { "label": "Automatic", "desc": "The agent runs the bisect end to end and hands you the pivot atom directly." }
+        }
+      },
+      "reversal": {
+        "name": "Tamper-proof memory",
+        "why": "Never an in-place UPDATE: to correct an atom, you create a `reversal` atom that explicitly inverts it plus a corrected atom. Integrity guaranteed by construction, not by control.",
+        "baseTask": "Add the `reversal` type to the frontmatter + a cryptographic signature on the reversal atom + a default filter in the orchestrator.",
+        "level": {
+          "0": { "label": "Disabled", "desc": "Classic in-place UPDATE." },
+          "1": { "label": "Logical", "desc": "`reversal` type in the frontmatter, without a crypto signature. Append-only by convention." },
+          "2": { "label": "HMAC-signed", "desc": "`reversal` type + HMAC signature over (original_atom_id, content_hash, timestamp). Append-only guaranteed." },
+          "3": { "label": "Chained ledger", "desc": "HMAC + chained hash of every atom (blockchain-style). Full ledger integrity." }
+        }
+      },
+      "prereg": {
+        "name": "Time-stamped decisions",
+        "why": "State the hypothesis + success criterion BEFORE the decision. The postmortem must reference the pre-registration. Structural defence against confirmation bias.",
+        "baseTask": "Add a `pre_reg` type to the schema + a decision → postmortem workflow that references it.",
+        "level": {
+          "0": { "label": "Disabled", "desc": "No pre-registration." },
+          "1": { "label": "Soft", "desc": "Pre-registration optional, merely recommended in the docs." },
+          "2": { "label": "Linked", "desc": "The postmortem may reference a parent pre-registration (non-blocking)." },
+          "3": { "label": "Hard", "desc": "Pre-registration mandatory and blocking before any structuring decision. The postmortem must resolve it." }
+        }
+      },
+      "mel": {
+        "name": "Failure plan",
+        "why": "Pre-thought doctrine: “what can be down while the agent still works, with repair time and an alternative procedure”. Not improvised during an incident.",
+        "baseTask": "Write the MEL: a matrix of components × failure types × maximum delay × alternative procedure.",
+        "level": {
+          "0": { "label": "Disabled", "desc": "Minimal runbook. Improvisation during incidents." },
+          "1": { "label": "Draft", "desc": "MEL written for critical components only." },
+          "2": { "label": "Tested", "desc": "MEL + degradation tests once per component (verifies the degraded mode works)." },
+          "3": { "label": "Monitored", "desc": "MEL + tests + automatic monitoring that detects the failure and switches to degraded mode." },
+          "4": { "label": "Certified", "desc": "MEL + regular tests + audit trail + annual review of the matrix." }
+        }
+      },
+      "conflict": {
+        "name": "Conflict detector",
+        "why": "Before an atom touches a client/project/entity, an automatic cross-reference: “is this entity an adversary / competitor / target of another decision?”. Prevents contradictory advice.",
+        "baseTask": "NER (spaCy or local Gliner) on ingestion + an entity index + a pre-query check in the orchestrator.",
+        "level": {
+          "0": { "label": "Disabled", "desc": "No conflict check." },
+          "1": { "label": "Basic NER", "desc": "Named-entity extraction (spaCy / Gliner). Alert on exact match." },
+          "2": { "label": "NER + graph", "desc": "Entity graph + fuzzy-match detection (spelling variants, aliases)." },
+          "3": { "label": "+ temporal", "desc": "Check on the bitemporal axis: “was this entity in a different context before?”" },
+          "4": { "label": "+ cross-circle", "desc": "Check across every circle (active multi-tenancy). Cross-client alert." }
+        }
+      }
     },
     "layers": {
       "c0": { "name": "Common contract (YAML frontmatter)" },

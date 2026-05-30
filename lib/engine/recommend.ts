@@ -55,9 +55,9 @@ function computeActiveModules(profile: Profile): ActiveModule[] {
       maxLevel: mod.maxLevel,
       levelLabel: levelMeta.label,
       levelDesc: levelMeta.desc,
+      baseTask: mod.baseTask,
       fraction,
       cost: Math.round(mod.costFull * fraction),
-      task: `[Niveau ${level}/${mod.maxLevel}, ${levelMeta.label}] ${mod.baseTask} Spécificité du niveau : ${levelMeta.desc}`,
       bonusFull: mod.bonusFull,
     });
   }
@@ -169,9 +169,12 @@ export function recommend(
       const previous = dim.score;
       dim.score = Math.min(10, Math.round((dim.score + bonusAmount) * 10) / 10);
       if (dim.score > previous || bonusAmount >= 0.3) {
+        // `modName` ne peut plus être passé en valeur ICU (mod.name est désormais un descripteur
+        // Message, pas une chaîne) : on transmet `modId` et le catalogue résout le nom via un
+        // `select` ICU (parité avec `Engine.modules.<id>.name` garantie par un test anti-drift).
         (dim.bonuses ??= []).push(
           msg("scores.moduleBonus", {
-            modName: mod.name,
+            modId: mod.id,
             level: mod.level,
             maxLevel: mod.maxLevel,
             bonus: bonusAmount.toFixed(1),

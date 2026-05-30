@@ -96,7 +96,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
             <span className="flex items-center gap-2">
               <StatusDot confidence="medium" />
               <span className="text-body-sm text-on-surface">
-                {mod.name} <span className="text-on-surface-variant">{t("moduleLevel", { level: mod.level, maxLevel: mod.maxLevel })}</span>
+                {resolveEngine(mod.name)} <span className="text-on-surface-variant">{t("moduleLevel", { level: mod.level, maxLevel: mod.maxLevel })}</span>
               </span>
             </span>
             <span className="shrink-0 font-mono text-body-sm text-on-surface">{mod.cost} €</span>

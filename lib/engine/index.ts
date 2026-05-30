@@ -1,7 +1,7 @@
 // Moteur de recommandation Strate, point d'entrée public.
 export * from "./types";
 export { msg, type Message, type MessageValue, type MessageValues, type EngineResolver } from "./message";
-export { MODULES, defaultModuleLevels } from "./modules";
+export { MODULES, defaultModuleLevels, formatModuleTask } from "./modules";
 export { PRESET_PROFILES, type PresetProfile } from "./presets";
 export { decidePreset, formatPresetReason, type PresetDecision } from "./preset";
 export { buildLayers } from "./layers";
