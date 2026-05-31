@@ -1409,8 +1409,8 @@
       "eyebrow": "Pricing",
       "title": "The diagnostic is free. You only pay for the cooking.",
       "subtitle": "Infrastructure cost stays transparent, paid to your own vendors — we take no markup on it.",
-      "surveyTag": "Indicative price — survey in progress",
-      "note": "Indicative prices (excl. infrastructure, paid to your vendors) — refined by the ongoing price survey (Van Westendorp + conjoint analysis), never picked out of thin air. Morocco: purchasing-power-adjusted pricing (≈ 2,900 / 6,900 MAD), on request.",
+      "surveyTag": "Indicative pricing",
+      "note": "Indicative pricing, excluding infrastructure costs — those are paid directly to your providers, with no markup on our side.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
