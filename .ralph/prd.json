@@ -1179,7 +1179,8 @@
       "id": "S-074",
       "title": "Tarification de l'inference LLM a l'usage (par 1M de tokens in + out)",
       "feature": "pricing",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-31",
       "deps": ["S-041"],
       "note": "Le cout d'inference LLM a l'usage etait flagge « a chiffrer en devis » (non coute, S-033/S-041). Amine : tarifer au 1M de tokens in ET out. EPIC : (a) seed prix sources par modele (par 1M input + output, devises natives + FX runtime, repli date + garde-fou — doctrine prix-live) ; (b) estimateur d'usage pur (tokens/mois depuis reqPerDay x hypotheses in/out +-30%) ; (c) integrer dans C6 (remplace la note « non chiffre »), ligne CostMap dediee ; (d) tests proprietes + sources DEFCON 1.",
       "acceptance": [

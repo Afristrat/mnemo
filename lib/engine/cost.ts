@@ -1,4 +1,5 @@
 import type { ComputeSizing } from "./compute";
+import type { LlmUsage } from "./llm-usage";
 import type { MultimodalPriceTable } from "./sizing";
 import type { BackupPlan, Layer, Profile, ReqPerDay, ResidencyPlan, Sizing, Volume } from "./types";
 
@@ -81,10 +82,20 @@ export function applyCompute(layers: Layer[], compute: ComputeSizing): Layer[] {
       ? {
           ...layer,
           cost: compute.monthlyCost,
-          note: `Serveurs souverains dimensionnés : ${compute.monthlyCost} €/mois (${detail}) · LLM à l'usage non chiffré (devis)`,
+          note: `Serveurs souverains dimensionnés : ${compute.monthlyCost} €/mois (${detail})`,
         }
       : layer,
   );
+}
+
+/**
+ * Injecte le coût d'inférence LLM À L'USAGE (S-074, tarifé au 1M tokens) dans la couche C6. Pure.
+ * `monthlyCost <= 0` (auto-hébergé : déjà compté dans le compute/GPU ; ou prix neutres) → couches
+ * inchangées (invariant `totalCost` préservé). Le détail (modèle, volume, source) est affiché à part.
+ */
+export function applyLlmUsage(layers: Layer[], usage: LlmUsage): Layer[] {
+  if (usage.monthlyCost <= 0) return layers;
+  return layers.map((layer) => (layer.id === 6 ? { ...layer, cost: layer.cost + usage.monthlyCost } : layer));
 }
 
 /**

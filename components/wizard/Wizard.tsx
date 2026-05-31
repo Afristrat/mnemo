@@ -24,6 +24,7 @@ import { applyIntakeFields } from "@/lib/llm/intake";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
+import { getLlmTokenPrices } from "@/lib/pricing/llm-token-seed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { buildChoiceRecap } from "@/lib/wizard/recap";
 import { useWizardProfile } from "@/hooks/useWizardProfile";
@@ -243,7 +244,7 @@ export function Wizard(): ReactElement {
   const backupPrices = getBackupPrices();
   const residencyPrices = getResidencyPrices();
   const decision = decidePreset(profile);
-  const result = recommend(profile, prices, undefined, backupPrices, getComputePrices(), residencyPrices);
+  const result = recommend(profile, prices, undefined, backupPrices, getComputePrices(), residencyPrices, getLlmTokenPrices());
 
   return (
     <div className="w-full lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-8">
