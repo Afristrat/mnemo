@@ -39,4 +39,12 @@ describe("coffre — chiffrement enveloppe (Lot 2 A)", () => {
   it("rejette une KEK de mauvaise longueur", () => {
     expect(() => encryptSecret("x", randomBytes(16))).toThrow();
   });
+
+  it("deux chiffrements du même secret produisent des IV distincts", () => {
+    const rec1 = encryptSecret("secret", KEK);
+    const rec2 = encryptSecret("secret", KEK);
+    expect(rec1.ivSecret).not.toBe(rec2.ivSecret);
+    expect(rec1.ivDek).not.toBe(rec2.ivDek);
+    expect(rec1.ciphertext).not.toBe(rec2.ciphertext);
+  });
 });

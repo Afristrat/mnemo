@@ -29,9 +29,15 @@ function encGcm(
 }
 
 function decGcm(key: Buffer, ct: Buffer, iv: Buffer, tag: Buffer): Buffer {
-  const decipher = createDecipheriv(ALGO, key, iv);
-  decipher.setAuthTag(tag);
-  return Buffer.concat([decipher.update(ct), decipher.final()]);
+  if (iv.length !== 12) throw new Error(`IV invalide : ${iv.length} octets (attendu : 12).`);
+  if (tag.length !== 16) throw new Error(`Tag invalide : ${tag.length} octets (attendu : 16).`);
+  try {
+    const decipher = createDecipheriv(ALGO, key, iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(ct), decipher.final()]);
+  } catch {
+    throw new Error("Déchiffrement échoué : clé incorrecte ou données altérées.");
+  }
 }
 
 function assertKek(kek: Buffer): void {
