@@ -55,5 +55,7 @@ pays, tranche 3) qui respectera les **choix utilisateur comme contrainte absolue
   (`lib/residency/discovery.ts` + route `POST /api/residency/providers`), **bornée par les contraintes
   utilisateur** (S-072, absolues) — requête orientée + règle dure du prompt + re-filtre de la sortie
   (souveraineté exigée ⇒ rejet hyperscaler) ; anti-hallucination d'URL ; repli annuaire seed garanti.
-- **Tranche 4** — UI : choix de **N fournisseurs redondants** + topologie multi-juridiction.
+- **Tranche 4** ✅ (2026-05-31) — UI `RedundancyPanel` : sélecteur continent + pays cible → veille
+  `/api/residency/providers` → liste sourcée (souveraineté + provenance + source datée) → sélection de
+  **N fournisseurs redondants** + topologie résumée (multi-juridiction). i18n fr/en/ar.
 - **Tranche 5** — coûts/transferts via S-044, défaut légal **conservateur**.
