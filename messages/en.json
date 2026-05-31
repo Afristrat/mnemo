@@ -1451,7 +1451,24 @@
             "support": "Dedicated support + SLA"
           }
         }
-      }
+      },
+      "cta": "Start the diagnostic",
+      "compareSummary": "Detailed comparison",
+      "compare": {
+        "configurator": "Configurator & 7-layer reco",
+        "deliverable": "Sourced plan & costs, deliverable",
+        "exit": "Exit bundle (Exit Escrow)",
+        "deploy": "Assisted deployment",
+        "supervision": "Continuous monitoring",
+        "costs": "Continuous cost optimisation",
+        "expertise": "Expertise & error avoidance",
+        "priority": "Monitoring & priority support",
+        "onprem": "On-premise / air-gapped",
+        "negotiation": "Vendor negotiation (fiduciary)",
+        "support": "Dedicated support + SLA"
+      },
+      "compareYes": "included",
+      "compareNo": "not included"
     },
     "diagnostic": {
       "eyebrow": "Free diagnostic",
