@@ -39,6 +39,16 @@ describe("RedundancyPanel (S-073 T4)", () => {
     expect(screen.getByText(/Choisissez un continent/)).toBeInTheDocument();
   });
 
+  it("pré-remplit le pays cible depuis le profil quand c'est un pays concret (S-076 → S-073)", () => {
+    render(<RedundancyPanel profile={prof({ continent: "africa", country: "maroc" })} />);
+    expect(screen.getByPlaceholderText(/Kenya, Japon/)).toHaveValue("Maroc");
+  });
+
+  it("ne pré-remplit pas pour un bloc/Autre (UE) : champ vide", () => {
+    render(<RedundancyPanel profile={prof({ continent: "europe", country: "union-europeenne" })} />);
+    expect(screen.getByPlaceholderText(/Kenya, Japon/)).toHaveValue("");
+  });
+
   it("recherche → liste sourcée, sélection → topologie redondante résumée", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
