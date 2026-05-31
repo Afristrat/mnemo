@@ -112,6 +112,32 @@ describe("buildObservation", () => {
     expect(obs.confidence).toBe("medium");
     expect(obs.figureCount).toBe(0);
   });
+
+  // S-074 / correctif « prix LLM non per-1M » : les couches LLM (1 = Anthropic, 4 = Mistral) substituent
+  // à l'empreinte brute scrappée le prix tokens per-1M sourcé (entrée/sortie), pas la liste de figures.
+  it("couche LLM (Anthropic, couche 1) → prix tokens per-1M, empreinte brute effacée", () => {
+    const llmSource: FeedSource = { layerId: 1, label: "Anthropic, pricing", url: "https://anthropic.test/pricing" };
+    const obs = buildObservation(llmSource, "$3 $15 $0.30 $25", { fingerprint: "deadbeef", capturedAt: "2026-05-25" }, now);
+    expect(obs.tokenPricing).toBeDefined();
+    expect(obs.tokenPricing?.inputPerMillionUsd).toBe(3);
+    expect(obs.tokenPricing?.outputPerMillionUsd).toBe(15);
+    // L'empreinte brute (trompeuse pour un prix tokens) n'est plus affichée.
+    expect(obs.sampleFigures).toHaveLength(0);
+  });
+
+  it("couche LLM (Mistral, couche 4) → prix tokens Mistral Small (0,1 / 0,3 $/1M)", () => {
+    const llmSource: FeedSource = { layerId: 4, label: "Mistral, pricing", url: "https://mistral.test/pricing" };
+    const obs = buildObservation(llmSource, "$0.10 $0.30", { fingerprint: "40fe5678", capturedAt: "2026-05-25" }, now);
+    expect(obs.tokenPricing?.inputPerMillionUsd).toBe(0.1);
+    expect(obs.tokenPricing?.outputPerMillionUsd).toBe(0.3);
+  });
+
+  it("vendeur d'infra (couche non-LLM) → pas de tokenPricing, empreinte brute conservée", () => {
+    // SOURCE.layerId = 99 (infra) → l'empreinte brute scrappée reste affichée telle quelle.
+    const obs = buildObservation(SOURCE, "$10 $20 $30", { fingerprint: "deadbeef", capturedAt: "2026-05-25" }, now);
+    expect(obs.tokenPricing).toBeUndefined();
+    expect(obs.sampleFigures.length).toBeGreaterThan(0);
+  });
 });
 
 describe("refreshAllPricing", () => {

@@ -6,6 +6,7 @@ import type { Confidence } from "@/components/ui/StatusDot";
 import { baselineForLayer, type PriceBaseline } from "./baseline";
 import { TtlCache } from "./cache";
 import { detectVariation, extractMoneyTokens } from "./extract";
+import { LLM_FRESHNESS_TOKEN_USD, type LlmTokenUsd } from "./llm-token-seed";
 import { scrapePricingMarkdown } from "./scraper";
 import { LAYER_PRICING, pricingForLayer } from "./sources";
 
@@ -23,7 +24,27 @@ export type PriceObservation = {
   /** Échantillon de figures observées (brut), pour affichage. */
   sampleFigures: string[];
   note: string;
+  /**
+   * Prix tokens per-1M (entrée/sortie, USD) pour les couches LLM (S-074). Présent ⇒ l'UI affiche
+   * « entrée $X/1M · sortie $Y/1M » au lieu de l'empreinte brute scrappée. Absent pour les vendeurs
+   * d'infra (stockage/compute/DB), inchangés.
+   */
+  tokenPricing?: LlmTokenUsd;
 };
+
+// Couches dont la « figure » est un prix tokens (S-074) : leur empreinte brute (« $0.01 · $0.02 … »)
+// est trompeuse → on affiche le per-1M entrée/sortie sourcé du seed. Couche 1 = Anthropic, couche 4 = Mistral.
+const LLM_TOKEN_LAYER: Record<number, keyof typeof LLM_FRESHNESS_TOKEN_USD> = { 1: "anthropic", 4: "mistral" };
+
+/**
+ * Pour une couche LLM, substitue à l'empreinte brute le prix tokens per-1M sourcé (S-074). Les vendeurs
+ * d'infra sont renvoyés inchangés. La fraîcheur (statut/date scrappés) reste celle de l'observation.
+ */
+function withLlmTokenPricing(obs: PriceObservation): PriceObservation {
+  const vendor = LLM_TOKEN_LAYER[obs.layerId];
+  if (vendor === undefined) return obs;
+  return { ...obs, sampleFigures: [], tokenPricing: LLM_FRESHNESS_TOKEN_USD[vendor] };
+}
 
 export type FeedSource = { layerId: number; label: string; url: string };
 
@@ -43,10 +64,20 @@ function isoDate(nowMs: number): string {
 }
 
 /**
- * Construit l'observation d'une source à partir du markdown scrapé (ou `null` si
- * indisponible) et de son snapshot de référence. Fonction pure.
+ * Construit l'observation d'une source à partir du markdown scrapé (ou `null` si indisponible) et de
+ * son snapshot de référence. Fonction pure. Les couches LLM voient leur empreinte brute remplacée par
+ * le prix tokens per-1M sourcé (S-074, `withLlmTokenPricing`).
  */
 export function buildObservation(
+  source: FeedSource,
+  markdown: string | null,
+  baseline: PriceBaseline,
+  nowMs: number,
+): PriceObservation {
+  return withLlmTokenPricing(buildRawObservation(source, markdown, baseline, nowMs));
+}
+
+function buildRawObservation(
   source: FeedSource,
   markdown: string | null,
   baseline: PriceBaseline,

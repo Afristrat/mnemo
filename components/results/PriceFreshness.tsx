@@ -84,7 +84,14 @@ export function PriceFreshness(): ReactElement {
                   <Chip tone={STATUS_TONE[obs.status]}>{t(STATUS_KEY[obs.status])}</Chip>
                 </span>
                 <span className="flex items-center gap-3">
-                  {obs.sampleFigures.length > 0 ? (
+                  {obs.tokenPricing !== undefined ? (
+                    <span className="font-mono text-body-sm text-on-surface-variant">
+                      {t("tokenInOut", {
+                        input: obs.tokenPricing.inputPerMillionUsd,
+                        output: obs.tokenPricing.outputPerMillionUsd,
+                      })}
+                    </span>
+                  ) : obs.sampleFigures.length > 0 ? (
                     <span className="font-mono text-body-sm text-on-surface-variant">
                       {obs.sampleFigures.join(" · ")}
                     </span>

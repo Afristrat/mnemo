@@ -489,7 +489,8 @@
       "loadingMsg": "Vérification des sources en cours…",
       "statusVerified": "Vérifié",
       "statusChanged": "À revérifier",
-      "statusUnavailable": "Re-vérif. indisponible"
+      "statusUnavailable": "Re-vérif. indisponible",
+      "tokenInOut": "entrée {input} $/1M · sortie {output} $/1M"
     },
     "share": {
       "title": "Partager ce plan",
