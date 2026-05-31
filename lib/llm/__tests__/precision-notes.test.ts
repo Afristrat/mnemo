@@ -5,6 +5,8 @@ import { buildOtherPrecisionNotes } from "@/lib/llm/precision-notes";
 function prof(over: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

@@ -16,6 +16,8 @@ import type { ResidencyPriceTable } from "@/lib/pricing/residency-seed";
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "freelance",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 1,
     contentTypes: ["text"],

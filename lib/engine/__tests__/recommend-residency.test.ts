@@ -8,6 +8,8 @@ import { recommend, buildEnsemble, type ComputePriceTable, type Profile, type Re
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

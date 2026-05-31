@@ -8,6 +8,8 @@ import type { Catalog, ComponentCandidate, SlotId } from "@/lib/catalog/types";
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

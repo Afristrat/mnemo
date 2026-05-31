@@ -51,10 +51,22 @@
         "why": "Recherche binaire dans l'historique tri-temporel : « à partir de quand ma doctrine sur X a-t-elle changé ? ». Outil de méta-réflexion épistémique.",
         "baseTask": "Implémenter l'opération bisect dans la couche C5 : sélectionner deux atomes (good/bad) sur un même concept, le système propose les atomes pivots à examiner par dichotomie.",
         "level": {
-          "0": { "label": "Désactivé", "desc": "Pas de bisect. Recherche temporelle classique." },
-          "1": { "label": "Manuel", "desc": "UI bisect : navigation chronologique manuelle dans l'historique tri-temporel." },
-          "2": { "label": "Assisté IA", "desc": "L'agent propose les pivots candidats, tu valides à chaque étape." },
-          "3": { "label": "Automatique", "desc": "L'agent fait le bisect de bout en bout, te livre directement l'atome pivot." }
+          "0": {
+            "label": "Désactivé",
+            "desc": "Pas de bisect. Recherche temporelle classique."
+          },
+          "1": {
+            "label": "Manuel",
+            "desc": "UI bisect : navigation chronologique manuelle dans l'historique tri-temporel."
+          },
+          "2": {
+            "label": "Assisté IA",
+            "desc": "L'agent propose les pivots candidats, tu valides à chaque étape."
+          },
+          "3": {
+            "label": "Automatique",
+            "desc": "L'agent fait le bisect de bout en bout, te livre directement l'atome pivot."
+          }
         }
       },
       "reversal": {
@@ -62,10 +74,22 @@
         "why": "Jamais d'UPDATE in-place : pour corriger un atome, on crée un atome `reversal` qui inverse explicitement + un atome corrigé. Intégrité garantie par construction, pas par contrôle.",
         "baseTask": "Ajouter le type `reversal` au frontmatter + signature crypto sur l'atome de reversal + filtre par défaut dans l'orchestrateur.",
         "level": {
-          "0": { "label": "Désactivé", "desc": "UPDATE in-place classique." },
-          "1": { "label": "Logique", "desc": "Type `reversal` au frontmatter, sans signature crypto. Append-only par convention." },
-          "2": { "label": "Signé HMAC", "desc": "Type `reversal` + signature HMAC sur (atome_original_id, hash_contenu, timestamp). Append-only garanti." },
-          "3": { "label": "Ledger chaîné", "desc": "HMAC + hash chaîné de tous les atomes (style blockchain). Intégrité totale du grand-livre." }
+          "0": {
+            "label": "Désactivé",
+            "desc": "UPDATE in-place classique."
+          },
+          "1": {
+            "label": "Logique",
+            "desc": "Type `reversal` au frontmatter, sans signature crypto. Append-only par convention."
+          },
+          "2": {
+            "label": "Signé HMAC",
+            "desc": "Type `reversal` + signature HMAC sur (atome_original_id, hash_contenu, timestamp). Append-only garanti."
+          },
+          "3": {
+            "label": "Ledger chaîné",
+            "desc": "HMAC + hash chaîné de tous les atomes (style blockchain). Intégrité totale du grand-livre."
+          }
         }
       },
       "prereg": {
@@ -73,10 +97,22 @@
         "why": "Annoncer hypothèse + critère de succès AVANT décision. Le postmortem référence obligatoirement le pre-reg. Anti-confirmation-bias structurel.",
         "baseTask": "Ajouter type `pre_reg` au schéma + workflow décision → postmortem qui le référence.",
         "level": {
-          "0": { "label": "Désactivé", "desc": "Pas de pre-registration." },
-          "1": { "label": "Soft", "desc": "Pre-reg optionnel, juste recommandé dans la doc." },
-          "2": { "label": "Lié", "desc": "Postmortem peut référencer un pre-reg parent (non bloquant)." },
-          "3": { "label": "Hard", "desc": "Pre-reg obligatoire bloquant avant toute décision structurante. Postmortem doit le résoudre." }
+          "0": {
+            "label": "Désactivé",
+            "desc": "Pas de pre-registration."
+          },
+          "1": {
+            "label": "Soft",
+            "desc": "Pre-reg optionnel, juste recommandé dans la doc."
+          },
+          "2": {
+            "label": "Lié",
+            "desc": "Postmortem peut référencer un pre-reg parent (non bloquant)."
+          },
+          "3": {
+            "label": "Hard",
+            "desc": "Pre-reg obligatoire bloquant avant toute décision structurante. Postmortem doit le résoudre."
+          }
         }
       },
       "mel": {
@@ -84,11 +120,26 @@
         "why": "Doctrine pré-pensée : « ce qui peut être en panne et l'agent fonctionne quand même, avec délai de réparation et procédure alternative ». Pas improvisé en incident.",
         "baseTask": "Rédiger la MEL : matrice composants × types panne × délai max × procédure alternative.",
         "level": {
-          "0": { "label": "Désactivé", "desc": "Runbook minimal. Improvisation en incident." },
-          "1": { "label": "Draft", "desc": "MEL rédigée sur composants critiques uniquement." },
-          "2": { "label": "Testée", "desc": "MEL + tests de dégradation 1× par composant (vérifie que le mode dégradé fonctionne)." },
-          "3": { "label": "Monitorée", "desc": "MEL + tests + monitoring auto qui détecte la panne et bascule en dégradé." },
-          "4": { "label": "Certifiée", "desc": "MEL + tests réguliers + audit trail + revue annuelle de la matrice." }
+          "0": {
+            "label": "Désactivé",
+            "desc": "Runbook minimal. Improvisation en incident."
+          },
+          "1": {
+            "label": "Draft",
+            "desc": "MEL rédigée sur composants critiques uniquement."
+          },
+          "2": {
+            "label": "Testée",
+            "desc": "MEL + tests de dégradation 1× par composant (vérifie que le mode dégradé fonctionne)."
+          },
+          "3": {
+            "label": "Monitorée",
+            "desc": "MEL + tests + monitoring auto qui détecte la panne et bascule en dégradé."
+          },
+          "4": {
+            "label": "Certifiée",
+            "desc": "MEL + tests réguliers + audit trail + revue annuelle de la matrice."
+          }
         }
       },
       "conflict": {
@@ -96,22 +147,51 @@
         "why": "Avant qu'un atome touche un client/projet/entité, cross-référence automatique : « cette entité est-elle adversaire / concurrente / cible d'une autre décision ? ». Empêche conseil contradictoire.",
         "baseTask": "NER (spaCy ou Gliner local) sur l'ingestion + index entités + check pre-query orchestrateur.",
         "level": {
-          "0": { "label": "Désactivé", "desc": "Aucun check de conflit." },
-          "1": { "label": "NER simple", "desc": "Extraction d'entités nommées (spaCy / Gliner). Alerte sur match exact." },
-          "2": { "label": "NER + graphe", "desc": "Graphe d'entités + détection match fuzzy (variantes orthographiques, alias)." },
-          "3": { "label": "+ temporel", "desc": "Check sur axe bitemporel : « cette entité a-t-elle été dans un contexte différent avant ? »" },
-          "4": { "label": "+ cross-circle", "desc": "Check entre tous les circles (multi-tenancy actif). Alerte cross-clients." }
+          "0": {
+            "label": "Désactivé",
+            "desc": "Aucun check de conflit."
+          },
+          "1": {
+            "label": "NER simple",
+            "desc": "Extraction d'entités nommées (spaCy / Gliner). Alerte sur match exact."
+          },
+          "2": {
+            "label": "NER + graphe",
+            "desc": "Graphe d'entités + détection match fuzzy (variantes orthographiques, alias)."
+          },
+          "3": {
+            "label": "+ temporel",
+            "desc": "Check sur axe bitemporel : « cette entité a-t-elle été dans un contexte différent avant ? »"
+          },
+          "4": {
+            "label": "+ cross-circle",
+            "desc": "Check entre tous les circles (multi-tenancy actif). Alerte cross-clients."
+          }
         }
       }
     },
     "layers": {
-      "c0": { "name": "Contrat commun (frontmatter YAML)" },
-      "c1": { "name": "Surface utilisateur (MCP)" },
-      "c2": { "name": "Orchestrateur RAG (+ cascade LLM)" },
-      "c3": { "name": "Retrieval + reranking" },
-      "c4": { "name": "Embeddings{mm, select, yes { multimodaux} other {}}" },
-      "c5": { "name": "Stockage polyglotte{bitemporal, select, yes { bitemporel} other {}}" },
-      "c6": { "name": "Infra (LLM Gateway + inference + backup)" }
+      "c0": {
+        "name": "Contrat commun (frontmatter YAML)"
+      },
+      "c1": {
+        "name": "Surface utilisateur (MCP)"
+      },
+      "c2": {
+        "name": "Orchestrateur RAG (+ cascade LLM)"
+      },
+      "c3": {
+        "name": "Retrieval + reranking"
+      },
+      "c4": {
+        "name": "Embeddings{mm, select, yes { multimodaux} other {}}"
+      },
+      "c5": {
+        "name": "Stockage polyglotte{bitemporal, select, yes { bitemporel} other {}}"
+      },
+      "c6": {
+        "name": "Infra (LLM Gateway + inference + backup)"
+      }
     },
     "diagnostics": {
       "compliance": {
@@ -777,10 +857,22 @@
     "seeReco": "Voir ma recommandation détaillée",
     "orPreset": "Ou partir d’un profil-type",
     "blocks": {
-      "profil": { "title": "Profil & contraintes", "description": "Qui vous êtes, et vos contraintes : conformité, sensibilité, budget." },
-      "infra": { "title": "Infra pure", "description": "Volume, débit, latence, croissance attendue." },
-      "memoire": { "title": "Usage-Mémoire", "description": "À qui sert cette mémoire, que mémoriser, et les usages avancés." },
-      "medias": { "title": "Médias", "description": "Besoins audio / vidéo / images, à mémoriser et/ou à créer." }
+      "profil": {
+        "title": "Profil & contraintes",
+        "description": "Qui vous êtes, et vos contraintes : conformité, sensibilité, budget."
+      },
+      "infra": {
+        "title": "Infra pure",
+        "description": "Volume, débit, latence, croissance attendue."
+      },
+      "memoire": {
+        "title": "Usage-Mémoire",
+        "description": "À qui sert cette mémoire, que mémoriser, et les usages avancés."
+      },
+      "medias": {
+        "title": "Médias",
+        "description": "Besoins audio / vidéo / images, à mémoriser et/ou à créer."
+      }
     },
     "fields": {
       "activity": "Activité",
@@ -799,7 +891,9 @@
       "contentTypes": "Que mémoriser ? (au moins un)",
       "audit": "Audit (traçabilité signée)",
       "bitemporal": "Bitemporalité (qui savait quoi quand)",
-      "advancedUses": "Usages avancés (optionnels)"
+      "advancedUses": "Usages avancés (optionnels)",
+      "continent": "Continent",
+      "country": "Pays / juridiction"
     },
     "sliderLabels": {
       "volume": "Volume",
@@ -854,6 +948,14 @@
       "preferSovereign": {
         "why": "Oriente la recommandation vers une stack davantage auto-hébergée et open-source, plutôt que des outils propriétaires qui enferment.",
         "consequence": "Le preset est relevé d'un cran (composants self-host) : plus de souveraineté, mais coût et complexité plus élevés — la tension éventuelle avec le budget est signalée, jamais masquée."
+      },
+      "continent": {
+        "why": "Où vivent vos données et vos utilisateurs, à l’échelle mondiale — tous les continents sont couverts.",
+        "consequence": "Oriente l’hébergement et les fournisseurs proposés ; vous précisez ensuite le pays."
+      },
+      "country": {
+        "why": "La juridiction précise détermine l’analyse des transferts de données. Analyse détaillée pour l’UE, le Maroc et les États-Unis ; ailleurs, défaut conservateur à valider par un conseil.",
+        "consequence": "Affine les fournisseurs locaux proposés ; orientation d’ingénierie, pas un avis juridique."
       }
     },
     "intakeFieldLabels": {
@@ -883,8 +985,14 @@
       "error": "Intégration indisponible pour le moment. Réglez les champs à la main, c’est toujours possible.",
       "help": "Optionnel : « Intégrer » fait lire votre note par une IA qui ajuste les champs ci-dessus (valeurs bornées, aucun coût inventé). Vous gardez la main."
     },
-    "yesNo": { "yes": "Oui", "no": "Non" },
-    "numberStepper": { "decrease": "Diminuer", "increase": "Augmenter" },
+    "yesNo": {
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "numberStepper": {
+      "decrease": "Diminuer",
+      "increase": "Augmenter"
+    },
     "module": {
       "perMonthDelta": "+{cost} €/mois",
       "zeroDelta": "+0 €",
@@ -928,23 +1036,33 @@
       "previewImmutable": ", immuable",
       "previewDisclaimer": "Coûts variables ±30 %, sources datées sur la page résultats. Orientation d’ingénierie, pas un avis juridique.",
       "criticality": {
-        "none": "Aucune", "noneHint": "Pas de sauvegarde gérée",
-        "standard": "Standard", "standardHint": "Quotidien · 30 j · hors-site",
-        "high": "Élevée", "highHint": "Horaire · 90 j · air-gap · PITR",
-        "critical": "Critique", "criticalHint": "≈ continu · 365 j · WORM"
+        "none": "Aucune",
+        "noneHint": "Pas de sauvegarde gérée",
+        "standard": "Standard",
+        "standardHint": "Quotidien · 30 j · hors-site",
+        "high": "Élevée",
+        "highHint": "Horaire · 90 j · air-gap · PITR",
+        "critical": "Critique",
+        "criticalHint": "≈ continu · 365 j · WORM"
       },
       "tier": {
-        "hot": "Chaud", "hotHint": "Accès immédiat",
-        "cold": "Froid", "coldHint": "Archive longue durée, moins cher"
+        "hot": "Chaud",
+        "hotHint": "Accès immédiat",
+        "cold": "Froid",
+        "coldHint": "Archive longue durée, moins cher"
       },
       "vector": {
-        "auto": "Auto", "autoHint": "Le moteur tranche au moindre coût",
+        "auto": "Auto",
+        "autoHint": "Le moteur tranche au moindre coût",
         "backup": "Sauvegarder",
-        "reembed": "Ré-embed", "reembedHint": "Reconstruit depuis la source, RTO plus long"
+        "reembed": "Ré-embed",
+        "reembedHint": "Reconstruit depuis la source, RTO plus long"
       },
       "erasure": {
-        "expiration": "Expiration", "expirationHint": "Purge à l'expiration de la rétention",
-        "cryptoShred": "Crypto-shred", "cryptoShredHint": "Destruction de clé → donnée illisible"
+        "expiration": "Expiration",
+        "expirationHint": "Purge à l'expiration de la rétention",
+        "cryptoShred": "Crypto-shred",
+        "cryptoShredHint": "Destruction de clé → donnée illisible"
       }
     },
     "residency": {
@@ -988,7 +1106,12 @@
       "modeAria": "Mode d'exécution",
       "modeSovereign": "🟢 Souverain",
       "modeApi": "💳 API",
-      "tier": { "none": "Aucun", "light": "Léger", "medium": "Modéré", "intensive": "Intensif" },
+      "tier": {
+        "none": "Aucun",
+        "light": "Léger",
+        "medium": "Modéré",
+        "intensive": "Intensif"
+      },
       "modalityAudio": "Audio",
       "modalityVideo": "Vidéo",
       "modalityImages": "Images",
@@ -1049,7 +1172,8 @@
         "contentTypes": "Types de contenu",
         "voices": "Voix / perspectives",
         "media": "Médias",
-        "modules": "Modules"
+        "modules": "Modules",
+        "geography": "Géographie"
       },
       "value": {
         "yes": "Oui",
@@ -1181,6 +1305,38 @@
       "multiHint": "2 – 5 voix",
       "many": "Nombreuses",
       "manyHint": "> 5 voix"
+    },
+    "continent": {
+      "europe": "Europe",
+      "north-america": "Amérique du Nord",
+      "latam": "Amérique latine",
+      "africa": "Afrique",
+      "middle-east": "Moyen-Orient",
+      "apac": "Asie-Pacifique"
+    },
+    "country": {
+      "union-europeenne": "Union européenne",
+      "suisse": "Suisse",
+      "royaume-uni": "Royaume-Uni",
+      "autre-europe": "Autre (Europe)",
+      "etats-unis": "États-Unis",
+      "canada": "Canada",
+      "autre-amerique-nord": "Autre (Amérique du Nord)",
+      "maroc": "Maroc",
+      "nigeria": "Nigeria",
+      "kenya": "Kenya",
+      "afrique-sud": "Afrique du Sud",
+      "autre-afrique": "Autre (Afrique)",
+      "bresil": "Brésil",
+      "mexique": "Mexique",
+      "autre-amerique-latine": "Autre (Amérique latine)",
+      "japon": "Japon",
+      "coree-sud": "Corée du Sud",
+      "inde": "Inde",
+      "autre-asie-pacifique": "Autre (Asie-Pacifique)",
+      "emirats": "Émirats arabes unis",
+      "arabie-saoudite": "Arabie saoudite",
+      "autre-moyen-orient": "Autre (Moyen-Orient)"
     }
   },
   "Home": {

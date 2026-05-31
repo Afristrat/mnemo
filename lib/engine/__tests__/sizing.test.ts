@@ -45,6 +45,8 @@ function makePrices(): MultimodalPriceTable {
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "freelance",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 1,
     contentTypes: ["text"],

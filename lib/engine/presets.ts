@@ -21,6 +21,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 120,
     profile: {
       activity: "freelance",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 1,
       contentTypes: ["text", "audio"],
@@ -47,6 +49,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 800,
     profile: {
       activity: "cabinet-regule",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 10,
       contentTypes: ["text", "audio", "structured"],
@@ -73,6 +77,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 50,
     profile: {
       activity: "particulier",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 1,
       contentTypes: ["audio"],
@@ -99,6 +105,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 450,
     profile: {
       activity: "agence",
+      continent: "africa",
+      country: "maroc",
       zone: "maroc",
       users: 100,
       contentTypes: ["text", "audio", "video"],
@@ -125,6 +133,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 180,
     profile: {
       activity: "pme-startup",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 8,
       contentTypes: ["text", "code", "structured"],
@@ -151,6 +161,8 @@ export const PRESET_PROFILES: readonly PresetProfile[] = [
     cost: 90,
     profile: {
       activity: "recherche",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 1,
       contentTypes: ["text", "structured"],

@@ -11,6 +11,8 @@ const SLOT_IDS: readonly SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

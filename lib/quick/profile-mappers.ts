@@ -68,7 +68,9 @@ export function mapQuickAnswersToProfile(answers: QuickAnswers): Profile {
 
   return {
     activity: ACTIVITY_BY_WHO[who],
-    // Souveraineté = conséquence des contraintes : zone UE par défaut (rapatriable au Maroc au besoin).
+    // Souveraineté = conséquence des contraintes : UE par défaut (rapatriable au Maroc au besoin).
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: who === "team" ? 8 : who === "regulated" ? 5 : 1,
     contentTypes,

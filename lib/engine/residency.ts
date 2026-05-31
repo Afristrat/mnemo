@@ -26,7 +26,7 @@ import { decidePreset } from "./preset";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { lookupTransferBasis, type TransferContext } from "@/lib/legal/transfers";
 import type { MultimodalPriceEntry } from "./sizing";
-import type { Continent } from "./providers";
+import type { Continent } from "./types";
 
 // --- Contrat de prix résidence (DANS le moteur ; le SEED sourcé vit dans lib/pricing/residency-seed,
 // comme BackupPriceTable/backup-seed). Prix INJECTÉS, le moteur reste pur (zéro import lib/pricing). --

@@ -1,7 +1,9 @@
 import { useTranslations } from "next-intl";
+import { jurisdictionsFor, type Continent } from "@/lib/engine";
 import {
   ACTIVITY_OPTIONS,
   BUDGET_OPTIONS,
+  CONTINENT_OPTIONS,
   CONTENT_TYPE_OPTIONS,
   DR_TIER_OPTIONS,
   GROWTH_OPTIONS,
@@ -22,6 +24,9 @@ import {
 // pour les composants de saisie. Un seul `useTranslations("Options")` partagé.
 type LocalizedOptions = {
   activity: Option<(typeof ACTIVITY_OPTIONS)[number]["value"]>[];
+  continent: Option<Continent>[];
+  /** Pays/juridictions du continent sélectionné (libellés localisés). */
+  countriesFor: (continent: Continent) => Option<string>[];
   zone: Option<(typeof ZONE_OPTIONS)[number]["value"]>[];
   region: Option<(typeof REGION_OPTIONS)[number]["value"]>[];
   drTier: Option<(typeof DR_TIER_OPTIONS)[number]["value"]>[];
@@ -43,6 +48,9 @@ export function useOptions(): LocalizedOptions {
     defs.map((d) => (d.hintKey !== undefined ? { value: d.value, label: t(d.labelKey), hint: t(d.hintKey) } : { value: d.value, label: t(d.labelKey) }));
   return {
     activity: loc(ACTIVITY_OPTIONS),
+    continent: loc(CONTINENT_OPTIONS),
+    countriesFor: (continent: Continent): Option<string>[] =>
+      jurisdictionsFor(continent).map((j) => ({ value: j.code, label: t(j.labelKey) })),
     zone: loc(ZONE_OPTIONS),
     region: loc(REGION_OPTIONS),
     drTier: loc(DR_TIER_OPTIONS),

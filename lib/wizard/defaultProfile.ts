@@ -6,6 +6,8 @@ export const STORAGE_KEY = "mnemo:profile:v2";
 
 export const DEFAULT_PROFILE: Profile = {
   activity: "freelance",
+  continent: "europe",
+  country: "union-europeenne",
   zone: "ue",
   users: 1,
   contentTypes: ["text"],

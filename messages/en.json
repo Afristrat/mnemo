@@ -51,10 +51,22 @@
         "why": "Binary search through tri-temporal history: “from when did my stance on X change?”. A tool for epistemic meta-reflection.",
         "baseTask": "Implement the bisect operation in layer C5: select two atoms (good/bad) on the same concept, and the system proposes the pivot atoms to examine by dichotomy.",
         "level": {
-          "0": { "label": "Disabled", "desc": "No bisect. Classic temporal search." },
-          "1": { "label": "Manual", "desc": "Bisect UI: manual chronological navigation through the tri-temporal history." },
-          "2": { "label": "AI-assisted", "desc": "The agent proposes candidate pivots; you validate at each step." },
-          "3": { "label": "Automatic", "desc": "The agent runs the bisect end to end and hands you the pivot atom directly." }
+          "0": {
+            "label": "Disabled",
+            "desc": "No bisect. Classic temporal search."
+          },
+          "1": {
+            "label": "Manual",
+            "desc": "Bisect UI: manual chronological navigation through the tri-temporal history."
+          },
+          "2": {
+            "label": "AI-assisted",
+            "desc": "The agent proposes candidate pivots; you validate at each step."
+          },
+          "3": {
+            "label": "Automatic",
+            "desc": "The agent runs the bisect end to end and hands you the pivot atom directly."
+          }
         }
       },
       "reversal": {
@@ -62,10 +74,22 @@
         "why": "Never an in-place UPDATE: to correct an atom, you create a `reversal` atom that explicitly inverts it plus a corrected atom. Integrity guaranteed by construction, not by control.",
         "baseTask": "Add the `reversal` type to the frontmatter + a cryptographic signature on the reversal atom + a default filter in the orchestrator.",
         "level": {
-          "0": { "label": "Disabled", "desc": "Classic in-place UPDATE." },
-          "1": { "label": "Logical", "desc": "`reversal` type in the frontmatter, without a crypto signature. Append-only by convention." },
-          "2": { "label": "HMAC-signed", "desc": "`reversal` type + HMAC signature over (original_atom_id, content_hash, timestamp). Append-only guaranteed." },
-          "3": { "label": "Chained ledger", "desc": "HMAC + chained hash of every atom (blockchain-style). Full ledger integrity." }
+          "0": {
+            "label": "Disabled",
+            "desc": "Classic in-place UPDATE."
+          },
+          "1": {
+            "label": "Logical",
+            "desc": "`reversal` type in the frontmatter, without a crypto signature. Append-only by convention."
+          },
+          "2": {
+            "label": "HMAC-signed",
+            "desc": "`reversal` type + HMAC signature over (original_atom_id, content_hash, timestamp). Append-only guaranteed."
+          },
+          "3": {
+            "label": "Chained ledger",
+            "desc": "HMAC + chained hash of every atom (blockchain-style). Full ledger integrity."
+          }
         }
       },
       "prereg": {
@@ -73,10 +97,22 @@
         "why": "State the hypothesis + success criterion BEFORE the decision. The postmortem must reference the pre-registration. Structural defence against confirmation bias.",
         "baseTask": "Add a `pre_reg` type to the schema + a decision → postmortem workflow that references it.",
         "level": {
-          "0": { "label": "Disabled", "desc": "No pre-registration." },
-          "1": { "label": "Soft", "desc": "Pre-registration optional, merely recommended in the docs." },
-          "2": { "label": "Linked", "desc": "The postmortem may reference a parent pre-registration (non-blocking)." },
-          "3": { "label": "Hard", "desc": "Pre-registration mandatory and blocking before any structuring decision. The postmortem must resolve it." }
+          "0": {
+            "label": "Disabled",
+            "desc": "No pre-registration."
+          },
+          "1": {
+            "label": "Soft",
+            "desc": "Pre-registration optional, merely recommended in the docs."
+          },
+          "2": {
+            "label": "Linked",
+            "desc": "The postmortem may reference a parent pre-registration (non-blocking)."
+          },
+          "3": {
+            "label": "Hard",
+            "desc": "Pre-registration mandatory and blocking before any structuring decision. The postmortem must resolve it."
+          }
         }
       },
       "mel": {
@@ -84,11 +120,26 @@
         "why": "Pre-thought doctrine: “what can be down while the agent still works, with repair time and an alternative procedure”. Not improvised during an incident.",
         "baseTask": "Write the MEL: a matrix of components × failure types × maximum delay × alternative procedure.",
         "level": {
-          "0": { "label": "Disabled", "desc": "Minimal runbook. Improvisation during incidents." },
-          "1": { "label": "Draft", "desc": "MEL written for critical components only." },
-          "2": { "label": "Tested", "desc": "MEL + degradation tests once per component (verifies the degraded mode works)." },
-          "3": { "label": "Monitored", "desc": "MEL + tests + automatic monitoring that detects the failure and switches to degraded mode." },
-          "4": { "label": "Certified", "desc": "MEL + regular tests + audit trail + annual review of the matrix." }
+          "0": {
+            "label": "Disabled",
+            "desc": "Minimal runbook. Improvisation during incidents."
+          },
+          "1": {
+            "label": "Draft",
+            "desc": "MEL written for critical components only."
+          },
+          "2": {
+            "label": "Tested",
+            "desc": "MEL + degradation tests once per component (verifies the degraded mode works)."
+          },
+          "3": {
+            "label": "Monitored",
+            "desc": "MEL + tests + automatic monitoring that detects the failure and switches to degraded mode."
+          },
+          "4": {
+            "label": "Certified",
+            "desc": "MEL + regular tests + audit trail + annual review of the matrix."
+          }
         }
       },
       "conflict": {
@@ -96,22 +147,51 @@
         "why": "Before an atom touches a client/project/entity, an automatic cross-reference: “is this entity an adversary / competitor / target of another decision?”. Prevents contradictory advice.",
         "baseTask": "NER (spaCy or local Gliner) on ingestion + an entity index + a pre-query check in the orchestrator.",
         "level": {
-          "0": { "label": "Disabled", "desc": "No conflict check." },
-          "1": { "label": "Basic NER", "desc": "Named-entity extraction (spaCy / Gliner). Alert on exact match." },
-          "2": { "label": "NER + graph", "desc": "Entity graph + fuzzy-match detection (spelling variants, aliases)." },
-          "3": { "label": "+ temporal", "desc": "Check on the bitemporal axis: “was this entity in a different context before?”" },
-          "4": { "label": "+ cross-circle", "desc": "Check across every circle (active multi-tenancy). Cross-client alert." }
+          "0": {
+            "label": "Disabled",
+            "desc": "No conflict check."
+          },
+          "1": {
+            "label": "Basic NER",
+            "desc": "Named-entity extraction (spaCy / Gliner). Alert on exact match."
+          },
+          "2": {
+            "label": "NER + graph",
+            "desc": "Entity graph + fuzzy-match detection (spelling variants, aliases)."
+          },
+          "3": {
+            "label": "+ temporal",
+            "desc": "Check on the bitemporal axis: “was this entity in a different context before?”"
+          },
+          "4": {
+            "label": "+ cross-circle",
+            "desc": "Check across every circle (active multi-tenancy). Cross-client alert."
+          }
         }
       }
     },
     "layers": {
-      "c0": { "name": "Common contract (YAML frontmatter)" },
-      "c1": { "name": "User surface (MCP)" },
-      "c2": { "name": "RAG orchestrator (+ LLM cascade)" },
-      "c3": { "name": "Retrieval + reranking" },
-      "c4": { "name": "{mm, select, yes {Multimodal embeddings} other {Embeddings}}" },
-      "c5": { "name": "{bitemporal, select, yes {Bitemporal polyglot storage} other {Polyglot storage}}" },
-      "c6": { "name": "Infra (LLM Gateway + inference + backup)" }
+      "c0": {
+        "name": "Common contract (YAML frontmatter)"
+      },
+      "c1": {
+        "name": "User surface (MCP)"
+      },
+      "c2": {
+        "name": "RAG orchestrator (+ LLM cascade)"
+      },
+      "c3": {
+        "name": "Retrieval + reranking"
+      },
+      "c4": {
+        "name": "{mm, select, yes {Multimodal embeddings} other {Embeddings}}"
+      },
+      "c5": {
+        "name": "{bitemporal, select, yes {Bitemporal polyglot storage} other {Polyglot storage}}"
+      },
+      "c6": {
+        "name": "Infra (LLM Gateway + inference + backup)"
+      }
     },
     "diagnostics": {
       "compliance": {
@@ -777,10 +857,22 @@
     "seeReco": "See my detailed recommendation",
     "orPreset": "Or start from a profile template",
     "blocks": {
-      "profil": { "title": "Profile & constraints", "description": "Who you are, and your constraints: compliance, sensitivity, budget." },
-      "infra": { "title": "Raw infrastructure", "description": "Volume, throughput, latency, expected growth." },
-      "memoire": { "title": "Memory usage", "description": "Who this memory serves, what to memorize, and advanced uses." },
-      "medias": { "title": "Media", "description": "Audio / video / image needs, to memorize and/or to create." }
+      "profil": {
+        "title": "Profile & constraints",
+        "description": "Who you are, and your constraints: compliance, sensitivity, budget."
+      },
+      "infra": {
+        "title": "Raw infrastructure",
+        "description": "Volume, throughput, latency, expected growth."
+      },
+      "memoire": {
+        "title": "Memory usage",
+        "description": "Who this memory serves, what to memorize, and advanced uses."
+      },
+      "medias": {
+        "title": "Media",
+        "description": "Audio / video / image needs, to memorize and/or to create."
+      }
     },
     "fields": {
       "activity": "Activity",
@@ -799,7 +891,9 @@
       "contentTypes": "What to memorize? (at least one)",
       "audit": "Audit (signed traceability)",
       "bitemporal": "Bitemporality (who knew what, when)",
-      "advancedUses": "Advanced uses (optional)"
+      "advancedUses": "Advanced uses (optional)",
+      "continent": "Continent",
+      "country": "Country / jurisdiction"
     },
     "sliderLabels": {
       "volume": "Volume",
@@ -854,6 +948,14 @@
       "preferSovereign": {
         "why": "Steers the recommendation toward a more self-hosted, open-source stack, rather than proprietary tools that lock you in.",
         "consequence": "The preset is bumped up one notch (self-host components): more sovereignty, but higher cost and complexity — any tension with the budget is flagged, never hidden."
+      },
+      "continent": {
+        "why": "Where your data and users live, worldwide — every continent is covered.",
+        "consequence": "Drives hosting and the providers proposed; you then specify the country."
+      },
+      "country": {
+        "why": "The precise jurisdiction drives data-transfer analysis. Detailed for the EU, Morocco and the United States; elsewhere, a conservative default to validate with counsel.",
+        "consequence": "Refines the local providers proposed; engineering guidance, not legal advice."
       }
     },
     "intakeFieldLabels": {
@@ -883,8 +985,14 @@
       "error": "Integration unavailable right now. Set the fields by hand — that's always possible.",
       "help": "Optional: “Integrate” has an AI read your note and adjust the fields above (bounded values, no invented cost). You stay in control."
     },
-    "yesNo": { "yes": "Yes", "no": "No" },
-    "numberStepper": { "decrease": "Decrease", "increase": "Increase" },
+    "yesNo": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "numberStepper": {
+      "decrease": "Decrease",
+      "increase": "Increase"
+    },
     "module": {
       "perMonthDelta": "+€{cost}/month",
       "zeroDelta": "+€0",
@@ -928,23 +1036,33 @@
       "previewImmutable": ", immutable",
       "previewDisclaimer": "Variable costs ±30%, dated sources on the results page. Engineering guidance, not legal advice.",
       "criticality": {
-        "none": "None", "noneHint": "No managed backup",
-        "standard": "Standard", "standardHint": "Daily · 30 d · off-site",
-        "high": "High", "highHint": "Hourly · 90 d · air-gapped · PITR",
-        "critical": "Critical", "criticalHint": "≈ continuous · 365 d · WORM"
+        "none": "None",
+        "noneHint": "No managed backup",
+        "standard": "Standard",
+        "standardHint": "Daily · 30 d · off-site",
+        "high": "High",
+        "highHint": "Hourly · 90 d · air-gapped · PITR",
+        "critical": "Critical",
+        "criticalHint": "≈ continuous · 365 d · WORM"
       },
       "tier": {
-        "hot": "Hot", "hotHint": "Immediate access",
-        "cold": "Cold", "coldHint": "Long-term archive, cheaper"
+        "hot": "Hot",
+        "hotHint": "Immediate access",
+        "cold": "Cold",
+        "coldHint": "Long-term archive, cheaper"
       },
       "vector": {
-        "auto": "Auto", "autoHint": "The engine picks the cheapest",
+        "auto": "Auto",
+        "autoHint": "The engine picks the cheapest",
         "backup": "Back up",
-        "reembed": "Re-embed", "reembedHint": "Rebuilt from source, longer RTO"
+        "reembed": "Re-embed",
+        "reembedHint": "Rebuilt from source, longer RTO"
       },
       "erasure": {
-        "expiration": "Expiration", "expirationHint": "Purge when retention expires",
-        "cryptoShred": "Crypto-shred", "cryptoShredHint": "Key destruction → unreadable data"
+        "expiration": "Expiration",
+        "expirationHint": "Purge when retention expires",
+        "cryptoShred": "Crypto-shred",
+        "cryptoShredHint": "Key destruction → unreadable data"
       }
     },
     "residency": {
@@ -988,7 +1106,12 @@
       "modeAria": "Execution mode",
       "modeSovereign": "🟢 Sovereign",
       "modeApi": "💳 API",
-      "tier": { "none": "None", "light": "Light", "medium": "Moderate", "intensive": "Intensive" },
+      "tier": {
+        "none": "None",
+        "light": "Light",
+        "medium": "Moderate",
+        "intensive": "Intensive"
+      },
       "modalityAudio": "Audio",
       "modalityVideo": "Video",
       "modalityImages": "Images",
@@ -1049,7 +1172,8 @@
         "contentTypes": "Content types",
         "voices": "Voices / perspectives",
         "media": "Media",
-        "modules": "Modules"
+        "modules": "Modules",
+        "geography": "Geography"
       },
       "value": {
         "yes": "Yes",
@@ -1181,6 +1305,38 @@
       "multiHint": "2 – 5 voices",
       "many": "Many",
       "manyHint": "> 5 voices"
+    },
+    "continent": {
+      "europe": "Europe",
+      "north-america": "North America",
+      "latam": "Latin America",
+      "africa": "Africa",
+      "middle-east": "Middle East",
+      "apac": "Asia-Pacific"
+    },
+    "country": {
+      "union-europeenne": "European Union",
+      "suisse": "Switzerland",
+      "royaume-uni": "United Kingdom",
+      "autre-europe": "Other (Europe)",
+      "etats-unis": "United States",
+      "canada": "Canada",
+      "autre-amerique-nord": "Other (North America)",
+      "maroc": "Morocco",
+      "nigeria": "Nigeria",
+      "kenya": "Kenya",
+      "afrique-sud": "South Africa",
+      "autre-afrique": "Other (Africa)",
+      "bresil": "Brazil",
+      "mexique": "Mexico",
+      "autre-amerique-latine": "Other (Latin America)",
+      "japon": "Japan",
+      "coree-sud": "South Korea",
+      "inde": "India",
+      "autre-asie-pacifique": "Other (Asia-Pacific)",
+      "emirats": "United Arab Emirates",
+      "arabie-saoudite": "Saudi Arabia",
+      "autre-moyen-orient": "Other (Middle East)"
     }
   },
   "Home": {

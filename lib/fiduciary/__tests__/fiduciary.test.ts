@@ -6,6 +6,8 @@ import frMessages from "@/messages/fr.json";
 
 const PROFILE: Profile = {
   activity: "agence",
+  continent: "africa",
+  country: "maroc",
   zone: "maroc",
   users: 8,
   contentTypes: ["text"],

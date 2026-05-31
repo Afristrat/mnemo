@@ -12,6 +12,8 @@ const stubRecap: RecapLabel = (k, v) => (v !== undefined && "name" in v ? String
 function prof(over: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],
@@ -57,7 +59,7 @@ describe("buildChoiceRecap (S-050)", () => {
       expect(item(groups, l)?.impactsCost).toBe(true);
     }
     // Orientent la stack/scores/conformité mais pas une ligne de coût directe
-    for (const l of ["label.zone", "label.audit", "label.bitemporal", "label.voices", "label.budget"]) {
+    for (const l of ["label.geography", "label.audit", "label.bitemporal", "label.voices", "label.budget"]) {
       expect(item(groups, l)?.impactsCost).toBe(false);
     }
   });
@@ -78,16 +80,18 @@ describe("buildChoiceRecap (S-050)", () => {
     if (firstModule) expect(value).toContain(stubEngine(firstModule.name));
   });
 
-  describe("précision « Autre » (S-064)", () => {
-    it("intègre la précision libre dans le libellé quand activity/zone = other", () => {
+  describe("précision « Autre » (S-064 / S-076)", () => {
+    it("intègre la précision libre : activity = other, pays = autre-* (otherText.zone)", () => {
       const p = prof({
         activity: "other",
-        zone: "other",
-        otherText: { activity: "Coopérative agricole", zone: "Suisse" },
+        continent: "europe",
+        country: "autre-europe",
+        otherText: { activity: "Coopérative agricole", zone: "Andorre" },
       });
       const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine, stubRecap);
       expect(item(groups, "label.activity")?.value).toContain("Coopérative agricole");
-      expect(item(groups, "label.zone")?.value).toContain("Suisse");
+      // La ligne géographie montre « continent · pays : précision ».
+      expect(item(groups, "label.geography")?.value).toContain("Andorre");
     });
 
     it("ne montre pas la précision quand la valeur n'est pas other (texte résiduel ignoré)", () => {
@@ -96,12 +100,12 @@ describe("buildChoiceRecap (S-050)", () => {
       expect(item(groups, "label.activity")?.value ?? "").not.toContain("texte résiduel");
     });
 
-    it("invariant : sans otherText, le libellé reste celui de l'énum (other → « Autre » muet)", () => {
-      const withOther = prof({ activity: "other", zone: "other" });
-      const groups = buildChoiceRecap(withOther, recommend(withOther), (k) => k, stubEngine, stubRecap);
-      // Avec le traducteur identité (k) => k, « other » résout sur sa clé, sans précision accolée.
+    it("invariant : pays « autre-* » sans otherText → libellé géographie sans précision accolée", () => {
+      const p = prof({ activity: "other", continent: "europe", country: "autre-europe" });
+      const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine, stubRecap);
       expect(item(groups, "label.activity")?.value).toBe("activity.other");
-      expect(item(groups, "label.zone")?.value).toBe("zone.other");
+      // Traducteur identité : « continent.europe · country.autre-europe », sans précision.
+      expect(item(groups, "label.geography")?.value).toBe("continent.europe · country.autre-europe");
     });
   });
 });

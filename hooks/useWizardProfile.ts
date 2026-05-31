@@ -1,13 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { BlockId, ContentType, ModuleId, Profile, Regulation } from "@/lib/engine";
+import type { BlockId, Continent, ContentType, ModuleId, Profile, Regulation } from "@/lib/engine";
+import { deriveZone, geographyFromZone } from "@/lib/engine";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 
 type UseWizardProfile = {
   profile: Profile;
   hydrated: boolean;
   setField: <K extends keyof Profile>(key: K, value: Profile[K]) => void;
+  /** Pose continent + pays + zone DÉRIVÉE de façon cohérente (S-076). */
+  setGeography: (continent: Continent, country: string) => void;
   toggleContentType: (value: ContentType) => void;
   toggleRegulation: (value: Regulation) => void;
   setModuleLevel: (id: ModuleId, level: number) => void;
@@ -26,7 +29,11 @@ export function useWizardProfile(): UseWizardProfile {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved !== null) {
         const parsed: Partial<Profile> = JSON.parse(saved);
-        setProfile({ ...DEFAULT_PROFILE, ...parsed });
+        const merged = { ...DEFAULT_PROFILE, ...parsed };
+        // Profil legacy (sans continent/pays) → reconstruit la géographie depuis la zone, cohérente.
+        const reconciled =
+          parsed.country === undefined ? { ...merged, ...geographyFromZone(merged.zone) } : merged;
+        setProfile(reconciled);
       }
     } catch {
       /* localStorage indisponible ou JSON corrompu : on garde le profil par défaut. */
@@ -45,6 +52,11 @@ export function useWizardProfile(): UseWizardProfile {
 
   const setField = useCallback(<K extends keyof Profile>(key: K, value: Profile[K]) => {
     setProfile((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  // Géographie (S-076) : le pays détermine le bucket juridique `zone` (dérivé), jamais saisi à part.
+  const setGeography = useCallback((continent: Continent, country: string) => {
+    setProfile((prev) => ({ ...prev, continent, country, zone: deriveZone(country) }));
   }, []);
 
   const toggleContentType = useCallback((value: ContentType) => {
@@ -89,6 +101,7 @@ export function useWizardProfile(): UseWizardProfile {
     profile,
     hydrated,
     setField,
+    setGeography,
     toggleContentType,
     toggleRegulation,
     setModuleLevel,

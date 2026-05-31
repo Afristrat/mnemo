@@ -18,7 +18,7 @@ import { ResidencyBlock } from "@/components/wizard/ResidencyBlock";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
 import { YesNo } from "@/components/wizard/YesNo";
-import { MODULES, PRESET_PROFILES, decidePreset, recommend, type BlockId, type Profile } from "@/lib/engine";
+import { MODULES, PRESET_PROFILES, decidePreset, defaultCountryFor, recommend, type BlockId, type Profile } from "@/lib/engine";
 import { useEngineText } from "@/lib/i18n/engine";
 import { applyIntakeFields } from "@/lib/llm/intake";
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
@@ -204,6 +204,7 @@ export function Wizard(): ReactElement {
     profile,
     hydrated,
     setField,
+    setGeography,
     toggleContentType,
     toggleRegulation,
     setModuleLevel,
@@ -295,9 +296,20 @@ export function Wizard(): ReactElement {
                   />
                 ) : null}
               </Field>
-              <Field label={tFields("zone")} info={{ why: tInfo("zone.why"), consequence: tInfo("zone.consequence") }}>
-                <RadioCards value={profile.zone} options={opts.zone} onChange={(v) => setField("zone", v)} />
-                {profile.zone === "other" ? (
+              <Field label={tFields("continent")} info={{ why: tInfo("continent.why"), consequence: tInfo("continent.consequence") }}>
+                <RadioCards
+                  value={profile.continent}
+                  options={opts.continent}
+                  onChange={(c) => setGeography(c, defaultCountryFor(c))}
+                />
+              </Field>
+              <Field label={tFields("country")} info={{ why: tInfo("country.why"), consequence: tInfo("country.consequence") }}>
+                <RadioCards
+                  value={profile.country}
+                  options={opts.countriesFor(profile.continent)}
+                  onChange={(c) => setGeography(profile.continent, c)}
+                />
+                {profile.country.startsWith("autre-") ? (
                   <OtherTextField
                     field="zone"
                     value={profile.otherText?.zone ?? ""}

@@ -1204,6 +1204,21 @@
         "watch_paths exclut les commits purement doc (evite builds OOM inutiles)",
         "verifie : un push de code declenche un deploy, un push doc non"
       ]
+    },
+    {
+      "id": "S-076",
+      "title": "Geographie coherente : CONTINENT -> PAYS dans le configurateur (fin du modele Europe-centrique)",
+      "feature": "residency",
+      "passes": true,
+      "completedAt": "2026-05-31",
+      "deps": ["S-073"],
+      "note": "Retour Amine : « je ne vois toujours pas de continents en dehors d'Europe, Etats-Unis c'est un pays comme Maroc ». Le modele historique melait les niveaux (zone = ue/maroc/us/other : un bloc + 2 pays + fourre-tout, aucun continent hors Europe) et le multi-continent (S-073) etait relegue aux resultats. Refonte (decision Amine = « Continent + pays ») : modele homogene CONTINENT -> PAYS dans le parcours principal. lib/engine/geography.ts (catalogue JURISDICTIONS : 6 continents, 22 pays/juridictions ; deriveZone(pays) -> bucket juridique ; geographyFromZone pour profils legacy). Profile gagne continent + country (requis) ; zone DERIVEE du pays (le moteur + lib/legal restent INTACTS). Wizard : selecteur Continent (6) + Pays (dependant), setGeography pose continent+pays+zone. useOptions.countriesFor(continent). Recap : ligne « continent · pays » (precise) au lieu du bucket zone. RedundancyPanel s'ouvre sur le continent choisi. i18n fr/en/ar (Options.continent 6, Options.country 22, Wizard.fields/info, recap.label.geography). DEFCON 1 : AUCUN statut juridique par pays fabrique (legal precis UE/Maroc/US uniquement, sinon bucket 'other' conservateur). Profils legacy reconcilies a l'hydratation.",
+      "acceptance": [
+        "les 6 continents sont selectionnables dans le configurateur (pas seulement l'Europe)",
+        "granularite homogene : tout est un pays groupe par continent (Etats-Unis et Maroc au meme niveau)",
+        "zone juridique derivee du pays ; moteur/legal inchanges ; profils legacy reconcilies",
+        "typecheck 0 / lint 0-0 / tests verts / build OK ; i18n fr/en/ar parite"
+      ]
     }
   ]
 }

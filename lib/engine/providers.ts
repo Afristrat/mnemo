@@ -11,12 +11,8 @@
 // Consommateurs : seed `lib/pricing/sovereign-providers-seed`, veille `lib/residency/discovery`,
 // UI `components/results/RedundancyPanel`.
 
-import type { CostSource } from "./types";
-
-/** Continents couverts (granularité « présence mondiale »). */
-export type Continent = "europe" | "north-america" | "latam" | "africa" | "middle-east" | "apac";
-
-export const CONTINENTS: readonly Continent[] = ["europe", "north-america", "latam", "africa", "middle-east", "apac"];
+import { CONTINENTS } from "./types";
+import type { Continent, CostSource } from "./types";
 
 /** Classe de souveraineté d'un fournisseur (pour le filtrage par contraintes utilisateur, cf. S-072). */
 export type ProviderSovereignty = "sovereign" | "eu-hosted" | "hyperscaler";

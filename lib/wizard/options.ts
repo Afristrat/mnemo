@@ -1,6 +1,7 @@
 import type {
   Activity,
   Budget,
+  Continent,
   ContentType,
   DrTier,
   Growth,
@@ -40,6 +41,16 @@ export const ZONE_OPTIONS: OptionDef<Zone>[] = [
   { value: "maroc", labelKey: "zone.maroc" },
   { value: "us", labelKey: "zone.us" },
   { value: "other", labelKey: "zone.other" },
+];
+
+/** Continents (axe géographique homogène, S-076). Le pays se choisit ensuite via `jurisdictionsFor`. */
+export const CONTINENT_OPTIONS: OptionDef<Continent>[] = [
+  { value: "europe", labelKey: "continent.europe" },
+  { value: "north-america", labelKey: "continent.north-america" },
+  { value: "latam", labelKey: "continent.latam" },
+  { value: "africa", labelKey: "continent.africa" },
+  { value: "middle-east", labelKey: "continent.middle-east" },
+  { value: "apac", labelKey: "continent.apac" },
 ];
 
 /** Régions (juridictions) pour la résidence + le DR multi-région (S-048, finding C4). */

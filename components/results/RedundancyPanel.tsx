@@ -76,7 +76,7 @@ function parseProviders(data: unknown): ProviderView[] {
  */
 export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement {
   const t = useTranslations("Results.redundancyPanel");
-  const [continent, setContinent] = useState<Continent>("africa");
+  const [continent, setContinent] = useState<Continent>(profile.continent);
   const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
