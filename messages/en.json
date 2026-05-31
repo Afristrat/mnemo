@@ -236,6 +236,65 @@
       }
     }
   },
+  "Deliverable": {
+    "title": "Strate, Memory infrastructure plan",
+    "subtitle": "Sovereign configuration recommendation",
+    "disclaimer": "An AI can be wrong. These costs are sourced projections (±30%), not commitments. Verify every source before any decision.",
+    "yes": "Yes",
+    "no": "No",
+    "included": "included",
+    "perMonth": "{cost} €/mo",
+    "euro": "{amount} €",
+    "moduleLevel": "{name} (lvl {level}/{max})",
+    "totalEstimate": "Estimated total",
+    "band": "Range ±30%",
+    "bandValue": "{low} – {high} €/mo",
+    "section": {
+      "profile": "Profile",
+      "presetReason": "Why this preset",
+      "stack": "Recommended stack (7 layers)",
+      "catalog": "Selected catalog (provenance of choices)",
+      "scores": "Scores (10 dimensions)",
+      "costMap": "Cost map",
+      "ensemble": "Configuration ensemble (uncertainty)",
+      "compliance": "Compliance actions",
+      "risks": "Detected risks",
+      "fiduciary": "Fiduciary charter"
+    },
+    "profile": {
+      "activity": "Activity",
+      "zone": "Hosting zone",
+      "users": "Users",
+      "contentTypes": "Content types",
+      "volume": "Data volume",
+      "growth": "Growth",
+      "regulations": "Regulatory regimes",
+      "sensitivity": "Sensitivity",
+      "audit": "Audit",
+      "bitemporal": "Bitemporal",
+      "techLevel": "Technical skills",
+      "budget": "Budget",
+      "reqPerDay": "Requests / day",
+      "latency": "Latency",
+      "voices": "Voices / perspectives"
+    },
+    "meta": {
+      "preset": "Preset",
+      "scoreAvg": "Average score",
+      "cost": "Estimated cost",
+      "costValue": "{cost} €/mo (±30%: {low} – {high} €)",
+      "agreement": "Ensemble agreement"
+    },
+    "provenance": {
+      "live": "verified live",
+      "seed": "dated calibration",
+      "flagged": "to re-verify (fallback)"
+    },
+    "catalog": {
+      "assembled": "Catalog assembled on {date} (origin: {origin}). Each component carries its provenance and source: the plan replays identically.",
+      "provenanceConfidence": "{provenance} · confidence {confidence}"
+    }
+  },
   "StatusDot": {
     "high": "Verified against vendor docs",
     "medium": "Estimate (to confirm)",

@@ -2,7 +2,7 @@
 // les rendus Markdown et PDF. Aucune dépendance UI ni I/O → entièrement testable.
 
 import { costBand, formatPresetReason, type EngineResolver, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
-import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
+import type { Catalog, SlotId } from "@/lib/catalog";
 import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 import {
@@ -25,6 +25,9 @@ import {
 /** Résout la clé de libellé d'une option (namespace `Options`) — injecté (UI) ou stub (tests). */
 export type OptionLabel = (key: string) => string;
 
+/** Traducteur du chrome propre au livrable (namespace `Deliverable`, S-059) — injecté (UI) ou stub. */
+export type DeliverableLabel = (key: string, values?: Record<string, string | number>) => string;
+
 export type DeliverableRow = { left: string; right: string };
 export type DeliverableSection = { heading: string; rows: DeliverableRow[]; bullets: string[] };
 export type DeliverableSource = { label: string; url: string; checkedAt: string };
@@ -39,9 +42,6 @@ export type Deliverable = {
   disclaimer: string;
 };
 
-export const DISCLAIMER =
-  "Une IA peut se tromper. Ces coûts sont des projections sourcées (±30 %), pas des engagements. Vérifiez chaque source avant toute décision.";
-
 function labelOf<T extends string>(defs: OptionDef<T>[], value: T, optionLabel: OptionLabel): string {
   return optionLabel(optionLabelKey(defs, value));
 }
@@ -50,26 +50,27 @@ function labelsOf<T extends string>(defs: OptionDef<T>[], values: T[], optionLab
   return values.map((v) => labelOf(defs, v, optionLabel)).join(", ");
 }
 
-function profileSection(p: Profile, optionLabel: OptionLabel): DeliverableSection {
+function profileSection(p: Profile, optionLabel: OptionLabel, t: DeliverableLabel): DeliverableSection {
+  const yesNo = (v: boolean): string => t(v ? "yes" : "no");
   return {
-    heading: "Profil",
+    heading: t("section.profile"),
     bullets: [],
     rows: [
-      { left: "Activité", right: labelOf(ACTIVITY_OPTIONS, p.activity, optionLabel) },
-      { left: "Zone d'hébergement", right: labelOf(ZONE_OPTIONS, p.zone, optionLabel) },
-      { left: "Utilisateurs", right: String(p.users) },
-      { left: "Types de contenu", right: labelsOf(CONTENT_TYPE_OPTIONS, p.contentTypes, optionLabel) },
-      { left: "Volume de données", right: labelOf(VOLUME_OPTIONS, p.volume, optionLabel) },
-      { left: "Croissance", right: labelOf(GROWTH_OPTIONS, p.growth, optionLabel) },
-      { left: "Régimes réglementaires", right: labelsOf(REGULATION_OPTIONS, p.regulations, optionLabel) },
-      { left: "Sensibilité", right: labelOf(SENSITIVITY_OPTIONS, p.sensitivity, optionLabel) },
-      { left: "Audit", right: p.audit ? "Oui" : "Non" },
-      { left: "Bitemporel", right: p.bitemporal ? "Oui" : "Non" },
-      { left: "Compétences techniques", right: labelOf(TECH_LEVEL_OPTIONS, p.techLevel, optionLabel) },
-      { left: "Budget", right: labelOf(BUDGET_OPTIONS, p.budget, optionLabel) },
-      { left: "Requêtes / jour", right: labelOf(REQ_PER_DAY_OPTIONS, p.reqPerDay, optionLabel) },
-      { left: "Latence", right: labelOf(LATENCY_OPTIONS, p.latency, optionLabel) },
-      { left: "Voix / perspectives", right: labelOf(VOICES_OPTIONS, p.voices, optionLabel) },
+      { left: t("profile.activity"), right: labelOf(ACTIVITY_OPTIONS, p.activity, optionLabel) },
+      { left: t("profile.zone"), right: labelOf(ZONE_OPTIONS, p.zone, optionLabel) },
+      { left: t("profile.users"), right: String(p.users) },
+      { left: t("profile.contentTypes"), right: labelsOf(CONTENT_TYPE_OPTIONS, p.contentTypes, optionLabel) },
+      { left: t("profile.volume"), right: labelOf(VOLUME_OPTIONS, p.volume, optionLabel) },
+      { left: t("profile.growth"), right: labelOf(GROWTH_OPTIONS, p.growth, optionLabel) },
+      { left: t("profile.regulations"), right: labelsOf(REGULATION_OPTIONS, p.regulations, optionLabel) },
+      { left: t("profile.sensitivity"), right: labelOf(SENSITIVITY_OPTIONS, p.sensitivity, optionLabel) },
+      { left: t("profile.audit"), right: yesNo(p.audit) },
+      { left: t("profile.bitemporal"), right: yesNo(p.bitemporal) },
+      { left: t("profile.techLevel"), right: labelOf(TECH_LEVEL_OPTIONS, p.techLevel, optionLabel) },
+      { left: t("profile.budget"), right: labelOf(BUDGET_OPTIONS, p.budget, optionLabel) },
+      { left: t("profile.reqPerDay"), right: labelOf(REQ_PER_DAY_OPTIONS, p.reqPerDay, optionLabel) },
+      { left: t("profile.latency"), right: labelOf(LATENCY_OPTIONS, p.latency, optionLabel) },
+      { left: t("profile.voices"), right: labelOf(VOICES_OPTIONS, p.voices, optionLabel) },
     ],
   };
 }
@@ -89,29 +90,20 @@ function collectSources(reco: Recommendation): DeliverableSource[] {
 
 const SLOT_ORDER: SlotId[] = ["c0", "c1", "c2", "c3", "c4", "c5", "c6"];
 
-const PROVENANCE_LABEL: Record<Provenance, string> = {
-  live: "vérifié en direct",
-  seed: "calibration datée",
-  flagged: "à revérifier (repli)",
-};
-
 /**
  * Fige le catalogue retenu (S-037) : un candidat par couche, sa provenance (live/seed/flagged), sa
  * confiance et sa source. Rend le livrable rejouable — on sait exactement quels composants ont été
  * recommandés, d'où vient l'information, et à quelle date le catalogue a été assemblé.
  */
-function catalogSection(catalog: Catalog): DeliverableSection {
+function catalogSection(catalog: Catalog, t: DeliverableLabel): DeliverableSection {
   return {
-    heading: "Catalogue retenu (provenance des choix)",
-    bullets: [
-      `Catalogue assemblé le ${catalog.assembledAt} (origine : ${catalog.source}). ` +
-        "Chaque composant porte sa provenance et sa source : le plan est rejouable à l'identique.",
-    ],
+    heading: t("section.catalog"),
+    bullets: [t("catalog.assembled", { date: catalog.assembledAt, origin: catalog.source })],
     rows: SLOT_ORDER.map((slot) => {
       const rec = catalog.slots[slot].recommended;
       return {
         left: `${slot.toUpperCase()} · ${rec.name}`,
-        right: `${PROVENANCE_LABEL[rec.provenance]} · confiance ${rec.confidence}`,
+        right: t("catalog.provenanceConfidence", { provenance: t(`provenance.${rec.provenance}`), confidence: rec.confidence }),
       };
     }),
   };
@@ -133,9 +125,9 @@ function catalogSources(catalog: Catalog): DeliverableSource[] {
 /**
  * Construit le livrable structuré à partir de la recommandation et de l'ensemble.
  * `catalog` (optionnel) fige les choix de composants retenus + leur provenance (S-037, rejouable).
- * `resolve` (S-058) résout les descripteurs `Message` du moteur (scores, et progressivement les
- * autres champs) en chaîne localisée. La localisation des EN-TÊTES propres au livrable et du
- * disclaimer relève de S-059 (ils restent en français ici).
+ * `resolve` (S-058) résout les descripteurs `Message` du moteur en chaîne localisée. `deliverableText`
+ * (S-059) localise le chrome PROPRE au livrable (titres de sections, libellés de profil/méta, disclaimer)
+ * via le namespace `Deliverable`. Les noms de composants/choix (données catalogue) restent bruts.
  */
 export function buildDeliverable(
   profile: Profile,
@@ -143,38 +135,41 @@ export function buildDeliverable(
   ensemble: Ensemble,
   resolve: EngineResolver,
   optionLabel: OptionLabel,
+  deliverableText: DeliverableLabel,
   now: Date = new Date(),
   catalog?: Catalog,
 ): Deliverable {
+  const t = deliverableText;
   const band = costBand(reco.totalCost);
   const generatedAt = now.toISOString().slice(0, 10);
+  const perMonth = (cost: number): string => (cost > 0 ? t("perMonth", { cost }) : t("included"));
 
   const stack: DeliverableSection = {
-    heading: "Stack recommandée (7 couches)",
+    heading: t("section.stack"),
     bullets: [],
     rows: reco.layers.map((l) => ({
       left: `${resolve(l.name)}, ${l.choice}`,
-      right: l.cost > 0 ? `${l.cost} €/mois` : "inclus",
+      right: perMonth(l.cost),
     })),
   };
 
   const scores: DeliverableSection = {
-    heading: "Scores (10 dimensions)",
+    heading: t("section.scores"),
     bullets: [],
     rows: reco.scores.map((s) => ({ left: resolve(s.label), right: `${s.score}/10` })),
   };
 
   const costRows: DeliverableRow[] = reco.layers
     .filter((l) => l.cost > 0)
-    .map((l) => ({ left: resolve(l.name), right: `${l.cost} €` }));
+    .map((l) => ({ left: resolve(l.name), right: t("euro", { amount: l.cost }) }));
   for (const m of reco.activeModules) {
-    costRows.push({ left: `${resolve(m.name)} (niv. ${m.level}/${m.maxLevel})`, right: `${m.cost} €` });
+    costRows.push({ left: t("moduleLevel", { name: resolve(m.name), level: m.level, max: m.maxLevel }), right: t("euro", { amount: m.cost }) });
   }
-  costRows.push({ left: "Total estimé", right: `${reco.totalCost} €/mois` });
-  costRows.push({ left: "Fourchette ±30 %", right: `${band.low} – ${band.high} €/mois` });
+  costRows.push({ left: t("totalEstimate"), right: t("perMonth", { cost: reco.totalCost }) });
+  costRows.push({ left: t("band"), right: t("bandValue", { low: band.low, high: band.high }) });
 
   const ensembleSection: DeliverableSection = {
-    heading: "Ensemble de configurations (incertitude)",
+    heading: t("section.ensemble"),
     bullets: [ensemble.spread.uncertaintyLabel],
     rows: ensemble.variants.map((v) => ({
       left: `${v.label} (${v.recommendation.preset})`,
@@ -183,17 +178,17 @@ export function buildDeliverable(
   };
 
   const sections: DeliverableSection[] = [
-    profileSection(profile, optionLabel),
-    { heading: "Pourquoi ce preset", rows: [], bullets: [formatPresetReason(reco.presetReason, resolve)] },
+    profileSection(profile, optionLabel, t),
+    { heading: t("section.presetReason"), rows: [], bullets: [formatPresetReason(reco.presetReason, resolve)] },
     stack,
-    ...(catalog !== undefined ? [catalogSection(catalog)] : []),
+    ...(catalog !== undefined ? [catalogSection(catalog, t)] : []),
     scores,
-    { heading: "Carte de coûts", rows: costRows, bullets: [] },
+    { heading: t("section.costMap"), rows: costRows, bullets: [] },
     ensembleSection,
-    { heading: "Actions de conformité", rows: [], bullets: reco.compliance.map(resolve) },
-    { heading: "Risques détectés", rows: [], bullets: reco.risks.map(resolve) },
+    { heading: t("section.compliance"), rows: [], bullets: reco.compliance.map(resolve) },
+    { heading: t("section.risks"), rows: [], bullets: reco.risks.map(resolve) },
     {
-      heading: "Charte fiduciaire",
+      heading: t("section.fiduciary"),
       rows: [],
       bullets: [
         FIDUCIARY_CHARTER.revenueModel,
@@ -203,21 +198,21 @@ export function buildDeliverable(
   ];
 
   return {
-    title: "Strate, Plan d'infrastructure mémorielle",
-    subtitle: "Recommandation de configuration souveraine",
+    title: t("title"),
+    subtitle: t("subtitle"),
     generatedAt,
     meta: [
-      { left: "Preset", right: reco.preset },
-      { left: "Score moyen", right: `${reco.scoreAvg}/10` },
-      { left: "Coût estimé", right: `${reco.totalCost} €/mois (±30 % : ${band.low} – ${band.high} €)` },
-      { left: "Accord de l'ensemble", right: ensemble.spread.agreement },
+      { left: t("meta.preset"), right: reco.preset },
+      { left: t("meta.scoreAvg"), right: `${reco.scoreAvg}/10` },
+      { left: t("meta.cost"), right: t("meta.costValue", { cost: reco.totalCost, low: band.low, high: band.high }) },
+      { left: t("meta.agreement"), right: ensemble.spread.agreement },
     ],
     sections,
     sources: dedupeSources([
       ...collectSources(reco),
       ...(catalog !== undefined ? catalogSources(catalog) : []),
     ]),
-    disclaimer: DISCLAIMER,
+    disclaimer: t("disclaimer"),
   };
 }
 

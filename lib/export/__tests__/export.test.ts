@@ -1,9 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { buildEnsemble, decidePreset, recommend, type Profile } from "@/lib/engine";
 import { seedCatalog } from "@/lib/catalog";
-import { buildDeliverable, DISCLAIMER } from "@/lib/export/model";
+import { buildDeliverable } from "@/lib/export/model";
 import { renderMarkdown } from "@/lib/export/markdown";
 import { renderPdf, toWinAnsi } from "@/lib/export/pdf";
+
+// Stubs de résolution (S-058/S-059) : engine → id du Message ; options & chrome livrable → la clé.
+// Les assertions portent alors sur les CLÉS i18n (la localisation réelle est vérifiée côté messages/e2e).
+const tEngine = (m: { id: string }): string => m.id;
+const tKey = (k: string): string => k;
 
 const PROFILE: Profile = {
   activity: "pme-startup",
@@ -26,25 +31,25 @@ const PROFILE: Profile = {
 
 function deliverable() {
   const reco = recommend(PROFILE);
-  return buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), (m) => m.id, (k) => k, new Date("2026-05-25T08:00:00Z"));
+  return buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), tEngine, tKey, tKey, new Date("2026-05-25T08:00:00Z"));
 }
 
 describe("buildDeliverable", () => {
-  it("structure toutes les sections clés et date le livrable", () => {
+  it("structure toutes les sections clés (clés i18n) et date le livrable", () => {
     const d = deliverable();
     expect(d.generatedAt).toBe("2026-05-25");
     const headings = d.sections.map((s) => s.heading);
     expect(headings).toEqual(
       expect.arrayContaining([
-        "Profil",
-        "Stack recommandée (7 couches)",
-        "Scores (10 dimensions)",
-        "Carte de coûts",
-        "Ensemble de configurations (incertitude)",
+        "section.profile",
+        "section.stack",
+        "section.scores",
+        "section.costMap",
+        "section.ensemble",
       ]),
     );
-    expect(d.meta.some((m) => m.left === "Preset")).toBe(true);
-    expect(d.disclaimer).toBe(DISCLAIMER);
+    expect(d.meta.some((m) => m.left === "meta.preset")).toBe(true);
+    expect(d.disclaimer).toBe("disclaimer");
   });
 
   it("collecte des sources cliquables dédupliquées (URL http)", () => {
@@ -59,8 +64,8 @@ describe("buildDeliverable avec catalogue figé (S-037)", () => {
   it("ajoute la section provenance (7 couches) + les sources du catalogue", () => {
     const reco = recommend(PROFILE);
     const catalog = seedCatalog(decidePreset(PROFILE).preset, PROFILE);
-    const d = buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), (m) => m.id, (k) => k, new Date("2026-05-25T08:00:00Z"), catalog);
-    const section = d.sections.find((s) => s.heading.startsWith("Catalogue retenu"));
+    const d = buildDeliverable(PROFILE, reco, buildEnsemble(PROFILE), tEngine, tKey, tKey, new Date("2026-05-25T08:00:00Z"), catalog);
+    const section = d.sections.find((s) => s.heading === "section.catalog");
     expect(section).toBeDefined();
     expect(section?.rows).toHaveLength(7);
     expect(section?.rows[0].left).toContain(catalog.slots.c0.recommended.name);
@@ -69,17 +74,17 @@ describe("buildDeliverable avec catalogue figé (S-037)", () => {
   });
 
   it("sans catalogue : aucune section catalogue (rétro-compat)", () => {
-    expect(deliverable().sections.find((s) => s.heading.startsWith("Catalogue retenu"))).toBeUndefined();
+    expect(deliverable().sections.find((s) => s.heading === "section.catalog")).toBeUndefined();
   });
 });
 
 describe("renderMarkdown", () => {
   it("rend titres, sources en lien markdown et disclaimer", () => {
     const md = renderMarkdown(deliverable());
-    expect(md).toContain("# Strate, Plan d'infrastructure mémorielle");
-    expect(md).toContain("## Stack recommandée (7 couches)");
+    expect(md).toContain("# title");
+    expect(md).toContain("## section.stack");
     expect(md).toMatch(/\]\(https?:\/\//); // lien cliquable [label](http…)
-    expect(md).toContain(DISCLAIMER);
+    expect(md).toContain("disclaimer");
   });
 });
 
