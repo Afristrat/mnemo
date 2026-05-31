@@ -1146,6 +1146,60 @@
         "typecheck 0 / lint 0 / tests verts / build OK"
       ],
       "completedAt": "2026-05-29"
+    },
+    {
+      "id": "S-072",
+      "title": "Veille (crawl4ai) = choix utilisateur en contrainte ABSOLUE",
+      "feature": "llm",
+      "passes": true,
+      "completedAt": "2026-05-31",
+      "deps": ["S-036"],
+      "note": "Directive Amine : la recherche crawl4ai doit OBLIGATOIREMENT respecter les choix utilisateurs. lib/catalog/constraints.ts = source unique (requete + prompt RULES + reconcile) ; preferSovereign (toggle) etait IGNORE -> desormais exige la souverainete (rejet API tierce, repli seed flagged) ; secret/secret-pro/hipaa idem. Non-overreach : RGPD seul + interne n'interdit pas une API tierce (transferts encadres) -> la zone oriente la recherche, pas un rejet dur. +4 tests, 506 total. Prerequis de S-073.",
+      "acceptance": [
+        "preferSovereign + secret/secret-pro/hipaa => aucune API tierce retenue (requete + prompt + reconcile)",
+        "choix explicites = contrainte dure ; zone oriente la recherche ; pas de surcontrainte RGPD",
+        "typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-073",
+      "title": "Couverture multi-continent + decouverte de fournisseurs par pays cible + redondance multi-fournisseur",
+      "feature": "residency",
+      "passes": false,
+      "deps": ["S-043", "S-072"],
+      "note": "Vision Amine : pour mieux servir, etre present sur TOUS les continents ; pour chaque continent, proposer de TROUVER des fournisseurs dans le(s) pays cible(s), surtout pour les utilisateurs voulant PLUSIEURS solutions infra REDONDANTES (securite). S'appuie sur le modele residency multi-segment (S-043, EgressVector) + la veille contrainte (S-072). EPIC : (a) etendre le modele region->continent/pays ; (b) seed fournisseurs sourcés par continent/pays ; (c) veille live de decouverte de fournisseurs par pays (respectant S-072) ; (d) UI : choisir N fournisseurs redondants + visualiser la topologie multi-region ; (e) cout + transferts inter-region deja modelises (S-044). A decouper en sous-stories.",
+      "acceptance": [
+        "modele de regions couvrant les continents (au-dela de ue/maroc/us/other) + pays cibles",
+        "decouverte de fournisseurs par pays via la veille, en respectant les contraintes utilisateur (S-072) comme absolues",
+        "support de la redondance multi-fournisseur (plusieurs solutions infra) + topologie affichee",
+        "couts + transferts inter-region coherents (reutilise S-044) ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-074",
+      "title": "Tarification de l'inference LLM a l'usage (par 1M de tokens in + out)",
+      "feature": "pricing",
+      "passes": false,
+      "deps": ["S-041"],
+      "note": "Le cout d'inference LLM a l'usage etait flagge « a chiffrer en devis » (non coute, S-033/S-041). Amine : tarifer au 1M de tokens in ET out. EPIC : (a) seed prix sources par modele (par 1M input + output, devises natives + FX runtime, repli date + garde-fou — doctrine prix-live) ; (b) estimateur d'usage pur (tokens/mois depuis reqPerDay x hypotheses in/out +-30%) ; (c) integrer dans C6 (remplace la note « non chiffre »), ligne CostMap dediee ; (d) tests proprietes + sources DEFCON 1.",
+      "acceptance": [
+        "prix tokens LLM sources (par 1M in + out), seed date + repli + garde-fou (jamais hardcode fige)",
+        "estimateur d'usage pur (prix injectes), cout integre dans le total + visible CostMap",
+        "DEFCON 1 : sources URL+date+confiance ; le LLM ne calcule jamais ; typecheck 0 / lint 0/0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-075",
+      "title": "CI/CD : auto-deploy Coolify au push (retrait du controle manuel)",
+      "feature": "infra",
+      "passes": false,
+      "deps": [],
+      "note": "Amine : « retire le controle CI/CD ». App Coolify connectee via GitHub App (Afristrat/mnemo, branche main, dockerfile). L'auto-deploy n'est pas expose de facon fiable par l'API publique Coolify -> toggle « Automatic Deployment » a activer dans l'UI Coolify (1 clic). ⚠ Builds OOM-prone -> recommander watch_paths pour EXCLURE les commits doc (.ralph/, *.md, PASSATION) et ne builder que sur du code applicatif. A faire cote infra (UI) ou confirmer le champ API.",
+      "acceptance": [
+        "push sur main -> deploiement automatique Coolify",
+        "watch_paths exclut les commits purement doc (evite builds OOM inutiles)",
+        "verifie : un push de code declenche un deploy, un push doc non"
+      ]
     }
   ]
 }

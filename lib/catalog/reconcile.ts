@@ -7,15 +7,8 @@
 
 import { isValidFactor } from "@/lib/engine/sizing-params";
 import type { Profile } from "@/lib/engine/types";
+import { candidateViolatesConstraints } from "./constraints";
 import type { ComponentCandidate, ComponentSizingParams } from "./types";
-
-/** Un profil régulé « dur » ou `secret` exige un composant souverain (pas d'API tierce). */
-function requiresSovereign(profile: Profile): boolean {
-  return (
-    profile.sensitivity === "secret" ||
-    profile.regulations.some((r) => r === "secret-pro" || r === "hipaa")
-  );
-}
 
 /**
  * Garde-fou des facteurs de dimensionnement sourcés (S-056) : ne conserve qu'un facteur fini ET dans
@@ -43,9 +36,10 @@ export function reconcileCatalog(
 ): ComponentCandidate {
   const hasName = live.name.trim().length > 0;
   const hasSource = live.source.url.trim().length > 0;
-  const sovereignOk = !(requiresSovereign(profile) && live.sovereignty === "api-third-party");
+  // Contraintes utilisateur ABSOLUES (S-072) : souveraineté exigée / résidence régulée → jamais d'API tierce.
+  const constraintsOk = !candidateViolatesConstraints(live.sovereignty, profile);
 
-  if (hasName && hasSource && sovereignOk) {
+  if (hasName && hasSource && constraintsOk) {
     return { ...live, provenance: "live", sizingParams: sanitizeSizingParams(live.sizingParams) };
   }
   return { ...seed, provenance: "flagged", confidence: "low" };

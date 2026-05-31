@@ -11,6 +11,7 @@ import type { LlmMessage, LlmResult } from "@/lib/llm";
 import { DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import type { WebSearchResult } from "@/lib/pricing/scraper";
 import { seedCatalog } from "./catalog-seed";
+import { constraintPromptBlock, constraintQueryHint } from "./constraints";
 import { reconcileCatalog } from "./reconcile";
 import type { Catalog, CatalogSlot, ComponentCandidate, ComponentSovereignty, SlotId } from "./types";
 
@@ -123,8 +124,9 @@ export async function proposeForSlotLive(
   seedSlot: CatalogSlot,
   deps: ProposeDeps,
 ): Promise<ComponentCandidate | null> {
-  const sovereignHint = profile.sensitivity === "secret" ? " souverain auto-hébergeable open-source" : "";
-  const query = `meilleur ${seedSlot.recommended.role}${sovereignHint} 2026 comparatif licence open-source`;
+  // Contraintes utilisateur ABSOLUES (S-072) : orientent la RECHERCHE (requête) ET sont des RÈGLES
+  // DURES dans le prompt (le LLM rejette tout composant non conforme ; le reconcile re-vérifie ensuite).
+  const query = `best ${seedSlot.recommended.role}${constraintQueryHint(profile)} 2026 comparison license open-source`;
   const results = await deps.search(query, 5);
   if (results.length === 0) return null;
 
@@ -132,10 +134,10 @@ export async function proposeForSlotLive(
     .map((r, i) => `[${i + 1}] ${r.title} — ${r.url}\n${r.snippet}`)
     .join("\n");
   const user =
-    `Rôle: ${seedSlot.recommended.role}\n` +
-    `Contraintes: zone=${profile.zone}, sensibilité=${profile.sensitivity}\n` +
-    `Référence actuelle: ${seedSlot.recommended.name}\n` +
-    `Résultats web:\n${sourcesBlock}`;
+    `Role: ${seedSlot.recommended.role}\n` +
+    `HARD CONSTRAINTS (reject any component that violates these): ${constraintPromptBlock(profile)}\n` +
+    `Current reference: ${seedSlot.recommended.name}\n` +
+    `Web results:\n${sourcesBlock}`;
   const messages: LlmMessage[] = [
     { role: "system", content: deps.systemPrompt ?? DEFAULT_PROMPTS["catalog-veille"] },
     { role: "user", content: user },
