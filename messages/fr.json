@@ -278,12 +278,26 @@
     },
     "verdict": {
       "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage.",
+      "risk": {
+        "secret": "Données sensibles ou secrètes traitées hors d'une mémoire souveraine : exposition en cas de fuite, de réquisition étrangère (Cloud Act) ou de contrôle, sans piste d'audit que vous maîtrisez.",
+        "regulated": "{count, plural, one {Un régime de conformité s'applique} other {Plusieurs régimes de conformité s'appliquent}} : sans base mémorielle souveraine et auditable, le risque de non-conformité et de verrouillage reste ouvert.",
+        "sovereignty": "Sans stack souveraine auto-hébergée : dépendance technique et juridique à des fournisseurs que vous ne maîtrisez pas (réversibilité, transferts hors juridiction)."
+      },
+      "constraint": {
+        "preset": "{preset, select, LIGHT {Stack Essentielle} MEDIUM {Stack Standard} HARD {Stack Souveraine renforcée} other {Stack recommandée}}",
+        "sensitivity": "{sensitivity, select, confidential {Données confidentielles} secret {Données secrètes} other {Sensibilité élevée}}",
+        "regime": "{regime, select, rgpd {RGPD} cndp {CNDP} aiact {AI Act} hipaa {HIPAA} secret_pro {Secret professionnel} other {Conformité}}",
+        "sovereign": "Souveraineté prioritaire",
+        "zone": "{zone, select, ue {Hébergement UE} maroc {Hébergement Maroc} us {Hébergement États-Unis} other {Hébergement hors zones cadrées}}"
+      },
       "pain": "{activity, select, cabinet_regule {Reconstituer « qui a décidé quoi, et quand » coûte cher et vous expose en cas de contrôle ; vos dossiers sensibles transitent par des mémoires que vous ne maîtrisez pas.} pme_startup {Le savoir de l'équipe se disperse (conversations, docs, têtes) ; chaque départ ou pivot fait perdre le contexte des décisions.} recherche {Vos corpus et l'historique de vos hypothèses sont éclatés ; impossible de rejouer « ce que l'on savait » à une date donnée.} agence {Le contexte client se reconstruit à chaque mission ; la mémoire des comptes vit dans des outils tiers non souverains.} freelance {Votre mémoire de travail dépend d'outils propriétaires ; vous ne pouvez ni l'auditer ni l'emporter.} particulier {Vos notes et souvenirs sont dispersés et dépendants d'un éditeur ; aucune garantie de portabilité.} other {Votre mémoire d'organisation est dispersée et dépend d'outils que vous ne maîtrisez pas (souveraineté, portabilité, auditabilité).}}",
-      "gain": "« −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",
-      "firmPriceTier": "Dès 290 €/mois (Essentiel) — prix indicatif, sondage en cours",
+      "gain": "{preset, select, LIGHT {Démarrage rapide d'une base mémorielle souveraine : stack légère, coût maîtrisé.} MEDIUM {Base mémorielle souveraine équilibrée : gouvernance, audit et résilience en standard.} HARD {Base mémorielle souveraine renforcée : auto-hébergement, audit et bitemporel, résilience maximale.} other {Base mémorielle souveraine, maîtrisée de bout en bout.}} « −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",
+      "firmPriceTier": "{preset, select, LIGHT {Niveau Essentiel} MEDIUM {Niveau Standard} HARD {Niveau Souverain renforcé} other {Niveau standard}}",
       "nextStep": {
         "withSetup": "Validez les volumes médias (mémoriser + créer + backlog) et demandez un devis ferme avant le go.",
-        "default": "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go."
+        "default": "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go.",
+        "regime": "Cadrez la conformité (AIPD, DPA, registre des traitements) avec votre référent, puis demandez un devis ferme avant le go.",
+        "setupRegime": "Validez les volumes médias et cadrez la conformité (AIPD, DPA, registre) avec votre référent, puis demandez un devis ferme avant le go."
       }
     },
     "ensemble": {
@@ -852,6 +866,7 @@
     "narrated": "Texte adapté à votre profil par IA, chiffres inchangés",
     "synthesis": "Synthèse, le détail complet est sous « Voir le détail ».",
     "title": "Votre verdict",
+    "constraintsLabel": "Contraintes prises en compte",
     "pain": "Le besoin",
     "risk": "Le risque sans rien faire",
     "gain": "Le gain",

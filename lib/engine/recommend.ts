@@ -22,6 +22,7 @@ import {
   SCORE_KEYS,
   type ActiveModule,
   type CostSource,
+  type Preset,
   type Profile,
   type Recommendation,
   type Verdict,
@@ -64,23 +65,74 @@ function computeActiveModules(profile: Profile): ActiveModule[] {
   return active;
 }
 
+/**
+ * Risque saillant « sans rien faire ». Priorité à une incohérence concrète détectée dans le profil
+ * (déjà spécifique). À défaut, on dérive un risque STRUCTUREL selon les vrais enjeux (sensibilité,
+ * régimes, souveraineté) plutôt qu'un message générique fixe — c'est ce qui rendait le verdict
+ * identique entre deux profils radicalement différents.
+ */
+function salientRisk(profile: Profile, risks: Message[]): Message {
+  if (risks.length > 0) return risks[0];
+  if (profile.sensitivity === "secret" || profile.regulations.includes("secret-pro")) {
+    return msg("verdict.risk.secret");
+  }
+  const realRegimes = profile.regulations.filter((r) => r !== "none");
+  if (realRegimes.length > 0) return msg("verdict.risk.regulated", { count: realRegimes.length });
+  if (profile.preferSovereign === true) return msg("verdict.risk.sovereignty");
+  return msg("verdict.defaultRisk");
+}
+
+/** Prochaine étape : dépend du backlog média (mise en route) ET de la présence d'un régime de conformité. */
+function buildNextStep(profile: Profile, setupCost: number): Message {
+  const hasRegime = profile.regulations.some((r) => r !== "none");
+  const hasSetup = setupCost > 0;
+  const key = hasSetup ? (hasRegime ? "setupRegime" : "withSetup") : hasRegime ? "regime" : "default";
+  return msg(`verdict.nextStep.${key}`);
+}
+
+/**
+ * Contraintes structurantes du profil, surfacées dans le verdict (elles étaient invisibles : le
+ * preset et les contraintes souveraineté/régimes/géo n'apparaissaient pas). Descripteurs i18n PURS,
+ * aucun chiffre inventé (DÉFCON 1). Ordre stable (preset → sensibilité → régimes → souveraineté → géo).
+ */
+function buildConstraints(profile: Profile, preset: Preset): Message[] {
+  const out: Message[] = [msg("verdict.constraint.preset", { preset })];
+  if (profile.sensitivity === "secret" || profile.sensitivity === "confidential") {
+    out.push(msg("verdict.constraint.sensitivity", { sensitivity: profile.sensitivity }));
+  }
+  for (const r of profile.regulations) {
+    // ICU n'autorise pas le tiret dans une clé de `select` → normalisation (`secret-pro` → `secret_pro`).
+    if (r !== "none") out.push(msg("verdict.constraint.regime", { regime: r.replace(/-/g, "_") }));
+  }
+  if (profile.preferSovereign === true) out.push(msg("verdict.constraint.sovereign"));
+  out.push(msg("verdict.constraint.zone", { zone: profile.zone }));
+  return out;
+}
+
 // i18n (S-058, reliquat moteur chantier b) : le verdict ne porte plus de prose. Chaque champ
 // user-facing est un descripteur `Message` résolu en fr/en par la présentation (ResultsView →
-// DisplayVerdict). `pain` = `select` ICU sur l'activité (`other` couvre le défaut) ; `firmPriceTier`
-// reste le [PLACEHOLDER] tant que le sondage Van Westendorp n'a pas de réponses (spec §11).
-function buildVerdict(profile: Profile, totalCost: number, setupCost: number, risks: Message[]): Verdict {
+// DisplayVerdict). `pain` = `select` ICU sur l'activité ; `gain`/`firmPriceTier` = `select` sur le
+// preset ; `risk`/`nextStep` dérivés du profil. `firmPriceTier` reste sans prix ferme tant que le
+// sondage Van Westendorp n'a pas de réponses (spec §11) — seul le NIVEAU d'offre suit le preset.
+function buildVerdict(
+  profile: Profile,
+  preset: Preset,
+  totalCost: number,
+  setupCost: number,
+  risks: Message[],
+): Verdict {
   return {
     // ICU n'autorise pas le tiret dans une clé de `select` → on normalise (`cabinet-regule` → `cabinet_regule`) ;
     // la branche `other` couvre l'activité « other » ET toute activité non listée (= ancien PAIN_DEFAULT).
     pain: msg("verdict.pain", { activity: profile.activity.replace(/-/g, "_") }),
-    // Risque saillant = 1er risque détecté (descripteur i18n), sinon risque générique de souveraineté.
-    risk: risks[0] ?? msg("verdict.defaultRisk"),
-    // « Prouvé » uniquement pour « −risques » (Exit Escrow + Fiduciary livrés) ; jamais de stat inventée (spec §11).
-    gain: msg("verdict.gain"),
-    firmPriceTier: msg("verdict.firmPriceTier"),
+    risk: salientRisk(profile, risks),
+    // « Prouvé » pour « −risques » (Exit Escrow + Fiduciary livrés) ; le bénéfice de stack varie par preset.
+    gain: msg("verdict.gain", { preset }),
+    firmPriceTier: msg("verdict.firmPriceTier", { preset }),
     variableCostBand: costBand(totalCost),
     setupCostBand: costBand(setupCost),
-    nextStep: setupCost > 0 ? msg("verdict.nextStep.withSetup") : msg("verdict.nextStep.default"),
+    nextStep: buildNextStep(profile, setupCost),
+    constraints: buildConstraints(profile, preset),
   };
 }
 
@@ -206,6 +258,6 @@ export function recommend(
     compute,
     residency,
     llmUsage,
-    verdict: buildVerdict(profile, totalCost, setupCost, risks),
+    verdict: buildVerdict(profile, preset, totalCost, setupCost, risks),
   };
 }

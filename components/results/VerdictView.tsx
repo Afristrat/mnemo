@@ -59,6 +59,19 @@ export function VerdictView({ verdict, preset, onExpert, narrated = false }: Ver
 
       <h2 className="mt-4 font-display text-headline-lg text-on-surface">{t("title")}</h2>
 
+      {verdict.constraints.length > 0 ? (
+        <div className="mt-4">
+          <span className="text-label-caps uppercase text-on-surface-variant">{t("constraintsLabel")}</span>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {verdict.constraints.map((c) => (
+              <li key={c}>
+                <Chip tone="neutral">{c}</Chip>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <dl className="mt-4 grid gap-3 sm:grid-cols-3">
         <Box label={t("pain")}>{verdict.pain}</Box>
         <Box label={t("risk")}>{verdict.risk}</Box>

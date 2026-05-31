@@ -83,6 +83,7 @@ describe("VerdictView", () => {
     variableCostBand: { low: 70, high: 130 },
     setupCostBand: { low: 0, high: 0 },
     nextStep: "Étape test",
+    constraints: ["Stack Standard", "Données secrètes", "RGPD"],
   };
 
   it("présente douleur/risque/gain + prix ferme placeholder + bande ±30 %", () => {
@@ -91,5 +92,12 @@ describe("VerdictView", () => {
     expect(screen.getByText("Risque test")).toBeInTheDocument();
     expect(screen.getByText(/\[PLACEHOLDER\]/)).toBeInTheDocument();
     expect(screen.getByText(/70.*130/)).toBeInTheDocument();
+  });
+
+  it("surface les contraintes structurantes du profil (preset, sensibilité, régimes)", () => {
+    render(<VerdictView verdict={verdict} preset="MEDIUM" onExpert={() => {}} />);
+    expect(screen.getByText("Stack Standard")).toBeInTheDocument();
+    expect(screen.getByText("Données secrètes")).toBeInTheDocument();
+    expect(screen.getByText("RGPD")).toBeInTheDocument();
   });
 });
