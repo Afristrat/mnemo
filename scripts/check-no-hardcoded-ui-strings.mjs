@@ -18,7 +18,9 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOTS = ["components", "app"];
-const EXCLUDE_DIR = /[\\/]__tests__([\\/]|$)|^app[\\/]api([\\/]|$)/;
+// Exclusions : __tests__ (non rendus), app/api (route handlers — locale injectée à l'appel),
+// app/actions (server actions — leurs chaînes sont des labels de données BDD, pas de l'UI rendue).
+const EXCLUDE_DIR = /[\\/]__tests__([\\/]|$)|^app[\\/]api([\\/]|$)|^app[\\/]actions([\\/]|$)/;
 const ACCENT = /[àâäéèêëïîôöùûüÿçœæÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇŒÆ]/;
 // Exceptions explicites (chaîne exacte → raison). Vide : aucune chaîne FR en dur légitime aujourd'hui.
 const ALLOWLIST = new Set();
