@@ -8,19 +8,19 @@ describe("buildIntakeMessages", () => {
     const messages = buildIntakeMessages("cabinet d'avocats, 10 personnes, données secrètes");
     expect(messages).toHaveLength(2);
     expect(messages[0].role).toBe("system");
-    expect(messages[0].content).toContain("N'INVENTE RIEN");
+    expect(messages[0].content).toContain("INVENT NOTHING");
     expect(messages[0].content).toContain("cabinet-regule"); // valeurs autorisées listées
-    expect(messages[0].content).toContain("AUCUN coût");
-    expect(messages[0].content).not.toContain("Profil ACTUEL"); // pas de base → pas de contexte d'ajustement
+    expect(messages[0].content).toContain("NO cost");
+    expect(messages[0].content).not.toContain("CURRENT PROFILE"); // pas de base → pas de contexte d'ajustement
     expect(messages[1]).toEqual({ role: "user", content: "cabinet d'avocats, 10 personnes, données secrètes" });
   });
 
   it("avec une base (note libre S-052) : injecte le profil actuel + la consigne d'AJUSTEMENT des listes", () => {
     const base: Profile = { ...DEFAULT_PROFILE, activity: "agence", contentTypes: ["text"] };
     const messages = buildIntakeMessages("on ajoute de la vidéo", base);
-    expect(messages[0].content).toContain("Profil ACTUEL");
+    expect(messages[0].content).toContain("CURRENT PROFILE");
     expect(messages[0].content).toContain("agence"); // valeur du profil actuel injectée
-    expect(messages[0].content).toContain("CONSERVE les valeurs déjà présentes"); // merge listes
+    expect(messages[0].content).toContain("KEEP the values already present"); // merge listes
   });
 });
 

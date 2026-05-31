@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
@@ -182,6 +182,8 @@ export function ResultsView(): ReactElement {
 
   // i18n (S-058) : résolveur des descripteurs du moteur + libellés courts du radar + chrome résultats.
   const resolveEngine = useEngineText();
+  // Locale active (S-059) → transmise à la route de narration pour une réponse LLM dans la langue.
+  const locale = useLocale();
   const tScoreShort = useTranslations("Results.scoreShort");
   const tR = useTranslations("Results");
   const opts = useOptions();
@@ -255,7 +257,7 @@ export function ResultsView(): ReactElement {
         const res = await fetch("/api/llm/narrate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(narrationContext),
+          body: JSON.stringify({ ...narrationContext, locale }),
           cache: "no-store",
         });
         if (!res.ok) return;
@@ -268,7 +270,7 @@ export function ResultsView(): ReactElement {
     return () => {
       cancelled = true;
     };
-  }, [narrationContext]);
+  }, [narrationContext, locale]);
 
   if (projected === null || result === null || ensemble === null || effectiveCatalog === undefined) {
     return <p className="p-8 text-center text-on-surface-variant">{tR("loading")}</p>;

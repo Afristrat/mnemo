@@ -71,8 +71,8 @@ describe("buildChatMessages", () => {
     const messages = buildChatMessages("Quel composant pour les embeddings ?", history, facts, WEB);
 
     expect(messages[0].role).toBe("system");
-    expect(messages[0].content).toContain("N'invente AUCUN chiffre");
-    expect(messages[0].content).toContain("CITE l'URL");
+    expect(messages[0].content).toContain("Invent NO figure");
+    expect(messages[0].content).toContain("NEVER invent a URL");
     expect(messages[0].content).toContain(`${reco.totalCost} €/mois`); // FAITS greffés
     expect(messages[0].content).toContain("https://qdrant.tech"); // résultats web greffés
     // Historique threadé, question en dernier.
@@ -83,13 +83,13 @@ describe("buildChatMessages", () => {
   it("sans résultat web → consigne de répondre à partir des seuls FAITS", () => {
     const reco = recommend(baseProfile());
     const messages = buildChatMessages("Une question", [], serializeRecoFacts(reco, (m) => m.id), []);
-    expect(messages[0].content).toContain("aucun résultat web fourni");
+    expect(messages[0].content).toContain("no web result provided");
   });
 
   it("utilise un gabarit personnalisé (override admin S-053)", () => {
     const reco = recommend(baseProfile());
     const messages = buildChatMessages("q", [], serializeRecoFacts(reco, (m) => m.id), [], "ADMIN PERSO\n{{recoFacts}}");
     expect(messages[0].content).toContain("ADMIN PERSO");
-    expect(messages[0].content).not.toContain("Tu es l'assistant de Strate");
+    expect(messages[0].content).not.toContain("You are Strate's assistant");
   });
 });

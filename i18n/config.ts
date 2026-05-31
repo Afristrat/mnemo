@@ -26,3 +26,10 @@ export const localeNames: Record<Locale, string> = {
 export function isLocale(value: string | undefined | null): value is Locale {
   return value === "fr" || value === "en";
 }
+
+// Nom anglais de la langue, injecté dans les prompts LLM (gabarits anglais → directive de langue de
+// sortie « respond in {{language}} », S-059). Distinct des autonymes du sélecteur (`localeNames`).
+export const promptLanguageNames: Record<Locale, string> = {
+  fr: "French",
+  en: "English",
+};

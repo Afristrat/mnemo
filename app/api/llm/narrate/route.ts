@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { defaultLocale, isLocale, promptLanguageNames } from "@/i18n/config";
 import { callLLM } from "@/lib/llm/client";
 import { buildNarrateMessages, parseNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import { loadActivePrompt } from "@/lib/prompts/store";
@@ -58,9 +59,15 @@ export async function POST(req: Request): Promise<Response> {
     base,
   };
 
+  // Locale active (S-059) → langue de sortie user-facing. Lue du body (le client envoie `useLocale()`),
+  // validée, repli sur la locale par défaut. La narration produit alors le texte dans cette langue.
+  const rawLocale = typeof raw.locale === "string" ? raw.locale : undefined;
+  const locale = isLocale(rawLocale) ? rawLocale : defaultLocale;
+  const language = promptLanguageNames[locale];
+
   // Prompt système éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
   const template = await loadActivePrompt("narration");
-  const result = await callLLM(buildNarrateMessages(ctx, template ?? undefined));
+  const result = await callLLM(buildNarrateMessages(ctx, template ?? undefined, language));
   if (!result.ok) {
     // Repli : les textes statiques de base (aucun chiffre touché de toute façon).
     return NextResponse.json(base);

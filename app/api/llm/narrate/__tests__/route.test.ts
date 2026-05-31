@@ -53,6 +53,18 @@ describe("POST /api/llm/narrate", () => {
     expect(res.status).toBe(200);
     const messages = callLLMMock.mock.calls[0][0];
     expect(messages[0].content).toContain("dossiers vidéo");
-    expect(messages[0].content).toContain("Précisions de l'utilisateur");
+    expect(messages[0].content).toContain("USER CLARIFICATIONS");
+  });
+
+  it("la locale active (S-059) pilote la langue de sortie du prompt", async () => {
+    callLLMMock.mockResolvedValue({ ok: true, content: JSON.stringify({ pain: "x" }) });
+    await POST(post({ base: BASE, locale: "en" }));
+    expect(callLLMMock.mock.calls[0][0][0].content).toContain("write EVERY value in English");
+  });
+
+  it("locale absente/invalide → repli sur la langue par défaut (français)", async () => {
+    callLLMMock.mockResolvedValue({ ok: true, content: JSON.stringify({ pain: "x" }) });
+    await POST(post({ base: BASE, locale: "zz" }));
+    expect(callLLMMock.mock.calls[0][0][0].content).toContain("write EVERY value in French");
   });
 });
