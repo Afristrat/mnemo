@@ -223,6 +223,44 @@ export type PromptInsert = {
 // Coffre de credentials vendeurs (Lot 2-A) : credentials chiffrés + audit trail.
 export type VendorCredentialKind = "oauth_token" | "api_key";
 
+/** Ligne complète de la table `vendor_credentials` (colonnes chiffrées incluses — serveur uniquement). */
+export type VendorCredentialRow = {
+  id: string;
+  circle_id: string;
+  provider: string;
+  label: string;
+  kind: VendorCredentialKind;
+  ciphertext: string;
+  wrapped_dek: string;
+  iv_secret: string;
+  tag_secret: string;
+  iv_dek: string;
+  tag_dek: string;
+  key_version: number;
+  expires_at: string | null;
+  revoked_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type VendorCredentialInsert = {
+  circle_id: string;
+  provider: string;
+  label: string;
+  kind: VendorCredentialKind;
+  ciphertext: string;
+  wrapped_dek: string;
+  iv_secret: string;
+  tag_secret: string;
+  iv_dek: string;
+  tag_dek: string;
+  key_version: number;
+  expires_at?: string | null;
+  revoked_at?: string | null;
+  created_by?: string | null;
+};
+
 /** Métadonnées exposées par la vue `vendor_credentials_meta` (jamais le chiffré). */
 export type VendorCredentialMetaRow = {
   id: string;
@@ -246,6 +284,14 @@ export type CredentialAccessRow = {
   at: string;
 };
 
+export type CredentialAccessInsert = {
+  circle_id: string;
+  credential_id?: string | null;
+  actor: string;
+  action: CredentialAction;
+  context: Record<string, unknown>;
+};
+
 // `Relationships: []` est requis par le contrat `GenericTable` de @supabase/supabase-js (v2) : sans
 // lui, les requêtes typées `<Database>` résolvent les lignes en `never`. Aucune relation FK déclarée ici.
 type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert>; Relationships: [] };
@@ -266,6 +312,8 @@ export type Database = {
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;
       leads: TableShape<LeadRow, LeadInsert>;
+      vendor_credentials: TableShape<VendorCredentialRow, VendorCredentialInsert>;
+      credential_access: TableShape<CredentialAccessRow, CredentialAccessInsert>;
     };
     Views: Record<string, never>;
     Functions: {
