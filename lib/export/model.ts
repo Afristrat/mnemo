@@ -3,7 +3,7 @@
 
 import { costBand, formatPresetReason, type EngineResolver, type Ensemble, type Profile, type Recommendation } from "@/lib/engine";
 import type { Catalog, SlotId } from "@/lib/catalog";
-import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
+import { FIDUCIARY_COMMITMENT_KEYS } from "@/lib/fiduciary/charter";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
 import {
   ACTIVITY_OPTIONS,
@@ -136,10 +136,12 @@ export function buildDeliverable(
   resolve: EngineResolver,
   optionLabel: OptionLabel,
   deliverableText: DeliverableLabel,
+  fiduciaryText: DeliverableLabel,
   now: Date = new Date(),
   catalog?: Catalog,
 ): Deliverable {
   const t = deliverableText;
+  const fid = fiduciaryText;
   const band = costBand(reco.totalCost);
   const generatedAt = now.toISOString().slice(0, 10);
   const perMonth = (cost: number): string => (cost > 0 ? t("perMonth", { cost }) : t("included"));
@@ -191,8 +193,8 @@ export function buildDeliverable(
       heading: t("section.fiduciary"),
       rows: [],
       bullets: [
-        FIDUCIARY_CHARTER.revenueModel,
-        ...FIDUCIARY_CHARTER.commitments.map((c) => `${c.title}, ${c.detail}`),
+        fid("revenueModel"),
+        ...FIDUCIARY_COMMITMENT_KEYS.map((k) => `${fid(`commitment.${k}.title`)}, ${fid(`commitment.${k}.detail`)}`),
       ],
     },
   ];

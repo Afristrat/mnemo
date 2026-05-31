@@ -217,6 +217,7 @@ export function Wizard(): ReactElement {
   const tInfo = useTranslations("Wizard.info");
   const tFields = useTranslations("Wizard.fields");
   const tBlocks = useTranslations("Wizard.blocks");
+  const tRecap = useTranslations("Wizard.recap");
   const resolveEngine = useEngineText();
 
   // À chaque changement d'étape (Suivant/Précédent/profil-type), remonter en haut de page :
@@ -493,7 +494,7 @@ export function Wizard(): ReactElement {
           sizing={result.sizing}
           backupMonthlyCost={result.backup.monthlyCost}
         />
-        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result, tOptions, resolveEngine)} />
+        <ChoiceRecap className="mt-4" groups={buildChoiceRecap(profile, result, tOptions, resolveEngine, tRecap)} />
       </aside>
     </div>
   );
