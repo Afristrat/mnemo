@@ -223,7 +223,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
 
       <div className="mt-4 flex items-center justify-between border-t border-outline-variant pt-4">
         <span className="font-display font-semibold text-on-surface">{t("totalLabel")}</span>
-        <span className="text-right">
+        <span className="text-end">
           <span className="block font-mono text-headline-md text-primary">{t("totalPerMonth", { cost: totalCost })}</span>
           <span className="block font-mono text-body-sm text-on-surface-variant">
             {t("band", { low: band.low, high: band.high })}
@@ -239,7 +239,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
               residency: residency !== undefined && residency.setupCost > 0 ? t("setupResidency") : "",
             })}
           </span>
-          <span className="text-right">
+          <span className="text-end">
             <span className="block font-mono text-body-md text-on-surface">{setupCost} €</span>
             <span className="block font-mono text-body-sm text-on-surface-variant">
               {t("band", { low: setupBand.low, high: setupBand.high })}

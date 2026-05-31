@@ -31,7 +31,7 @@ function CostLine({ label, value, note }: { label: string; value: string; note?:
   return (
     <div className="flex items-baseline justify-between gap-4 py-2">
       <span className="text-body-sm text-on-surface-variant">{label}</span>
-      <span className="text-right">
+      <span className="text-end">
         <span className="block font-mono text-body-md text-on-surface">{value}</span>
         {note !== undefined ? <span className="block text-body-sm text-on-surface-variant">{note}</span> : null}
       </span>

@@ -107,7 +107,7 @@ export function IntakeField(): ReactElement {
   const dictationAvailable = speechRecognitionCtor() !== null;
 
   return (
-    <div className="w-full max-w-2xl text-left">
+    <div className="w-full max-w-2xl text-start">
       <label htmlFor="intake-text" className="text-label-caps uppercase text-on-surface-variant">
         {t("label")}
       </label>

@@ -45,7 +45,7 @@ export function InfoBubble({ why, consequence, label, className }: InfoBubblePro
           id={panelId}
           role="note"
           className={cn(
-            "absolute left-0 top-7 z-10 w-72 rounded-card bg-surface p-3 shadow-elevation",
+            "absolute start-0 top-7 z-10 w-72 rounded-card bg-surface p-3 shadow-elevation",
             "text-body-sm text-on-surface-variant ring-1 ring-outline/20",
           )}
         >

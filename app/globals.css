@@ -12,3 +12,16 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
+
+/* i18n RTL (S-060). En arabe, pile de polices avec glyphes arabes (fallback système, pas de
+   téléchargement) ; les polices latines restent en repli. */
+:lang(ar) {
+  font-family: "Noto Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, var(--font-inter), system-ui, sans-serif;
+}
+
+/* Données mono (coûts, scores, clés, chemins) : toujours LTR, même dans un flux RTL.
+   `isolate` empêche l'algorithme bidi de réordonner ces fragments au sein d'un texte arabe. */
+[dir="rtl"] .font-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

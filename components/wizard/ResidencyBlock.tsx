@@ -53,7 +53,7 @@ function NumberRow({
         value={value}
         onChange={(e) => onChange(Math.max(min, Math.round(Number(e.target.value) || min)))}
         className={cn(
-          "w-28 rounded-input bg-surface-container px-3 py-1.5 text-right font-mono text-on-surface",
+          "w-28 rounded-input bg-surface-container px-3 py-1.5 text-end font-mono text-on-surface",
           "ring-1 ring-outline/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         )}
       />
@@ -163,7 +163,7 @@ export function ResidencyBlock({
           <p className="font-medium text-error">{t("conflictTitle")}</p>
           <p className="mt-1 text-on-surface-variant">{resolveEngine(plan.conflict.reason)}</p>
           <p className="mt-2 text-on-surface">{t("conflictLevers")}</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5 text-on-surface-variant">
+          <ul className="mt-1 list-disc space-y-1 ps-5 text-on-surface-variant">
             {plan.conflict.levers.map((lever) => (
               <li key={lever.id}>{resolveEngine(lever)}</li>
             ))}

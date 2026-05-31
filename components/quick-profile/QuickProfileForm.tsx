@@ -73,7 +73,7 @@ export function QuickProfileForm(): ReactElement {
   }
 
   return (
-    <Card className="w-full max-w-2xl text-left">
+    <Card className="w-full max-w-2xl text-start">
       <div className="space-y-6">
         <Field label={t("fieldWho")}>
           <RadioCards value={answers.who} options={whoOptions} onChange={(v) => set("who", v)} />

@@ -91,7 +91,7 @@ export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | nu
           <p className="font-medium text-error">{t("conflictTitle")}</p>
           <p className="mt-1 text-on-surface-variant">{resolveEngine(plan.conflict.reason)}</p>
           <p className="mt-2 text-on-surface">{t("conflictLevers")}</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5 text-on-surface-variant">
+          <ul className="mt-1 list-disc space-y-1 ps-5 text-on-surface-variant">
             {plan.conflict.levers.map((lever) => (
               <li key={lever.id}>{resolveEngine(lever)}</li>
             ))}

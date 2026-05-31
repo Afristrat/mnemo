@@ -121,7 +121,7 @@ export function MediaNeedsBlock({ profile, onChange, prices = getMediaPricesEur(
                 value={need.backlog ?? 0}
                 onChange={(e) => upsert({ ...need, backlog: Math.max(0, Math.round(Number(e.target.value) || 0)) })}
                 className={cn(
-                  "w-28 rounded-input bg-surface-container px-3 py-1.5 text-right font-mono text-on-surface",
+                  "w-28 rounded-input bg-surface-container px-3 py-1.5 text-end font-mono text-on-surface",
                   "ring-1 ring-outline/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 )}
               />
