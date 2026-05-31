@@ -115,6 +115,14 @@ export async function revokeVendorCredential(
   const admin = createAdminClient();
   if (admin === null) return { ok: false };
 
+  // Vérification d'appartenance : le credential doit appartenir au cercle de l'utilisateur.
+  const { data: cred } = await admin
+    .from("vendor_credentials")
+    .select("circle_id")
+    .eq("id", credentialId)
+    .maybeSingle();
+  if (cred === null || cred.circle_id !== circleId) return { ok: false };
+
   await admin
     .from("vendor_credentials")
     .update({ revoked_at: new Date().toISOString() })
