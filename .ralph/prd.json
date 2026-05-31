@@ -1195,9 +1195,10 @@
       "id": "S-075",
       "title": "CI/CD : auto-deploy Coolify au push (retrait du controle manuel)",
       "feature": "infra",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-31",
       "deps": [],
-      "note": "Amine : « retire le controle CI/CD ». App Coolify connectee via GitHub App (Afristrat/mnemo, branche main, dockerfile). L'auto-deploy n'est pas expose de facon fiable par l'API publique Coolify -> toggle « Automatic Deployment » a activer dans l'UI Coolify (1 clic). ⚠ Builds OOM-prone -> recommander watch_paths pour EXCLURE les commits doc (.ralph/, *.md, PASSATION) et ne builder que sur du code applicatif. A faire cote infra (UI) ou confirmer le champ API.",
+      "note": "Amine : « retire le controle CI/CD » + « tu as l'API Coolify, fais-le seul ». FAIT 100% par API/DB/CLI (zero geste UI). Diagnostic : is_auto_deploy_enabled etait DEJA true mais la source = « Public GitHub » (source_id=0) au lieu de la GitHub App org (id 1) -> aucun webhook ne livrait les push. La GitHub App coolify-afristrat est sur depots SELECTIONNES sans mnemo (ajout = scope admin:org indispo non-interactif) -> bascule sur WEBHOOK MANUEL repo->Coolify (entierement pilotable par API repo-admin) : source_id remis a 0 ; webhook Afristrat/mnemo (id 634221541) -> https://coolify.ai-mpower.com/webhooks/source/github/events/manual, event push, content-type json. PIEGE RESOLU : manual_webhook_secret_github est CHIFFRE en base (cast Laravel encrypted, 256c ciphertext) -> il faut le secret EN CLAIR (40c) recupere via `php artisan tinker` (le modele dechiffre) ; le ciphertext donne « Invalid signature ». VERIFIE bout-en-bout : push code -> 'Deployment queued' + deploy + health 200 ; push doc-only -> 'Changed files do not match watch paths. Ignoring deployment'. watch_paths (liste d'INCLUSION code, pose par API PATCH) : app/** components/** lib/** hooks/** i18n/** messages/** public/** + middleware.ts Dockerfile package.json package-lock.json next.config.mjs tailwind.config.ts postcss.config.mjs tsconfig.json. Reversible : supprimer le webhook + (option) source_id->1.",
       "acceptance": [
         "push sur main -> deploiement automatique Coolify",
         "watch_paths exclut les commits purement doc (evite builds OOM inutiles)",
