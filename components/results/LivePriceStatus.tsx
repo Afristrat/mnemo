@@ -7,6 +7,7 @@ import { Chip } from "@/components/ui/Chip";
 import { StatusDot } from "@/components/ui/StatusDot";
 import type { LivePriceItem } from "@/lib/pricing/live-feed";
 import type { PriceStatus } from "@/lib/pricing/reconcile";
+import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 
 const STATUS_TONE: Record<PriceStatus, "primary" | "error" | "neutral"> = {
   live: "primary",
@@ -41,7 +42,7 @@ export function LivePriceStatus(): ReactElement {
   const load = useCallback(async () => {
     setState({ kind: "loading" });
     try {
-      const response = await fetch("/api/pricing/live", { cache: "no-store" });
+      const response = await fetchWithTimeout("/api/pricing/live", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload: { items?: LivePriceItem[]; generatedAt?: string } = await response.json();
       setState({

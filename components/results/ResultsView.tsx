@@ -43,6 +43,7 @@ import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
 import { getLlmTokenPrices } from "@/lib/pricing/llm-token-seed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
+import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { useOptions } from "@/lib/wizard/useOptions";
 
@@ -87,12 +88,13 @@ export function ResultsView(): ReactElement {
     let cancelled = false;
     void (async () => {
       try {
-        const response = await fetch("/api/pricing/live", { cache: "no-store" });
+        // Borné par timeout client : un feed live lent ne doit jamais bloquer la page (le seed est déjà rendu).
+        const response = await fetchWithTimeout("/api/pricing/live", { cache: "no-store" });
         if (!response.ok) return;
         const feed: { media?: MultimodalPriceTable } = await response.json();
         if (!cancelled && feed.media !== undefined) setPrices(feed.media);
       } catch {
-        /* repli : le seed est déjà en place. */
+        /* repli (timeout/erreur) : le seed est déjà en place. */
       }
     })();
     return () => {
@@ -108,7 +110,8 @@ export function ResultsView(): ReactElement {
     setCatalogPending(true);
     void (async () => {
       try {
-        const response = await fetch("/api/catalog/live", {
+        // Borné par timeout client : une veille lente ne laisse jamais `catalogPending` à true indéfiniment.
+        const response = await fetchWithTimeout("/api/catalog/live", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(base),
@@ -118,7 +121,7 @@ export function ResultsView(): ReactElement {
         const cat: Catalog = await response.json();
         if (!cancelled) setLiveCatalog(cat);
       } catch {
-        /* repli : le seed (catalogue effectif ci-dessous) est déjà en place. */
+        /* repli (timeout/erreur) : le seed (catalogue effectif ci-dessous) est déjà en place. */
       } finally {
         if (!cancelled) setCatalogPending(false);
       }
@@ -256,7 +259,9 @@ export function ResultsView(): ReactElement {
     setNarration(null);
     void (async () => {
       try {
-        const res = await fetch("/api/llm/narrate", {
+        // Borné par timeout client : la narration LLM (appel le plus lent) ne doit jamais bloquer la
+        // page — au-delà du délai, on garde les textes statiques (désormais enrichis, cf. verdict S-0xx).
+        const res = await fetchWithTimeout("/api/llm/narrate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...narrationContext, locale }),
@@ -266,7 +271,7 @@ export function ResultsView(): ReactElement {
         const data: NarrationTexts = await res.json();
         if (!cancelled) setNarration(data);
       } catch {
-        /* repli : les textes statiques restent affichés. */
+        /* repli (timeout/erreur) : les textes statiques restent affichés. */
       }
     })();
     return () => {

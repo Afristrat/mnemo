@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { StatusDot } from "@/components/ui/StatusDot";
 import type { PriceFeedStatus, PriceObservation } from "@/lib/pricing/feed";
+import { fetchWithTimeout } from "@/lib/utils/fetchWithTimeout";
 
 const STATUS_TONE: Record<PriceFeedStatus, "primary" | "error" | "neutral"> = {
   verified: "primary",
@@ -30,7 +31,7 @@ export function PriceFreshness(): ReactElement {
   const load = useCallback(async () => {
     setState({ kind: "loading" });
     try {
-      const response = await fetch("/api/pricing", { cache: "no-store" });
+      const response = await fetchWithTimeout("/api/pricing", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload: { observations: PriceObservation[] } = await response.json();
       setState({ kind: "ready", observations: payload.observations });
