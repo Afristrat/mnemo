@@ -64,6 +64,24 @@ function erasureOptions(t: BackupT): Option<ErasurePolicy>[] {
   ];
 }
 
+/** Bascule Oui/Non AVEC label visible (l'`ariaLabel` seul laissait des « Oui/Non » nus, S-... fix). */
+function ToggleRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}): ReactElement {
+  return (
+    <div className="flex items-center justify-between gap-3 text-body-sm text-on-surface-variant">
+      <span>{label}</span>
+      <YesNo ariaLabel={label} value={value} onChange={onChange} />
+    </div>
+  );
+}
+
 function NumberRow({
   label,
   value,
@@ -155,10 +173,10 @@ export function BackupBlock({
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <YesNo ariaLabel={t("offsiteAria")} value={plan.offsite} onChange={(offsite) => update({ offsite })} />
-              <YesNo ariaLabel={t("airgapAria")} value={plan.airgap} onChange={(airgap) => update({ airgap })} />
-              <YesNo ariaLabel={t("immutableAria")} value={plan.immutable} onChange={(immutable) => update({ immutable })} />
-              <YesNo ariaLabel={t("byokAria")} value={plan.byok} onChange={(byok) => update({ byok })} />
+              <ToggleRow label={t("offsiteAria")} value={plan.offsite} onChange={(offsite) => update({ offsite })} />
+              <ToggleRow label={t("airgapAria")} value={plan.airgap} onChange={(airgap) => update({ airgap })} />
+              <ToggleRow label={t("immutableAria")} value={plan.immutable} onChange={(immutable) => update({ immutable })} />
+              <ToggleRow label={t("byokAria")} value={plan.byok} onChange={(byok) => update({ byok })} />
             </div>
           </div>
         </details>
