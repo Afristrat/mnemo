@@ -1,9 +1,11 @@
 // Fondation i18n (S-057) — source de vérité des locales.
 // Approche next-intl SANS préfixe d'URL : la locale vit dans un cookie (`NEXT_LOCALE`),
 // détectée au 1ᵉʳ accès via Accept-Language (cf. middleware.ts), repli `fr`.
-// L'arabe (`ar`, RTL) arrive en S-060 — ne PAS l'ajouter ici tant que le miroir RTL n'existe pas.
+// `ar` (arabe, RTL) ajouté en S-060 : miroir RTL en place (`localeDir`/propriétés logiques) +
+// `messages/ar.json`. ⚠ Le contenu arabe est un brouillon MSA généré (LLM projet) — relecture
+// native requise avant communication publique (DÉFCON 1) ; techniquement valide (ICU/parité OK).
 
-export const locales = ["fr", "en"] as const;
+export const locales = ["fr", "en", "ar"] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -21,10 +23,11 @@ export const LOCALE_HEADER = "x-next-locale";
 export const localeNames: Record<Locale, string> = {
   fr: "Français",
   en: "English",
+  ar: "العربية",
 };
 
 export function isLocale(value: string | undefined | null): value is Locale {
-  return value === "fr" || value === "en";
+  return value === "fr" || value === "en" || value === "ar";
 }
 
 // Nom anglais de la langue, injecté dans les prompts LLM (gabarits anglais → directive de langue de
@@ -32,6 +35,7 @@ export function isLocale(value: string | undefined | null): value is Locale {
 export const promptLanguageNames: Record<Locale, string> = {
   fr: "French",
   en: "English",
+  ar: "Arabic",
 };
 
 // Sens d'écriture (S-060) : les locales RTL (arabe) pilotent `<html dir>` + le miroir des layouts via

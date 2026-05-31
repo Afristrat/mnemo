@@ -983,7 +983,9 @@
       "id": "S-060",
       "title": "Arabe + RTL (dir=rtl, miroir des layouts, police arabe) — marché Maroc",
       "feature": "i18n",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-05-31",
+      "note": "TRANCHE 1 (infra RTL, 7d12cd4) : localeDir + <html dir> ; migration physique->logique (text-start/end, ps-, start-, marginInlineStart) ; :lang(ar) police arabe (fallback systeme) ; [dir=rtl] .font-mono LTR (donnees mono). TRANCHE 2 : messages/ar.json genere via LLM projet (deepseek-v4-flash, namespace par namespace, decoupe recursive), VALIDE techniquement (parite 975/975 x3 ; ICU parse ar 0 echec ; arguments ICU identiques via AST ; cles select preservees ; pluriels arabes zero/one/two/few/many/other corrects) ; ar active (config locales/localeNames/promptLanguageNames/isLocale + request loader) ; e2e ar 6/6 (rtl+lang+script arabe+retour fr). typecheck 0/lint 0/0/494 tests/build OK. ⚠ NON DEPLOYE : contenu arabe = brouillon MSA genere, RELECTURE NATIVE REQUISE avant expo publique (prod reste 7b7eeac fr/en). La qualite prose est le seul reliquat ; engineering livre+verifie.",
       "deps": [
         "S-058",
         "S-059"

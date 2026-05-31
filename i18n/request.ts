@@ -8,6 +8,7 @@ import { LOCALE_COOKIE, LOCALE_HEADER, defaultLocale, isLocale, type Locale } fr
 const loaders: Record<Locale, () => Promise<{ default: AbstractIntlMessages }>> = {
   fr: () => import("../messages/fr.json"),
   en: () => import("../messages/en.json"),
+  ar: () => import("../messages/ar.json"),
 };
 
 // next-intl (App Router, mode « sans routing ») : la locale provient du cookie `NEXT_LOCALE`.
