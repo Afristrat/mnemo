@@ -1,3 +1,4 @@
+import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALE_COOKIE, LOCALE_HEADER, defaultLocale, isLocale, type Locale } from "@/i18n/config";
 
@@ -21,7 +22,7 @@ function negotiate(header: string | null): Locale {
   return defaultLocale;
 }
 
-export function middleware(request: NextRequest): NextResponse {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   const existing = request.cookies.get(LOCALE_COOKIE)?.value;
   const resolved: Locale = isLocale(existing) ? existing : negotiate(request.headers.get("accept-language"));
 
@@ -40,6 +41,34 @@ export function middleware(request: NextRequest): NextResponse {
       sameSite: "lax",
     });
   }
+
+  // Rafraîchissement de session Supabase : maintient le jeton à jour sans bloquer
+  // l'expérience anonyme (Lot 1) si Supabase est indisponible ou non configuré.
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (
+      supabaseUrl !== undefined &&
+      supabaseAnon !== undefined &&
+      supabaseUrl.length > 0 &&
+      supabaseAnon.length > 0
+    ) {
+      const supabase = createServerClient(supabaseUrl, supabaseAnon, {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: (cookiesToSet) => {
+            for (const { name, value, options } of cookiesToSet) {
+              response.cookies.set(name, value, options);
+            }
+          },
+        },
+      });
+      await supabase.auth.getUser(); // rafraîchit le jeton ; ne JAMAIS logguer le résultat
+    }
+  } catch {
+    /* Supabase indisponible/non configuré : l'expérience anonyme (Lot 1) reste intacte. */
+  }
+
   return response;
 }
 
