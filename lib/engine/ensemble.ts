@@ -9,6 +9,7 @@ import type { Catalog } from "@/lib/catalog/types";
 import { NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
 import { NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency";
+import { msg, type Message } from "./message";
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
 import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
@@ -23,18 +24,21 @@ import {
 export const ENSEMBLE_VARIANT_IDS = ["sovereignty", "cost", "speed"] as const;
 export type EnsembleVariantId = (typeof ENSEMBLE_VARIANT_IDS)[number];
 
+// i18n (S-059, résiduel) : la prose des membres d'ensemble (label, intent, assumptions) et le libellé
+// d'incertitude deviennent des descripteurs `Message` résolus en fr/en par la présentation. `agreement`
+// reste une union (discriminant logique : tonalité de chip, branches `select` ICU), pas de la prose.
 export type EnsembleVariant = {
   id: EnsembleVariantId;
-  label: string;
+  label: Message;
   /** Objectif poursuivi par ce membre de l'ensemble. */
-  intent: string;
+  intent: Message;
   /** Hypothèses appliquées au profil, en clair (transparence des overrides). */
-  assumptions: string[];
+  assumptions: Message[];
   profile: Profile;
   recommendation: Recommendation;
 };
 
-/** Niveau d'accord de l'ensemble (inverse de la dispersion). */
+/** Niveau d'accord de l'ensemble (inverse de la dispersion). Union = discriminant (logique + select ICU). */
 export type EnsembleAgreement = "fort" | "modéré" | "faible";
 
 export type EnsembleSpread = {
@@ -50,8 +54,8 @@ export type EnsembleSpread = {
   /** Presets distincts couverts par l'ensemble (ordre LIGHT→MEDIUM→HARD). */
   presetsSpan: Preset[];
   agreement: EnsembleAgreement;
-  /** Libellé d'incertitude explicite, prêt à afficher. */
-  uncertaintyLabel: string;
+  /** Libellé d'incertitude (descripteur i18n : valeurs chiffrées + `select` sur `agreement`). */
+  uncertaintyLabel: Message;
 };
 
 export type Ensemble = {
@@ -59,21 +63,6 @@ export type Ensemble = {
   baseline: Recommendation;
   variants: EnsembleVariant[];
   spread: EnsembleSpread;
-};
-
-const VARIANT_META: Record<EnsembleVariantId, { label: string; intent: string }> = {
-  sovereignty: {
-    label: "Souveraineté maximale",
-    intent: "Verrouille la souveraineté et la gouvernance au maximum ; coût et délai passent au second plan.",
-  },
-  cost: {
-    label: "Coût minimal",
-    intent: "Comprime le coût mensuel : budget serré, options de gouvernance et modules désactivés.",
-  },
-  speed: {
-    label: "Time-to-V1 minimal",
-    intent: "Démarre le plus vite possible : stack légère, compétences DevOps, zéro module bloquant.",
-  },
 };
 
 /** Construit un jeu de niveaux de modules tout au maximum ou tout désactivé. */
@@ -85,11 +74,19 @@ function modulesAt(target: "max" | "off"): Record<ModuleId, number> {
   return levels;
 }
 
+/** Descripteurs i18n des hypothèses par membre (résolus en présentation). Le compte par variant doit
+ *  rester aligné avec les clés `Engine.ensemble.<id>.assumption.<n>` des catalogues fr/en. */
+function assumptionsOf(id: EnsembleVariantId): Message[] {
+  const counts: Record<EnsembleVariantId, number> = { sovereignty: 4, cost: 3, speed: 4 };
+  return Array.from({ length: counts[id] }, (_unused, n) => msg(`ensemble.${id}.assumption.${n}`));
+}
+
 /** Applique les overrides d'un membre de l'ensemble au profil de base. */
 function applyVariant(
   id: EnsembleVariantId,
   base: Profile,
-): { profile: Profile; assumptions: string[] } {
+): { profile: Profile; assumptions: Message[] } {
+  const assumptions = assumptionsOf(id);
   switch (id) {
     case "sovereignty":
       return {
@@ -101,12 +98,7 @@ function applyVariant(
           bitemporal: true,
           modules: modulesAt("max"),
         },
-        assumptions: [
-          "Hébergement en zone UE / Maroc",
-          "Sensibilité traitée comme « secret »",
-          "Audit et bitemporel rendus obligatoires",
-          "Modules de gouvernance poussés au maximum",
-        ],
+        assumptions,
       };
     case "cost":
       return {
@@ -117,11 +109,7 @@ function applyVariant(
           bitemporal: false,
           modules: modulesAt("off"),
         },
-        assumptions: [
-          "Budget plafonné sous 50 €/mois",
-          "Audit et bitemporel désactivés",
-          "Modules avancés désactivés",
-        ],
+        assumptions,
       };
     case "speed":
       return {
@@ -133,12 +121,7 @@ function applyVariant(
           budget: "lt50",
           modules: modulesAt("off"),
         },
-        assumptions: [
-          "Compétences DevOps disponibles",
-          "Audit et bitemporel désactivés",
-          "Budget plafonné sous 50 €/mois",
-          "Modules avancés désactivés",
-        ],
+        assumptions,
       };
   }
 }
@@ -151,39 +134,15 @@ function buildVariant(
   computePrices: ComputePriceTable,
   residencyPrices: ResidencyPriceTable,
 ): EnsembleVariant {
-  const meta = VARIANT_META[id];
   const { profile, assumptions } = applyVariant(id, base);
   return {
     id,
-    label: meta.label,
-    intent: meta.intent,
+    label: msg(`ensemble.${id}.label`),
+    intent: msg(`ensemble.${id}.intent`),
     assumptions,
     profile,
     recommendation: recommend(profile, prices, undefined, backupPrices, computePrices, residencyPrices),
   };
-}
-
-function describeUncertainty(
-  count: number,
-  costMin: number,
-  costMax: number,
-  costRange: number,
-  costRangePct: number,
-  scoreMin: number,
-  scoreMax: number,
-  agreement: EnsembleAgreement,
-): string {
-  const head =
-    `Les ${count} configurations s'étalent de ${costMin} à ${costMax} €/mois ` +
-    `(écart ${costRange} €, soit ${costRangePct} %) et de ${scoreMin} à ${scoreMax}/10 de score global. ` +
-    `Accord de l'ensemble : ${agreement}. `;
-  const tail =
-    agreement === "fort"
-      ? "Les membres convergent : la recommandation est robuste et peu sensible aux arbitrages."
-      : agreement === "modéré"
-        ? "Un arbitrage souveraineté / coût / délai reste à trancher selon votre priorité."
-        : "Forte divergence : la décision dépend fortement de la priorité retenue, tranchez explicitement souveraineté vs coût vs délai.";
-  return head + tail;
 }
 
 function computeSpread(recommendations: Recommendation[]): EnsembleSpread {
@@ -219,8 +178,9 @@ function computeSpread(recommendations: Recommendation[]): EnsembleSpread {
     scoreRange,
     presetsSpan,
     agreement,
-    uncertaintyLabel: describeUncertainty(
-      recommendations.length,
+    // Descripteur i18n : valeurs chiffrées (données) + `select` sur `agreement` pour la phrase de synthèse.
+    uncertaintyLabel: msg("ensemble.uncertainty", {
+      count: recommendations.length,
       costMin,
       costMax,
       costRange,
@@ -228,7 +188,7 @@ function computeSpread(recommendations: Recommendation[]): EnsembleSpread {
       scoreMin,
       scoreMax,
       agreement,
-    ),
+    }),
   };
 }
 

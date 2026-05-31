@@ -206,6 +206,38 @@
         "default": "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go."
       }
     },
+    "ensemble": {
+      "uncertainty": "Les {count} configurations s'étalent de {costMin} à {costMax} €/mois (écart {costRange} €, soit {costRangePct} %) et de {scoreMin} à {scoreMax}/10 de score global. Accord de l'ensemble : {agreement, select, fort {fort} modéré {modéré} faible {faible} other {?}}. {agreement, select, fort {Les membres convergent : la recommandation est robuste et peu sensible aux arbitrages.} modéré {Un arbitrage souveraineté / coût / délai reste à trancher selon votre priorité.} faible {Forte divergence : la décision dépend fortement de la priorité retenue, tranchez explicitement souveraineté vs coût vs délai.} other {}}",
+      "sovereignty": {
+        "label": "Souveraineté maximale",
+        "intent": "Verrouille la souveraineté et la gouvernance au maximum ; coût et délai passent au second plan.",
+        "assumption": {
+          "0": "Hébergement en zone UE / Maroc",
+          "1": "Sensibilité traitée comme « secret »",
+          "2": "Audit et bitemporel rendus obligatoires",
+          "3": "Modules de gouvernance poussés au maximum"
+        }
+      },
+      "cost": {
+        "label": "Coût minimal",
+        "intent": "Comprime le coût mensuel : budget serré, options de gouvernance et modules désactivés.",
+        "assumption": {
+          "0": "Budget plafonné sous 50 €/mois",
+          "1": "Audit et bitemporel désactivés",
+          "2": "Modules avancés désactivés"
+        }
+      },
+      "speed": {
+        "label": "Time-to-V1 minimal",
+        "intent": "Démarre le plus vite possible : stack légère, compétences DevOps, zéro module bloquant.",
+        "assumption": {
+          "0": "Compétences DevOps disponibles",
+          "1": "Audit et bitemporel désactivés",
+          "2": "Budget plafonné sous 50 €/mois",
+          "3": "Modules avancés désactivés"
+        }
+      }
+    },
     "preset": {
       "reasonHard": "Niveau de besoin maximal — déclencheur(s) : {drivers}. Souveraineté maximale, on-prem privilégié, isolation forte.",
       "reasonLight": "Besoin léger (score {score} ≤ {max}) : {drivers}. Stack simplifiée API-first qui démarre en quelques heures.",
@@ -283,7 +315,8 @@
       "scoreAvg": "Score moyen",
       "cost": "Coût estimé",
       "costValue": "{cost} €/mois (±30 % : {low} – {high} €)",
-      "agreement": "Accord de l'ensemble"
+      "agreement": "Accord de l'ensemble",
+      "agreementValue": "{agreement, select, fort {fort} modéré {modéré} faible {faible} other {?}}"
     },
     "provenance": {
       "live": "vérifié en direct",
@@ -433,7 +466,7 @@
     "ensemble": {
       "aria": "Ensemble de configurations",
       "title": "Ensemble de configurations",
-      "agreement": "Accord {agreement}",
+      "agreement": "Accord {agreement, select, fort {fort} modéré {modéré} faible {faible} other {?}}",
       "intro": "Comme une prévision météo d’ensemble : plutôt qu’une seule réponse, on explore plusieurs priorités, et la dispersion de leurs résultats est la mesure honnête de l’incertitude. <strong>Cliquez une solution pour recalculer toute la page dessus</strong> ; votre profil enregistré n’est jamais modifié, revenez à votre recommandation quand vous voulez.",
       "costRange": "Fourchette de coût",
       "costRangeValue": "{min} – {max} €/mois",

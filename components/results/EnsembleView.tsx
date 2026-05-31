@@ -1,8 +1,9 @@
 import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Chip } from "@/components/ui/Chip";
+import { useEngineText } from "@/lib/i18n/engine";
 import { cn } from "@/lib/utils/cn";
-import type { Ensemble, EnsembleAgreement, EnsembleVariantId } from "@/lib/engine";
+import type { EngineResolver, Ensemble, EnsembleAgreement, EnsembleVariantId } from "@/lib/engine";
 
 type EnsembleT = ReturnType<typeof useTranslations<"Results.ensemble">>;
 
@@ -32,7 +33,7 @@ type EnsembleViewProps = {
   onSelect: (id: EnsembleVariantId | null) => void;
 };
 
-function buildCards(ensemble: Ensemble, t: EnsembleT): SolutionCard[] {
+function buildCards(ensemble: Ensemble, t: EnsembleT, resolveEngine: EngineResolver): SolutionCard[] {
   const baseline: SolutionCard = {
     id: null,
     kind: t("kindReco"),
@@ -43,12 +44,13 @@ function buildCards(ensemble: Ensemble, t: EnsembleT): SolutionCard[] {
     totalCost: ensemble.baseline.totalCost,
     scoreAvg: ensemble.baseline.scoreAvg,
   };
+  // Variants : label/intent/assumptions = descripteurs moteur (S-059) → résolus en fr/en.
   const variants = ensemble.variants.map<SolutionCard>((v) => ({
     id: v.id,
     kind: t("kindScenario"),
-    label: v.label,
-    intent: v.intent,
-    assumptions: v.assumptions,
+    label: resolveEngine(v.label),
+    intent: resolveEngine(v.intent),
+    assumptions: v.assumptions.map(resolveEngine),
     preset: v.recommendation.preset,
     totalCost: v.recommendation.totalCost,
     scoreAvg: v.recommendation.scoreAvg,
@@ -64,10 +66,11 @@ function buildCards(ensemble: Ensemble, t: EnsembleT): SolutionCard[] {
  */
 export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps): ReactElement {
   const t = useTranslations("Results.ensemble");
+  const resolveEngine = useEngineText();
   const { spread } = ensemble;
   // Bande d'incertitude rapportée au coût le plus élevé de l'ensemble.
   const bandLeft = spread.costMax > 0 ? (spread.costMin / spread.costMax) * 100 : 0;
-  const cards = buildCards(ensemble, t);
+  const cards = buildCards(ensemble, t, resolveEngine);
 
   return (
     <section
@@ -96,7 +99,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
             style={{ marginLeft: `${bandLeft}%`, width: `${100 - bandLeft}%` }}
           />
         </div>
-        <p className="mt-3 text-body-sm text-on-surface-variant">{spread.uncertaintyLabel}</p>
+        <p className="mt-3 text-body-sm text-on-surface-variant">{resolveEngine(spread.uncertaintyLabel)}</p>
       </div>
 
       {/* Solutions sélectionnables : référence + scénarios */}

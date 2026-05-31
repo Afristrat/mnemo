@@ -32,7 +32,8 @@ describe("EnsembleView", () => {
     expect(screen.getByText("Coût minimal")).toBeInTheDocument();
     expect(screen.getByText("Time-to-V1 minimal")).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`Accord ${ensemble.spread.agreement}`))).toBeInTheDocument();
-    expect(screen.getByText(ensemble.spread.uncertaintyLabel)).toBeInTheDocument();
+    // Le libellé d'incertitude (descripteur i18n) est résolu en fr par le provider de test.
+    expect(screen.getByText(/Accord de l'ensemble/)).toBeInTheDocument();
   });
 
   it("cliquer un scénario appelle onSelect avec son id", () => {
