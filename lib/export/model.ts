@@ -170,9 +170,9 @@ export function buildDeliverable(
 
   const ensembleSection: DeliverableSection = {
     heading: t("section.ensemble"),
-    bullets: [ensemble.spread.uncertaintyLabel],
+    bullets: [resolve(ensemble.spread.uncertaintyLabel)],
     rows: ensemble.variants.map((v) => ({
-      left: `${v.label} (${v.recommendation.preset})`,
+      left: `${resolve(v.label)} (${v.recommendation.preset})`,
       right: `${v.recommendation.totalCost} € · ${v.recommendation.scoreAvg}/10`,
     })),
   };
@@ -205,7 +205,7 @@ export function buildDeliverable(
       { left: t("meta.preset"), right: reco.preset },
       { left: t("meta.scoreAvg"), right: `${reco.scoreAvg}/10` },
       { left: t("meta.cost"), right: t("meta.costValue", { cost: reco.totalCost, low: band.low, high: band.high }) },
-      { left: t("meta.agreement"), right: ensemble.spread.agreement },
+      { left: t("meta.agreement"), right: t("meta.agreementValue", { agreement: ensemble.spread.agreement }) },
     ],
     sections,
     sources: dedupeSources([

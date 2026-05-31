@@ -206,6 +206,38 @@
         "default": "Refine the profile in the configurator, then request a firm quote before going live."
       }
     },
+    "ensemble": {
+      "uncertainty": "The {count} configurations range from {costMin} to {costMax} €/mo (spread {costRange} €, i.e. {costRangePct}%) and from {scoreMin} to {scoreMax}/10 overall score. Ensemble agreement: {agreement, select, fort {strong} modéré {moderate} faible {weak} other {?}}. {agreement, select, fort {The members converge: the recommendation is robust and largely insensitive to trade-offs.} modéré {A sovereignty / cost / time-to-V1 trade-off remains to be settled by your priority.} faible {Strong divergence: the decision depends heavily on the chosen priority — settle sovereignty vs cost vs speed explicitly.} other {}}",
+      "sovereignty": {
+        "label": "Maximum sovereignty",
+        "intent": "Locks sovereignty and governance to the maximum; cost and time-to-V1 come second.",
+        "assumption": {
+          "0": "Hosting in EU / Morocco zone",
+          "1": "Sensitivity treated as “secret”",
+          "2": "Audit and bitemporal made mandatory",
+          "3": "Governance modules pushed to the maximum"
+        }
+      },
+      "cost": {
+        "label": "Minimum cost",
+        "intent": "Compresses the monthly cost: tight budget, governance options and modules disabled.",
+        "assumption": {
+          "0": "Budget capped under 50 €/mo",
+          "1": "Audit and bitemporal disabled",
+          "2": "Advanced modules disabled"
+        }
+      },
+      "speed": {
+        "label": "Minimum time-to-V1",
+        "intent": "Starts as fast as possible: lightweight stack, DevOps skills, zero blocking module.",
+        "assumption": {
+          "0": "DevOps skills available",
+          "1": "Audit and bitemporal disabled",
+          "2": "Budget capped under 50 €/mo",
+          "3": "Advanced modules disabled"
+        }
+      }
+    },
     "preset": {
       "reasonHard": "Maximum level of need — trigger(s): {drivers}. Maximum sovereignty, on-prem preferred, strong isolation.",
       "reasonLight": "Light need (score {score} ≤ {max}): {drivers}. Simplified API-first stack that gets started in a few hours.",
@@ -283,7 +315,8 @@
       "scoreAvg": "Average score",
       "cost": "Estimated cost",
       "costValue": "{cost} €/mo (±30%: {low} – {high} €)",
-      "agreement": "Ensemble agreement"
+      "agreement": "Ensemble agreement",
+      "agreementValue": "{agreement, select, fort {strong} modéré {moderate} faible {weak} other {?}}"
     },
     "provenance": {
       "live": "verified live",
@@ -433,7 +466,7 @@
     "ensemble": {
       "aria": "Configuration ensemble",
       "title": "Configuration ensemble",
-      "agreement": "Agreement {agreement}",
+      "agreement": "Agreement {agreement, select, fort {strong} modéré {moderate} faible {weak} other {?}}",
       "intro": "Like an ensemble weather forecast: rather than a single answer, we explore several priorities, and the spread of their results is the honest measure of uncertainty. <strong>Click a solution to recompute the whole page on it</strong>; your saved profile is never changed, return to your recommendation whenever you like.",
       "costRange": "Cost range",
       "costRangeValue": "€{min} – €{max}/month",

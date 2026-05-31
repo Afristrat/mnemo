@@ -50,7 +50,9 @@ describe("buildEnsemble, génération des membres", () => {
   it("chaque membre expose des hypothèses explicites non vides", () => {
     for (const v of buildEnsemble(baseProfile()).variants) {
       expect(v.assumptions.length).toBeGreaterThan(0);
-      expect(v.intent.length).toBeGreaterThan(0);
+      // Descripteurs i18n (S-059) : on asserte l'id du Message, pas la prose.
+      expect(v.intent.id).toBe(`ensemble.${v.id}.intent`);
+      expect(v.assumptions.every((a) => a.id.startsWith(`ensemble.${v.id}.assumption.`))).toBe(true);
     }
   });
 
@@ -100,11 +102,13 @@ describe("buildEnsemble, spread (= incertitude)", () => {
     expect(spread.presetsSpan.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("produit un libellé d'incertitude explicite mentionnant les bornes", () => {
+  it("produit un descripteur d'incertitude portant les bornes chiffrées + l'accord (S-059)", () => {
     const { spread } = buildEnsemble(baseProfile());
-    expect(spread.uncertaintyLabel).toContain("Accord de l'ensemble");
-    expect(spread.uncertaintyLabel).toContain(String(spread.costMin));
-    expect(spread.uncertaintyLabel).toContain(String(spread.costMax));
+    // Descripteur i18n : l'id + les valeurs (bornes chiffrées) sont asserties, la prose est en fr/en.
+    expect(spread.uncertaintyLabel.id).toBe("ensemble.uncertainty");
+    expect(spread.uncertaintyLabel.values?.costMin).toBe(spread.costMin);
+    expect(spread.uncertaintyLabel.values?.costMax).toBe(spread.costMax);
+    expect(spread.uncertaintyLabel.values?.agreement).toBe(spread.agreement);
     expect(["fort", "modéré", "faible"]).toContain(spread.agreement);
   });
 

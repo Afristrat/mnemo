@@ -353,7 +353,7 @@ export function ResultsView(): ReactElement {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-primary/40 bg-primary/5 px-4 py-3">
           <p className="text-body-sm text-on-surface">
             {tR.rich("scenarioActive", {
-              label: activeVariantData.label,
+              label: resolveEngine(activeVariantData.label),
               b: (chunks) => <strong>{chunks}</strong>,
             })}
           </p>
