@@ -200,7 +200,7 @@
       "defaultRisk": "Sans base mémorielle souveraine : dépendance aux mémoires propriétaires (ChatGPT/Claude) et risque de verrouillage.",
       "pain": "{activity, select, cabinet_regule {Reconstituer « qui a décidé quoi, et quand » coûte cher et vous expose en cas de contrôle ; vos dossiers sensibles transitent par des mémoires que vous ne maîtrisez pas.} pme_startup {Le savoir de l'équipe se disperse (conversations, docs, têtes) ; chaque départ ou pivot fait perdre le contexte des décisions.} recherche {Vos corpus et l'historique de vos hypothèses sont éclatés ; impossible de rejouer « ce que l'on savait » à une date donnée.} agence {Le contexte client se reconstruit à chaque mission ; la mémoire des comptes vit dans des outils tiers non souverains.} freelance {Votre mémoire de travail dépend d'outils propriétaires ; vous ne pouvez ni l'auditer ni l'emporter.} particulier {Vos notes et souvenirs sont dispersés et dépendants d'un éditeur ; aucune garantie de portabilité.} other {Votre mémoire d'organisation est dispersée et dépend d'outils que vous ne maîtrisez pas (souveraineté, portabilité, auditabilité).}}",
       "gain": "« −Risques » prouvé : Exit Escrow (bundle reproductible, zéro verrouillage) + charte fiduciaire (zéro commission cachée). Gains de productivité : à mesurer sur votre propre corpus, jamais affirmés à l'aveugle.",
-      "firmPriceTier": "[PLACEHOLDER], prix de vente du service Strate (sondage en cours)",
+      "firmPriceTier": "Dès 290 €/mois (Essentiel) — prix indicatif, sondage en cours",
       "nextStep": {
         "withSetup": "Validez les volumes médias (mémoriser + créer + backlog) et demandez un devis ferme avant le go.",
         "default": "Affinez le profil dans le configurateur, puis demandez un devis ferme avant le go."
@@ -1218,8 +1218,8 @@
       "eyebrow": "Tarifs",
       "title": "Le diagnostic est gratuit. Vous ne payez que la cuisine.",
       "subtitle": "Le coût de l'infra reste transparent, payé à vos fournisseurs, on ne marge pas dessus.",
-      "surveyTag": "Prix, sondage en cours",
-      "note": "Les montants seront calés par le sondage de prix (Van Westendorp + analyse conjointe) en cours, pas de chiffre au doigt mouillé.",
+      "surveyTag": "Prix indicatif, sondage en cours",
+      "note": "Prix indicatifs (hors infra, payée à vos fournisseurs) — affinés par le sondage en cours (Van Westendorp + analyse conjointe), jamais au doigt mouillé. Maroc : tarif ajusté au pouvoir d'achat (≈ 2 900 / 6 900 MAD), sur demande.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
@@ -1231,20 +1231,29 @@
             "exit": "Bundle de sortie (Exit Escrow)"
           }
         },
-        "pro": {
-          "name": "Pro",
-          "price": "[__ / mois]",
-          "cta": "Commencer le diagnostic",
+        "essentiel": {
+          "name": "Essentiel",
+          "price": "290 €/mois",
           "features": {
             "deploy": "Déploiement assisté",
             "supervision": "Supervision continue",
-            "costs": "Optimisation des coûts",
-            "expertise": "Expertise & évitement d'erreurs"
+            "exitIncluded": "Exit Escrow inclus (zéro verrouillage)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "690 €/mois",
+          "cta": "Commencer le diagnostic",
+          "features": {
+            "allEssentiel": "Tout l'Essentiel, plus :",
+            "costs": "Optimisation continue des coûts",
+            "expertise": "Expertise & évitement d'erreurs",
+            "priority": "Veille composants/prix & support prioritaire"
           }
         },
         "sovereign": {
           "name": "Souverain+",
-          "price": "Sur devis",
+          "price": "Sur devis, dès 1 900 €/mois",
           "features": {
             "onprem": "On-premise / air-gapped",
             "negotiation": "Négociation fournisseurs (mode fiduciaire)",

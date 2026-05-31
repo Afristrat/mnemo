@@ -200,7 +200,7 @@
       "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk.",
       "pain": "{activity, select, cabinet_regule {Reconstructing “who decided what, and when” is costly and exposes you under audit; your sensitive files pass through memories you do not control.} pme_startup {Your team's knowledge scatters (chats, docs, heads); every departure or pivot loses the context behind decisions.} recherche {Your corpora and the history of your hypotheses are fragmented; replaying “what we knew” at a given date is impossible.} agence {Client context is rebuilt on every engagement; account memory lives in third-party, non-sovereign tools.} freelance {Your working memory depends on proprietary tools; you can neither audit it nor take it with you.} particulier {Your notes and recollections are scattered and tied to a vendor; no portability guarantee.} other {Your organisational memory is scattered and depends on tools you do not control (sovereignty, portability, auditability).}}",
       "gain": "“−Risk” proven: Exit Escrow (reproducible bundle, zero lock-in) + fiduciary charter (no hidden commission). Productivity gains: to be measured on your own corpus, never claimed blindly.",
-      "firmPriceTier": "[PLACEHOLDER], Strate's service price (survey in progress)",
+      "firmPriceTier": "From €290/month (Essential) — indicative price, survey in progress",
       "nextStep": {
         "withSetup": "Confirm the media volumes (remember + create + backlog) and request a firm quote before going live.",
         "default": "Refine the profile in the configurator, then request a firm quote before going live."
@@ -1218,8 +1218,8 @@
       "eyebrow": "Pricing",
       "title": "The diagnostic is free. You only pay for the cooking.",
       "subtitle": "Infrastructure cost stays transparent, paid to your own vendors — we take no markup on it.",
-      "surveyTag": "Price — survey in progress",
-      "note": "Amounts will be set by the ongoing price survey (Van Westendorp + conjoint analysis), not picked out of thin air.",
+      "surveyTag": "Indicative price — survey in progress",
+      "note": "Indicative prices (excl. infrastructure, paid to your vendors) — refined by the ongoing price survey (Van Westendorp + conjoint analysis), never picked out of thin air. Morocco: purchasing-power-adjusted pricing (≈ 2,900 / 6,900 MAD), on request.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
@@ -1231,20 +1231,29 @@
             "exit": "Exit bundle (Exit Escrow)"
           }
         },
-        "pro": {
-          "name": "Pro",
-          "price": "[__ / month]",
-          "cta": "Start the diagnostic",
+        "essentiel": {
+          "name": "Essential",
+          "price": "€290/month",
           "features": {
             "deploy": "Assisted deployment",
             "supervision": "Continuous supervision",
-            "costs": "Cost optimization",
-            "expertise": "Expertise & mistake avoidance"
+            "exitIncluded": "Exit Escrow included (zero lock-in)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "€690/month",
+          "cta": "Start the diagnostic",
+          "features": {
+            "allEssentiel": "Everything in Essential, plus:",
+            "costs": "Continuous cost optimization",
+            "expertise": "Expertise & mistake avoidance",
+            "priority": "Component/price monitoring & priority support"
           }
         },
         "sovereign": {
           "name": "Sovereign+",
-          "price": "On request",
+          "price": "On request, from €1,900/month",
           "features": {
             "onprem": "On-premise / air-gapped",
             "negotiation": "Vendor negotiation (fiduciary mode)",

@@ -28,11 +28,16 @@ const TIERS = [
     features: ["configurator", "plan", "deliverable", "exit"],
   },
   {
+    key: "essentiel",
+    surveyTag: true,
+    features: ["deploy", "supervision", "exitIncluded"],
+  },
+  {
     key: "pro",
     featured: true,
     surveyTag: true,
     hasCta: true,
-    features: ["deploy", "supervision", "costs", "expertise"],
+    features: ["allEssentiel", "costs", "expertise", "priority"],
   },
   {
     key: "sovereign",
@@ -201,7 +206,7 @@ export default async function Home(): Promise<ReactElement> {
             <h2 className="mt-2 font-display text-headline-lg">{t("pricing.title")}</h2>
             <p className="mt-2 text-body-md text-on-surface-variant">{t("pricing.subtitle")}</p>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {TIERS.map((tier) => (
               <div
                 key={tier.key}
