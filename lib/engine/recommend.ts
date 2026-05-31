@@ -2,7 +2,8 @@ import type { Catalog } from "@/lib/catalog/types";
 import { buildBackupPlan, NEUTRAL_BACKUP_PRICES, type BackupPriceTable } from "./backup";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { deriveResidencyPlan, hostingClassForProfile, NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency";
-import { applyBackup, applyCompute, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
+import { applyBackup, applyCompute, applyLlmUsage, applyMultimodalSizing, applyResidency, costBand, layersBaseCost, profileCostFactors } from "./cost";
+import { costLlmUsage, NEUTRAL_LLM_PRICES, type LlmTokenPrices } from "./llm-usage";
 import { computeCompliance, computeKMChecks, computeRisks } from "./diagnostics";
 import { buildLayers } from "./layers";
 import { msg, type Message } from "./message";
@@ -98,6 +99,7 @@ export function recommend(
   backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
   computePrices: ComputePriceTable = NEUTRAL_COMPUTE_PRICES,
   residencyPrices: ResidencyPriceTable = NEUTRAL_RESIDENCY_PRICES,
+  llmPrices: LlmTokenPrices = NEUTRAL_LLM_PRICES,
 ): Recommendation {
   const { preset, reason } = decidePreset(profile);
   // Paramètres de dimensionnement « vivants » (S-056) : un composant sourcé du catalogue (C6 GPU,
@@ -121,12 +123,18 @@ export function recommend(
   // Choix des composants = `catalog` injecté (défaut seed = sortie identique, spec n°3). Coûts dans les
   // couches : compute remplace le forfait C6, puis GPU/stockage multimédias (C4/C5/C6), puis backup (C6),
   // puis résidence/DR (réplication + régions en attente, C6).
-  const layers = applyResidency(
-    applyBackup(
-      applyMultimodalSizing(applyCompute(buildLayers(preset, profile, catalog), compute), sizing, prices),
-      backup,
+  // Coût d'inférence LLM à l'usage (S-074) : auto-hébergé (HARD/préférence souveraine) → 0 (déjà dans
+  // le compute), sinon tokens × prix/1M du modèle API par défaut. Neutre par défaut → 0 (invariant).
+  const llmUsage = costLlmUsage(profile, preset, llmPrices);
+  const layers = applyLlmUsage(
+    applyResidency(
+      applyBackup(
+        applyMultimodalSizing(applyCompute(buildLayers(preset, profile, catalog), compute), sizing, prices),
+        backup,
+      ),
+      residency,
     ),
-    residency,
+    llmUsage,
   );
   const baseCost = layersBaseCost(layers) + profileCostFactors(profile);
   const activeModules = computeActiveModules(profile);
@@ -189,12 +197,15 @@ export function recommend(
       ...backup.costSources,
       ...compute.sources,
       ...residency.costSources,
+      // Source du prix LLM à l'usage effectivement appliqué (S-074, DÉFCON 1) — null si auto-hébergé/neutre.
+      ...(llmUsage.source !== null ? [llmUsage.source] : []),
       // Sources des facteurs de dimensionnement sourcés effectivement appliqués (S-056, traçabilité).
       ...derivedParams.applied.map((a) => a.source),
     ]),
     backup,
     compute,
     residency,
+    llmUsage,
     verdict: buildVerdict(profile, totalCost, setupCost, risks),
   };
 }

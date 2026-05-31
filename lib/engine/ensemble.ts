@@ -12,6 +12,7 @@ import { NEUTRAL_RESIDENCY_PRICES, type ResidencyPriceTable } from "./residency"
 import { msg, type Message } from "./message";
 import { MODULES, defaultModuleLevels } from "./modules";
 import { recommend } from "./recommend";
+import { NEUTRAL_LLM_PRICES, type LlmTokenPrices } from "./llm-usage";
 import { NEUTRAL_MEDIA_PRICES, type MultimodalPriceTable } from "./sizing";
 import {
   PRESETS,
@@ -133,6 +134,7 @@ function buildVariant(
   backupPrices: BackupPriceTable,
   computePrices: ComputePriceTable,
   residencyPrices: ResidencyPriceTable,
+  llmPrices: LlmTokenPrices,
 ): EnsembleVariant {
   const { profile, assumptions } = applyVariant(id, base);
   return {
@@ -141,7 +143,7 @@ function buildVariant(
     intent: msg(`ensemble.${id}.intent`),
     assumptions,
     profile,
-    recommendation: recommend(profile, prices, undefined, backupPrices, computePrices, residencyPrices),
+    recommendation: recommend(profile, prices, undefined, backupPrices, computePrices, residencyPrices, llmPrices),
   };
 }
 
@@ -204,13 +206,14 @@ export function buildEnsemble(
   backupPrices: BackupPriceTable = NEUTRAL_BACKUP_PRICES,
   computePrices: ComputePriceTable = NEUTRAL_COMPUTE_PRICES,
   residencyPrices: ResidencyPriceTable = NEUTRAL_RESIDENCY_PRICES,
+  llmPrices: LlmTokenPrices = NEUTRAL_LLM_PRICES,
 ): Ensemble {
   // Le catalogue (live ou seed) s'applique à la baseline ; les variants explorent sur leur propre
   // seed (le spread coût/score n'en dépend pas — les coûts sont indépendants du choix de composant).
-  // Prix backup + compute + résidence threadés partout pour que le spread reflète tous les postes.
-  const baseline = recommend(profile, prices, catalog, backupPrices, computePrices, residencyPrices);
+  // Prix backup + compute + résidence + LLM threadés partout pour que le spread reflète tous les postes.
+  const baseline = recommend(profile, prices, catalog, backupPrices, computePrices, residencyPrices, llmPrices);
   const variants = ENSEMBLE_VARIANT_IDS.map((id) =>
-    buildVariant(id, profile, prices, backupPrices, computePrices, residencyPrices),
+    buildVariant(id, profile, prices, backupPrices, computePrices, residencyPrices, llmPrices),
   );
   const spread = computeSpread([baseline, ...variants.map((v) => v.recommendation)]);
   return { baseline, variants, spread };

@@ -45,6 +45,14 @@ export {
   type ComputeSizing,
 } from "./compute";
 export {
+  costLlmUsage,
+  estimateLlmUsage,
+  NEUTRAL_LLM_PRICES,
+  type LlmTokenPrice,
+  type LlmTokenPrices,
+  type LlmUsage,
+} from "./llm-usage";
+export {
   deriveResidencyPlan,
   deriveResidencyTopology,
   hostingClassForProfile,

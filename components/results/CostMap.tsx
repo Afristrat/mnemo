@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { StatusDot } from "@/components/ui/StatusDot";
-import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer, type ResidencyPlan } from "@/lib/engine";
+import { costBand, type ActiveModule, type BackupPlan, type GpuTier, type Layer, type LlmUsage, type ResidencyPlan } from "@/lib/engine";
 import { useEngineText } from "@/lib/i18n/engine";
 import { pricingForLayer } from "@/lib/pricing/sources";
 
@@ -29,6 +29,8 @@ type CostMapProps = {
   backup?: BackupPlan;
   /** Plan de résidence/DR (coût réplication déjà compris dans C6) — ligne réplication + sources (S-048). */
   residency?: ResidencyPlan;
+  /** Coût d'inférence LLM à l'usage (déjà compris dans C6) — ligne dédiée + source (S-074). */
+  llmUsage?: LlmUsage;
 };
 
 const REGION_KEY: Record<ResidencyPlan["primaryRegion"], "regionEu" | "regionMaroc" | "regionUs" | "regionOther"> = {
@@ -39,7 +41,7 @@ const REGION_KEY: Record<ResidencyPlan["primaryRegion"], "regionEu" | "regionMar
 };
 
 /** Carte de coûts transparente : chaque poste avec confiance + source datée, total avec bande ±30 %. */
-export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup, residency }: CostMapProps): ReactElement {
+export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCost = 0, media, backup, residency, llmUsage }: CostMapProps): ReactElement {
   const resolveEngine = useEngineText();
   const t = useTranslations("Results.costMap");
   const band = costBand(totalCost);
@@ -48,6 +50,7 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
     media !== undefined && (media.gpuCost > 0 || media.storageCost > 0 || media.embeddingsCost > 0 || media.apiLines.length > 0);
   const hasBackup = backup !== undefined && backup.criticality !== "none" && backup.monthlyCost > 0;
   const hasResidency = residency !== undefined && residency.monthlyCost > 0;
+  const hasLlm = llmUsage !== undefined && llmUsage.monthlyCost > 0;
   const replicaRegions = residency?.regions.filter((r) => r.role !== "primary") ?? [];
 
   return (
@@ -218,6 +221,33 @@ export function CostMap({ layers, factorsCost, activeModules, totalCost, setupCo
             </p>
           ) : null}
           <p className="mt-2 text-body-sm text-on-surface-variant">{t("residencyDisclaimer")}</p>
+        </div>
+      ) : null}
+
+      {hasLlm && llmUsage !== undefined ? (
+        <div className="mt-4 rounded-card bg-surface-container p-3">
+          <p className="text-label-caps uppercase text-on-surface-variant">
+            {t("llmTitle")} <span className="normal-case">{t("llmIncluded")}</span>
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            <li className="flex items-center justify-between gap-3 text-body-sm">
+              <span>{t("llmLine", { model: llmUsage.pricedModel ?? "", ktokens: Math.round((llmUsage.monthlyTokensIn + llmUsage.monthlyTokensOut) / 1000) })}</span>
+              <span className="font-mono text-on-surface">{t("mediaPerMonth", { cost: llmUsage.monthlyCost })}</span>
+            </li>
+          </ul>
+          {llmUsage.source !== null ? (
+            <p className="mt-2 text-body-sm">
+              <a
+                href={llmUsage.source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary underline decoration-dotted"
+              >
+                {t("sourceLink", { label: llmUsage.source.label, date: llmUsage.source.checkedAt })}
+              </a>
+            </p>
+          ) : null}
+          <p className="mt-2 text-body-sm text-on-surface-variant">{t("llmDisclaimer")}</p>
         </div>
       ) : null}
 

@@ -40,6 +40,7 @@ import {
 import { getBackupPrices } from "@/lib/pricing/backup-seed";
 import { getComputePrices } from "@/lib/pricing/compute-seed";
 import { getMediaPricesEur } from "@/lib/pricing/media-feed";
+import { getLlmTokenPrices } from "@/lib/pricing/llm-token-seed";
 import { getResidencyPrices } from "@/lib/pricing/residency-seed";
 import { DEFAULT_PROFILE, STORAGE_KEY } from "@/lib/wizard/defaultProfile";
 import { useOptions } from "@/lib/wizard/useOptions";
@@ -206,14 +207,14 @@ export function ResultsView(): ReactElement {
     () =>
       projected === null
         ? null
-        : recommend(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices()),
+        : recommend(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices(), getLlmTokenPrices()),
     [projected, prices, effectiveCatalog],
   );
   const ensemble = useMemo(
     () =>
       projected === null
         ? null
-        : buildEnsemble(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices()),
+        : buildEnsemble(projected, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices(), getLlmTokenPrices()),
     [projected, prices, effectiveCatalog],
   );
 
@@ -221,7 +222,7 @@ export function ResultsView(): ReactElement {
   // mouvement de slider ; recalculé seulement si le profil/les prix/le catalogue changent.
   const narrationContext = useMemo<NarrationContext | null>(() => {
     if (base === null) return null;
-    const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices());
+    const r = recommend(base, prices, effectiveCatalog, getBackupPrices(), getComputePrices(), getResidencyPrices(), getLlmTokenPrices());
     // Notes libres saisies au configurateur (S-052) + précisions « Autre » (S-064) → contexte de
     // personnalisation du ton (jamais un chiffre : le garde-fou `isCleanNarration` rejette tout
     // montant/score). Les préfixes des précisions vivent dans la couche LLM (`buildOtherPrecisionNotes`).
@@ -449,6 +450,7 @@ export function ResultsView(): ReactElement {
         media={media}
         backup={activeResult.backup}
         residency={activeResult.residency}
+        llmUsage={activeResult.llmUsage}
       />
 
       {/* Résidence & transferts (S-048) : topologie régions + conformité des flux + RTO + conflit. */}

@@ -2,6 +2,7 @@
 // Porté de design-reference/.../simulator-archi-base-memorielle-v2.html (logique pure, sans UI).
 
 import type { ComputeSizing } from "./compute";
+import type { LlmUsage } from "./llm-usage";
 import type { Message } from "./message";
 import type { TransferRegion, TransferStatus } from "@/lib/legal/transfers";
 
@@ -413,6 +414,8 @@ export type Recommendation = {
   compute: ComputeSizing;
   /** Plan résidence/DR déduit du profil (spec n°2, intégré en S-046). `none` + mono-région → neutre. */
   residency: ResidencyPlan;
+  /** Coût d'inférence LLM à l'usage (S-074, tarifé au 1M tokens in/out) ; 0 si auto-hébergé/neutre. */
+  llmUsage: LlmUsage;
   /** Synthèse « verdict » pour le chemin 90 s (douleur/risque/gain/prix ferme/coûts/next step). */
   verdict: Verdict;
 };
