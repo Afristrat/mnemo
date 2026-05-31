@@ -28,7 +28,7 @@ export function CheckboxCards<T extends string>({
             aria-checked={selected}
             onClick={() => onToggle(opt.value)}
             className={cn(
-              "flex items-start gap-3 rounded-card border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              "flex items-start gap-3 rounded-card border p-4 text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
               selected
                 ? "border-primary bg-primary/5"
                 : "border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low",

@@ -226,8 +226,8 @@ export default async function Home(): Promise<ReactElement> {
                 </div>
                 <ul className="mt-4 space-y-1.5 text-body-sm text-on-surface-variant">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="relative pl-6">
-                      <span className="absolute left-0 text-primary">✓</span>
+                    <li key={feature} className="relative ps-6">
+                      <span className="absolute start-0 text-primary">✓</span>
                       {t(`pricing.tiers.${tier.key}.features.${feature}`)}
                     </li>
                   ))}

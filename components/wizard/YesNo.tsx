@@ -37,7 +37,7 @@ export function YesNo({
             aria-pressed={selected}
             onClick={() => onChange(opt.v)}
             className={cn(
-              "rounded-card border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              "rounded-card border p-4 text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
               selected
                 ? "border-primary bg-primary/5"
                 : "border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low",

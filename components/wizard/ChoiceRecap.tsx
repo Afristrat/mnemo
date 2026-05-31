@@ -27,7 +27,7 @@ export function ChoiceRecap({ groups, className }: { groups: RecapGroup[]; class
                     </span>
                     {item.label}
                   </dt>
-                  <dd className="text-right font-mono text-body-sm text-on-surface">{item.value}</dd>
+                  <dd className="text-end font-mono text-body-sm text-on-surface">{item.value}</dd>
                 </div>
               ))}
             </dl>

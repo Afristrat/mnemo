@@ -33,3 +33,12 @@ export const promptLanguageNames: Record<Locale, string> = {
   fr: "French",
   en: "English",
 };
+
+// Sens d'écriture (S-060) : les locales RTL (arabe) pilotent `<html dir>` + le miroir des layouts via
+// propriétés logiques. Set extensible ; `localeDir` accepte une chaîne (la locale active vient de
+// `getLocale()`) et reste sûr pour toute valeur. `ar` n'est ajouté à `locales` qu'avec le miroir RTL prêt.
+export const RTL_LOCALES: ReadonlySet<string> = new Set(["ar"]);
+
+export function localeDir(locale: string): "ltr" | "rtl" {
+  return RTL_LOCALES.has(locale) ? "rtl" : "ltr";
+}

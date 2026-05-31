@@ -122,7 +122,7 @@ export function SurveyForm(): ReactElement {
                     key={opt}
                     type="button"
                     onClick={() => setChoices((p) => ({ ...p, [i]: opt }))}
-                    className={`rounded-lg border p-3 text-left text-sm ${choices[i] === opt ? "border-teal-600 bg-teal-50" : "border-slate-200"}`}
+                    className={`rounded-lg border p-3 text-start text-sm ${choices[i] === opt ? "border-teal-600 bg-teal-50" : "border-slate-200"}`}
                   >
                     <div className="text-slate-700">{opt === "a" ? task.a : task.b}</div>
                     <div className="mt-1 font-mono font-semibold text-teal-700">{t("conjointPrice", { price: opt === "a" ? task.priceA : task.priceB, cur })}</div>

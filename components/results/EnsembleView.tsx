@@ -96,7 +96,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
         <div className="mt-2 h-2 w-full rounded-full bg-surface-container">
           <div
             className="h-2 rounded-full bg-primary/70"
-            style={{ marginLeft: `${bandLeft}%`, width: `${100 - bandLeft}%` }}
+            style={{ marginInlineStart: `${bandLeft}%`, width: `${100 - bandLeft}%` }}
           />
         </div>
         <p className="mt-3 text-body-sm text-on-surface-variant">{resolveEngine(spread.uncertaintyLabel)}</p>
@@ -117,7 +117,7 @@ export function EnsembleView({ ensemble, activeId, onSelect }: EnsembleViewProps
               onClick={() => onSelect(card.id)}
               aria-pressed={isActive}
               className={cn(
-                "flex flex-col rounded-card border p-4 text-left transition-colors",
+                "flex flex-col rounded-card border p-4 text-start transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                 isActive
                   ? "border-primary bg-primary/5 ring-2 ring-primary/30"
