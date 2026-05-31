@@ -5,6 +5,14 @@ export { MODULES, defaultModuleLevels, formatModuleTask } from "./modules";
 export { PRESET_PROFILES, type PresetProfile } from "./presets";
 export { decidePreset, formatPresetReason, type PresetDecision } from "./preset";
 export { buildLayers } from "./layers";
+export {
+  type Continent,
+  type ProviderSovereignty,
+  type SovereignProvider,
+  CONTINENTS,
+  providersByContinent,
+  coveredContinents,
+} from "./providers";
 export { layersBaseCost, profileCostFactors, costBand } from "./cost";
 export { computeScores } from "./scores";
 export {
