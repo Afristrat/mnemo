@@ -51,6 +51,9 @@ pays, tranche 3) qui respectera les **choix utilisateur comme contrainte absolue
   les 7 vecteurs egress sourcés (UE, Amérique du Nord) annotés + helper `vectorsForContinent`. Les
   continents sans vecteur egress chiffré (Afrique, Moyen-Orient, APAC, Amérique latine) restent en
   **devis/veille** (aucun prix fabriqué — DÉFCON 1).
-- **Tranche 3** — veille : découverte live de fournisseurs par pays cible, **bornée par les contraintes**.
+- **Tranche 3** ✅ (2026-05-31) — veille : découverte live de fournisseurs par pays cible
+  (`lib/residency/discovery.ts` + route `POST /api/residency/providers`), **bornée par les contraintes
+  utilisateur** (S-072, absolues) — requête orientée + règle dure du prompt + re-filtre de la sortie
+  (souveraineté exigée ⇒ rejet hyperscaler) ; anti-hallucination d'URL ; repli annuaire seed garanti.
 - **Tranche 4** — UI : choix de **N fournisseurs redondants** + topologie multi-juridiction.
 - **Tranche 5** — coûts/transferts via S-044, défaut légal **conservateur**.
