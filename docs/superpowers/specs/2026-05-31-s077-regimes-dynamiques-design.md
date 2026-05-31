@@ -1,7 +1,21 @@
 # S-077 — Régimes réglementaires dynamiques (veille crawl4ai par pays)
 
-> Spec de conception. Statut : **proposée, en attente de revue Amine**. Date : 2026-05-31.
+> Spec de conception. Statut : **VALIDÉE (décisions Amine, 2026-06-01)**. Date : 2026-05-31.
 > Indépendante de Lot 2 · A. Appartient à la ligne géographie/veille (suite de S-073/S-076).
+
+## Décisions Amine verrouillées (2026-06-01)
+
+1. **Entrées = pays cible + résidence des clients.** On ajoute un multi-input « pays où résident vos
+   clients » (`profile.clientResidence?: string[]`) — un régime suit souvent la résidence des personnes,
+   pas seulement l'hébergement (RGPD = sujets UE ; LGPD = sujets brésiliens).
+2. **Régimes : les deux comportements coexistent.** (a) On **modélise dans le moteur quelques régimes
+   phares hors-UE** (LGPD/Brésil, APPI/Japon… — priorité aux plus notoires) avec **actions de conformité
+   sourcées** (extension de `computeCompliance`) ; (b) tout régime **non modélisé** reste **affichage
+   sourcé seul** (porté comme donnée libre, n'altère pas le chiffrage — DÉFCON 1). Règle : on ne modélise
+   QUE ce qu'on peut sourcer rigoureusement (URL officielle + date) ; sinon affichage-seul « à valider ».
+3. **Persistance = trace d'audit RLS.** Les suggestions de régimes sont persistées (table `regime_observations`,
+   RLS pivot `circle`, service-role, non bloquant) comme les veilles catalogue (S-036) / transferts (S-062).
+   Migration prod MANUELLE (SSH + psql, cf. ALERTE passation).
 
 ## 0. Problème
 
