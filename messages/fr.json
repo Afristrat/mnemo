@@ -546,7 +546,9 @@
       "selectedTitle": "Topologie redondante composée",
       "selectedSummary": "{providers} fournisseur(s) sélectionné(s) sur {locations} localisation(s) distincte(s).",
       "redundancyHint": "Ajoutez un second fournisseur (idéalement dans une autre juridiction) pour une vraie redondance infra.",
-      "redundancyOk": "Redondance multi-fournisseur : la défaillance ou la contrainte légale d’un fournisseur n’interrompt pas le service."
+      "redundancyOk": "Redondance multi-fournisseur : la défaillance ou la contrainte légale d’un fournisseur n’interrompt pas le service.",
+      "legalCaveat": "Transferts entre juridictions distinctes : à valider avant décision (défaut conservateur, voir « Résidence & transferts »). Orientation d’ingénierie, pas un avis juridique.",
+      "costCaveat": "Coûts : sur devis par fournisseur (jamais figés). Le chiffrage egress inter-région reste fourni pour l’Europe et l’Amérique du Nord ; ailleurs, à confirmer auprès du fournisseur."
     },
     "exportButtons": {
       "markdown": "Télécharger le plan (Markdown)",
