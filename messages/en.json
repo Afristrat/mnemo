@@ -546,7 +546,9 @@
       "selectedTitle": "Composed redundant topology",
       "selectedSummary": "{providers} provider(s) selected across {locations} distinct location(s).",
       "redundancyHint": "Add a second provider (ideally in another jurisdiction) for genuine infrastructure redundancy.",
-      "redundancyOk": "Multi-provider redundancy: the failure or legal constraint of one provider does not interrupt the service."
+      "redundancyOk": "Multi-provider redundancy: the failure or legal constraint of one provider does not interrupt the service.",
+      "legalCaveat": "Transfers between distinct jurisdictions: to be validated before deciding (conservative default, see “Residency & transfers”). Engineering guidance, not legal advice.",
+      "costCaveat": "Costs: quote-based per provider (never hardcoded). Inter-region egress pricing is provided for Europe and North America; elsewhere, confirm with the provider."
     },
     "exportButtons": {
       "markdown": "Download the plan (Markdown)",

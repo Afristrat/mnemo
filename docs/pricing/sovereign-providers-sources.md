@@ -58,4 +58,7 @@ pays, tranche 3) qui respectera les **choix utilisateur comme contrainte absolue
 - **Tranche 4** ✅ (2026-05-31) — UI `RedundancyPanel` : sélecteur continent + pays cible → veille
   `/api/residency/providers` → liste sourcée (souveraineté + provenance + source datée) → sélection de
   **N fournisseurs redondants** + topologie résumée (multi-juridiction). i18n fr/en/ar.
-- **Tranche 5** — coûts/transferts via S-044, défaut légal **conservateur**.
+- **Tranche 5** ✅ (2026-05-31) — caveats sur la topologie composée : transferts inter-juridiction
+  **conservateurs** (≥ 2 juridictions → « à valider, voir Résidence & transferts » ; réutilise
+  `lib/legal` S-044, jamais un avis juridique) + coûts **sur devis** (egress chiffré UE/Amérique du
+  Nord, ailleurs à confirmer auprès du fournisseur). **S-073 complet.**

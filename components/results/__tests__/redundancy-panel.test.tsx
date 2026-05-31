@@ -84,6 +84,9 @@ describe("RedundancyPanel (S-073 T4)", () => {
     fireEvent.click(checkboxes[0]);
     fireEvent.click(checkboxes[1]);
     await waitFor(() => expect(screen.getByText(/Redondance multi-fournisseur/)).toBeInTheDocument());
+    // T5 : 2 juridictions distinctes (Kenya, Nigeria) → caveat légal conservateur + caveat coûts=devis.
+    expect(screen.getByText(/à valider avant décision/)).toBeInTheDocument();
+    expect(screen.getByText(/sur devis par fournisseur/)).toBeInTheDocument();
   });
 
   it("erreur réseau → message d'échec", async () => {

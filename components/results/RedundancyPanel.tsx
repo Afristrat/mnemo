@@ -230,6 +230,10 @@ export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement
           <p className="mt-2 text-on-surface-variant/80">
             {selectedList.length >= 2 ? t("redundancyOk") : t("redundancyHint")}
           </p>
+          {selectedCountries >= 2 ? (
+            <p className="mt-2 text-on-surface-variant/80">⚖ {t("legalCaveat")}</p>
+          ) : null}
+          <p className="mt-1 text-on-surface-variant/80">€ {t("costCaveat")}</p>
         </div>
       ) : null}
     </Card>
