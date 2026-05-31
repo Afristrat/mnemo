@@ -220,6 +220,32 @@ export type PromptInsert = {
   author: string | null;
 };
 
+// Coffre de credentials vendeurs (Lot 2-A) : credentials chiffrés + audit trail.
+export type VendorCredentialKind = "oauth_token" | "api_key";
+
+/** Métadonnées exposées par la vue `vendor_credentials_meta` (jamais le chiffré). */
+export type VendorCredentialMetaRow = {
+  id: string;
+  circle_id: string;
+  provider: string;
+  label: string;
+  kind: VendorCredentialKind;
+  expires_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+};
+
+export type CredentialAction = "store" | "read" | "rotate" | "revoke";
+export type CredentialAccessRow = {
+  id: string;
+  circle_id: string;
+  credential_id: string | null;
+  actor: string;
+  action: CredentialAction;
+  context: Record<string, unknown>;
+  at: string;
+};
+
 // `Relationships: []` est requis par le contrat `GenericTable` de @supabase/supabase-js (v2) : sans
 // lui, les requêtes typées `<Database>` résolvent les lignes en `never`. Aucune relation FK déclarée ici.
 type TableShape<Row, Insert> = { Row: Row; Insert: Insert; Update: Partial<Insert>; Relationships: [] };
