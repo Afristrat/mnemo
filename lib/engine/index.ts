@@ -68,6 +68,7 @@ export {
   costInterSiteSecurity,
   selectEgressVector,
   vectorsForClass,
+  vectorsForContinent,
   NEUTRAL_RESIDENCY_PRICES,
   type ResidencyTopology,
   type ResidencyCost,

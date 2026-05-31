@@ -20,7 +20,7 @@ import type { EgressVector, InterSiteSecurityPrices, ResidencyPriceTable } from 
 import { reconcilePrice, type PriceStatus } from "./reconcile";
 
 export type { EgressVector, HostingClass, InterSiteSecurityPrices, ResidencyPriceTable } from "@/lib/engine";
-export { NEUTRAL_RESIDENCY_PRICES, selectEgressVector, vectorsForClass } from "@/lib/engine";
+export { NEUTRAL_RESIDENCY_PRICES, selectEgressVector, vectorsForClass, vectorsForContinent } from "@/lib/engine";
 
 const CHECKED_AT = "2026-05-29";
 
@@ -35,6 +35,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "Hetzner",
     hostingClass: "self-hosted",
     sovereign: true,
+    continent: "europe",
+    country: "Allemagne",
     interRegionEgress: {
       amount: 0.001,
       currency: "EUR",
@@ -48,6 +50,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "OVHcloud",
     hostingClass: "sovereign-eu",
     sovereign: true,
+    continent: "europe",
+    country: "France",
     interRegionEgress: {
       amount: 0,
       currency: "EUR",
@@ -61,6 +65,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "Scaleway",
     hostingClass: "sovereign-eu",
     sovereign: true,
+    continent: "europe",
+    country: "France",
     interRegionEgress: {
       amount: 0.01,
       currency: "EUR",
@@ -74,6 +80,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "IONOS",
     hostingClass: "sovereign-eu",
     sovereign: true,
+    continent: "europe",
+    country: "Allemagne",
     interRegionEgress: {
       amount: 0.03,
       currency: "EUR",
@@ -87,6 +95,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "Outscale",
     hostingClass: "secnumcloud",
     sovereign: true,
+    continent: "europe",
+    country: "France",
     interRegionEgress: {
       amount: 0,
       currency: "EUR",
@@ -100,6 +110,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "GCP",
     hostingClass: "hyperscaler",
     sovereign: false,
+    continent: "north-america",
+    country: "États-Unis",
     interRegionEgress: {
       amount: 0.05,
       currency: "USD",
@@ -113,6 +125,8 @@ export const RESIDENCY_EGRESS_SEED: EgressVector[] = [
     provider: "AWS",
     hostingClass: "hyperscaler",
     sovereign: false,
+    continent: "north-america",
+    country: "États-Unis",
     interRegionEgress: {
       amount: 0.02,
       currency: "USD",
