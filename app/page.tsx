@@ -36,13 +36,28 @@ const TIERS = [
     key: "pro",
     featured: true,
     surveyTag: true,
-    hasCta: true,
     features: ["allEssentiel", "costs", "expertise", "priority"],
   },
   {
     key: "sovereign",
     features: ["onprem", "negotiation", "support"],
   },
+] as const;
+
+// Vrai comparatif (lignes × tiers, ordre des colonnes = TIERS). Chaque ligne : inclus (true) / non (false)
+// par palier [Diagnostic, Essentiel, Pro, Souverain+]. Repliable via <details> (hide/unhide natif, SSR).
+const COMPARE_ROWS = [
+  { key: "configurator", values: [true, true, true, true] },
+  { key: "deliverable", values: [true, true, true, true] },
+  { key: "exit", values: [true, true, true, true] },
+  { key: "deploy", values: [false, true, true, true] },
+  { key: "supervision", values: [false, true, true, true] },
+  { key: "costs", values: [false, false, true, true] },
+  { key: "expertise", values: [false, false, true, true] },
+  { key: "priority", values: [false, false, true, true] },
+  { key: "onprem", values: [false, false, false, true] },
+  { key: "negotiation", values: [false, false, false, true] },
+  { key: "support", values: [false, false, false, true] },
 ] as const;
 
 function Eyebrow({ children }: { children: ReactNode }): ReactElement {
@@ -237,17 +252,61 @@ export default async function Home(): Promise<ReactElement> {
                     </li>
                   ))}
                 </ul>
-                {"hasCta" in tier && tier.hasCta ? (
-                  <a href="#diagnostic" className={`${PILL_PRIMARY} mt-5 w-full`}>
-                    {t(`pricing.tiers.${tier.key}.cta`)}
-                  </a>
-                ) : null}
               </div>
             ))}
           </div>
+
+          {/* Vrai comparatif détaillé, repliable (hide/unhide natif via <details>, sans JS). */}
+          <details className="group mx-auto mt-6 max-w-4xl rounded-card border border-outline-variant bg-surface-container-lowest">
+            <summary className="flex cursor-pointer list-none items-center justify-center gap-2 px-6 py-3 text-body-sm font-medium text-primary">
+              <span className="transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
+              {t("pricing.compareSummary")}
+            </summary>
+            <div className="overflow-x-auto px-2 pb-4">
+              <table className="w-full min-w-[640px] border-collapse text-body-sm">
+                <thead>
+                  <tr className="border-b border-outline-variant">
+                    <th className="px-3 py-2 text-start font-medium text-on-surface-variant" scope="col" />
+                    {TIERS.map((tier) => (
+                      <th key={tier.key} className="px-3 py-2 text-center" scope="col">
+                        <span className="block font-display text-on-surface">{t(`pricing.tiers.${tier.key}.name`)}</span>
+                        <span className="block text-label-caps uppercase text-primary">{t(`pricing.tiers.${tier.key}.price`)}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARE_ROWS.map((row) => (
+                    <tr key={row.key} className="border-b border-outline-variant/40">
+                      <th className="px-3 py-2 text-start font-normal text-on-surface-variant" scope="row">
+                        {t(`pricing.compare.${row.key}`)}
+                      </th>
+                      {row.values.map((included, i) => (
+                        <td key={TIERS[i].key} className="px-3 py-2 text-center">
+                          {included ? (
+                            <span className="text-primary" aria-label={t("pricing.compareYes")}>✓</span>
+                          ) : (
+                            <span className="text-on-surface-variant/30" aria-label={t("pricing.compareNo")}>—</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
+
           <p className="mx-auto mt-4 max-w-2xl text-center text-body-sm text-on-surface-variant">
             {t("pricing.note")}
           </p>
+
+          {/* CTA unique en bas de la section (plus dans la seule carte Pro). */}
+          <div className="mt-6 text-center">
+            <a href="#diagnostic" className={PILL_PRIMARY}>
+              {t("pricing.cta")}
+            </a>
+          </div>
         </section>
 
         {/* Diagnostic, chemin 90 s (vrai formulaire) */}
