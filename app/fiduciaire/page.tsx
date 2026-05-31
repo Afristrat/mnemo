@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import type { ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
-import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
+import { FIDUCIARY_COMMITMENT_KEYS, FIDUCIARY_LAST_UPDATED } from "@/lib/fiduciary/charter";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Fiduciaire");
@@ -15,30 +15,29 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FiduciaryPage(): Promise<ReactElement> {
   const t = await getTranslations("Fiduciaire");
-  const charter = FIDUCIARY_CHARTER;
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <p className="font-mono text-xs uppercase tracking-widest text-primary">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-display-lg font-bold text-on-surface">{charter.title}</h1>
-      <p className="mt-4 text-body-lg text-on-surface-variant">{charter.intro}</p>
+      <h1 className="mt-2 font-display text-display-lg font-bold text-on-surface">{t("title")}</h1>
+      <p className="mt-4 text-body-lg text-on-surface-variant">{t("intro")}</p>
 
       <Card className="mt-8">
         <h2 className="font-display text-headline-md text-on-surface">{t("revenueTitle")}</h2>
-        <p className="mt-2 text-body-md text-on-surface-variant">{charter.revenueModel}</p>
+        <p className="mt-2 text-body-md text-on-surface-variant">{t("revenueModel")}</p>
       </Card>
 
       <section className="mt-8 space-y-4">
         <h2 className="font-display text-headline-lg text-on-surface">{t("commitmentsTitle")}</h2>
-        {charter.commitments.map((c) => (
-          <Card key={c.title}>
-            <h3 className="font-display text-body-lg text-on-surface">{c.title}</h3>
-            <p className="mt-1 text-body-sm text-on-surface-variant">{c.detail}</p>
+        {FIDUCIARY_COMMITMENT_KEYS.map((key) => (
+          <Card key={key}>
+            <h3 className="font-display text-body-lg text-on-surface">{t(`commitment.${key}.title`)}</h3>
+            <p className="mt-1 text-body-sm text-on-surface-variant">{t(`commitment.${key}.detail`)}</p>
           </Card>
         ))}
       </section>
 
       <p className="mt-8 font-mono text-body-sm text-on-surface-variant">
-        {t("lastUpdated", { date: charter.lastUpdated })}
+        {t("lastUpdated", { date: FIDUCIARY_LAST_UPDATED })}
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">

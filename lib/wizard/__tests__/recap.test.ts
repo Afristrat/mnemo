@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { recommend, type EngineResolver, type Profile } from "@/lib/engine";
-import { buildChoiceRecap, type RecapItem } from "@/lib/wizard/recap";
+import { buildChoiceRecap, type RecapItem, type RecapLabel } from "@/lib/wizard/recap";
 
 // Stub de résolution des descripteurs Message du moteur (S-058) : on renvoie l'`id` (assez pour
 // vérifier que le nom du module est bien injecté ; la localisation réelle est testée côté i18n).
 const stubEngine: EngineResolver = (m) => m.id;
+// Stub du chrome du récap (S-059) : renvoie la clé i18n, en réinjectant `name` pour la ligne module
+// (pour vérifier que le nom du module est bien composé). La localisation réelle est testée côté messages.
+const stubRecap: RecapLabel = (k, v) => (v !== undefined && "name" in v ? String(v.name) : k);
 
 function prof(over: Partial<Profile> = {}): Profile {
   return {
@@ -39,37 +42,37 @@ describe("buildChoiceRecap (S-050)", () => {
   it("couvre les champs clés + valeurs effectives dérivées (preset, serveurs, sauvegarde)", () => {
     const p = prof();
     const reco = recommend(p);
-    const groups = buildChoiceRecap(p, reco, (k) => k, stubEngine);
+    const groups = buildChoiceRecap(p, reco, (k) => k, stubEngine, stubRecap);
     const labels = allItems(groups).map((i) => i.label);
-    for (const expected of ["Preset retenu", "Volume de données", "Croissance", "Latence visée", "Sauvegarde", "Modules", "Médias"]) {
+    for (const expected of ["label.preset", "label.volume", "label.growth", "label.latency", "label.backup", "label.modules", "label.media"]) {
       expect(labels).toContain(expected);
     }
-    expect(item(groups, "Preset retenu")?.value).toBe(reco.preset);
+    expect(item(groups, "label.preset")?.value).toBe(reco.preset);
   });
 
   it("marque la transparence coût : charge = ●, souveraineté/conformité = ○", () => {
-    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k, stubEngine);
+    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k, stubEngine, stubRecap);
     // Influencent directement le coût mensuel
-    for (const l of ["Utilisateurs", "Volume de données", "Croissance", "Latence visée"]) {
+    for (const l of ["label.users", "label.volume", "label.growth", "label.latency"]) {
       expect(item(groups, l)?.impactsCost).toBe(true);
     }
     // Orientent la stack/scores/conformité mais pas une ligne de coût directe
-    for (const l of ["Zone d'hébergement", "Audit", "Bitemporel", "Voix / perspectives", "Budget (plafond)"]) {
+    for (const l of ["label.zone", "label.audit", "label.bitemporal", "label.voices", "label.budget"]) {
       expect(item(groups, l)?.impactsCost).toBe(false);
     }
   });
 
   it("résume modules et médias inactifs sans rien inventer", () => {
-    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k, stubEngine);
-    expect(item(groups, "Modules")?.value).toBe("Aucun module activé");
-    expect(item(groups, "Médias")?.value).toBe("Aucun besoin média actif");
+    const groups = buildChoiceRecap(prof(), recommend(prof()), (k) => k, stubEngine, stubRecap);
+    expect(item(groups, "label.modules")?.value).toBe("value.modulesNone");
+    expect(item(groups, "label.media")?.value).toBe("value.mediaNone");
   });
 
   it("reporte les modules actifs et leur niveau", () => {
     const p = prof({ modules: { bisect: 0, reversal: 1, prereg: 0, mel: 0, conflict: 0 } });
     const reco = recommend(p);
-    const value = item(buildChoiceRecap(p, reco, (k) => k, stubEngine), "Modules")?.value ?? "";
-    expect(value).not.toBe("Aucun module activé");
+    const value = item(buildChoiceRecap(p, reco, (k) => k, stubEngine, stubRecap), "label.modules")?.value ?? "";
+    expect(value).not.toBe("value.modulesNone");
     const firstModule = reco.activeModules[0];
     expect(firstModule).toBeDefined();
     if (firstModule) expect(value).toContain(stubEngine(firstModule.name));
@@ -82,23 +85,23 @@ describe("buildChoiceRecap (S-050)", () => {
         zone: "other",
         otherText: { activity: "Coopérative agricole", zone: "Suisse" },
       });
-      const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine);
-      expect(item(groups, "Activité")?.value).toContain("Coopérative agricole");
-      expect(item(groups, "Zone d'hébergement")?.value).toContain("Suisse");
+      const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine, stubRecap);
+      expect(item(groups, "label.activity")?.value).toContain("Coopérative agricole");
+      expect(item(groups, "label.zone")?.value).toContain("Suisse");
     });
 
     it("ne montre pas la précision quand la valeur n'est pas other (texte résiduel ignoré)", () => {
       const p = prof({ activity: "pme-startup", otherText: { activity: "texte résiduel" } });
-      const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine);
-      expect(item(groups, "Activité")?.value ?? "").not.toContain("texte résiduel");
+      const groups = buildChoiceRecap(p, recommend(p), (k) => k, stubEngine, stubRecap);
+      expect(item(groups, "label.activity")?.value ?? "").not.toContain("texte résiduel");
     });
 
     it("invariant : sans otherText, le libellé reste celui de l'énum (other → « Autre » muet)", () => {
       const withOther = prof({ activity: "other", zone: "other" });
-      const groups = buildChoiceRecap(withOther, recommend(withOther), (k) => k, stubEngine);
+      const groups = buildChoiceRecap(withOther, recommend(withOther), (k) => k, stubEngine, stubRecap);
       // Avec le traducteur identité (k) => k, « other » résout sur sa clé, sans précision accolée.
-      expect(item(groups, "Activité")?.value).toBe("activity.other");
-      expect(item(groups, "Zone d'hébergement")?.value).toBe("zone.other");
+      expect(item(groups, "label.activity")?.value).toBe("activity.other");
+      expect(item(groups, "label.zone")?.value).toBe("zone.other");
     });
   });
 });

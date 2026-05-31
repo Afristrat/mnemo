@@ -33,10 +33,11 @@ export function ExportButtons({ profile, recommendation, ensemble, catalog }: Ex
   const resolveEngine = useEngineText();
   const tOptions = useTranslations("Options");
   const tDeliverable = useTranslations("Deliverable");
+  const tFiduciary = useTranslations("Fiduciaire");
   const t = useTranslations("Results.exportButtons");
 
   const exportMarkdown = (): void => {
-    const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, tOptions, tDeliverable, undefined, catalog);
+    const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, tOptions, tDeliverable, tFiduciary, undefined, catalog);
     const blob = new Blob([renderMarkdown(deliverable)], { type: "text/markdown;charset=utf-8" });
     triggerDownload(`mnemo-plan-${deliverable.generatedAt}.md`, blob);
   };
@@ -46,7 +47,7 @@ export function ExportButtons({ profile, recommendation, ensemble, catalog }: Ex
     try {
       // Import dynamique : jsPDF (~135 ko) reste hors du bundle initial de /resultats.
       const { pdfBlob } = await import("@/lib/export/pdf");
-      const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, tOptions, tDeliverable, undefined, catalog);
+      const deliverable = buildDeliverable(profile, recommendation, ensemble, resolveEngine, tOptions, tDeliverable, tFiduciary, undefined, catalog);
       triggerDownload(`mnemo-plan-${deliverable.generatedAt}.pdf`, pdfBlob(deliverable));
     } finally {
       setBusy(false);

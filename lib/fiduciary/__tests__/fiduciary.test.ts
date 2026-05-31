@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { buildEnsemble, recommend, type Profile } from "@/lib/engine";
-import { FIDUCIARY_CHARTER } from "@/lib/fiduciary/charter";
+import { FIDUCIARY_COMMITMENT_KEYS } from "@/lib/fiduciary/charter";
 import { buildDeliverable } from "@/lib/export/model";
+import frMessages from "@/messages/fr.json";
 
 const PROFILE: Profile = {
   activity: "agence",
@@ -24,23 +25,26 @@ const PROFILE: Profile = {
 
 const COMMISSION_RE = /commission|affiliation|affiliate|kickback|rétrocommission|apport d'affaires/i;
 
-describe("Charte fiduciaire", () => {
-  it("engage explicitement le zéro commission cachée", () => {
+describe("Charte fiduciaire (S-059 : contenu i18n dans le namespace Fiduciaire)", () => {
+  it("engage explicitement le zéro commission cachée (catalogue fr)", () => {
+    const f = frMessages.Fiduciaire;
     const text = [
-      FIDUCIARY_CHARTER.intro,
-      FIDUCIARY_CHARTER.revenueModel,
-      ...FIDUCIARY_CHARTER.commitments.flatMap((c) => [c.title, c.detail]),
+      f.intro,
+      f.revenueModel,
+      ...FIDUCIARY_COMMITMENT_KEYS.flatMap((k) => [f.commitment[k].title, f.commitment[k].detail]),
     ].join(" ");
     expect(text).toMatch(/commission/i);
     expect(text).toMatch(/conseil|déploiement/i);
-    expect(FIDUCIARY_CHARTER.commitments.length).toBeGreaterThanOrEqual(4);
+    expect(FIDUCIARY_COMMITMENT_KEYS.length).toBeGreaterThanOrEqual(4);
   });
 
-  it("est intégrée au livrable exporté", () => {
-    const d = buildDeliverable(PROFILE, recommend(PROFILE), buildEnsemble(PROFILE), (m) => m.id, (k) => k, (k) => k);
+  it("est intégrée au livrable exporté (depuis le namespace Fiduciaire)", () => {
+    const d = buildDeliverable(PROFILE, recommend(PROFILE), buildEnsemble(PROFILE), (m) => m.id, (k) => k, (k) => k, (k) => k);
     const charter = d.sections.find((s) => s.heading === "section.fiduciary");
     expect(charter).toBeDefined();
-    expect(charter?.bullets.join(" ")).toMatch(/commission/i);
+    // Avec le stub identité, les puces portent les clés d'engagement (la localisation réelle est en messages).
+    expect(charter?.bullets.join(" ")).toContain("noCommission");
+    expect(charter?.bullets.join(" ")).toContain("revenueModel");
   });
 });
 

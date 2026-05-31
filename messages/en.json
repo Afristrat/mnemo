@@ -547,6 +547,31 @@
     "metaTitle": "Fiduciary charter, Strate",
     "metaDescription": "Strate acts in your sole interest: zero hidden vendor commission, open recipe, sourced prices, sovereignty first.",
     "eyebrow": "Disclosure",
+    "title": "Strate fiduciary charter",
+    "intro": "Strate acts solely in your interest. Our recommendations are never steered by vendor compensation. This document is public and binding.",
+    "revenueModel": "We charge for advice and deployment — the “cooking”. The recipe stays open. We take no commission, no referral fee and no kickback from the vendors we recommend.",
+    "commitment": {
+      "noCommission": {
+        "title": "Zero hidden commission",
+        "detail": "No recommendation is conditioned on vendor compensation. The recommendation engine knows nothing of commissions, affiliate programs or kickbacks."
+      },
+      "openRecipe": {
+        "title": "Open recipe",
+        "detail": "The recommended stack is fully documented and reproducible: you can take it and redeploy it elsewhere (Exit Escrow), without us."
+      },
+      "sourcedPrices": {
+        "title": "Sourced and dated prices",
+        "detail": "Every displayed cost links to its public source, dated, with a confidence level. The price feed is transparent and the ±30% uncertainty margin is owned."
+      },
+      "sovereigntyFirst": {
+        "title": "Sovereignty first",
+        "detail": "No lock-in. Your data and your markdown vault remain the source of truth; the vector base is only a replayable projection of it."
+      },
+      "noActionOnAccounts": {
+        "title": "No action on your accounts on your behalf",
+        "detail": "The agent (Lot 2) never creates an account nor enters a bank card on your behalf: you keep control and contractual responsibility."
+      }
+    },
     "revenueTitle": "How we make a living",
     "commitmentsTitle": "Our commitments",
     "lastUpdated": "Last updated: {date}",
@@ -959,7 +984,46 @@
     "recap": {
       "aria": "Summary of your choices",
       "title": "Your choices",
-      "legend": "<dot></dot> affects monthly cost · <empty></empty> steers the stack, scores or compliance (not a direct cost line)."
+      "legend": "<dot></dot> affects monthly cost · <empty></empty> steers the stack, scores or compliance (not a direct cost line).",
+      "heading": {
+        "result": "Result",
+        "profile": "Profile & compliance",
+        "load": "Load & scale",
+        "usage": "Usage & content"
+      },
+      "label": {
+        "preset": "Selected preset",
+        "servers": "Sized servers",
+        "backup": "Backup",
+        "activity": "Activity",
+        "zone": "Hosting zone",
+        "sensitivity": "Sensitivity",
+        "regulations": "Regimes",
+        "audit": "Audit",
+        "bitemporal": "Bitemporal",
+        "users": "Users",
+        "volume": "Data volume",
+        "growth": "Growth",
+        "reqPerDay": "Requests / day",
+        "latency": "Target latency",
+        "techLevel": "Technical skills",
+        "budget": "Budget (cap)",
+        "contentTypes": "Content types",
+        "voices": "Voices / perspectives",
+        "media": "Media",
+        "modules": "Modules"
+      },
+      "value": {
+        "yes": "Yes",
+        "no": "No",
+        "managed": "managed",
+        "backup": "criticality {criticality, select, none {none} standard {standard} high {high} critical {critical} other {?}}, {copies, plural, one {# copy} other {# copies}}",
+        "mediaNone": "No active media need",
+        "modality": "{modality, select, audio {Audio} video {Video} images {Images} other {?}}",
+        "mode": "{mode, select, sovereign {self-hosted} other {API}}",
+        "modulesNone": "No module enabled",
+        "moduleItem": "{name} (lvl {level}/{max})"
+      }
     }
   },
   "Options": {

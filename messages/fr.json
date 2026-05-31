@@ -547,6 +547,31 @@
     "metaTitle": "Charte fiduciaire, Strate",
     "metaDescription": "Strate agit dans votre seul intérêt : zéro commission vendor cachée, recette ouverte, prix sourcés, souveraineté d'abord.",
     "eyebrow": "Divulgation",
+    "title": "Charte fiduciaire Strate",
+    "intro": "Strate agit dans votre seul intérêt. Nos recommandations ne sont jamais orientées par une rémunération de fournisseur. Ce document est public et opposable.",
+    "revenueModel": "Nous facturons le conseil et le déploiement, la « cuisine ». La recette, elle, reste ouverte. Nous ne percevons aucune commission, aucun apport d'affaires ni aucune rétrocommission des fournisseurs que nous recommandons.",
+    "commitment": {
+      "noCommission": {
+        "title": "Zéro commission cachée",
+        "detail": "Aucune recommandation n'est conditionnée à une rémunération vendor. Le moteur de reco ne connaît ni commission, ni programme d'affiliation, ni rétrocommission."
+      },
+      "openRecipe": {
+        "title": "Recette ouverte",
+        "detail": "La stack recommandée est intégralement documentée et reproductible : vous pouvez l'emporter et la redéployer ailleurs (Exit Escrow), sans nous."
+      },
+      "sourcedPrices": {
+        "title": "Prix sourcés et datés",
+        "detail": "Chaque coût affiché est lié à sa source publique, daté, avec un niveau de confiance. Le price feed est transparent et la marge d'incertitude (±30 %) est assumée."
+      },
+      "sovereigntyFirst": {
+        "title": "Souveraineté d'abord",
+        "detail": "Aucun verrouillage. Vos données et votre vault markdown restent la source de vérité ; la base vectorielle n'en est qu'une projection rejouable."
+      },
+      "noActionOnAccounts": {
+        "title": "Pas d'action à votre place sur vos comptes",
+        "detail": "L'agent (Lot 2) ne crée jamais de compte ni ne saisit de carte bancaire à votre place : vous gardez la main et la responsabilité contractuelle."
+      }
+    },
     "revenueTitle": "Comment nous gagnons notre vie",
     "commitmentsTitle": "Nos engagements",
     "lastUpdated": "Dernière mise à jour : {date}",
@@ -959,7 +984,46 @@
     "recap": {
       "aria": "Récapitulatif de vos choix",
       "title": "Vos choix",
-      "legend": "<dot></dot> influe sur le coût mensuel · <empty></empty> oriente la stack, les scores ou la conformité (pas une ligne de coût directe)."
+      "legend": "<dot></dot> influe sur le coût mensuel · <empty></empty> oriente la stack, les scores ou la conformité (pas une ligne de coût directe).",
+      "heading": {
+        "result": "Résultat",
+        "profile": "Profil & conformité",
+        "load": "Charge & échelle",
+        "usage": "Usage & contenu"
+      },
+      "label": {
+        "preset": "Preset retenu",
+        "servers": "Serveurs dimensionnés",
+        "backup": "Sauvegarde",
+        "activity": "Activité",
+        "zone": "Zone d'hébergement",
+        "sensitivity": "Sensibilité",
+        "regulations": "Régimes",
+        "audit": "Audit",
+        "bitemporal": "Bitemporel",
+        "users": "Utilisateurs",
+        "volume": "Volume de données",
+        "growth": "Croissance",
+        "reqPerDay": "Requêtes / jour",
+        "latency": "Latence visée",
+        "techLevel": "Compétences techniques",
+        "budget": "Budget (plafond)",
+        "contentTypes": "Types de contenu",
+        "voices": "Voix / perspectives",
+        "media": "Médias",
+        "modules": "Modules"
+      },
+      "value": {
+        "yes": "Oui",
+        "no": "Non",
+        "managed": "managé",
+        "backup": "criticité {criticality, select, none {aucune} standard {standard} high {élevée} critical {critique} other {?}}, {copies, plural, one {# copie} other {# copies}}",
+        "mediaNone": "Aucun besoin média actif",
+        "modality": "{modality, select, audio {Audio} video {Vidéo} images {Images} other {?}}",
+        "mode": "{mode, select, sovereign {souverain} other {API}}",
+        "modulesNone": "Aucun module activé",
+        "moduleItem": "{name} (niv. {level}/{max})"
+      }
     }
   },
   "Options": {
