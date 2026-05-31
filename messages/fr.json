@@ -620,7 +620,7 @@
       "provenanceLive": "veille live",
       "provenanceSeed": "annuaire de référence",
       "sourceLabel": "Source (vérifié le {date})",
-      "emptyHint": "Choisissez un continent, saisissez un pays cible, puis lancez la recherche.",
+      "emptyHint": "La recherche se lance automatiquement pour votre pays cible ; ajustez le continent ou le pays pour explorer d’autres juridictions.",
       "noResults": "Aucun fournisseur conforme à vos contraintes pour ce pays. Élargissez le pays ou assouplissez vos choix.",
       "error": "La recherche a échoué. Réessayez dans un instant.",
       "selectedTitle": "Topologie redondante composée",

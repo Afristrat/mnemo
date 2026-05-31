@@ -620,7 +620,7 @@
       "provenanceLive": "live watch",
       "provenanceSeed": "reference directory",
       "sourceLabel": "Source (checked {date})",
-      "emptyHint": "Pick a continent, enter a target country, then run the search.",
+      "emptyHint": "The search runs automatically for your target country; adjust the continent or country to explore other jurisdictions.",
       "noResults": "No provider compliant with your constraints for this country. Widen the country or relax your choices.",
       "error": "The search failed. Please try again shortly.",
       "selectedTitle": "Composed redundant topology",
