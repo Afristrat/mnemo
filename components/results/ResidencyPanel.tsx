@@ -1,5 +1,7 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import type { ReactElement } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { useEngineText } from "@/lib/i18n/engine";
 import type { Region, ResidencyPlan, TransferFlag } from "@/lib/engine";
@@ -21,23 +23,84 @@ const STATUS_META: Record<TransferFlag["status"], { icon: string; labelKey: "sta
   forbidden: { icon: "⛔", labelKey: "statusForbidden", tone: "text-error" },
 };
 
+// Base de transfert renvoyée par la veille live (S-062, `/api/legal/transfers`). Type local minimal
+// (pas d'import du module serveur côté client) — seuls les champs consommés par le panneau.
+type LiveBasis = {
+  from: Region;
+  to: Region;
+  status: TransferFlag["status"];
+  legalBasis: string;
+  note?: string;
+  checkedAt: string;
+  provenance?: "seed" | "live" | "flagged";
+};
+
+/** Affichage effectif d'un transfert = base moteur (seed) éventuellement RAFRAÎCHIE par la veille live. */
+type DisplayedTransfer = TransferFlag & { live?: "live" | "flagged"; checkedAt?: string };
+
 /**
- * Panneau Résidence & transferts (S-048, spec n°2 §9) : topologie des régions, conformité des flux
+ * Panneau Résidence & transferts (S-048 + S-062) : topologie des régions, conformité des flux
  * inter-juridiction (pastilles autorisé/encadré/interdit + base légale datée), RPO/RTO régionaux et
- * alerte de conflit. Rendu uniquement si une continuité régionale est dérivée (DR ≠ none) ou si des
- * transferts sont à signaler. Disclaimer « ingénierie, pas un avis juridique » systématique.
+ * alerte de conflit. Les statuts sont RAFRAÎCHIS par la veille juridique live (`/api/legal/transfers`,
+ * réconcilié vs le repli daté — un signal divergent est `flagged` « à revérifier », jamais adopté en
+ * douce) ; indispo → on garde le statut seed (gracieux). Disclaimer « ingénierie, pas un avis juridique ».
  */
 export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | null {
   const t = useTranslations("Results.residencyPanel");
   const resolveEngine = useEngineText();
+  const [live, setLive] = useState<LiveBasis[] | null>(null);
+  const [checking, setChecking] = useState(false);
+
+  const hasTransfers = plan.transfers.length > 0;
+
+  // Veille live des statuts juridiques (S-062) : rafraîchit les transferts affichés. Au montage
+  // seulement, si des transferts existent. Échec/indispo → on reste sur le seed (jamais bloquant).
+  useEffect(() => {
+    if (!hasTransfers) return;
+    let cancelled = false;
+    setChecking(true);
+    void (async () => {
+      try {
+        const res = await fetch("/api/legal/transfers", { cache: "no-store" });
+        if (!res.ok) return;
+        const data: unknown = await res.json();
+        if (!cancelled && data !== null && typeof data === "object" && Array.isArray((data as { bases?: unknown }).bases)) {
+          setLive((data as { bases: LiveBasis[] }).bases);
+        }
+      } catch {
+        /* repli silencieux : les statuts seed restent affichés. */
+      } finally {
+        if (!cancelled) setChecking(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasTransfers]);
+
   const hasDr = plan.drTier !== "none" || plan.activeActive;
-  if (!hasDr && plan.transfers.length === 0 && !plan.conflict.hasConflict) return null;
+  if (!hasDr && !hasTransfers && !plan.conflict.hasConflict) return null;
 
   const continuityMode = plan.activeActive
     ? t("modeActiveActive")
     : plan.drTier === "none"
       ? t("modeNone")
       : t("modeDr", { tier: plan.drTier });
+
+  // Fusion : pour chaque transfert affiché, si la veille a une base live/flagged sur le même flux,
+  // on adopte son statut/base légale/note + on marque la fraîcheur (jamais le seed silencieusement).
+  const transfers: DisplayedTransfer[] = plan.transfers.map((tr) => {
+    const match = live?.find((b) => b.from === tr.from && b.to === tr.to && (b.provenance ?? "seed") !== "seed");
+    if (match === undefined) return tr;
+    return {
+      ...tr,
+      status: match.status,
+      legalBasis: match.legalBasis,
+      note: match.note ?? tr.note,
+      live: match.provenance === "flagged" ? "flagged" : "live",
+      checkedAt: match.checkedAt,
+    };
+  });
 
   return (
     <Card>
@@ -57,20 +120,28 @@ export function ResidencyPanel({ plan }: ResidencyPanelProps): ReactElement | nu
         </div>
       </dl>
 
-      {plan.transfers.length > 0 ? (
+      {hasTransfers ? (
         <div className="mt-4">
-          <p className="text-label-caps uppercase text-on-surface-variant">{t("transfersTitle")}</p>
+          <p className="flex items-center gap-2 text-label-caps uppercase text-on-surface-variant">
+            {t("transfersTitle")}
+            {checking ? <span className="font-mono normal-case text-on-surface-variant/70">· {t("liveChecking")}</span> : null}
+          </p>
           <ul className="mt-2 space-y-2">
-            {plan.transfers.map((transfer) => {
+            {transfers.map((transfer) => {
               const meta = STATUS_META[transfer.status];
               return (
                 <li key={`${transfer.from}-${transfer.to}`} className="rounded-card bg-surface-container p-3 text-body-sm">
-                  <p className="flex items-center gap-2">
+                  <p className="flex flex-wrap items-center gap-2">
                     <span aria-hidden="true">{meta.icon}</span>
                     <span className="text-on-surface">
                       {t(REGION_KEY[transfer.from])} → {t(REGION_KEY[transfer.to])}
                     </span>
                     <span className={meta.tone}>· {t(meta.labelKey)}</span>
+                    {transfer.live === "live" ? (
+                      <span className="font-mono text-xs text-primary">{t("liveFresh", { date: transfer.checkedAt ?? "" })}</span>
+                    ) : transfer.live === "flagged" ? (
+                      <span className="font-mono text-xs text-tertiary">{t("liveFlagged", { date: transfer.checkedAt ?? "" })}</span>
+                    ) : null}
                   </p>
                   <p className="mt-1 text-on-surface-variant">
                     <span className="font-medium text-on-surface">{t("legalBasis")}</span>
