@@ -6,6 +6,8 @@ import { decidePreset, type Profile } from "@/lib/engine";
 
 const PROFILE: Profile = {
   activity: "pme-startup",
+  continent: "europe",
+  country: "union-europeenne",
   zone: "ue",
   users: 5,
   contentTypes: ["text", "audio"],

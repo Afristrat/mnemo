@@ -7,6 +7,8 @@ import type { ComponentCandidate } from "@/lib/catalog/types";
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "freelance",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 1,
     contentTypes: ["text"],

@@ -30,6 +30,8 @@ const CATALOGS = [
 function profile(): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

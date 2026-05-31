@@ -23,6 +23,8 @@ const PERSONAL_CODENAMES = /\bXavier\b|\bChris\b|\bMeydeey\b|\bAmine\b/i;
 function prof(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "freelance",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 1,
     contentTypes: ["text"],

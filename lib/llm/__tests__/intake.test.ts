@@ -73,6 +73,8 @@ describe("parseIntakeProfile", () => {
   it("applique les champs valides extraits par le LLM", () => {
     const json = JSON.stringify({
       activity: "cabinet-regule",
+      continent: "europe",
+      country: "union-europeenne",
       zone: "ue",
       users: 12,
       sensitivity: "secret",

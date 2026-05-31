@@ -22,6 +22,8 @@ const password = "Passw0rd!integration";
 function profileFixture(): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

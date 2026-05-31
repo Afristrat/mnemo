@@ -3,10 +3,11 @@
 // et un marqueur de transparence (influe DIRECTEMENT sur le coût mensuel, ou oriente seulement la
 // stack / les scores / la conformité). Aucune dépendance UI ni I/O → testable.
 
-import type { EngineResolver, Profile, Recommendation } from "@/lib/engine";
+import { jurisdictionFor, type EngineResolver, type Profile, type Recommendation } from "@/lib/engine";
 import {
   ACTIVITY_OPTIONS,
   BUDGET_OPTIONS,
+  CONTINENT_OPTIONS,
   CONTENT_TYPE_OPTIONS,
   GROWTH_OPTIONS,
   LATENCY_OPTIONS,
@@ -17,7 +18,6 @@ import {
   TECH_LEVEL_OPTIONS,
   VOICES_OPTIONS,
   VOLUME_OPTIONS,
-  ZONE_OPTIONS,
   type OptionDef,
 } from "./options";
 
@@ -52,6 +52,17 @@ function labelWithOther<T extends string>(
 }
 function labelsOf<T extends string>(defs: OptionDef<T>[], values: T[], optionLabel: OptionLabel): string {
   return values.length === 0 ? "—" : values.map((v) => labelOf(defs, v, optionLabel)).join(", ");
+}
+
+/** Libellé géographie (S-076) : « <continent> · <pays> », avec précision libre si pays « Autre ». */
+function geographyValue(profile: Profile, optionLabel: OptionLabel): string {
+  const continent = labelOf(CONTINENT_OPTIONS, profile.continent, optionLabel);
+  let country = optionLabel(jurisdictionFor(profile.country)?.labelKey ?? "country.autre-europe");
+  const precise = profile.otherText?.zone?.trim();
+  if (profile.country.startsWith("autre-") && precise !== undefined && precise.length > 0) {
+    country = `${country} : ${precise}`;
+  }
+  return `${continent} · ${country}`;
 }
 
 function mediaSummary(profile: Profile, t: RecapLabel): string {
@@ -102,7 +113,7 @@ export function buildChoiceRecap(
       heading: t("heading.profile"),
       items: [
         { label: t("label.activity"), value: labelWithOther(ACTIVITY_OPTIONS, profile.activity, optionLabel, profile.otherText?.activity), impactsCost: false },
-        { label: t("label.zone"), value: labelWithOther(ZONE_OPTIONS, profile.zone, optionLabel, profile.otherText?.zone), impactsCost: false },
+        { label: t("label.geography"), value: geographyValue(profile, optionLabel), impactsCost: false },
         { label: t("label.sensitivity"), value: labelOf(SENSITIVITY_OPTIONS, profile.sensitivity, optionLabel), impactsCost: false },
         { label: t("label.regulations"), value: labelsOf(REGULATION_OPTIONS, profile.regulations, optionLabel), impactsCost: false },
         { label: t("label.audit"), value: yesNo(profile.audit), impactsCost: false },

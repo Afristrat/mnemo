@@ -6,6 +6,8 @@ import { COMPUTE_PRICE_SEED } from "@/lib/pricing/compute-seed";
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

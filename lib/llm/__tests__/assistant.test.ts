@@ -8,6 +8,8 @@ import type { WebSearchResult } from "@/lib/pricing/scraper";
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],

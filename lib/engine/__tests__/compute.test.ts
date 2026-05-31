@@ -9,7 +9,7 @@ const P = COMPUTE_PRICE_SEED;
 
 function profile(over: Partial<Profile> = {}): Profile {
   return {
-    activity: "pme-startup", zone: "ue", users: 5, contentTypes: ["text"], volume: "10to100",
+    activity: "pme-startup", continent: "europe", country: "union-europeenne", zone: "ue", users: 5, contentTypes: ["text"], volume: "10to100",
     growth: "medium", regulations: ["rgpd"], sensitivity: "internal", audit: false, bitemporal: false,
     techLevel: "hybrid", budget: "200to500", reqPerDay: "lt1k", latency: "fast", voices: "solo",
     modules: { bisect: 0, reversal: 0, prereg: 0, mel: 0, conflict: 0 }, ...over,

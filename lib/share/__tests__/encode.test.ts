@@ -8,6 +8,8 @@ import type { Profile } from "@/lib/engine";
 const RICH_PROFILE: Profile = {
   ...DEFAULT_PROFILE,
   activity: "cabinet-regule",
+  continent: "africa",
+  country: "maroc",
   zone: "maroc",
   users: 12,
   contentTypes: ["text", "audio", "video"],

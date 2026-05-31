@@ -11,6 +11,7 @@
 
 import {
   CONTENT_TYPES,
+  CONTINENTS,
   MODULE_IDS,
   REGULATIONS,
   type Backup,
@@ -232,6 +233,8 @@ export function profileFromUnknown(value: unknown): Profile | null {
   const profile: Profile = {
     ...DEFAULT_PROFILE,
     activity: value.activity,
+    continent: isMember(CONTINENTS, value.continent) ? value.continent : DEFAULT_PROFILE.continent,
+    country: typeof value.country === "string" && value.country.length > 0 ? value.country : DEFAULT_PROFILE.country,
     zone: value.zone,
     users: value.users,
     contentTypes,

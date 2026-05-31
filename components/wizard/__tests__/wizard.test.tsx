@@ -34,6 +34,25 @@ describe("Wizard (4 blocs)", () => {
     expect(screen.getByRole("button", { name: "Intégrer cette note" })).toBeInTheDocument();
   });
 
+  describe("géographie continent → pays (S-076)", () => {
+    it("expose les 6 continents (pas seulement l'Europe)", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      for (const c of ["Europe", "Amérique du Nord", "Amérique latine", "Afrique", "Moyen-Orient", "Asie-Pacifique"]) {
+        expect(screen.getAllByText(new RegExp(c)).length).toBeGreaterThan(0);
+      }
+    });
+
+    it("changer de continent révèle ses pays (Afrique → Maroc ; Amérique du Nord → États-Unis)", async () => {
+      render(<Wizard />);
+      await screen.findByText("Profil & contraintes");
+      fireEvent.click(screen.getByRole("button", { name: "Afrique" }));
+      expect(screen.getByRole("button", { name: "Maroc" })).toBeInTheDocument();
+      fireEvent.click(screen.getByRole("button", { name: "Amérique du Nord" }));
+      expect(screen.getByRole("button", { name: "États-Unis" })).toBeInTheDocument();
+    });
+  });
+
   describe("saisie « Autre » (S-064)", () => {
     it("n'affiche aucune saisie « Autre » par défaut (activité freelance)", async () => {
       render(<Wizard />);
@@ -51,12 +70,11 @@ describe("Wizard (4 blocs)", () => {
       expect(screen.getByLabelText("Précisez votre activité")).toBeInTheDocument();
     });
 
-    it("affiche la saisie inline dès que la zone est réglée sur « Autre »", async () => {
+    it("affiche la saisie inline dès que le pays est réglé sur « Autre (Europe) » (S-076)", async () => {
       render(<Wizard />);
       await screen.findByText("Profil & contraintes");
-      const autres = screen.getAllByRole("button", { name: "Autre" });
-      // La 2ᵉ carte « Autre » est celle de la zone d'hébergement.
-      fireEvent.click(autres[1]);
+      // Continent par défaut = Europe → le pays « Autre (Europe) » déclenche la précision libre.
+      fireEvent.click(screen.getByRole("button", { name: "Autre (Europe)" }));
       expect(screen.getByLabelText("Précisez la zone d'hébergement")).toBeInTheDocument();
     });
 

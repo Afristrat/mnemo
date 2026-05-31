@@ -15,7 +15,13 @@ export type ContentType = (typeof CONTENT_TYPES)[number];
 export const REGULATIONS = ["rgpd", "cndp", "aiact", "hipaa", "secret-pro", "none"] as const;
 export type Regulation = (typeof REGULATIONS)[number];
 
+/** Bucket juridique (analyse des transferts, lib/legal). DÉRIVÉ du pays choisi (S-076). */
 export type Zone = "ue" | "maroc" | "us" | "other";
+
+/** Continents couverts (axe géographique « présence mondiale », S-073/S-076). Canonique ici. */
+export type Continent = "europe" | "north-america" | "latam" | "africa" | "middle-east" | "apac";
+export const CONTINENTS: readonly Continent[] = ["europe", "north-america", "latam", "africa", "middle-east", "apac"];
+
 export type Volume = "lt1" | "1to10" | "10to100" | "100to1000" | "gt1000";
 export type Growth = "low" | "medium" | "high";
 export type Sensitivity = "public" | "internal" | "confidential" | "secret";
@@ -281,6 +287,11 @@ export type ScoreKey = (typeof SCORE_KEYS)[number];
 
 export type Profile = {
   activity: Activity;
+  /** Continent visé (axe géographique homogène, S-076). */
+  continent: Continent;
+  /** Pays/juridiction visé dans le continent (code, cf. lib/engine/geography). Affine la découverte de fournisseurs. */
+  country: string;
+  /** Bucket juridique DÉRIVÉ du pays (`deriveZone`) — le moteur/le légal restent inchangés (S-076). */
   zone: Zone;
   users: number;
   contentTypes: ContentType[];

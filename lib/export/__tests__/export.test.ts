@@ -12,6 +12,8 @@ const tKey = (k: string): string => k;
 
 const PROFILE: Profile = {
   activity: "pme-startup",
+  continent: "europe",
+  country: "union-europeenne",
   zone: "ue",
   users: 5,
   contentTypes: ["text", "audio"],

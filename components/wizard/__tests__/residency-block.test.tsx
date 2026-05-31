@@ -8,6 +8,8 @@ import type { Profile } from "@/lib/engine";
 function baseProfile(overrides: Partial<Profile> = {}): Profile {
   return {
     activity: "pme-startup",
+    continent: "europe",
+    country: "union-europeenne",
     zone: "ue",
     users: 5,
     contentTypes: ["text"],
