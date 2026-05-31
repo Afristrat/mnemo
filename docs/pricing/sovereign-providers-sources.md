@@ -47,7 +47,10 @@ pays, tranche 3) qui respectera les **choix utilisateur comme contrainte absolue
 
 ## Tranches suivantes (S-073)
 
-- **Tranche 2** — modèle : rattacher continent/pays aux vecteurs egress chiffrés existants (additif).
+- **Tranche 2** ✅ (2026-05-31) — modèle : `EgressVector` étendu (`continent?`/`country?` additifs),
+  les 7 vecteurs egress sourcés (UE, Amérique du Nord) annotés + helper `vectorsForContinent`. Les
+  continents sans vecteur egress chiffré (Afrique, Moyen-Orient, APAC, Amérique latine) restent en
+  **devis/veille** (aucun prix fabriqué — DÉFCON 1).
 - **Tranche 3** — veille : découverte live de fournisseurs par pays cible, **bornée par les contraintes**.
 - **Tranche 4** — UI : choix de **N fournisseurs redondants** + topologie multi-juridiction.
 - **Tranche 5** — coûts/transferts via S-044, défaut légal **conservateur**.

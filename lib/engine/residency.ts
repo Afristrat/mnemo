@@ -26,6 +26,7 @@ import { decidePreset } from "./preset";
 import { computeSovereignCompute, NEUTRAL_COMPUTE_PRICES, type ComputePriceTable } from "./compute";
 import { lookupTransferBasis, type TransferContext } from "@/lib/legal/transfers";
 import type { MultimodalPriceEntry } from "./sizing";
+import type { Continent } from "./providers";
 
 // --- Contrat de prix résidence (DANS le moteur ; le SEED sourcé vit dans lib/pricing/residency-seed,
 // comme BackupPriceTable/backup-seed). Prix INJECTÉS, le moteur reste pur (zéro import lib/pricing). --
@@ -40,6 +41,10 @@ export type EgressVector = {
   sovereign: boolean;
   /** Egress inter-région, devise native, montant **par Go** (unité native rappelée en `note`). */
   interRegionEgress: MultimodalPriceEntry;
+  /** Continent du fournisseur (S-073 T2) — relie le vecteur chiffré à l'annuaire multi-continent. Additif. */
+  continent?: Continent;
+  /** Pays du fournisseur (S-073 T2) — granularité « fournisseur dans le(s) pays cible(s) ». Additif. */
+  country?: string;
 };
 
 /**
@@ -78,6 +83,11 @@ export const NEUTRAL_RESIDENCY_PRICES: ResidencyPriceTable = {
 /** Vecteurs d'egress d'une classe d'hébergement (préserve l'ordre). */
 export function vectorsForClass(table: ResidencyPriceTable, hostingClass: HostingClass): EgressVector[] {
   return table.egressVectors.filter((v) => v.hostingClass === hostingClass);
+}
+
+/** Vecteurs d'egress chiffrés rattachés à un continent (S-073 T2 ; vecteurs non annotés exclus). */
+export function vectorsForContinent(table: ResidencyPriceTable, continent: Continent): EgressVector[] {
+  return table.egressVectors.filter((v) => v.continent === continent);
 }
 
 /** Vecteur représentatif d'une classe (1ᵉʳ du table) ; repli sur le 1ᵉʳ disponible, sinon vecteur neutre. */
