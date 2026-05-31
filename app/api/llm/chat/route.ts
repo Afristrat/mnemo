@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { defaultLocale, isLocale, promptLanguageNames } from "@/i18n/config";
 import { buildChatMessages, type ChatTurn } from "@/lib/llm/assistant";
 import { callLLM } from "@/lib/llm/client";
 import { searchWeb, type WebSearchResult } from "@/lib/pricing/scraper";
@@ -57,8 +58,12 @@ export async function POST(req: Request): Promise<Response> {
     webResults = [];
   }
 
+  // Locale active (S-059) → langue de réponse de l'assistant (lue du body, validée, repli défaut).
+  const rawLocale = typeof raw.locale === "string" ? raw.locale : undefined;
+  const locale = isLocale(rawLocale) ? rawLocale : defaultLocale;
+
   const template = (await loadActivePrompt("assistant")) ?? undefined;
-  const messages = buildChatMessages(question, history, recoFacts, webResults, template);
+  const messages = buildChatMessages(question, history, recoFacts, webResults, template, promptLanguageNames[locale]);
   const result = await callLLM(messages);
   if (!result.ok) {
     return NextResponse.json({ ok: false, reason: result.reason, sources: webResults }, { status: 200 });

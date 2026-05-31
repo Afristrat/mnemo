@@ -970,7 +970,7 @@
         "S-057",
         "S-053"
       ],
-      "note": "Intègre la demande Amine « prompts ridicules → structure très soignée, comme un vrai natif ». Réécrire les 4 gabarits (intake/narration/veille/assistant) à un niveau natif/structuré EN CONSERVANT placeholders + clauses DÉFCON 1, et les rendre localisés.",
+      "note": "Intègre la demande Amine « prompts ridicules → structure très soignée, comme un vrai natif ». PARTIE 1 FAITE (2026-05-31) : 5 gabarits DEFAULT_PROMPTS réécrits en ANGLAIS structuré natif (ROLE/TASK/RULES/OUTPUT, placeholders + clauses DÉFCON 1 préservés en EN) ; langue de sortie pilotée par {{language}} (narration/assistant ; JSON intake/veilles = langue-agnostiques) ; promptLanguageNames (i18n/config) ; builders+routes narrate/chat threadent la locale (lue du body, validée, repli défaut) ; clients ResultsView/AssistantPanel envoient useLocale() ; tests DÉFCON màj EN + flux locale→langue ; 494 tests, typecheck/lint/build verts. RESTE PARTIE 2 : livrable MD/PDF + verdict localisés (en-têtes/disclaimer buildDeliverable) ; + résiduels S-058 (recap.ts chrome rendu FR, messages JSON app/api/**).",
       "acceptance": [
         "réécrire DEFAULT_PROMPTS (lib/prompts/registry.ts) à un niveau RÉDACTIONNEL natif et structuré (rôle, contexte, règles, format) — conserver les placeholders ({{enumList}}/{{adjustContext}}/{{profile}}/{{notesBlock}}/{{baseTexts}}/{{recoFacts}}/{{webResults}}) et les garde-fous DÉFCON 1 (N'INVENTE RIEN, AUCUN coût, AUCUN chiffre, −risques, n'invente JAMAIS d'URL)",
         "passer la LOCALE active aux routes LLM (intake/narrate/chat) → les réponses USER-FACING (verdict narré, assistant Q&A) s'expriment DANS LA LANGUE de l'utilisateur, niveau natif ; l'intake/veille restent JSON (langue-agnostique)",

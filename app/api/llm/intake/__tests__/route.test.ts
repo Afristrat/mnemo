@@ -51,7 +51,7 @@ describe("POST /api/llm/intake", () => {
     expect(data.profile.contentTypes).toEqual(["text", "video"]);
     // Le prompt a reçu le profil actuel pour l'AJUSTEMENT (pas un repli au défaut).
     const messages = callLLMMock.mock.calls[0][0];
-    expect(messages[0].content).toContain("Profil ACTUEL");
+    expect(messages[0].content).toContain("CURRENT PROFILE");
     expect(messages[0].content).toContain("agence");
   });
 });

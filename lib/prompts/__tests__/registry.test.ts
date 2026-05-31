@@ -21,23 +21,30 @@ describe("composePrompt", () => {
 });
 
 describe("DEFAULT_PROMPTS (les clauses DÉFCON 1 sont dans le gabarit par défaut)", () => {
+  // S-059 : gabarits réécrits en anglais natif structuré — les clauses DÉFCON 1 sont préservées (en EN).
   it("intake : interdiction d'inventer + de chiffrer", () => {
-    expect(DEFAULT_PROMPTS.intake).toContain("N'INVENTE RIEN");
-    expect(DEFAULT_PROMPTS.intake).toContain("AUCUN coût");
+    expect(DEFAULT_PROMPTS.intake).toContain("INVENT NOTHING");
+    expect(DEFAULT_PROMPTS.intake).toContain("NO cost");
     expect(DEFAULT_PROMPTS.intake).toContain("{{enumList}}");
   });
-  it("narration : aucun chiffre + gain prouvé seulement", () => {
-    expect(DEFAULT_PROMPTS.narration).toContain("AUCUN chiffre");
-    expect(DEFAULT_PROMPTS.narration).toContain("−risques");
+  it("narration : aucun chiffre + gain prouvé seulement + langue de sortie pilotée", () => {
+    expect(DEFAULT_PROMPTS.narration).toContain("NO number");
+    expect(DEFAULT_PROMPTS.narration).toContain("−risk");
     expect(DEFAULT_PROMPTS.narration).toContain("{{baseTexts}}");
+    expect(DEFAULT_PROMPTS.narration).toContain("{{language}}");
+  });
+  it("assistant : aucun chiffre inventé + langue de réponse pilotée", () => {
+    expect(DEFAULT_PROMPTS.assistant).toContain("Invent NO figure");
+    expect(DEFAULT_PROMPTS.assistant).toContain("{{language}}");
+    expect(DEFAULT_PROMPTS.assistant).toContain("{{recoFacts}}");
   });
   it("veille : URL obligatoirement issue des résultats web", () => {
-    expect(DEFAULT_PROMPTS["catalog-veille"]).toContain("n'invente JAMAIS d'URL");
+    expect(DEFAULT_PROMPTS["catalog-veille"]).toContain("NEVER invent a URL");
   });
   it("veille juridique : statut sourcé, jamais un avis juridique, URL non inventée (S-062)", () => {
-    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("PAS un conseil juridique");
-    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("n'invente JAMAIS d'URL");
-    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("N'INVENTE AUCUN fait");
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("NOT legal counsel");
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("NEVER invent a URL");
+    expect(DEFAULT_PROMPTS["legal-veille"]).toContain("INVENT NO fact");
   });
 });
 
@@ -53,7 +60,7 @@ describe("les builders consomment un gabarit personnalisé (override admin)", ()
     const messages = buildIntakeMessages("salut", undefined, "PERSONA ADMIN\n{{enumList}}");
     expect(messages[0].content).toContain("PERSONA ADMIN");
     expect(messages[0].content).toContain("cabinet-regule"); // enumList greffé par le code
-    expect(messages[0].content).not.toContain("Tu es un extracteur"); // le défaut n'est PAS utilisé
+    expect(messages[0].content).not.toContain("You are a parameter extractor"); // le défaut n'est PAS utilisé
   });
 
   it("buildNarrateMessages utilise le gabarit fourni + greffe les textes de base", () => {
@@ -61,6 +68,6 @@ describe("les builders consomment un gabarit personnalisé (override admin)", ()
     const messages = buildNarrateMessages({ activity: "agence", base }, "TON ADMIN\n{{baseTexts}}");
     expect(messages[0].content).toContain("TON ADMIN");
     expect(messages[0].content).toContain("P."); // baseTexts greffé
-    expect(messages[0].content).not.toContain("Tu personnalises"); // le défaut n'est PAS utilisé
+    expect(messages[0].content).not.toContain("senior, neutral technical writer"); // le défaut n'est PAS utilisé
   });
 });

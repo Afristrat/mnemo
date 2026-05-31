@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useState, type ReactElement } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -29,6 +29,7 @@ export function AssistantPanel({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const resolveEngine = useEngineText();
+  const locale = useLocale();
   const t = useTranslations("Assistant");
 
   const send = useCallback(async (): Promise<void> => {
@@ -42,7 +43,7 @@ export function AssistantPanel({
       const res = await fetch("/api/llm/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, history, recoFacts: serializeRecoFacts(reco, resolveEngine, otherPrecisions) }),
+        body: JSON.stringify({ question, history, locale, recoFacts: serializeRecoFacts(reco, resolveEngine, otherPrecisions) }),
       });
       const data: ChatResponse = await res.json();
       if (res.ok && data.ok === true && typeof data.answer === "string") {
@@ -60,7 +61,7 @@ export function AssistantPanel({
       ]);
     }
     setBusy(false);
-  }, [input, busy, messages, reco, resolveEngine, otherPrecisions, t]);
+  }, [input, busy, messages, reco, resolveEngine, otherPrecisions, locale, t]);
 
   return (
     <Card>

@@ -61,7 +61,7 @@ export function serializeRecoFacts(
 }
 
 function formatWebResults(results: WebSearchResult[]): string {
-  if (results.length === 0) return "(aucun résultat web fourni — réponds alors uniquement à partir des FAITS)";
+  if (results.length === 0) return "(no web result provided — then answer from the FACTS only)";
   return results.map((r, i) => `[${i + 1}] ${r.title} — ${r.url}\n${r.snippet}`).join("\n");
 }
 
@@ -75,8 +75,10 @@ export function buildChatMessages(
   recoFacts: string,
   webResults: WebSearchResult[],
   template: string = DEFAULT_PROMPTS.assistant,
+  language: string = "French",
 ): LlmMessage[] {
-  const system = composePrompt(template, { recoFacts, webResults: formatWebResults(webResults) });
+  // `{{language}}` impose la langue de réponse (locale active de l'utilisateur), S-059.
+  const system = composePrompt(template, { language, recoFacts, webResults: formatWebResults(webResults) });
   const past: LlmMessage[] = history.map((t) => ({ role: t.role, content: t.content }));
   return [{ role: "system", content: system }, ...past, { role: "user", content: question }];
 }

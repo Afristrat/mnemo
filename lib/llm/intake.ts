@@ -154,17 +154,18 @@ export function buildIntakeMessages(
   base?: Profile,
   template: string = DEFAULT_PROMPTS.intake,
 ): LlmMessage[] {
+  // Gabarit anglais (S-059) → contexte d'ajustement en anglais pour la cohérence (sortie = JSON, langue-agnostique).
   const adjustContext =
     base === undefined
       ? ""
       : "\n" +
         [
           "",
-          "Profil ACTUEL (ne repars pas de zéro, AJUSTE-le) :",
+          "CURRENT PROFILE (do not start from scratch, ADJUST it):",
           JSON.stringify(intakeSnapshot(base)),
-          "Ne renvoie QUE les champs que la note modifie réellement. Pour les listes (contentTypes,",
-          "regulations), CONSERVE les valeurs déjà présentes et AJOUTE celles demandées (ne remplace",
-          "que si l'utilisateur demande explicitement un retrait).",
+          "Return ONLY the fields the note actually changes. For lists (contentTypes, regulations),",
+          "KEEP the values already present and ADD the requested ones (only remove if the user explicitly",
+          "asks for a removal).",
         ].join("\n");
   const system = composePrompt(template, { enumList: intakeEnumList(), adjustContext });
   return [
