@@ -164,6 +164,10 @@ Amine peut fournir) — le **code UI supporte déjà les 3**, seule la config ba
   à déclarer : `https://db.ai-mpower.com/auth/v1/callback`.
 - **DETTE-AUTH-3 — `AUTOCONFIRM=true`** : compromis de sécurité temporaire (pas de vérification de
   possession de l'e-mail). À **repasser à `false`** dès que DETTE-AUTH-1 (SMTP réel) est levée.
+- **DETTE-VAULT-1 — `server-only`** : `lib/vault/server.ts` + `credentials.ts` reposent sur la discipline
+  d'import (commentaire) faute du package `server-only` (non installé, casserait les tests vitest sous
+  jsdom). Risque pratique faible (KEK lue de `process.env`, indisponible client ; aucun import client
+  aujourd'hui). À durcir : `npm i server-only` + `import "server-only"` + alias vitest vers un module vide.
 
 Ces dettes sont reportées dans la passation à la clôture de Lot 2 · A. Elles ne bloquent pas la livraison
 du MVP auth, mais doivent être levées avant une ouverture publique large.
