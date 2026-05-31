@@ -22,6 +22,8 @@ export type DisplayVerdict = {
   variableCostBand: { low: number; high: number };
   setupCostBand: { low: number; high: number };
   nextStep: string;
+  /** Contraintes structurantes (preset, sensibilité, régimes, souveraineté, géo) déjà résolues. Non narrées (déterministes). */
+  constraints: string[];
 };
 
 /** Textes narratifs de base (repli) + contexte de profil pour personnaliser le ton. */

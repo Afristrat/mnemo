@@ -24,6 +24,7 @@ const VERDICT: DisplayVerdict = {
   variableCostBand: { low: 70, high: 130 },
   setupCostBand: { low: 200, high: 400 },
   nextStep: "Étape de base.",
+  constraints: ["Stack Standard", "RGPD"],
 };
 
 describe("isCleanNarration", () => {
@@ -76,6 +77,8 @@ describe("mergeVerdictNarration (invariant DÉFCON 1)", () => {
     expect(merged.variableCostBand).toEqual(VERDICT.variableCostBand);
     expect(merged.setupCostBand).toEqual(VERDICT.setupCostBand);
     expect(merged.firmPriceTier).toBe(VERDICT.firmPriceTier);
+    // Les contraintes structurantes sont déterministes (non narrées) → préservées telles quelles.
+    expect(merged.constraints).toEqual(VERDICT.constraints);
   });
 });
 

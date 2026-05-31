@@ -103,13 +103,20 @@ export type Sizing = {
 // à part). `pain` porte la valeur `activity` (select ICU) ; `firmPriceTier` = [PLACEHOLDER] (sondage).
 export type Verdict = {
   pain: Message;
-  /** Risque saillant (descripteur i18n, S-058) = le 1er risque détecté, ou un risque générique par défaut. */
+  /** Risque saillant (descripteur i18n) = 1re incohérence détectée, sinon risque structurel selon sensibilité/régimes/souveraineté. */
   risk: Message;
+  /** Gain — descripteur i18n paramétré par le preset (la stack recommandée varie le bénéfice). */
   gain: Message;
-  firmPriceTier: Message; // prix ferme service Strate ([PLACEHOLDER])
+  firmPriceTier: Message; // prix ferme service Strate ([PLACEHOLDER]) — paramétré par le preset (niveau d'offre)
   variableCostBand: { low: number; high: number };
   setupCostBand: { low: number; high: number };
   nextStep: Message;
+  /**
+   * Contraintes structurantes du profil surfacées dans le verdict (preset, sensibilité, régimes,
+   * souveraineté, géo). Descripteurs i18n PURS — aucun chiffre inventé (DÉFCON 1). Ordre stable.
+   * Corrige le verdict « trop pauvre » : preset et contraintes étaient invisibles.
+   */
+  constraints: Message[];
 };
 /**
  * Raison du preset « expliqué » (S-058) : gabarit i18n `template` (placeholder `{drivers}` + valeurs

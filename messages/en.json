@@ -278,12 +278,26 @@
     },
     "verdict": {
       "defaultRisk": "Without a sovereign memory base: dependence on proprietary memories (ChatGPT/Claude) and lock-in risk.",
+      "risk": {
+        "secret": "Sensitive or secret data handled outside a sovereign memory base: exposure in the event of a leak, foreign legal request (Cloud Act) or audit, with no audit trail you control.",
+        "regulated": "{count, plural, one {One compliance regime applies} other {Several compliance regimes apply}}: without a sovereign, auditable memory base, the risk of non-compliance and lock-in stays open.",
+        "sovereignty": "Without a sovereign, self-hosted stack: technical and legal dependence on providers you do not control (reversibility, transfers outside the jurisdiction)."
+      },
+      "constraint": {
+        "preset": "{preset, select, LIGHT {Essential stack} MEDIUM {Standard stack} HARD {Reinforced sovereign stack} other {Recommended stack}}",
+        "sensitivity": "{sensitivity, select, confidential {Confidential data} secret {Secret data} other {High sensitivity}}",
+        "regime": "{regime, select, rgpd {GDPR} cndp {CNDP} aiact {AI Act} hipaa {HIPAA} secret_pro {Professional secrecy} other {Compliance}}",
+        "sovereign": "Sovereignty first",
+        "zone": "{zone, select, ue {EU hosting} maroc {Morocco hosting} us {US hosting} other {Hosting outside framed zones}}"
+      },
       "pain": "{activity, select, cabinet_regule {Reconstructing “who decided what, and when” is costly and exposes you under audit; your sensitive files pass through memories you do not control.} pme_startup {Your team's knowledge scatters (chats, docs, heads); every departure or pivot loses the context behind decisions.} recherche {Your corpora and the history of your hypotheses are fragmented; replaying “what we knew” at a given date is impossible.} agence {Client context is rebuilt on every engagement; account memory lives in third-party, non-sovereign tools.} freelance {Your working memory depends on proprietary tools; you can neither audit it nor take it with you.} particulier {Your notes and recollections are scattered and tied to a vendor; no portability guarantee.} other {Your organisational memory is scattered and depends on tools you do not control (sovereignty, portability, auditability).}}",
-      "gain": "“−Risk” proven: Exit Escrow (reproducible bundle, zero lock-in) + fiduciary charter (no hidden commission). Productivity gains: to be measured on your own corpus, never claimed blindly.",
-      "firmPriceTier": "From €290/month (Essential) — indicative price, survey in progress",
+      "gain": "{preset, select, LIGHT {Fast start of a sovereign memory base: lightweight stack, controlled cost.} MEDIUM {Balanced sovereign memory base: governance, audit and resilience as standard.} HARD {Reinforced sovereign memory base: self-hosting, audit and bitemporal, maximum resilience.} other {Sovereign memory base, controlled end to end.}} “−Risk” proven: Exit Escrow (reproducible bundle, zero lock-in) + fiduciary charter (no hidden commission). Productivity gains: to be measured on your own corpus, never claimed blindly.",
+      "firmPriceTier": "{preset, select, LIGHT {Essential tier} MEDIUM {Standard tier} HARD {Reinforced sovereign tier} other {Standard tier}}",
       "nextStep": {
         "withSetup": "Confirm the media volumes (remember + create + backlog) and request a firm quote before going live.",
-        "default": "Refine the profile in the configurator, then request a firm quote before going live."
+        "default": "Refine the profile in the configurator, then request a firm quote before going live.",
+        "regime": "Frame compliance (DPIA, DPA, processing register) with your point of contact, then request a firm quote before going live.",
+        "setupRegime": "Confirm the media volumes and frame compliance (DPIA, DPA, register) with your point of contact, then request a firm quote before going live."
       }
     },
     "ensemble": {
@@ -852,6 +866,7 @@
     "narrated": "Text adapted to your profile by AI, figures unchanged",
     "synthesis": "Summary — full detail under “See detail”.",
     "title": "Your verdict",
+    "constraintsLabel": "Constraints taken into account",
     "pain": "The need",
     "risk": "The risk of doing nothing",
     "gain": "The gain",

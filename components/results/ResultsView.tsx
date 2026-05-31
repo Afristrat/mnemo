@@ -291,6 +291,7 @@ export function ResultsView(): ReactElement {
       nextStep: resolveEngine(result.verdict.nextStep),
       variableCostBand: result.verdict.variableCostBand,
       setupCostBand: result.verdict.setupCostBand,
+      constraints: result.verdict.constraints.map(resolveEngine),
     };
     const verdictToShow = narration === null ? displayVerdict : mergeVerdictNarration(displayVerdict, narration);
     return (
