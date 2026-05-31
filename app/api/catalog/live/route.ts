@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLiveCatalogCached } from "@/lib/catalog/cache";
+import { persistCatalogObservations } from "@/lib/catalog/persist";
 import { loadActivePrompt } from "@/lib/prompts/store";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
 import type { Profile } from "@/lib/engine";
@@ -25,5 +26,8 @@ export async function POST(req: Request): Promise<Response> {
   // Prompt de veille éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
   const systemPrompt = (await loadActivePrompt("catalog-veille")) ?? undefined;
   const catalog = await getLiveCatalogCached(profile, { apiKey: process.env.FIRECRAWL_API_KEY, systemPrompt });
+  // Audit trail (S-036) : trace ce que la veille a retenu (provenance/source) si elle a contribué.
+  // Gatée + jamais bloquante : un échec d'insertion ne casse pas la réponse de la veille.
+  await persistCatalogObservations(catalog);
   return NextResponse.json(catalog);
 }
