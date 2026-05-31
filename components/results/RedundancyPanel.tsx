@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useMemo, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
-import { CONTINENTS, type Continent, type Profile } from "@/lib/engine";
+import { CONTINENTS, jurisdictionFor, type Continent, type Profile } from "@/lib/engine";
 
 type RedundancyPanelProps = {
   profile: Profile;
@@ -76,8 +76,18 @@ function parseProviders(data: unknown): ProviderView[] {
  */
 export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement {
   const t = useTranslations("Results.redundancyPanel");
+  const tOptions = useTranslations("Options");
+  // Pré-remplissage depuis le configurateur (S-076 → S-073) : le continent + le pays choisis ouvrent
+  // la découverte sur la bonne cible. Les codes « bloc » (UE) ou « Autre » ne sont pas un pays
+  // recherchable → champ laissé vide (l'utilisateur précise).
+  const initialCountry = ((): string => {
+    const code = profile.country;
+    if (code === "union-europeenne" || code.startsWith("autre-")) return "";
+    const j = jurisdictionFor(code);
+    return j === undefined ? "" : tOptions(j.labelKey);
+  })();
   const [continent, setContinent] = useState<Continent>(profile.continent);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState(initialCountry);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [providers, setProviders] = useState<ProviderView[] | null>(null);
