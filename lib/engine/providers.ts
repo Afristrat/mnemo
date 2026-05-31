@@ -6,7 +6,10 @@
 // DÉFCON 1 : on ne porte PAS de prix egress par fournisseur ici (devis/veille — jamais fabriqué) ;
 // l'annuaire documente l'EXISTENCE + pays + classe de souveraineté + source datée. La découverte live
 // par pays (veille, tranche 3, respectant les contraintes S-072) et l'UI de redondance (tranche 4)
-// consommeront cet annuaire. La classe légale de transfert reste gérée par lib/legal (conservatrice).
+// consomment cet annuaire. La classe légale de transfert reste gérée par lib/legal (conservatrice).
+//
+// Consommateurs : seed `lib/pricing/sovereign-providers-seed`, veille `lib/residency/discovery`,
+// UI `components/results/RedundancyPanel`.
 
 import type { CostSource } from "./types";
 
