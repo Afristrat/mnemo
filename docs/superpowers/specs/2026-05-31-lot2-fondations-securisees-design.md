@@ -150,7 +150,26 @@ membres, révocation OAuth distante chez le vendor (relève de B), KMS externe.
 4. Bootstrap circle + migration anon→auth (server actions).
 5. UI minimale (connexion, indicateur compte, écran « Mes accès vendor »).
 
+## 10. Dette assumée & tracée (auth — décision Amine 2026-05-31)
+
+Le MVP livre **e-mail + mot de passe** (fonctionnel + vérifié en prod, avec `AUTOCONFIRM=true`). Les deux
+autres méthodes sont gardées comme **dette explicite** (bloquées sur des credentials externes que seul
+Amine peut fournir) — le **code UI supporte déjà les 3**, seule la config backend manque :
+
+- **DETTE-AUTH-1 — Magic link** : nécessite un **vrai SMTP** sur le Supabase serveur (aujourd'hui
+  `SMTP_HOST=supabase-mail` = faux serveur de dev → aucun e-mail délivré). À faire : fournir un SMTP
+  (hôte/port/user/pass) → renseigner les `SMTP_*` du `.env` Supabase + redémarrer `auth`.
+- **DETTE-AUTH-2 — OAuth Google/GitHub** : nécessite des **apps OAuth** (client_id/secret) créées dans
+  les consoles Google/GitHub d'Amine + décommenter les `GOTRUE_EXTERNAL_*` du docker-compose. Redirection
+  à déclarer : `https://db.ai-mpower.com/auth/v1/callback`.
+- **DETTE-AUTH-3 — `AUTOCONFIRM=true`** : compromis de sécurité temporaire (pas de vérification de
+  possession de l'e-mail). À **repasser à `false`** dès que DETTE-AUTH-1 (SMTP réel) est levée.
+
+Ces dettes sont reportées dans la passation à la clôture de Lot 2 · A. Elles ne bloquent pas la livraison
+du MVP auth, mais doivent être levées avant une ouverture publique large.
+
 ---
 
 *Décisions produit verrouillées rappelées : souveraineté (OAuth social = option, pas défaut),
-DÉFCON 1 (aucun secret en clair exposé), zéro dette, français irréprochable, RLS sur toutes les tables.*
+DÉFCON 1 (aucun secret en clair exposé), français irréprochable, RLS sur toutes les tables.
+Dette auth (§10) = assumée et tracée, jamais silencieuse.*
