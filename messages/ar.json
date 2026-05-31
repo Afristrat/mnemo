@@ -1320,7 +1320,8 @@
       "loadingMsg": "جارٍ فحص المصادر…",
       "statusVerified": "تم التحقق",
       "statusChanged": "بحاجة لإعادة التحقق",
-      "statusUnavailable": "إعادة التحقق غير متاحة"
+      "statusUnavailable": "إعادة التحقق غير متاحة",
+      "tokenInOut": "إدخال {input} $/1M · إخراج {output} $/1M"
     },
     "share": {
       "title": "شارك هذه الخطة",

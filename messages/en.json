@@ -489,7 +489,8 @@
       "loadingMsg": "Checking sources…",
       "statusVerified": "Verified",
       "statusChanged": "To recheck",
-      "statusUnavailable": "Recheck unavailable"
+      "statusUnavailable": "Recheck unavailable",
+      "tokenInOut": "input ${input}/1M · output ${output}/1M"
     },
     "share": {
       "title": "Share this plan",
