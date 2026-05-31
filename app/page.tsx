@@ -4,6 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 import { IntakeField } from "@/components/intake/IntakeField";
 import { QuickProfileForm } from "@/components/quick-profile/QuickProfileForm";
 import { LocaleSwitcher } from "@/components/ui/LocaleSwitcher";
+import { AccountMenu } from "@/components/account/AccountMenu";
 
 // Homepage de vente Strate, portage du brouillon validé en sparring (homepage-draft.html,
 // décision #11 de la passation). 4 promesses (une seule « prouvée » = −risques, DÉFCON 1 :
@@ -93,6 +94,7 @@ export default async function Home(): Promise<ReactElement> {
             </Link>
           </div>
           <div className="flex items-center gap-3">
+            <AccountMenu />
             <LocaleSwitcher />
             <a href="#diagnostic" className={`${PILL_PRIMARY} px-5 py-2.5 text-body-sm`}>
               {tNav("cta")}

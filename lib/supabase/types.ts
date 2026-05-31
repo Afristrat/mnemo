@@ -315,7 +315,15 @@ export type Database = {
       vendor_credentials: TableShape<VendorCredentialRow, VendorCredentialInsert>;
       credential_access: TableShape<CredentialAccessRow, CredentialAccessInsert>;
     };
-    Views: Record<string, never>;
+    Views: {
+      // Vue read-only exposant uniquement les metadonnees (jamais le chiffre).
+      vendor_credentials_meta: {
+        Row: VendorCredentialMetaRow;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+    };
     Functions: {
       get_simulation_by_token: { Args: { token: string }; Returns: SimulationLogRow[] };
       get_shared_reco: { Args: { reco_id: string }; Returns: SharedRecoRow[] };
