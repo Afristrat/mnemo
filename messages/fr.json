@@ -236,6 +236,65 @@
       }
     }
   },
+  "Deliverable": {
+    "title": "Strate, Plan d'infrastructure mémorielle",
+    "subtitle": "Recommandation de configuration souveraine",
+    "disclaimer": "Une IA peut se tromper. Ces coûts sont des projections sourcées (±30 %), pas des engagements. Vérifiez chaque source avant toute décision.",
+    "yes": "Oui",
+    "no": "Non",
+    "included": "inclus",
+    "perMonth": "{cost} €/mois",
+    "euro": "{amount} €",
+    "moduleLevel": "{name} (niv. {level}/{max})",
+    "totalEstimate": "Total estimé",
+    "band": "Fourchette ±30 %",
+    "bandValue": "{low} – {high} €/mois",
+    "section": {
+      "profile": "Profil",
+      "presetReason": "Pourquoi ce preset",
+      "stack": "Stack recommandée (7 couches)",
+      "catalog": "Catalogue retenu (provenance des choix)",
+      "scores": "Scores (10 dimensions)",
+      "costMap": "Carte de coûts",
+      "ensemble": "Ensemble de configurations (incertitude)",
+      "compliance": "Actions de conformité",
+      "risks": "Risques détectés",
+      "fiduciary": "Charte fiduciaire"
+    },
+    "profile": {
+      "activity": "Activité",
+      "zone": "Zone d'hébergement",
+      "users": "Utilisateurs",
+      "contentTypes": "Types de contenu",
+      "volume": "Volume de données",
+      "growth": "Croissance",
+      "regulations": "Régimes réglementaires",
+      "sensitivity": "Sensibilité",
+      "audit": "Audit",
+      "bitemporal": "Bitemporel",
+      "techLevel": "Compétences techniques",
+      "budget": "Budget",
+      "reqPerDay": "Requêtes / jour",
+      "latency": "Latence",
+      "voices": "Voix / perspectives"
+    },
+    "meta": {
+      "preset": "Preset",
+      "scoreAvg": "Score moyen",
+      "cost": "Coût estimé",
+      "costValue": "{cost} €/mois (±30 % : {low} – {high} €)",
+      "agreement": "Accord de l'ensemble"
+    },
+    "provenance": {
+      "live": "vérifié en direct",
+      "seed": "calibration datée",
+      "flagged": "à revérifier (repli)"
+    },
+    "catalog": {
+      "assembled": "Catalogue assemblé le {date} (origine : {origin}). Chaque composant porte sa provenance et sa source : le plan est rejouable à l'identique.",
+      "provenanceConfidence": "{provenance} · confiance {confidence}"
+    }
+  },
   "StatusDot": {
     "high": "Vérifié sur la doc vendor",
     "medium": "Estimation (à confirmer)",
