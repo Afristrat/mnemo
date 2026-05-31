@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useMemo, useState, type ReactElement } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { CONTINENTS, jurisdictionFor, type Continent, type Profile } from "@/lib/engine";
 
@@ -77,13 +77,10 @@ function parseProviders(data: unknown): ProviderView[] {
 export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement {
   const t = useTranslations("Results.redundancyPanel");
   const tOptions = useTranslations("Options");
-  // Pré-remplissage depuis le configurateur (S-076 → S-073) : le continent + le pays choisis ouvrent
-  // la découverte sur la bonne cible. Les codes « bloc » (UE) ou « Autre » ne sont pas un pays
-  // recherchable → champ laissé vide (l'utilisateur précise).
+  // Pré-remplissage depuis le configurateur (S-076 → S-073) : le pays choisi ouvre la découverte sur la
+  // bonne cible. Toujours non vide (même « Union européenne » / « Autre » : le repli annuaire seed couvre).
   const initialCountry = ((): string => {
-    const code = profile.country;
-    if (code === "union-europeenne" || code.startsWith("autre-")) return "";
-    const j = jurisdictionFor(code);
+    const j = jurisdictionFor(profile.country);
     return j === undefined ? "" : tOptions(j.labelKey);
   })();
   const [continent, setContinent] = useState<Continent>(profile.continent);
@@ -99,31 +96,43 @@ export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement
     [selectedList],
   );
 
-  async function search(): Promise<void> {
-    const target = country.trim();
-    if (target === "") return;
-    setLoading(true);
-    setError(false);
-    try {
-      const res = await fetch("/api/residency/providers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ continent, country: target, profile }),
-        cache: "no-store",
-      });
-      if (!res.ok) {
+  // Recherche EN AMONT et SANS CLIC (décision Amine) : la découverte se déclenche automatiquement
+  // au chargement (pays du profil) puis à chaque changement de continent/pays, débouncée pour ne pas
+  // spammer pendant la saisie. Le repli annuaire seed garantit toujours un résultat.
+  const runSearch = useCallback(
+    async (cont: Continent, ctry: string): Promise<void> => {
+      const target = ctry.trim();
+      if (target === "") return;
+      setLoading(true);
+      setError(false);
+      try {
+        const res = await fetch("/api/residency/providers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ continent: cont, country: target, profile }),
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          setError(true);
+          setProviders([]);
+          return;
+        }
+        setProviders(parseProviders(await res.json()));
+      } catch {
         setError(true);
         setProviders([]);
-        return;
+      } finally {
+        setLoading(false);
       }
-      setProviders(parseProviders(await res.json()));
-    } catch {
-      setError(true);
-      setProviders([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [profile],
+  );
+
+  useEffect(() => {
+    if (country.trim() === "") return;
+    const id = setTimeout(() => void runSearch(continent, country), 500);
+    return () => clearTimeout(id);
+  }, [continent, country, runSearch]);
 
   function toggle(p: ProviderView): void {
     setSelected((prev) => {
@@ -141,7 +150,7 @@ export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement
       <p className="mt-1 text-body-sm text-on-surface-variant">{t("intro")}</p>
       <p className="mt-2 rounded-card bg-surface-container p-3 text-body-sm text-on-surface-variant">{t("constraintNote")}</p>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:items-end">
         <label className="block">
           <span className="text-label-caps uppercase text-on-surface-variant">{t("continentLabel")}</span>
           <select
@@ -160,26 +169,18 @@ export function RedundancyPanel({ profile }: RedundancyPanelProps): ReactElement
           </select>
         </label>
         <label className="block">
-          <span className="text-label-caps uppercase text-on-surface-variant">{t("countryLabel")}</span>
+          <span className="flex items-center gap-2 text-label-caps uppercase text-on-surface-variant">
+            {t("countryLabel")}
+            {loading ? <span className="font-mono normal-case text-on-surface-variant/70">· {t("searching")}</span> : null}
+          </span>
           <input
             type="text"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void search();
-            }}
             placeholder={t("countryPlaceholder")}
             className="mt-1 w-full rounded-card border border-outline bg-surface px-3 py-2 text-body-md text-on-surface"
           />
         </label>
-        <button
-          type="button"
-          onClick={() => void search()}
-          disabled={loading || country.trim() === ""}
-          className="rounded-card bg-primary px-4 py-2 text-body-md font-medium text-on-primary disabled:opacity-50"
-        >
-          {loading ? t("searching") : t("searchCta")}
-        </button>
       </div>
 
       {error ? <p className="mt-3 text-body-sm text-error">{t("error")}</p> : null}
