@@ -39,3 +39,23 @@ test("verdict rendu en anglais (i18n MOTEUR : verdict via descripteurs Message)"
   // (« proven » est propre à l'EN ; le FR dirait « prouvé »). Preuve que l'i18n moteur atteint l'écran.
   await expect(page.getByText(/proven/i)).toBeVisible();
 });
+
+test("arabe : bascule applique dir=rtl + lang=ar + contenu arabe (S-060)", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("dir", "ltr"); // LTR par défaut (fr)
+  await expect(page.getByRole("button", { name: "Voir mon verdict" })).toBeVisible(); // hydratation
+  // Sélecteur de langue dans l'en-tête (indépendant de la langue du label, qui devient arabe après bascule).
+  const switcher = page.getByRole("navigation").getByRole("combobox");
+  await switcher.selectOption("ar");
+
+  // <html> bascule en arabe RTL.
+  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  // Du contenu en écriture arabe est rendu (script arabe U+0600–U+06FF), sans coder en dur la traduction.
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/[؀-ۿ]/);
+
+  // Retour au français : LTR rétabli.
+  await switcher.selectOption("fr");
+  await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+  await expect(page.locator("html")).toHaveAttribute("lang", "fr");
+});
