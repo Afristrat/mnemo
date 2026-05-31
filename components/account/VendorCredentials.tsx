@@ -76,7 +76,10 @@ export function VendorCredentials({ items }: Props): ReactElement {
         />
         <select
           value={kind}
-          onChange={(e) => setKind(e.target.value as "api_key" | "oauth_token")}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === "api_key" || v === "oauth_token") setKind(v);
+          }}
           className="rounded-card border border-outline bg-surface px-3 py-2 text-on-surface"
         >
           <option value="api_key">{t("kindApiKey")}</option>
