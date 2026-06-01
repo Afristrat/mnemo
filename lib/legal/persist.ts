@@ -3,6 +3,7 @@
 // circle). Gatée « live/flagged seulement » : un statut 100 % seed (la veille n'a pas tourné) n'est
 // pas une observation → on n'écrit pas. Jamais bloquant, jamais throw (échec Supabase → réponse OK).
 
+import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";

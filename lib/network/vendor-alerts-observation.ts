@@ -30,3 +30,25 @@ export function buildVendorAlertInserts(args: {
     checked_at: a.source.checkedAt,
   }));
 }
+
+/** Identité d'une alerte déjà loguée (un même état observé le même jour ne se re-logue pas). */
+export type VendorAlertKey = { circle_id: string | null; vendor: string; item: string; checked_at: string };
+
+function alertKey(k: VendorAlertKey): string {
+  return `${k.circle_id ?? ""}::${k.vendor}::${k.item}::${k.checked_at}`;
+}
+
+/**
+ * Dédup d'audit : ne garde que les alertes ABSENTES de la base, par (cercle, vendor, poste, date). Un
+ * audit trail trace un changement, pas la répétition du même état à chaque relevé (cron) ou consultation.
+ * Pur — la lecture de l'existant se fait côté appelant (persist).
+ */
+export function filterUnpersistedAlerts(
+  rows: readonly VendorAlertInsert[],
+  existing: readonly VendorAlertKey[],
+): VendorAlertInsert[] {
+  const seen = new Set(existing.map(alertKey));
+  return rows.filter(
+    (r) => !seen.has(alertKey({ circle_id: r.circle_id, vendor: r.vendor, item: r.item, checked_at: r.checked_at })),
+  );
+}

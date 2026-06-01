@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildVendorAlertInserts } from "@/lib/network/vendor-alerts-observation";
+import { buildVendorAlertInserts, filterUnpersistedAlerts } from "@/lib/network/vendor-alerts-observation";
 import { buildVendorAlerts } from "@/lib/network/alerts";
 
 const CHANGE = {
@@ -42,5 +42,28 @@ describe("buildVendorAlertInserts (S-084)", () => {
 
   it("liste vide → aucune ligne", () => {
     expect(buildVendorAlertInserts({ alerts: [] })).toEqual([]);
+  });
+});
+
+describe("filterUnpersistedAlerts (dédup d'audit, S-084)", () => {
+  const rows = buildVendorAlertInserts({ alerts: buildVendorAlerts([CHANGE]) });
+
+  it("garde une alerte absente de la base", () => {
+    expect(filterUnpersistedAlerts(rows, [])).toHaveLength(1);
+  });
+
+  it("filtre une alerte déjà loguée le même jour (même cercle/vendor/poste/date)", () => {
+    const existing = [{ circle_id: null, vendor: "Scaleway", item: "GPU H100 dédié (Scaleway)", checked_at: "2026-06-01" }];
+    expect(filterUnpersistedAlerts(rows, existing)).toHaveLength(0);
+  });
+
+  it("garde l'alerte si la date diffère (nouveau relevé = nouvel événement d'audit)", () => {
+    const existing = [{ circle_id: null, vendor: "Scaleway", item: "GPU H100 dédié (Scaleway)", checked_at: "2026-05-31" }];
+    expect(filterUnpersistedAlerts(rows, existing)).toHaveLength(1);
+  });
+
+  it("distingue les cercles (une alerte globale ≠ la même alerte d'un cercle)", () => {
+    const existing = [{ circle_id: "c-1", vendor: "Scaleway", item: "GPU H100 dédié (Scaleway)", checked_at: "2026-06-01" }];
+    expect(filterUnpersistedAlerts(rows, existing)).toHaveLength(1); // rows sont circle_id null
   });
 });
