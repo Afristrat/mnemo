@@ -70,3 +70,31 @@ N = Novelty · F = Feasibility · M = Moat potential (1-5 chacun)
 - Ensemble forecasting : [Science Advances — FuXi-ENS](https://www.science.org/doi/10.1126/sciadv.adu2854)
 - ISAC / collective defense : [Anomali](https://www.anomali.com/glossary/information-sharing-and-analysis-center-isac) · [National Council of ISACs](https://www.nationalisacs.org/about-isacs)
 - Minimum Equipment List : [SKYbrary](https://skybrary.aero/articles/minimum-equipment-list-mel) · [Pilot Institute](https://pilotinstitute.com/what-is-mel/)
+
+---
+
+# Vague 2 — 2026-06-02 (post-Lot 2/3, backlog vidé)
+
+> Job de cette vague : **prouver à un tiers sceptique (auditeur, régulateur, assureur, client, soi-même dans 18 mois) que la décision d'infra était justifiée, que la sortie fonctionne vraiment, et que les promesses (résidence, coût, réversibilité) tiennent en continu.** Strate sait recommander/chiffrer/exporter/garantir ; le chaînon manquant est la **preuve opposable et continue**. DÉFCON 1 : chaque analogie sourcée.
+
+| # | Piste | Moat | Effort | Job universel · industrie source |
+|---|---|---|---|---|
+| 1 | **Restore Drill certifié** — la sortie *testée*, pas juste *générée* (redéploie le bundle Exit Escrow dans un sandbox jetable, checklist, mesure RTO réel, certificat horodaté) | ★★★★★ | M | ne jamais croire un backup non restauré · chaos engineering / DR game days |
+| 2 | **Decision Record opposable** — fige/signe/exporte profil + alternatives écartées + scores + tensions à chaque `recommend()` (le moteur les calcule déjà, il les jette) | ★★★★★ | S | justifier a posteriori une reco engageante · suitability FINRA/NASAA + model risk SR 11-7 |
+| 3 | **Preuve de résidence continue** — moniteur juridiction × 7 couches, drapeau si backup/monitoring sort de zone, evidence pack CNDP/RGPD | ★★★★★ | M | « les régulateurs attendent une preuve, pas une intention » · sovereign cloud attestation |
+| 4 | **Lock-in / Exit-Cost Meter** — chiffre le coût+délai *pour partir* de chaque vendor (egress, frais API, durée mini) à côté du coût mensuel | ★★★★☆ | S | révéler le coût asymétrique de sortie · FinOps / egress fees |
+| 5 | **SLA inversé / garantie paramétrique de coût** — si coût réel > fourchette haute +X % pendant N j sans changement d'usage → crédit/re-optim auto | ★★★★☆ | L | payout automatique sur seuil mesuré · assurance SLA paramétrique (Parametrix/Lockton) |
+| 6 | **MBOM (Memory-Base Bill of Materials)** — manifeste signé type SBOM : couches, versions, modèles, licences, checksums | ★★★★☆ | S | liste d'ingrédients vérifiable · supply chain (SBOM/SLSA/Sigstore) |
+| 7 | **Drift Monitor** — l'infra déployée est-elle toujours la reco signée ? réconciliation iso-contraintes | ★★★☆☆ | M | écart état déclaré/vivant · drift detection IaC |
+
+**TOP 3 (chaîne de preuve cohérente, vendable comme un récit unique) :** ① **Decision Record** (effort S, ROI immédiat, zéro risque, fondation des autres) → ② **Restore Drill certifié** (le différenciateur incopiable par un hyperscaler) → ③ **Preuve de résidence continue** (verrou de positionnement souveraineté Maroc/UE). Quick win : **Lock-in Meter** (#4). Vague 3 : #5 (exige le réseau de calibration mûr) et #6.
+
+## Sources vague 2
+
+- Restore Drill / chaos DR : [Gremlin](https://www.gremlin.com/community/tutorials/testing-disaster-recovery-with-chaos-engineering) · [Google Cloud](https://cloud.google.com/blog/products/devops-sre/using-chaos-engineering-to-test-dr-plans) · [Azure Chaos Studio](https://learn.microsoft.com/en-us/azure/chaos-studio/chaos-studio-overview)
+- Decision Record : [NASAA — Documenting Suitability](https://www.nasaa.org/industry-resources/investment-advisers/resources/compliance-matters-documenting-suitability/) · [SR 11-7](https://validmind.com/blog/sr-11-7-model-risk-management-compliance/)
+- Résidence continue : [Stonefly](https://stonefly.com/blog/data-sovereignty-vs-data-residency-compliance-guide/) · [VMware](https://blogs.vmware.com/cloud-foundation/2025/11/18/the-great-cloud-charade-why-data-residency-isnt-data-sovereignty/)
+- Lock-in Meter / egress : [Hivelocity](https://www.hivelocity.net/blog/the-success-tax-mastering-cloud-bandwidth-economics/) · [GPUPerHour — 44+ providers](https://gpuperhour.com/reference/data-egress)
+- SLA paramétrique : [Parametrix](https://www.parametrixinsurance.com/blog/what-is-sla-insurance) · [Lockton+Parametrix](https://global.lockton.com/us/en/news-insights/lockton-and-parametrix-partner-to-deliver-sla-insurance-for-data-centers)
+- MBOM / supply chain : [Cycode](https://cycode.com/blog/software-bill-of-materials/) · [AquilaX SLSA/Sigstore](https://aquilax.ai/blog/supply-chain-artifact-signing-slsa)
+- Drift Monitor : [Spacelift — compliance cost of drift](https://spacelift.io/blog/compliance-cost-of-drift) · [env0](https://www.env0.com/blog/drift-detection-in-iac-prevent-your-infrastructure-from-breaking)
