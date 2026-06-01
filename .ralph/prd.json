@@ -1306,7 +1306,8 @@
       "id": "S-083",
       "title": "F13 Network: recalibration continue (cout reel agrege consenti -> baselines)",
       "feature": "network",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-082"],
       "note": "Lot 2 D, moat 3 'actif'. Le cout reel agrege ANONYMISE (consentement) recalibre les baselines/facteurs du moteur. lib/network/recalibrate.ts PUR : agrege les ecarts -> propose un ajustement de baseline AVEC garde-fou DEFCON 1 (jamais ecraser une source datee sans seuil de confiance + n d'observations minimal ; proposition tracee, jamais silencieuse). Reste une PROPOSITION (validation), pas une mutation auto du seed.",
       "acceptance": [
