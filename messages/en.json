@@ -262,6 +262,25 @@
         "cov7": "Portable markdown vault + frozen ADRs → zero vendor lock-in. Stack replaceable without losing the material."
       }
     },
+    "monitoring": {
+      "health": {
+        "dimension": {
+          "availability": "Availability",
+          "resilience": "Resilience",
+          "compliance": "Compliance",
+          "budget": "Budget",
+          "freshness": "Source freshness",
+          "drift": "Configuration drift"
+        },
+        "status": {
+          "ok": "Good",
+          "warn": "Watch",
+          "critical": "Critical",
+          "unknown": "Not measured"
+        },
+        "alert": "{status, select, critical {🔴 Critical} warn {🟠 Watch} other {⚠️ Check}}: {dimension, select, availability {Availability} resilience {Resilience} compliance {Compliance} budget {Budget} freshness {Source freshness} drift {Configuration drift} other {Dimension}}"
+      }
+    },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {audio transcription} audio_generate {speech synthesis} video_ingest {video analysis} video_generate {video generation} images_ingest {image OCR/vision} images_generate {image generation} other {workload}} ≈ {qty} {modality, select, audio {min/month} video {min/month} images {images/month} other {/month}} ({mode, select, sovereign {sovereign} api {API} other {}})"
     },

@@ -1253,7 +1253,8 @@
       "id": "S-079",
       "title": "F12 Monitoring: moteur Infra Health Score (composite pur + seuils + alertes)",
       "feature": "monitoring",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": [],
       "note": "Lot 2 C. lib/monitoring/health.ts PUR : computeHealthScore(signals) -> IHS composite (disponibilite, cout reel vs budget, resilience/backup, conformite, fraicheur des prix/sources, derive de config) sur 0-100 + sous-scores + statut (ok/warn/critical) par seuil documente. Signals INJECTES (testabilite, pas d'I/O). Descripteurs Message i18n (jamais de prose). DEFCON 1 : aucun seuil/poids invente sans justification (ADR).",
       "acceptance": [

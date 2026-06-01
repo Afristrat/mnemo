@@ -1136,6 +1136,25 @@
         "cov7": "مستودع Markdown محمول + سجلات قرارات معمارية مجمدة → لا حبس بائع. يمكن استبدال المكدس دون فقدان المادة."
       }
     },
+    "monitoring": {
+      "health": {
+        "dimension": {
+          "availability": "التوفّر",
+          "resilience": "المرونة",
+          "compliance": "الامتثال",
+          "budget": "الميزانية",
+          "freshness": "حداثة المصادر",
+          "drift": "انحراف الإعدادات"
+        },
+        "status": {
+          "ok": "جيد",
+          "warn": "للمراقبة",
+          "critical": "حرج",
+          "unknown": "غير مقيس"
+        },
+        "alert": "{status, select, critical {🔴 حرج} warn {🟠 للمراقبة} other {⚠️ للتحقّق}} : {dimension, select, availability {التوفّر} resilience {المرونة} compliance {الامتثال} budget {الميزانية} freshness {حداثة المصادر} drift {انحراف الإعدادات} other {البُعد}}"
+      }
+    },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {نسخ صوتي} audio_generate {توليف كلامي} video_ingest {تحليل فيديو} video_generate {توليد فيديو} images_ingest {OCR/رؤية الصور} images_generate {توليد صور} other {حمل عمل}} ≈ {qty} {modality, select, audio {دقيقة/شهر} video {دقيقة/شهر} images {صورة/شهر} other {/شهر}} ({mode, select, sovereign {سيادي} api {API} other {}})"
     },
