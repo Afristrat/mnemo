@@ -8,6 +8,22 @@
     "correctiveLabel": "Fix:",
     "allClear": "No degraded action — status {status}."
   },
+  "RealCost": {
+    "title": "My real cost",
+    "intro": "Declare your real cost per item to compare it with the estimate (±30%). With your consent, the anonymised gap refines the network’s shared estimates.",
+    "posteHeader": "Item",
+    "estimatedHeader": "Estimated",
+    "realHeader": "Real",
+    "deltaHeader": "Gap",
+    "realAria": "Real cost for {poste}",
+    "total": "Total: estimated {estimated} € · real {real} € · gap {delta}%.",
+    "consentLabel": "I agree that my anonymised cost gap helps refine the network’s shared estimates (revocable).",
+    "submit": "Save my real cost",
+    "saving": "Saving…",
+    "saved": "Real cost saved. Thank you — it improves estimates for everyone.",
+    "error": "Could not save right now.",
+    "setupPoste": "Setup"
+  },
   "Engine": {
     "scores": {
       "conf": {

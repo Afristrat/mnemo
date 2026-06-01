@@ -214,6 +214,19 @@ export type HealthMetricInsert = {
 };
 export type HealthMetricRow = HealthMetricInsert & { id: string; created_at: string };
 
+// Collecte du coût réel par poste (S-082, F13). Une ligne par poste comparé.
+export type RealCostEntryInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  poste: string;
+  estimated: number;
+  real_cost: number;
+  delta_pct: number;
+  status: string;
+  checked_at: string;
+};
+export type RealCostEntryRow = RealCostEntryInsert & { id: string; created_at: string };
+
 // Partage de la recommandation par lien court (S-067) : profil encodé derrière un id imprévisible.
 export type SharedRecoRow = {
   id: string;
@@ -357,6 +370,7 @@ export type Database = {
       transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
       regime_observations: TableShape<RegimeObservationRow, RegimeObservationInsert>;
       health_metrics: TableShape<HealthMetricRow, HealthMetricInsert>;
+      real_cost_entries: TableShape<RealCostEntryRow, RealCostEntryInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;

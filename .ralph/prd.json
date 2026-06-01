@@ -1293,7 +1293,8 @@
       "id": "S-082",
       "title": "F13 Network: collecte du cout reel (saisie/import par poste + ecart vs estime)",
       "feature": "network",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-023"],
       "note": "Lot 2 D. L'utilisateur (consentement opt-in F9) saisit/importe son cout reel par poste -> comparaison vs estime du moteur -> ecart + fraicheur. Reutilise le schema conversion_data (S-023) + consentement (network). lib/network/real-cost.ts PUR (diff estime/reel, ecart %, flag hors tolerance). Migration real_cost_entries RLS si besoin (pivot circle). DEFCON 1 : l'ecart est factuel, jamais un jugement.",
       "acceptance": [

@@ -20,6 +20,7 @@ import { RadarChart } from "@/components/results/RadarChart";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
+import { RealCostPanel } from "@/components/network/RealCostPanel";
 import { SharePanel } from "@/components/results/SharePanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
@@ -469,6 +470,9 @@ export function ResultsView(): ReactElement {
 
       {/* Monitoring (F12, S-081) : Infra Health Score + guide de déviation MEL (santé dérivée de la reco). */}
       <MonitoringPanel result={activeResult} profile={activeProfile} />
+
+      {/* Network actif (F13, S-082) : collecte du coût réel par poste + écart vs estimé (consentement). */}
+      <RealCostPanel result={activeResult} />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
       <LivePriceStatus />
