@@ -63,6 +63,18 @@ export type HealthSubscore = {
   label: Message;
 };
 
+/**
+ * Forme SÉRIALISABLE d'un rapport (sans les descripteurs `Message`) — pour la persistance et le
+ * transport HTTP. Un `HealthReport` y est structurellement assignable (champs en plus tolérés).
+ */
+export type HealthSnapshot = {
+  score: number | null;
+  status: HealthStatus;
+  measured: number;
+  total: number;
+  subscores: { dimension: HealthDimension; score: number | null; status: HealthStatus }[];
+};
+
 export type HealthReport = {
   /** IHS composite 0–100 (moyenne pondérée des dimensions MESURÉES), ou `null` si rien n'est mesuré. */
   score: number | null;

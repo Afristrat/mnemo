@@ -15,12 +15,13 @@ import { msg, type Message } from "@/lib/engine/message";
 import { type HealthDimension, type HealthReport } from "./health";
 
 /**
- * Verdict de dispatch (analogie MEL) :
- *  - `go-if` : exploitation permise SOUS CONDITION (surveillance / mode dégradé encadré) ;
- *  - `no-go` : pas d'exploitation normale — bascule en mode protégé (lecture seule, gel des écritures,
+ * Verdict de dispatch (analogie MEL). Valeurs en camelCase = **sélecteurs ICU valides** (un tiret
+ * casse un `{x, select, …}`, cf. règle du verdict) :
+ *  - `goIf` : exploitation permise SOUS CONDITION (surveillance / mode dégradé encadré) ;
+ *  - `noGo` : pas d'exploitation normale — bascule en mode protégé (lecture seule, gel des écritures,
  *    suspension du traitement concerné) jusqu'au rétablissement.
  */
-export type MelDispatch = "go-if" | "no-go";
+export type MelDispatch = "goIf" | "noGo";
 
 export type MelItem = {
   dimension: HealthDimension;
@@ -47,7 +48,7 @@ const NO_GO_ON_CRITICAL: ReadonlySet<HealthDimension> = new Set<HealthDimension>
 ]);
 
 function dispatchFor(dimension: HealthDimension, status: "warn" | "critical"): MelDispatch {
-  return status === "critical" && NO_GO_ON_CRITICAL.has(dimension) ? "no-go" : "go-if";
+  return status === "critical" && NO_GO_ON_CRITICAL.has(dimension) ? "noGo" : "goIf";
 }
 
 /**

@@ -1,4 +1,13 @@
 {
+  "Monitoring": {
+    "title": "صحة البنية التحتية",
+    "subtitle": "مُقدَّرة انطلاقًا من التوصية. تُربط إشارات التشغيل الفعلية (التوفّر، التكلفة الفعلية المقيسة) عند النشر.",
+    "coverage": "{measured}/{total} أبعاد مقيسة",
+    "notMeasured": "غير مقيس",
+    "melTitle": "ما العمل (الوضع المتدهور)",
+    "correctiveLabel": "التصحيح:",
+    "allClear": "لا إجراء متدهور — الحالة {status}."
+  },
   "Configurateur": {
     "metaTitle": "مُهَيِّئ، Strate",
     "metaDescription": "حدد احتياجاتك في بضع خطوات للحصول على توصية بحزمة ذاكرة سيادية.",
@@ -1155,7 +1164,7 @@
         "alert": "{status, select, critical {🔴 حرج} warn {🟠 للمراقبة} other {⚠️ للتحقّق}} : {dimension, select, availability {التوفّر} resilience {المرونة} compliance {الامتثال} budget {الميزانية} freshness {حداثة المصادر} drift {انحراف الإعدادات} other {البُعد}}"
       },
       "mel": {
-        "dispatch": "{dispatch, select, no-go {⛔ الوضع المحمي (no-go)} go-if {⚠️ تشغيل مشروط (go-if)} other {?}}",
+        "dispatch": "{dispatch, select, noGo {⛔ الوضع المحمي (no-go)} goIf {⚠️ تشغيل مشروط (go-if)} other {?}}",
         "guidance": {
           "availability": "التحوّل إلى القراءة فقط من آخر نسخة احتياطية صالحة؛ وتعليق الكتابات الجديدة حتى استعادة الخدمة.",
           "resilience": "تجميد الكتابات الحرجة حتى تأكيد نسخة احتياطية صالحة ومختبَرة.",

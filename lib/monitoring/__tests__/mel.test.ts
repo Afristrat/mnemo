@@ -24,25 +24,25 @@ describe("deriveDeviationGuide (MEL, S-080)", () => {
     const g = guide({ availability: 30, budget: 60 });
     const byDim = Object.fromEntries(g.map((i) => [i.dimension, i]));
     expect(byDim.availability.status).toBe("critical");
-    expect(byDim.availability.dispatch).toBe("no-go");
+    expect(byDim.availability.dispatch).toBe("noGo");
     expect(byDim.budget.status).toBe("warn");
-    expect(byDim.budget.dispatch).toBe("go-if");
+    expect(byDim.budget.dispatch).toBe("goIf");
   });
 
   it("resilience & compliance critiques → no-go (perte de données / non-conformité)", () => {
     const g = guide({ resilience: 10, compliance: 20 });
-    expect(g.every((i) => i.dispatch === "no-go")).toBe(true);
+    expect(g.every((i) => i.dispatch === "noGo")).toBe(true);
     expect(g.map((i) => i.dimension).sort()).toEqual(["compliance", "resilience"]);
   });
 
   it("budget/freshness/drift critiques restent go-if (qualité, pas vital)", () => {
     const g = guide({ budget: 10, freshness: 10, drift: 10 });
-    expect(g.every((i) => i.status === "critical" && i.dispatch === "go-if")).toBe(true);
+    expect(g.every((i) => i.status === "critical" && i.dispatch === "goIf")).toBe(true);
   });
 
   it("warn n'est jamais no-go (même sur une dimension vitale)", () => {
     const g = guide({ availability: 60 }); // 60 → warn
-    expect(g[0].dispatch).toBe("go-if");
+    expect(g[0].dispatch).toBe("goIf");
   });
 
   it("chaque item porte des descripteurs i18n (guidance/corrective/dispatch), jamais de prose", () => {
@@ -51,6 +51,6 @@ describe("deriveDeviationGuide (MEL, S-080)", () => {
     expect(item.guidance.id).toBe("monitoring.mel.guidance.resilience");
     expect(item.corrective.id).toBe("monitoring.mel.corrective.resilience");
     expect(item.dispatchLabel.id).toBe("monitoring.mel.dispatch");
-    expect(item.dispatchLabel.values?.dispatch).toBe("no-go");
+    expect(item.dispatchLabel.values?.dispatch).toBe("noGo");
   });
 });

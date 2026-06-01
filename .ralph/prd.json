@@ -1280,7 +1280,8 @@
       "id": "S-081",
       "title": "F12 Monitoring: UI dashboard (IHS + MEL) + persistance metriques RLS",
       "feature": "monitoring",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-079", "S-080"],
       "note": "Lot 2 C. Page/section monitoring : jauge IHS + sous-scores + items MEL + historique. Migration Supabase health_metrics (RLS, pivot circle) + builder pur d'audit + persistance service-role non bloquante (jumeau *_observations). i18n fr/en/ar parite. Saisie/collecte des signaux reels = via la collecte cout reel (S-082) + signaux derives du profil/reco en attendant les vraies metriques d'exploitation (marquees 'estimation').",
       "acceptance": [
