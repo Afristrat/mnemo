@@ -72,4 +72,33 @@ describe("useWizardProfile — hydratation & persistance", () => {
       expect(result.current.profile.regulations).toEqual([]);
     });
   });
+
+  describe("régimes dynamiques (S-077)", () => {
+    it("addRegulations pré-coche sans doublon et retire « Aucun »", () => {
+      const { result } = renderHook(() => useWizardProfile());
+      act(() => result.current.toggleRegulation("none")); // → ["none"]
+      act(() => result.current.addRegulations(["cndp", "rgpd", "rgpd"])); // dédup + retire none
+      expect(result.current.profile.regulations).toEqual(["cndp", "rgpd"]);
+      // Ré-appliquer n'ajoute pas de doublon ni ne retire les choix manuels.
+      act(() => result.current.addRegulations(["cndp"]));
+      expect(result.current.profile.regulations).toEqual(["cndp", "rgpd"]);
+    });
+
+    it("addRegulations([\"none\"]) est sans effet (jamais destructif)", () => {
+      const { result } = renderHook(() => useWizardProfile());
+      const before = result.current.profile.regulations;
+      act(() => result.current.addRegulations(["none"]));
+      expect(result.current.profile.regulations).toEqual(before);
+    });
+
+    it("toggleClientResidence ajoute/retire un pays (additif), persisté au montage suivant", () => {
+      const first = renderHook(() => useWizardProfile());
+      expect(first.result.current.profile.clientResidence).toBeUndefined();
+      act(() => first.result.current.toggleClientResidence("bresil"));
+      act(() => first.result.current.toggleClientResidence("japon"));
+      act(() => first.result.current.toggleClientResidence("bresil")); // retire bresil
+      const second = renderHook(() => useWizardProfile());
+      expect(second.result.current.profile.clientResidence).toEqual(["japon"]);
+    });
+  });
 });

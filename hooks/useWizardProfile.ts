@@ -13,6 +13,10 @@ type UseWizardProfile = {
   setGeography: (continent: Continent, country: string) => void;
   toggleContentType: (value: ContentType) => void;
   toggleRegulation: (value: Regulation) => void;
+  /** Ajoute (sans doublon) des régimes pré-détectés (S-077), en retirant « Aucun ». Les cases manuelles restent maîtres. */
+  addRegulations: (values: Regulation[]) => void;
+  /** Pays de résidence des clients (S-077) : ajoute/retire un code pays (additif, sans cascade moteur). */
+  toggleClientResidence: (code: string) => void;
   setModuleLevel: (id: ModuleId, level: number) => void;
   setNote: (block: BlockId, value: string) => void;
   setOtherText: (field: "activity" | "zone" | "region", value: string) => void;
@@ -83,6 +87,26 @@ export function useWizardProfile(): UseWizardProfile {
     });
   }, []);
 
+  // Pré-cochage des régimes détectés (S-077) : on AJOUTE sans doublon et on retire « Aucun » (exclusif).
+  // Jamais destructif des choix manuels existants (l'utilisateur reste maître via les cases).
+  const addRegulations = useCallback((values: Regulation[]) => {
+    const real = values.filter((v) => v !== "none");
+    if (real.length === 0) return;
+    setProfile((prev) => {
+      const merged = [...prev.regulations.filter((v) => v !== "none")];
+      for (const v of real) if (!merged.includes(v)) merged.push(v);
+      return { ...prev, regulations: merged };
+    });
+  }, []);
+
+  const toggleClientResidence = useCallback((code: string) => {
+    setProfile((prev) => {
+      const current = prev.clientResidence ?? [];
+      const next = current.includes(code) ? current.filter((c) => c !== code) : [...current, code];
+      return { ...prev, clientResidence: next };
+    });
+  }, []);
+
   const setModuleLevel = useCallback((id: ModuleId, level: number) => {
     setProfile((prev) => ({ ...prev, modules: { ...prev.modules, [id]: level } }));
   }, []);
@@ -104,6 +128,8 @@ export function useWizardProfile(): UseWizardProfile {
     setGeography,
     toggleContentType,
     toggleRegulation,
+    addRegulations,
+    toggleClientResidence,
     setModuleLevel,
     setNote,
     setOtherText,

@@ -332,6 +332,13 @@ export type Profile = {
    */
   otherText?: Partial<Record<"activity" | "zone" | "region", string>>;
   /**
+   * Pays de RÉSIDENCE des clients/sujets de données (codes `geography`, S-077). Un régime réglementaire
+   * suit souvent la résidence des personnes, pas seulement l'hébergement (RGPD = sujets UE ; LGPD =
+   * sujets brésiliens) → ces pays élargissent la veille de régimes (`/api/legal/regimes`). DONNÉE pure :
+   * additive, n'altère NI le chiffrage déterministe NI le bucket `zone`. Absent ⇒ seul le pays cible.
+   */
+  clientResidence?: string[];
+  /**
    * Préférence « open-source / souverain d'abord » (S-066). Quand activée, le moteur biaise la reco
    * vers une stack davantage AUTO-HÉBERGÉE/OPEN-SOURCE : (1) le preset est relevé d'un cran (la
    * souveraineté de la stack est portée par le preset dans le catalogue — MEDIUM/HARD = self-host) ;

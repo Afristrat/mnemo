@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { jurisdictionsFor, type Continent } from "@/lib/engine";
+import { JURISDICTIONS } from "@/lib/engine/geography";
 import {
   ACTIVITY_OPTIONS,
   BUDGET_OPTIONS,
@@ -27,6 +28,8 @@ type LocalizedOptions = {
   continent: Option<Continent>[];
   /** Pays/juridictions du continent sélectionné (libellés localisés). */
   countriesFor: (continent: Continent) => Option<string>[];
+  /** Toutes les juridictions CONCRÈTES (hors buckets « Autre »), pour le multi-input résidence clients (S-077). */
+  allCountries: Option<string>[];
   zone: Option<(typeof ZONE_OPTIONS)[number]["value"]>[];
   region: Option<(typeof REGION_OPTIONS)[number]["value"]>[];
   drTier: Option<(typeof DR_TIER_OPTIONS)[number]["value"]>[];
@@ -51,6 +54,7 @@ export function useOptions(): LocalizedOptions {
     continent: loc(CONTINENT_OPTIONS),
     countriesFor: (continent: Continent): Option<string>[] =>
       jurisdictionsFor(continent).map((j) => ({ value: j.code, label: t(j.labelKey) })),
+    allCountries: JURISDICTIONS.filter((j) => !j.code.startsWith("autre-")).map((j) => ({ value: j.code, label: t(j.labelKey) })),
     zone: loc(ZONE_OPTIONS),
     region: loc(REGION_OPTIONS),
     drTier: loc(DR_TIER_OPTIONS),

@@ -266,6 +266,11 @@ export function profileFromUnknown(value: unknown): Profile | null {
   const otherText = otherTextFromUnknown(value.otherText);
   if (otherText !== null) profile.otherText = otherText;
   if (typeof value.preferSovereign === "boolean") profile.preferSovereign = value.preferSovereign;
+  // Résidence des clients (S-077) : codes pays (chaînes non vides). Additif, sans impact sur le chiffrage.
+  if (Array.isArray(value.clientResidence)) {
+    const codes = value.clientResidence.filter((c): c is string => typeof c === "string" && c.trim() !== "");
+    if (codes.length > 0) profile.clientResidence = codes;
+  }
   return profile;
 }
 

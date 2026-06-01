@@ -17,6 +17,7 @@ import { ModuleSlider } from "@/components/wizard/ModuleSlider";
 import { ResidencyBlock } from "@/components/wizard/ResidencyBlock";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
 import { RadioCards } from "@/components/wizard/RadioCards";
+import { RegimeDetector } from "@/components/wizard/RegimeDetector";
 import { YesNo } from "@/components/wizard/YesNo";
 import { MODULES, PRESET_PROFILES, decidePreset, defaultCountryFor, recommend, type BlockId, type Profile } from "@/lib/engine";
 import { useEngineText } from "@/lib/i18n/engine";
@@ -207,6 +208,8 @@ export function Wizard(): ReactElement {
     setGeography,
     toggleContentType,
     toggleRegulation,
+    addRegulations,
+    toggleClientResidence,
     setModuleLevel,
     setNote,
     setOtherText,
@@ -322,6 +325,16 @@ export function Wizard(): ReactElement {
               </Field>
               <Field label={tFields("regulations")} info={{ why: tInfo("regulations.why"), consequence: tInfo("regulations.consequence") }}>
                 <CheckboxCards values={profile.regulations} options={opts.regulation} onToggle={toggleRegulation} />
+                <RegimeDetector
+                  targetCountry={profile.country}
+                  targetCountryLabel={
+                    opts.countriesFor(profile.continent).find((o) => o.value === profile.country)?.label ?? profile.country
+                  }
+                  clientResidence={profile.clientResidence ?? []}
+                  residenceOptions={opts.allCountries}
+                  onToggleResidence={toggleClientResidence}
+                  onDetected={addRegulations}
+                />
               </Field>
               <Field label={tFields("sensitivity")} info={{ why: tInfo("sensitivity.why"), consequence: tInfo("sensitivity.consequence") }}>
                 <RadioCards value={profile.sensitivity} options={opts.sensitivity} onChange={(v) => setField("sensitivity", v)} />
