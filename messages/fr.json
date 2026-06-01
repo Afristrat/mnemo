@@ -736,6 +736,12 @@
       "download": "Télécharger le bundle (.zip)",
       "generating": "Génération du bundle…",
       "charter": "Charte fiduciaire, zéro commission cachée"
+    },
+    "migrationBundle": {
+      "title": "Migration garantie (In-Switch)",
+      "desc": "Téléchargez un plan de migration vers cette stack : double-run (ancienne ∥ nouvelle), critères de bascule objectifs et rollback garanti (runbook + scripts). Vous basculez seulement quand tout est vert, et vous pouvez toujours revenir en arrière.",
+      "download": "Télécharger le plan de migration (.zip)",
+      "generating": "Génération du plan…"
     }
   },
   "Assistant": {
