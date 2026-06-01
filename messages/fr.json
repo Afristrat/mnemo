@@ -8,6 +8,22 @@
     "correctiveLabel": "Correctif :",
     "allClear": "Aucune conduite dégradée — état {status}."
   },
+  "RealCost": {
+    "title": "Mon coût réel",
+    "intro": "Déclarez votre coût réel par poste pour le comparer à l’estimation (±30 %). Avec votre consentement, l’écart anonymisé affine les estimations partagées du réseau.",
+    "posteHeader": "Poste",
+    "estimatedHeader": "Estimé",
+    "realHeader": "Réel",
+    "deltaHeader": "Écart",
+    "realAria": "Coût réel pour {poste}",
+    "total": "Total : estimé {estimated} € · réel {real} € · écart {delta} %.",
+    "consentLabel": "J’accepte que mon écart de coût, anonymisé, serve à affiner les estimations partagées du réseau (révocable).",
+    "submit": "Enregistrer mon coût réel",
+    "saving": "Enregistrement…",
+    "saved": "Coût réel enregistré. Merci — cela améliore les estimations pour tous.",
+    "error": "Enregistrement impossible pour le moment.",
+    "setupPoste": "Mise en route"
+  },
   "Engine": {
     "scores": {
       "conf": {
