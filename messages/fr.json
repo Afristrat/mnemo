@@ -24,6 +24,16 @@
     "error": "Enregistrement impossible pour le moment.",
     "setupPoste": "Mise en route"
   },
+  "Provisioning": {
+    "title": "Mise en service guidée",
+    "intro": "Pour chaque composant : la procédure que VOUS suivez pour créer le compte (avec votre carte), puis ce que l’agent optimisera sur le compte autorisé. Strate n’automatise aucune inscription.",
+    "kindAccount": "Compte fournisseur",
+    "kindSelfHost": "Déploiement souverain",
+    "officialLink": "Lien officiel",
+    "stepsLabel": "Étapes",
+    "fieldsLabel": "À relever :",
+    "planTitle": "Optimisation post-création (agent, sur compte autorisé)"
+  },
   "Engine": {
     "scores": {
       "conf": {
@@ -329,6 +339,30 @@
       "alert": {
         "summary": "{direction, select, increase {↑ Hausse} decrease {↓ Baisse} other {Variation}} — {vendor} {item} : {oldPrice} → {newPrice} {currency} ({deltaPct} %)"
       }
+    },
+    "provisioning": {
+      "account": {
+        "step1": "Créez un compte sur le site officiel du fournisseur (vous, avec votre identité).",
+        "step2": "Vérifiez votre adresse e-mail et activez le compte.",
+        "step3": "Ajoutez un moyen de paiement (votre carte — Strate ne la saisit jamais).",
+        "step4": "Générez une clé d’API dédiée à ce projet (droits minimaux).",
+        "step5": "Notez la clé d’API et l’URL/endpoint — vous les fournirez pour la configuration."
+      },
+      "selfHost": {
+        "step1": "Provisionnez un serveur ou un cluster chez votre hébergeur (vous).",
+        "step2": "Installez le composant (image officielle ou paquet vérifié).",
+        "step3": "Configurez le réseau, le stockage et les accès (TLS, pare-feu).",
+        "step4": "Notez l’endpoint et les identifiants d’administration."
+      },
+      "fields": {
+        "apiKey": "clé d’API",
+        "endpoint": "URL / endpoint",
+        "adminCreds": "identifiants d’administration"
+      },
+      "task": {
+        "optimize": "Configurer et optimiser {component} sur votre compte autorisé (paramètres, quotas, sécurité)."
+      },
+      "guardrail": "Strate ne crée jamais de compte et ne saisit jamais votre carte. Vous créez les comptes ; l’agent n’optimise ensuite que les réglages, sur le compte que vous avez autorisé."
     },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {transcription audio} audio_generate {synthèse vocale} video_ingest {analyse vidéo} video_generate {génération vidéo} images_ingest {OCR/vision images} images_generate {génération d’images} other {charge}} ≈ {qty} {modality, select, audio {min/mois} video {min/mois} images {images/mois} other {/mois}} ({mode, select, sovereign {souverain} api {API} other {}})"

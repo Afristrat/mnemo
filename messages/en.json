@@ -24,6 +24,16 @@
     "error": "Could not save right now.",
     "setupPoste": "Setup"
   },
+  "Provisioning": {
+    "title": "Guided provisioning",
+    "intro": "For each component: the procedure YOU follow to create the account (with your card), then what the agent will optimise on the authorised account. Strate automates no sign-up.",
+    "kindAccount": "Vendor account",
+    "kindSelfHost": "Sovereign deployment",
+    "officialLink": "Official link",
+    "stepsLabel": "Steps",
+    "fieldsLabel": "To note:",
+    "planTitle": "Post-creation optimisation (agent, on authorised account)"
+  },
   "Engine": {
     "scores": {
       "conf": {
@@ -329,6 +339,30 @@
       "alert": {
         "summary": "{direction, select, increase {↑ Rise} decrease {↓ Drop} other {Change}} — {vendor} {item}: {oldPrice} → {newPrice} {currency} ({deltaPct}%)"
       }
+    },
+    "provisioning": {
+      "account": {
+        "step1": "Create an account on the vendor's official site (you, with your identity).",
+        "step2": "Verify your email address and activate the account.",
+        "step3": "Add a payment method (your card — Strate never enters it).",
+        "step4": "Generate an API key dedicated to this project (least privilege).",
+        "step5": "Note the API key and the URL/endpoint — you'll provide them for configuration."
+      },
+      "selfHost": {
+        "step1": "Provision a server or cluster with your host (you).",
+        "step2": "Install the component (official image or verified package).",
+        "step3": "Configure network, storage and access (TLS, firewall).",
+        "step4": "Note the endpoint and admin credentials."
+      },
+      "fields": {
+        "apiKey": "API key",
+        "endpoint": "URL / endpoint",
+        "adminCreds": "admin credentials"
+      },
+      "task": {
+        "optimize": "Configure and optimise {component} on your authorised account (settings, quotas, security)."
+      },
+      "guardrail": "Strate never creates an account and never enters your card. You create the accounts; the agent then only optimises settings, on the account you authorised."
     },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {audio transcription} audio_generate {speech synthesis} video_ingest {video analysis} video_generate {video generation} images_ingest {image OCR/vision} images_generate {image generation} other {workload}} ≈ {qty} {modality, select, audio {min/month} video {min/month} images {images/month} other {/month}} ({mode, select, sovereign {sovereign} api {API} other {}})"
