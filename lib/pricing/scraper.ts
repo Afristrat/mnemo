@@ -6,7 +6,10 @@
 // `fetch` natif (zéro SDK), `fetchImpl` injectable pour les tests. Aucune clé exposée au client.
 // JAMAIS de throw → repli (l'appelant retombe sur le seed daté, DÉFCON 1). Signatures publiques
 // inchangées (searchWeb / scrapePricingMarkdown / scrapeStructuredJson / ScrapeDeps / WebSearchResult).
+// Garde-fou `server-only` (S-078) : lit SEARXNG/CRAWL4AI ; échec build si importé (en valeur) par un
+// Client Component. AssistantPanel n'en importe qu'un `type` (effacé au build). Stub en test Node.
 
+import "server-only";
 import { callLLM } from "@/lib/llm/client";
 
 const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL ?? "http://searxng-strate:8080";

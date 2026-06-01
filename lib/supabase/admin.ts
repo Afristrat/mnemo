@@ -3,8 +3,10 @@
 // Sert à l'app publique pour LIRE le prompt actif (table `prompts`, fermée par RLS aux super-admins),
 // sans session utilisateur. La clé secrète (`SUPABASE_SERVICE_ROLE_KEY`) n'est JAMAIS exposée au
 // client/bundle. Repli : si l'URL ou la clé manque → `null` (les appelants retombent sur le défaut).
-// Ne JAMAIS importer ce module depuis un composant client.
+// Ne JAMAIS importer ce module depuis un composant client (garde-fou `server-only`, S-078 :
+// échec build si un Client Component l'importe ; aliasé vers un stub en test Node).
 
+import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 

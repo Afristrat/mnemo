@@ -8,7 +8,9 @@ const root = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { "@": root },
+    // `server-only` (S-078) lève une erreur à l'import hors contexte react-server ; en test Node on
+    // l'alias vers un module vide. Le garde-fou réel est appliqué au build Next.js.
+    alias: { "@": root, "server-only": `${root}/test/server-only-stub.ts` },
   },
   test: {
     environment: "jsdom",

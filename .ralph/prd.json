@@ -1235,6 +1235,176 @@
         "la contrainte S-072 (la veille respecte les choix utilisateur) est preservee ; persistance audit RLS (regime_observations)",
         "typecheck 0 / lint 0-0 / tests verts / build OK ; i18n fr/en/ar parite"
       ]
+    },
+    {
+      "id": "S-078",
+      "title": "Dette: durcissement server-only (imports serveur jamais bundles client)",
+      "feature": "infra",
+      "passes": true,
+      "completedAt": "2026-06-01",
+      "deps": [],
+      "note": "Partie NON bloquante de la dette auth (DETTE-VAULT-1). Paquet `server-only` installe + importe en tete des 5 LECTEURS DIRECTS de secret/service-role : lib/vault/server.ts (KEK), vault/credentials.ts, lib/supabase/admin.ts (service-role), lib/llm/client.ts (LITELLM_API_KEY), lib/pricing/scraper.ts (SEARXNG/CRAWL4AI). Les modules de persistance (legal/catalog/regime persist, prompts/store) sont couverts TRANSITIVEMENT (ils importent createAdminClient). Stub vitest (test/server-only-stub.ts + alias vitest.config) car `server-only` throw en Node. DETTE DE COUPLAGE REVELEE PAR LE GARDE-FOU + corrigee a la racine : media-feed.ts (importe par Wizard/ResultsView clients) tirait scraper via refreshMediaPriceFreshness -> EXTRAIT dans lib/pricing/media-freshness.ts (server-only) ; media-feed.ts redevient PUR/client-safe. Build casse desormais si un Client Component importe un module serveur en valeur (verifie : build vert apres decouplage).",
+      "acceptance": [
+        "paquet server-only installe ; import en tete des modules serveur sensibles (vault server/credentials, admin supabase, lecture cles)",
+        "build OK (preuve qu'aucun client ne les importe) ; typecheck 0 / lint 0-0 / tests verts"
+      ]
+    },
+    {
+      "id": "S-079",
+      "title": "F12 Monitoring: moteur Infra Health Score (composite pur + seuils + alertes)",
+      "feature": "monitoring",
+      "passes": false,
+      "deps": [],
+      "note": "Lot 2 C. lib/monitoring/health.ts PUR : computeHealthScore(signals) -> IHS composite (disponibilite, cout reel vs budget, resilience/backup, conformite, fraicheur des prix/sources, derive de config) sur 0-100 + sous-scores + statut (ok/warn/critical) par seuil documente. Signals INJECTES (testabilite, pas d'I/O). Descripteurs Message i18n (jamais de prose). DEFCON 1 : aucun seuil/poids invente sans justification (ADR).",
+      "acceptance": [
+        "computeHealthScore pur, signals injectes, 0 dependance UI ; sous-scores + composite + statut par seuil",
+        "monotonie testee (un signal degrade -> score <=) ; descripteurs Message i18n",
+        "ADR sur la composition (poids/seuils) ; typecheck 0 / lint 0-0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-080",
+      "title": "F12 Monitoring: Dispatch Deviation Guide (MEL — exploitation degradee)",
+      "feature": "monitoring",
+      "passes": false,
+      "deps": ["S-079"],
+      "note": "Lot 2 C. lib/monitoring/mel.ts PUR (logique facon Minimum Equipment List aviation) : pour chaque composant degrade/indisponible, l'operation degradee AUTORISEE + condition + limite de temps + action corrective. Jumeau du moteur diagnostics. Descripteurs Message i18n. DEFCON 1 : regles d'exploitation documentees, pas inventees.",
+      "acceptance": [
+        "deriveDeviationGuide(healthSignals/components) pur -> liste d'items MEL (composant, etat, operation degradee permise, condition, delai, correctif)",
+        "i18n descripteurs Message ; tests table-driven ; typecheck 0 / lint 0-0 / tests verts / build OK"
+      ]
+    },
+    {
+      "id": "S-081",
+      "title": "F12 Monitoring: UI dashboard (IHS + MEL) + persistance metriques RLS",
+      "feature": "monitoring",
+      "passes": false,
+      "deps": ["S-079", "S-080"],
+      "note": "Lot 2 C. Page/section monitoring : jauge IHS + sous-scores + items MEL + historique. Migration Supabase health_metrics (RLS, pivot circle) + builder pur d'audit + persistance service-role non bloquante (jumeau *_observations). i18n fr/en/ar parite. Saisie/collecte des signaux reels = via la collecte cout reel (S-082) + signaux derives du profil/reco en attendant les vraies metriques d'exploitation (marquees 'estimation').",
+      "acceptance": [
+        "UI rend IHS + sous-scores + MEL (accents FR, garde i18n) ; migration health_metrics RLS=on",
+        "persistance non bloquante service-role ; i18n fr/en/ar parite ; typecheck 0 / lint 0-0 / tests / build OK"
+      ]
+    },
+    {
+      "id": "S-082",
+      "title": "F13 Network: collecte du cout reel (saisie/import par poste + ecart vs estime)",
+      "feature": "network",
+      "passes": false,
+      "deps": ["S-023"],
+      "note": "Lot 2 D. L'utilisateur (consentement opt-in F9) saisit/importe son cout reel par poste -> comparaison vs estime du moteur -> ecart + fraicheur. Reutilise le schema conversion_data (S-023) + consentement (network). lib/network/real-cost.ts PUR (diff estime/reel, ecart %, flag hors tolerance). Migration real_cost_entries RLS si besoin (pivot circle). DEFCON 1 : l'ecart est factuel, jamais un jugement.",
+      "acceptance": [
+        "saisie cout reel par poste (UI) -> persiste (RLS, consentement) ; diff estime/reel pur + ecart% + tolerance",
+        "i18n fr/en/ar ; test RLS gated ; typecheck 0 / lint 0-0 / tests / build OK"
+      ]
+    },
+    {
+      "id": "S-083",
+      "title": "F13 Network: recalibration continue (cout reel agrege consenti -> baselines)",
+      "feature": "network",
+      "passes": false,
+      "deps": ["S-082"],
+      "note": "Lot 2 D, moat 3 'actif'. Le cout reel agrege ANONYMISE (consentement) recalibre les baselines/facteurs du moteur. lib/network/recalibrate.ts PUR : agrege les ecarts -> propose un ajustement de baseline AVEC garde-fou DEFCON 1 (jamais ecraser une source datee sans seuil de confiance + n d'observations minimal ; proposition tracee, jamais silencieuse). Reste une PROPOSITION (validation), pas une mutation auto du seed.",
+      "acceptance": [
+        "agregation anonymisee des ecarts (k-min observations) -> ajustement propose, trace, jamais auto-applique au seed sans seuil",
+        "garde-fou : pas de recalibration sur n insuffisant ; tests ; typecheck 0 / lint 0-0 / build OK"
+      ]
+    },
+    {
+      "id": "S-084",
+      "title": "F13 Network: alertes vendor partagees (changement de prix -> reseau consentant)",
+      "feature": "network",
+      "passes": false,
+      "deps": ["S-082", "S-025"],
+      "note": "Lot 2 D. Le price feed (S-025) detecte un changement (empreinte) -> alerte partagee aux membres consentants du reseau. lib/network/alerts.ts PUR (construit l'alerte a partir d'une variation detectee, dedup, severite par ampleur). Persistance RLS si diffusion. DEFCON 1 : alerte = fait source (ancien->nouveau prix + date + URL), jamais une reco d'achat.",
+      "acceptance": [
+        "variation de prix detectee -> alerte sourcee (ancien/nouveau/date/URL) diffusable aux consentants ; dedup + severite",
+        "i18n ; tests ; typecheck 0 / lint 0-0 / build OK"
+      ]
+    },
+    {
+      "id": "S-085",
+      "title": "Lot 3 F14: Guaranteed Migration / In-Switch (double-run + rollback)",
+      "feature": "lot3",
+      "passes": false,
+      "deps": ["S-010"],
+      "note": "Lot 3. Jumeau de l'Exit Escrow (S-010) : genere un bundle de MIGRATION/IN-SWITCH = plan double-run (ancienne + nouvelle stack en parallele), criteres de bascule, et garantie de ROLLBACK (runbook + scripts). lib/migration/ (pur) + zip fflate. DEFCON 1 : artefacts reproductibles coherents avec la reco, jamais d'execution reelle (l'utilisateur execute).",
+      "acceptance": [
+        "buildMigrationBundle(reco) -> runbook double-run + criteres bascule + rollback scripte + manifest ; zip telechargeable",
+        "test d'integration coherence bundle<->reco ; typecheck 0 / lint 0-0 / tests / build OK"
+      ]
+    },
+    {
+      "id": "S-086",
+      "title": "Lot 3 F15: Continuous Re-optimization (economie > seuil -> proposition)",
+      "feature": "lot3",
+      "passes": false,
+      "deps": ["S-082"],
+      "note": "Lot 3. Detecte quand une re-optimisation ferait economiser plus qu'un seuil (cout reel S-082 + price feed live vs config actuelle) -> PROPOSE une migration sur VALIDATION HUMAINE (jamais auto). lib/optimize/reoptimize.ts PUR : compare config actuelle vs alternative moins chere a iso-contraintes (souverainete/conformite preservees, S-072) -> gain estime + diff. DEFCON 1 : proposition sourcee, contraintes respectees, l'humain tranche.",
+      "acceptance": [
+        "proposeReoptimization(current, signals) pur -> alternatives iso-contraintes avec gain estime > seuil, sinon rien",
+        "contraintes utilisateur preservees (S-072) ; validation humaine requise ; tests ; typecheck 0 / lint 0-0 / build OK"
+      ]
+    },
+    {
+      "id": "S-087",
+      "title": "Lot 2 B F10: procedures guidees de creation de compte vendor",
+      "feature": "provisioning",
+      "passes": false,
+      "deps": ["S-035"],
+      "note": "Lot 2 B (human-in-the-loop par design). Pour chaque composant de la reco (catalogue S-035), genere la PROCEDURE guidee : lien officiel d'inscription + etapes que l'UTILISATEUR realise lui-meme (compte + carte) + ce qu'il faut noter (cles/URLs). lib/provisioning/procedures.ts PUR (derive du catalogue retenu) + UI checklist. DEFCON 1 : Strate n'automatise AUCUNE inscription ni saisie de carte (CGU). Liens/etapes sources, jamais inventes.",
+      "acceptance": [
+        "deriveProvisioningProcedures(reco/catalog) pur -> par composant : lien officiel + etapes utilisateur + champs a relever",
+        "UI checklist (i18n fr/en/ar) ; aucune automatisation d'inscription ; tests ; typecheck 0 / lint 0-0 / build OK"
+      ]
+    },
+    {
+      "id": "S-088",
+      "title": "Lot 2 B F10: cadre d'optimisation post-creation (ProvisioningPlan, human-in-the-loop)",
+      "feature": "provisioning",
+      "passes": false,
+      "deps": ["S-087"],
+      "note": "Lot 2 B. Apres que l'utilisateur a cree les comptes (S-087), l'agent prend le relais sur la CONFIGURATION/optimisation via OAuth/MCP/API officiels SUR LE COMPTE AUTORISE. Cette story livre le CADRE verifiable : type ProvisioningPlan (taches d'optimisation par couche, statut, garde-fous), moteur pur de derivation + squelette d'execution MCP/OAuth avec garde-fou DUR (jamais creer de compte, jamais saisir de carte, jamais d'engagement financier). NOTE: l'execution reelle bout-en-bout necessite des comptes vendor + apps OAuth (input externe) -> testee par mocks ; le branchement live reste a activer quand les creds existent.",
+      "acceptance": [
+        "type ProvisioningPlan + deriveProvisioningPlan(reco) pur (taches par couche, statut) ; garde-fou dur teste (refus creation compte/carte)",
+        "squelette executor MCP/OAuth injectable (mocke en test) ; jamais d'effet sans autorisation explicite ; typecheck 0 / lint 0-0 / tests / build OK"
+      ]
+    },
+    {
+      "id": "S-089",
+      "title": "BLOQUE (input Amine): dette auth complete (SMTP reel + apps OAuth Google/GitHub)",
+      "feature": "infra",
+      "passes": false,
+      "deps": ["S-078"],
+      "note": "BLOQUE : necessite des inputs qu'Amine seul peut fournir -> serveur SMTP reel (magic-link), apps OAuth Google + GitHub (client id/secret), redirection https://db.ai-mpower.com/auth/v1/callback. Cote code : repasser AUTOCONFIRM->false, activer magic-link + OAuth (aujourd'hui visibles mais non fonctionnels, decision Amine), smoke-test navigateur du stockage credential sur /compte. NE PAS marquer fait tant que les creds ne sont pas fournis et le flux verifie end-to-end (DEFCON 1).",
+      "acceptance": [
+        "SMTP + apps OAuth fournis par Amine ; AUTOCONFIRM=false ; magic-link + OAuth fonctionnels verifies end-to-end en prod",
+        "smoke-test navigateur stockage credential /compte OK"
+      ]
+    },
+    {
+      "id": "S-090",
+      "title": "BLOQUE (donnees sondage): prix service reel (remplace [PLACEHOLDER])",
+      "feature": "refonte",
+      "passes": false,
+      "deps": [],
+      "note": "BLOQUE : necessite le depouillement du sondage Van Westendorp (donnees de willingness-to-pay) pour fixer les 3 paliers de prix du service. Aujourd'hui [PLACEHOLDER] + badge 'sondage en cours'. DEFCON 1 : ne jamais inventer un prix au doigt mouille -> rester en placeholder tant que les donnees ne sont pas la.",
+      "acceptance": [
+        "prix des 3 paliers issus des donnees du sondage (sources) ; remplace [PLACEHOLDER] ; badge retire",
+        "typecheck 0 / lint 0-0 / tests / build OK"
+      ]
+    },
+    {
+      "id": "S-091",
+      "title": "BLOQUE (arabophone natif): relecture native de messages/ar.json",
+      "feature": "i18n",
+      "passes": false,
+      "deps": [],
+      "note": "BLOQUE : l'arabe en ligne est un brouillon MSA genere (techniquement valide : parite + ICU + arguments AST OK) mais PAS relu par un natif. DEFCON 1 : la qualite prose/terminologie native ne peut etre validee par Claude -> exige une relecture humaine arabophone. Corrigeable a chaud (messages/ar.json + redeploy). Inclut les cles S-077 (compliance lgpd/appi + regulation) ajoutees en brouillon MSA.",
+      "acceptance": [
+        "messages/ar.json relu et corrige par un arabophone natif ; parite + ICU `ar` toujours verts",
+        "redeploy ; verifie en prod (RTL + contenu)"
+      ]
     }
   ]
 }

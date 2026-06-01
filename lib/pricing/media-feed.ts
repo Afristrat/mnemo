@@ -3,14 +3,14 @@
 // Le seed (`media-seed.ts`) porte les prix en DEVISES NATIVES. Ce module :
 //  1. récupère un taux de change USD→EUR **live** (Frankfurter, adossé aux taux de référence BCE,
 //     gratuit, sans clé), avec **repli** sur le taux BCE daté du seed (`SEED_USD_TO_EUR`) ;
-//  2. **normalise** la table en € (devise unique) pour le moteur (`costMultimodalSizing`, S-016) ;
-//  3. signale la **fraîcheur** des pages source via le client Firecrawl existant (repli seed).
+//  2. **normalise** la table en € (devise unique) pour le moteur (`costMultimodalSizing`, S-016).
 //
-// Toutes les fonctions sont pures ou à effets injectables (`fetchImpl`), testabilité, jamais de
-// throw côté réseau (repli systématique). La clé Firecrawl reste serveur (jamais exposée au client).
+// Module PUR (FX via `fetchImpl` injectable + normalisation + seed), **client-safe** : il ne tire
+// aucun module serveur. Le contrôle de fraîcheur des pages source (qui utilise le scraper, donc des
+// tokens serveur) vit dans `media-freshness.ts` (server-only, S-078) — séparé pour que les Client
+// Components (Wizard, ResultsView…) importent les prix sans embarquer le scraper.
 
 import type { GpuTier, MultimodalPriceEntry, MultimodalPriceTable } from "@/lib/engine";
-import { scrapePricingMarkdown } from "./scraper";
 import { MEDIA_PRICE_SEED, SEED_FX_SOURCE, SEED_USD_TO_EUR } from "./media-seed";
 
 const FRANKFURTER_URL = "https://api.frankfurter.app/latest?from=USD&to=EUR";
@@ -144,31 +144,4 @@ export function mediaPriceSources(table: MultimodalPriceTable = MEDIA_PRICE_SEED
     }
   }
   return out;
-}
-
-export type MediaPriceFreshness = {
-  label: string;
-  url: string;
-  status: "verified" | "unavailable";
-  checkedAt: string;
-};
-
-/**
- * Contrôle la fraîcheur des pages source via Firecrawl (page joignable = `verified`, sinon
- * `unavailable`). Ne ré-extrait PAS les prix dérivés (conversion/hypothèses) : toute revue de
- * valeur est manuelle. Repli (clé absente / réseau) → `unavailable`, jamais de throw.
- */
-export async function refreshMediaPriceFreshness(deps: {
-  apiKey: string | undefined;
-  fetchImpl?: typeof fetch;
-  now?: () => number;
-}): Promise<MediaPriceFreshness[]> {
-  const nowMs = (deps.now ?? ((): number => Date.now()))();
-  const checkedAt = isoDate(nowMs);
-  return Promise.all(
-    mediaPriceSources().map(async (s) => {
-      const markdown = await scrapePricingMarkdown(s.url, { apiKey: deps.apiKey, fetchImpl: deps.fetchImpl });
-      return { label: s.label, url: s.url, status: markdown === null ? "unavailable" : "verified", checkedAt };
-    }),
-  );
 }

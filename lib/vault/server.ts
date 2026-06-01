@@ -1,11 +1,11 @@
 // lib/vault/server.ts
 // ⚠ SERVEUR UNIQUEMENT — Ne jamais importer ce module côté client (composants React, bundle
-// navigateur). En production, Next.js garantit l'isolement via les Server Actions et Route
-// Handlers. L'import "server-only" n'est pas utilisé ici car le package n'est pas encore
-// installé dans ce projet ; l'isolement repose sur la discipline d'import et le bundler Next.
+// navigateur). L'import `server-only` (S-078) fait ÉCHOUER LE BUILD si un Client Component
+// l'importe par erreur ; en test Node, il est aliasé vers un stub vide (vitest.config.ts).
 //
 // Accès au coffre CÔTÉ SERVEUR : lit la KEK (clé de chiffrement de clés) depuis l'environnement.
 // Le paramètre `env` est injectable pour les tests unitaires ; en production il vaut `process.env`.
+import "server-only";
 import { encryptSecret, decryptSecret, type EncryptedSecret } from "./crypto";
 
 // Type interne : sous-ensemble de NodeJS.ProcessEnv utilisable en tests sans `process.env`.

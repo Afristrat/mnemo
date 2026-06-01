@@ -8,8 +8,9 @@ import {
   getMediaPricesEur,
   mediaPriceSources,
   normalizeMediaPricesToEur,
-  refreshMediaPriceFreshness,
 } from "@/lib/pricing/media-feed";
+// refreshMediaPriceFreshness vit désormais dans le module server-only media-freshness.ts (S-078).
+import { refreshMediaPriceFreshness } from "@/lib/pricing/media-freshness";
 
 // S-017, pricing médias sourcé (DÉFCON 1). Vérifie : devises natives + sources sur chaque coût,
 // normalisation FX en €, repli du taux de change, intégration au dimensionnement S-016.
