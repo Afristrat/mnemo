@@ -5,6 +5,7 @@
 // `listPromptVersions` / `activateNewVersion` : pilotent la console admin (après contrôle super-admin
 // côté route). Client injectable (tests). Aucune exception ne remonte : repli prudent partout.
 
+import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/types";

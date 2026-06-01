@@ -3,6 +3,7 @@
 // « live seulement » : un régime 100 % seed (la veille n'a rien ajouté) n'est pas une observation → on
 // n'écrit pas. Jamais bloquant, jamais throw (échec Supabase → réponse OK). Jumeau de `lib/legal/persist`.
 
+import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";

@@ -4,6 +4,7 @@
 // (pas de bruit/coût d'écriture inutile — le seed n'est pas une observation). Jamais bloquant, jamais
 // throw : un échec d'insertion (Supabase indispo, clé absente) ne casse jamais la réponse de la veille.
 
+import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";

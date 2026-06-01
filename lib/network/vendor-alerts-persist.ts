@@ -7,7 +7,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
-import { buildVendorAlertInserts } from "./vendor-alerts-observation";
+import { buildVendorAlertInserts, filterUnpersistedAlerts, type VendorAlertKey } from "./vendor-alerts-observation";
 import type { VendorAlert } from "./alerts";
 
 type Deps = {
@@ -27,8 +27,20 @@ export async function persistVendorAlerts(alerts: readonly VendorAlert[], deps: 
   if (client === null) return 0;
   const rows = buildVendorAlertInserts({ alerts, circleId: deps.circleId, createdBy: deps.createdBy });
   try {
-    const { error } = await client.from("vendor_alerts").insert(rows);
-    return error === null ? rows.length : 0;
+    // Dédup d'audit : on ne re-logue pas une alerte identique déjà présente (même cercle/vendor/poste/date).
+    // Le cron (toutes les N h) et les consultations relisent le même feed caché → sans ce filtre, doublons.
+    const checkedAts = [...new Set(rows.map((r) => r.checked_at))];
+    const { data } = await client.from("vendor_alerts").select("circle_id,vendor,item,checked_at").in("checked_at", checkedAts);
+    const existing: VendorAlertKey[] = (data ?? []).map((d) => ({
+      circle_id: d.circle_id,
+      vendor: d.vendor,
+      item: d.item,
+      checked_at: d.checked_at,
+    }));
+    const fresh = filterUnpersistedAlerts(rows, existing);
+    if (fresh.length === 0) return 0;
+    const { error } = await client.from("vendor_alerts").insert(fresh);
+    return error === null ? fresh.length : 0;
   } catch {
     return 0;
   }
