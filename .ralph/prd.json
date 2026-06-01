@@ -1267,7 +1267,8 @@
       "id": "S-080",
       "title": "F12 Monitoring: Dispatch Deviation Guide (MEL — exploitation degradee)",
       "feature": "monitoring",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-079"],
       "note": "Lot 2 C. lib/monitoring/mel.ts PUR (logique facon Minimum Equipment List aviation) : pour chaque composant degrade/indisponible, l'operation degradee AUTORISEE + condition + limite de temps + action corrective. Jumeau du moteur diagnostics. Descripteurs Message i18n. DEFCON 1 : regles d'exploitation documentees, pas inventees.",
       "acceptance": [

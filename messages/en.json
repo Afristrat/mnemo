@@ -279,6 +279,25 @@
           "unknown": "Not measured"
         },
         "alert": "{status, select, critical {🔴 Critical} warn {🟠 Watch} other {⚠️ Check}}: {dimension, select, availability {Availability} resilience {Resilience} compliance {Compliance} budget {Budget} freshness {Source freshness} drift {Configuration drift} other {Dimension}}"
+      },
+      "mel": {
+        "dispatch": "{dispatch, select, no-go {⛔ Protected mode (no-go)} go-if {⚠️ Conditional operation (go-if)} other {?}}",
+        "guidance": {
+          "availability": "Switch to read-only from the last valid backup; suspend new writes until service is restored.",
+          "resilience": "Freeze critical writes until a valid, tested backup is confirmed.",
+          "compliance": "Suspend processing of uncovered regulated data; restrict access to the strict minimum.",
+          "budget": "Freeze non-essential scale-ups; operate at the current sizing.",
+          "freshness": "Re-validate sourced prices and statuses before any quoted commitment; show freshness.",
+          "drift": "Operate while flagging the gap; do not rely on components diverging from the recommendation for structural decisions."
+        },
+        "corrective": {
+          "availability": "Restart or scale the failing services, check health-checks and capacity.",
+          "resilience": "Restore and test a backup; reinstate the 3-2-1-1 policy and immutability.",
+          "compliance": "Handle open compliance actions (record, DPA, rights); have a counsel validate.",
+          "budget": "Review sizing and over-target items; arbitrate cost levers.",
+          "freshness": "Re-run the price and legal watch; reconfirm dated sources.",
+          "drift": "Realign the deployed configuration with the recommendation; document or justify the gap."
+        }
       }
     },
     "sizing": {
