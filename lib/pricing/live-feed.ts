@@ -85,10 +85,14 @@ function gpuPricePerHour(json: unknown, prefix: string): number | null {
 export type LivePriceItem = {
   key: string;
   label: string;
+  /** Fournisseur du poste (ex. « Scaleway ») — sert l'alerte vendor (S-084). */
+  vendor: string;
   group: "media" | "backup";
   status: PriceStatus;
   confidence: Confidence;
   amountEur: number;
+  /** Prix baseline sourcé daté (seed) AVANT réconciliation — référence d'une variation (S-084). */
+  baselineEur: number;
   unit: string;
   url: string;
   checkedAt: string;
@@ -133,18 +137,22 @@ function reconciledEntry(
 function item(
   key: string,
   label: string,
+  vendor: string,
   group: "media" | "backup",
   entry: MultimodalPriceEntry,
   status: PriceStatus,
   checkedAt: string,
+  baselineEur: number,
 ): LivePriceItem {
   return {
     key,
     label,
+    vendor,
     group,
     status,
     confidence: entry.confidence,
     amountEur: entry.amount,
+    baselineEur,
     unit: entry.unit,
     url: entry.source?.url ?? "",
     checkedAt: status === "live" ? checkedAt : entry.source?.checkedAt ?? checkedAt,
@@ -241,14 +249,14 @@ export async function getLivePrices(deps: LiveFeedDeps): Promise<LivePriceFeed> 
   };
 
   const items: LivePriceItem[] = [
-    item("gpu.shared", "GPU L4 mutualisé (Scaleway)", "media", shared.entry, shared.status, checkedAt),
-    item("gpu.dedicated-small", "GPU L4 dédié (Scaleway)", "media", dedSmall.entry, dedSmall.status, checkedAt),
-    item("gpu.dedicated-large", "GPU H100 dédié (Scaleway)", "media", dedLarge.entry, dedLarge.status, checkedAt),
-    item("storage", "Stockage objet (Scaleway)", "media", storage.entry, storage.status, checkedAt),
-    item("backup.egress", "Egress / restauration (Scaleway)", "backup", egress.entry, egress.status, checkedAt),
-    item("backup.archive", "Stockage froid / archive (Scaleway)", "backup", archive.entry, archive.status, checkedAt),
-    item("backup.retrieval", "Retrait d'archive (Scaleway)", "backup", retrieval.entry, retrieval.status, checkedAt),
-    item("backup.offsite", "Copie hors-site (Scaleway)", "backup", offsite.entry, offsite.status, checkedAt),
+    item("gpu.shared", "GPU L4 mutualisé (Scaleway)", "Scaleway", "media", shared.entry, shared.status, checkedAt, base.gpuMonthly.shared.amount),
+    item("gpu.dedicated-small", "GPU L4 dédié (Scaleway)", "Scaleway", "media", dedSmall.entry, dedSmall.status, checkedAt, base.gpuMonthly["dedicated-small"].amount),
+    item("gpu.dedicated-large", "GPU H100 dédié (Scaleway)", "Scaleway", "media", dedLarge.entry, dedLarge.status, checkedAt, base.gpuMonthly["dedicated-large"].amount),
+    item("storage", "Stockage objet (Scaleway)", "Scaleway", "media", storage.entry, storage.status, checkedAt, base.storagePerGbMonth.amount),
+    item("backup.egress", "Egress / restauration (Scaleway)", "Scaleway", "backup", egress.entry, egress.status, checkedAt, BACKUP_PRICE_SEED.egressPerGb.amount),
+    item("backup.archive", "Stockage froid / archive (Scaleway)", "Scaleway", "backup", archive.entry, archive.status, checkedAt, BACKUP_PRICE_SEED.archiveStoragePerGbMonth.amount),
+    item("backup.retrieval", "Retrait d'archive (Scaleway)", "Scaleway", "backup", retrieval.entry, retrieval.status, checkedAt, BACKUP_PRICE_SEED.archiveRetrievalPerGb.amount),
+    item("backup.offsite", "Copie hors-site (Scaleway)", "Scaleway", "backup", offsite.entry, offsite.status, checkedAt, BACKUP_PRICE_SEED.offsiteBandwidthPerGb.amount),
   ];
 
   return { media, backup, items, fx, generatedAt: new Date(nowMs).toISOString() };

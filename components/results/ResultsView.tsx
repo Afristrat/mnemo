@@ -23,6 +23,7 @@ import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
+import { VendorAlertsPanel } from "@/components/results/VendorAlertsPanel";
 import { SharePanel } from "@/components/results/SharePanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
@@ -475,6 +476,9 @@ export function ResultsView(): ReactElement {
 
       {/* Network actif (F13, S-082) : collecte du coût réel par poste + écart vs estimé (consentement). */}
       <RealCostPanel result={activeResult} />
+
+      {/* Network actif (F13, S-084) : broadcast d'alertes vendor sourcées (veille prix vs baseline datée). */}
+      <VendorAlertsPanel />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
       <LivePriceStatus />

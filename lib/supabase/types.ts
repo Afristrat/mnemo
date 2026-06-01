@@ -227,6 +227,25 @@ export type RealCostEntryInsert = {
 };
 export type RealCostEntryRow = RealCostEntryInsert & { id: string; created_at: string };
 
+// Broadcast d'alertes vendor (S-084, F13) : variation de prix vendor sourcée (baseline daté → live daté),
+// diffusée au réseau. `circle_id` null = broadcast global (faits publics). Unions (direction/severity)
+// garanties par les CHECK SQL ; `string` côté TS (le builder injecte les valeurs typées du moteur).
+export type VendorAlertInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  vendor: string;
+  item: string;
+  old_price: number;
+  new_price: number;
+  currency: string;
+  delta_pct: number;
+  direction: string;
+  severity: string;
+  source_url: string;
+  checked_at: string;
+};
+export type VendorAlertRow = VendorAlertInsert & { id: string; created_at: string };
+
 // Partage de la recommandation par lien court (S-067) : profil encodé derrière un id imprévisible.
 export type SharedRecoRow = {
   id: string;
@@ -371,6 +390,7 @@ export type Database = {
       regime_observations: TableShape<RegimeObservationRow, RegimeObservationInsert>;
       health_metrics: TableShape<HealthMetricRow, HealthMetricInsert>;
       real_cost_entries: TableShape<RealCostEntryRow, RealCostEntryInsert>;
+      vendor_alerts: TableShape<VendorAlertRow, VendorAlertInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;

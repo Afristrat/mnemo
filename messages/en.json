@@ -759,6 +759,17 @@
       "legalCaveat": "Transfers between distinct jurisdictions: to be validated before deciding (conservative default, see “Residency & transfers”). Engineering guidance, not legal advice.",
       "costCaveat": "Costs: quote-based per provider (never hardcoded). Inter-region egress pricing is provided for Europe and North America; elsewhere, confirm with the provider."
     },
+    "vendorAlertsPanel": {
+      "title": "Vendor price alerts",
+      "intro": "When the price watch detects a change at a vendor, the gap is broadcast here — a sourced, quantified fact, never a prompt to buy.",
+      "loading": "Checking for price changes…",
+      "error": "Check unavailable right now. Displayed costs remain the last sourced, dated figure.",
+      "empty": "No significant price change detected on the tracked items.",
+      "severity_info": "Minor",
+      "severity_notable": "Notable",
+      "severity_major": "Major",
+      "source": "Source verified on {date}"
+    },
     "exportButtons": {
       "markdown": "Download the plan (Markdown)",
       "pdf": "Download the plan (PDF)",
