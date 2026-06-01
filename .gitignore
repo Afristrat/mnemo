@@ -40,3 +40,6 @@ npm-debug.log*
 # playwright MCP captures (artefacts de vérification visuelle)
 .playwright-mcp/
 /*.png
+
+# config locale Claude Code (settings, locks de session) — jamais versionnée
+.claude/
