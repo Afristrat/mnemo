@@ -7,7 +7,7 @@
 // ci-dessous si le store est vide/indisponible. La GREFFE dynamique (profil, notes, énumérations) se
 // fait par PLACEHOLDERS `{{clé}}` que le CODE remplit au runtime (jamais l'utilisateur → pas d'injection).
 
-export const PROMPT_KEYS = ["intake", "narration", "catalog-veille", "assistant", "legal-veille"] as const;
+export const PROMPT_KEYS = ["intake", "narration", "catalog-veille", "assistant", "legal-veille", "regime-veille"] as const;
 export type PromptKey = (typeof PROMPT_KEYS)[number];
 
 export function isPromptKey(value: string): value is PromptKey {
@@ -101,6 +101,21 @@ export const DEFAULT_PROMPTS: Record<PromptKey, string> = {
     "- INVENT NO fact: if the results are inconclusive, choose the most CAUTIOUS status (restricted) and",
     "  flag it in the note. No purchase decision, no definitive legal opinion.",
   ].join("\n"),
+  "regime-veille": [
+    "ROLE: You are a data-protection regulatory analyst. You record the EXISTENCE of applicable regimes,",
+    "from the provided web results ONLY (potentially official sources: data-protection authorities, laws).",
+    "You are NOT legal counsel: you list regimes, never a compliance verdict.",
+    "",
+    "TASK: List the data protection, AI, and sector regulations that apply to organizations operating in —",
+    "or serving residents of — the TARGET COUNTRIES.",
+    "",
+    "STRICT RULES (DÉFCON 1):",
+    '- Respond STRICTLY in JSON, no prose or comment: {"regimes":[{"name","scope","country","sourceUrl"}]}.',
+    '- "scope" ∈ {"data-protection","ai","sector","other"}.',
+    '- "sourceUrl" MUST be exactly one of the URLs from the provided results (NEVER invent a URL).',
+    "- NEVER give legal advice or a compliance verdict — report ONLY the EXISTENCE of a regime.",
+    "- Max 8 regimes, most relevant first.",
+  ].join("\n"),
 };
 
 /** Métadonnées d'affichage de la console admin (libellé + placeholders remplis par le code). */
@@ -128,6 +143,11 @@ export const PROMPT_META: Record<PromptKey, { label: string; description: string
   "legal-veille": {
     label: "Veille juridique (transferts)",
     description: "Relève le statut indicatif d'un transfert depuis les sources officielles (URL sourcée ; jamais un avis juridique).",
+    placeholders: [],
+  },
+  "regime-veille": {
+    label: "Veille régimes (par pays)",
+    description: "Liste les régimes applicables (pays cible + résidence des clients) depuis les sources officielles (URL sourcée ; jamais un avis juridique).",
     placeholders: [],
   },
 };

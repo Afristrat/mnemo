@@ -167,6 +167,40 @@ export type TransferObservationInsert = {
   note: string | null;
 };
 
+// Veille des régimes réglementaires par pays (S-077) : audit trail des régimes DÉCOUVERTS par la veille
+// (live). `regime_code` nullable (null = régime libre hors énum moteur) ; unions garanties par les CHECK
+// SQL, `string` côté TS pour ne pas coupler aux types de lib/legal (le builder injecte les valeurs typées).
+export type RegimeObservationRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  country: string;
+  regime_code: string | null;
+  regime_name: string;
+  scope: string;
+  provenance: string;
+  confidence: string;
+  source_url: string | null;
+  source_label: string | null;
+  checked_at: string;
+  note: string | null;
+  created_at: string;
+};
+export type RegimeObservationInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  country: string;
+  regime_code: string | null;
+  regime_name: string;
+  scope: string;
+  provenance: string;
+  confidence: string;
+  source_url: string | null;
+  source_label: string | null;
+  checked_at: string;
+  note: string | null;
+};
+
 // Partage de la recommandation par lien court (S-067) : profil encodé derrière un id imprévisible.
 export type SharedRecoRow = {
   id: string;
@@ -308,6 +342,7 @@ export type Database = {
       lead_capture: TableShape<LeadCaptureRow, LeadCaptureInsert>;
       catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
       transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
+      regime_observations: TableShape<RegimeObservationRow, RegimeObservationInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;

@@ -15,6 +15,7 @@
 import type { Regulation } from "@/lib/engine";
 import type { LlmMessage, LlmResult } from "@/lib/llm";
 import type { WebSearchResult } from "@/lib/pricing/scraper";
+import { DEFAULT_PROMPTS } from "@/lib/prompts/registry";
 import type { RegimeScope, RegimeSuggestion } from "./regime-seed";
 
 export type RegimeDiscoverDeps = {
@@ -31,13 +32,8 @@ export function regimeDiscoveryQuery(countries: readonly string[]): string {
   return `data protection and AI regulations applicable in ${list} 2026 official law`;
 }
 
-export const DEFAULT_REGIME_PROMPT =
-  "You are a data-protection regulatory analyst. From the web results, list the data protection, AI, and " +
-  "sector regulations that apply to organizations operating in — or serving residents of — the TARGET " +
-  "COUNTRIES. Return STRICT JSON: " +
-  '{"regimes":[{"name":string,"scope":"data-protection"|"ai"|"sector"|"other","country":string,"sourceUrl":string}]}. ' +
-  "sourceUrl MUST be one of the provided result URLs (never invent one). NEVER give legal advice or a " +
-  "compliance verdict — report ONLY the EXISTENCE of a regime. Max 8 regimes, most relevant first.";
+/** Gabarit par défaut = source unique du registry (S-053, éditable super-admin) — pas de dérive. */
+export const DEFAULT_REGIME_PROMPT = DEFAULT_PROMPTS["regime-veille"];
 
 /**
  * Mappe le NOM d'un régime sur l'énum moteur (`Regulation`) quand il est notoirement reconnaissable,
