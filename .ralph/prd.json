@@ -1319,7 +1319,8 @@
       "id": "S-084",
       "title": "F13 Network: alertes vendor partagees (changement de prix -> reseau consentant)",
       "feature": "network",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-082", "S-025"],
       "note": "Lot 2 D. Le price feed (S-025) detecte un changement (empreinte) -> alerte partagee aux membres consentants du reseau. lib/network/alerts.ts PUR (construit l'alerte a partir d'une variation detectee, dedup, severite par ampleur). Persistance RLS si diffusion. DEFCON 1 : alerte = fait source (ancien->nouveau prix + date + URL), jamais une reco d'achat.",
       "acceptance": [
