@@ -1345,7 +1345,8 @@
       "id": "S-086",
       "title": "Lot 3 F15: Continuous Re-optimization (economie > seuil -> proposition)",
       "feature": "lot3",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-082"],
       "note": "Lot 3. Detecte quand une re-optimisation ferait economiser plus qu'un seuil (cout reel S-082 + price feed live vs config actuelle) -> PROPOSE une migration sur VALIDATION HUMAINE (jamais auto). lib/optimize/reoptimize.ts PUR : compare config actuelle vs alternative moins chere a iso-contraintes (souverainete/conformite preservees, S-072) -> gain estime + diff. DEFCON 1 : proposition sourcee, contraintes respectees, l'humain tranche.",
       "acceptance": [
