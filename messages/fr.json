@@ -883,6 +883,18 @@
     "expert": "Voir le détail (expert)"
   },
   "Wizard": {
+    "regimeDetector": {
+      "summary": "Détecter les régimes applicables (selon le pays et vos clients)",
+      "residenceLabel": "Pays où résident vos clients (optionnel) — un régime suit souvent la résidence des personnes, pas seulement l'hébergement.",
+      "detectButton": "Détecter pour {country}",
+      "detecting": "Détection…",
+      "error": "Détection indisponible pour le moment. Vous pouvez cocher les régimes manuellement ci-dessus.",
+      "resultsTitle": "Régimes suggérés (sourcés)",
+      "mappedNote": "pré-coché ci-dessus",
+      "unmappedNote": "à valider par un conseil",
+      "empty": "Aucun régime spécifique trouvé pour ce pays. Cochez manuellement si besoin.",
+      "disclaimer": "Suggestions sourcées et datées — orientation d'ingénierie, pas un avis juridique. Vous restez maître des cases ci-dessus."
+    },
     "other": {
       "activityLabel": "Précisez votre activité",
       "activityPlaceholder": "Ex. : coopérative agricole, collectivité territoriale, ONG…",

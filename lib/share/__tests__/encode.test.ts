@@ -45,6 +45,7 @@ const RICH_PROFILE: Profile = {
   freeNotes: { profil: "Cabinet d’avocats, dossiers ultra-sensibles." },
   otherText: { region: "Casablanca uniquement" },
   preferSovereign: true,
+  clientResidence: ["bresil", "japon"],
 };
 
 describe("encode/decode du profil partagé (S-067)", () => {

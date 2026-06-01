@@ -883,6 +883,18 @@
     "expert": "See detail (expert)"
   },
   "Wizard": {
+    "regimeDetector": {
+      "summary": "Detect applicable regimes (based on country and your clients)",
+      "residenceLabel": "Countries where your clients reside (optional) — a regime often follows where people reside, not just where data is hosted.",
+      "detectButton": "Detect for {country}",
+      "detecting": "Detecting…",
+      "error": "Detection unavailable right now. You can tick the regimes manually above.",
+      "resultsTitle": "Suggested regimes (sourced)",
+      "mappedNote": "pre-ticked above",
+      "unmappedNote": "to be confirmed by counsel",
+      "empty": "No specific regime found for this country. Tick manually if needed.",
+      "disclaimer": "Sourced, dated suggestions — engineering guidance, not legal advice. You stay in control of the boxes above."
+    },
     "other": {
       "activityLabel": "Specify your activity",
       "activityPlaceholder": "E.g. agricultural cooperative, local authority, NGO…",
