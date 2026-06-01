@@ -759,6 +759,17 @@
       "legalCaveat": "Transferts entre juridictions distinctes : à valider avant décision (défaut conservateur, voir « Résidence & transferts »). Orientation d’ingénierie, pas un avis juridique.",
       "costCaveat": "Coûts : sur devis par fournisseur (jamais figés). Le chiffrage egress inter-région reste fourni pour l’Europe et l’Amérique du Nord ; ailleurs, à confirmer auprès du fournisseur."
     },
+    "vendorAlertsPanel": {
+      "title": "Alertes prix fournisseurs",
+      "intro": "Quand la veille prix détecte une variation chez un fournisseur, l’écart est diffusé ici — un fait chiffré et sourcé, jamais une incitation à l’achat.",
+      "loading": "Vérification des variations de prix…",
+      "error": "Vérification indisponible pour le moment. Les coûts affichés restent ceux du dernier relevé sourcé et daté.",
+      "empty": "Aucune variation de prix significative détectée sur les postes suivis.",
+      "severity_info": "Mineure",
+      "severity_notable": "Notable",
+      "severity_major": "Majeure",
+      "source": "Source vérifiée le {date}"
+    },
     "exportButtons": {
       "markdown": "Télécharger le plan (Markdown)",
       "pdf": "Télécharger le plan (PDF)",
