@@ -24,6 +24,16 @@
     "error": "تعذّر الحفظ في الوقت الحالي.",
     "setupPoste": "بدء التشغيل"
   },
+  "Provisioning": {
+    "title": "التشغيل الموجَّه",
+    "intro": "لكل مكوّن: الإجراء الذي تتبعه أنت لإنشاء الحساب (ببطاقتك)، ثم ما سيُحسّنه الوكيل على الحساب المُصرَّح به. لا تُؤتمت Strate أي تسجيل.",
+    "kindAccount": "حساب لدى مزوّد",
+    "kindSelfHost": "نشر سيادي",
+    "officialLink": "رابط رسمي",
+    "stepsLabel": "الخطوات",
+    "fieldsLabel": "للتدوين:",
+    "planTitle": "تحسين بعد الإنشاء (الوكيل، على الحساب المُصرَّح به)"
+  },
   "Configurateur": {
     "metaTitle": "مُهَيِّئ، Strate",
     "metaDescription": "حدد احتياجاتك في بضع خطوات للحصول على توصية بحزمة ذاكرة سيادية.",
@@ -1203,6 +1213,30 @@
       "alert": {
         "summary": "{direction, select, increase {↑ ارتفاع} decrease {↓ انخفاض} other {تغيّر}} — {vendor} {item}: {oldPrice} → {newPrice} {currency} ({deltaPct}٪)"
       }
+    },
+    "provisioning": {
+      "account": {
+        "step1": "أنشئ حسابًا على الموقع الرسمي للمزوّد (أنت، بهويتك).",
+        "step2": "تحقّق من بريدك الإلكتروني وفعّل الحساب.",
+        "step3": "أضف وسيلة دفع (بطاقتك — Strate لا تُدخلها أبدًا).",
+        "step4": "أنشئ مفتاح API مخصّصًا لهذا المشروع (بأقل الصلاحيات).",
+        "step5": "دوّن مفتاح API والـ URL/نقطة النهاية — ستقدّمها للإعداد."
+      },
+      "selfHost": {
+        "step1": "وفّر خادمًا أو عنقودًا لدى مضيفك (أنت).",
+        "step2": "ثبّت المكوّن (صورة رسمية أو حزمة موثّقة).",
+        "step3": "اضبط الشبكة والتخزين والوصول (TLS، جدار حماية).",
+        "step4": "دوّن نقطة النهاية وبيانات اعتماد الإدارة."
+      },
+      "fields": {
+        "apiKey": "مفتاح API",
+        "endpoint": "URL / نقطة النهاية",
+        "adminCreds": "بيانات اعتماد الإدارة"
+      },
+      "task": {
+        "optimize": "إعداد وتحسين {component} على حسابك المُصرَّح به (الإعدادات، الحصص، الأمان)."
+      },
+      "guardrail": "لا تُنشئ Strate حسابًا أبدًا ولا تُدخل بطاقتك. أنت تُنشئ الحسابات؛ ثم يُحسّن الوكيل الإعدادات فقط، على الحساب الذي صرّحت به."
     },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {نسخ صوتي} audio_generate {توليف كلامي} video_ingest {تحليل فيديو} video_generate {توليد فيديو} images_ingest {OCR/رؤية الصور} images_generate {توليد صور} other {حمل عمل}} ≈ {qty} {modality, select, audio {دقيقة/شهر} video {دقيقة/شهر} images {صورة/شهر} other {/شهر}} ({mode, select, sovereign {سيادي} api {API} other {}})"

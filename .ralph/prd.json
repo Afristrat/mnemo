@@ -1358,7 +1358,8 @@
       "id": "S-087",
       "title": "Lot 2 B F10: procedures guidees de creation de compte vendor",
       "feature": "provisioning",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-035"],
       "note": "Lot 2 B (human-in-the-loop par design). Pour chaque composant de la reco (catalogue S-035), genere la PROCEDURE guidee : lien officiel d'inscription + etapes que l'UTILISATEUR realise lui-meme (compte + carte) + ce qu'il faut noter (cles/URLs). lib/provisioning/procedures.ts PUR (derive du catalogue retenu) + UI checklist. DEFCON 1 : Strate n'automatise AUCUNE inscription ni saisie de carte (CGU). Liens/etapes sources, jamais inventes.",
       "acceptance": [
@@ -1370,7 +1371,8 @@
       "id": "S-088",
       "title": "Lot 2 B F10: cadre d'optimisation post-creation (ProvisioningPlan, human-in-the-loop)",
       "feature": "provisioning",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-087"],
       "note": "Lot 2 B. Apres que l'utilisateur a cree les comptes (S-087), l'agent prend le relais sur la CONFIGURATION/optimisation via OAuth/MCP/API officiels SUR LE COMPTE AUTORISE. Cette story livre le CADRE verifiable : type ProvisioningPlan (taches d'optimisation par couche, statut, garde-fous), moteur pur de derivation + squelette d'execution MCP/OAuth avec garde-fou DUR (jamais creer de compte, jamais saisir de carte, jamais d'engagement financier). NOTE: l'execution reelle bout-en-bout necessite des comptes vendor + apps OAuth (input externe) -> testee par mocks ; le branchement live reste a activer quand les creds existent.",
       "acceptance": [
