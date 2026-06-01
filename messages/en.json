@@ -992,7 +992,7 @@
     "risk": "The risk of doing nothing",
     "gain": "The gain",
     "firmPrice": "Strate service (firm price)",
-    "firmPriceNote": "sale price, survey in progress",
+    "firmPriceNote": "service sale price",
     "infraCost": "Infrastructure cost (paid to vendors)",
     "infraCostNote": "±30%, transparent, sourced",
     "setup": "Setup (one-off)",
@@ -1589,8 +1589,7 @@
       "eyebrow": "Pricing",
       "title": "The diagnostic is free. You only pay for the cooking.",
       "subtitle": "Infrastructure cost stays transparent, paid to your own vendors — we take no markup on it.",
-      "surveyTag": "Indicative pricing",
-      "note": "Indicative pricing, excluding infrastructure costs — those are paid directly to your providers, with no markup on our side.",
+      "note": "Excluding infrastructure costs — those are paid directly to your providers, with no markup on our side.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
