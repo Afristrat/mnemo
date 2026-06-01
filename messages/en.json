@@ -211,7 +211,19 @@
         "secretProRls": "🔒 Lock access with Postgres RLS (“circle” field); each client matter is its own circle",
         "secretProAuditTrail": "✍ Signed append-only audit trail (PL/pgSQL triggers)",
         "secretProAnonymization": "👤 k-anonymity (k=5 minimum) on any export beyond the matter’s scope",
-        "banProprietaryMemory": "🚫 Ban vendors’ proprietary memory (ChatGPT/Claude Memory) for any structural decision"
+        "banProprietaryMemory": "🚫 Ban vendors’ proprietary memory (ChatGPT/Claude Memory) for any structural decision",
+        "lgpdDpo": "🇧🇷 Appoint a Data Protection Officer (encarregado) — point of contact for the ANPD and data subjects (LGPD Art. 41)",
+        "lgpdRights": "📞 Operationalise data subject rights: confirmation, access, correction, anonymisation, deletion, portability (LGPD Art. 18)",
+        "lgpdRecords": "📚 Keep records of processing operations (categories, purposes, legal bases, recipients, retention — LGPD Art. 37)",
+        "lgpdRipd": "📄 Produce a Data Protection Impact Report (RIPD) for high-risk or sensitive-data processing (LGPD Art. 38)",
+        "lgpdTransfer": "🌐 Frame international transfers: adequate-protection country or specific contractual clauses (LGPD Art. 33)",
+        "lgpdIncident": "🚨 Set up security-incident notification to the ANPD and data subjects where there is relevant risk (LGPD Art. 48)",
+        "appiPurpose": "🇯🇵 Specify and notify the purpose of use; restrict use to the stated purpose (APPI, PPC)",
+        "appiSecurity": "🔐 Implement security control measures (organisational, human, physical, technical) (APPI, PPC)",
+        "appiThirdParty": "🤝 Govern third-party provision of data (prior consent; opt-out not allowed for sensitive data) (APPI, PPC)",
+        "appiRights": "📞 Respond to individuals’ requests: disclosure, correction, deletion, suspension of use and of third-party transfer (APPI, PPC)",
+        "appiIncident": "🚨 Notify the PPC and affected individuals of a data leak (mandatory since the 2022 amendment) (APPI, PPC)",
+        "appiCrossBorder": "🌐 Frame cross-border transfers: inform the individual of the recipient country and protection measures (APPI, PPC)"
       },
       "risks": {
         "noTechHard": "⚠️ HARD preset with non-technical skills: needs a DevOps partner, or downscale to managed MEDIUM.",
@@ -1314,6 +1326,10 @@
       "hipaa": "HIPAA",
       "hipaaHint": "Healthcare (US)",
       "secret-pro": "Professional secrecy",
+      "lgpd": "LGPD (Brazil)",
+      "lgpdHint": "General Personal Data Protection Law (Lei 13.709/2018)",
+      "appi": "APPI (Japan)",
+      "appiHint": "Act on the Protection of Personal Information",
       "none": "None"
     },
     "sensitivity": {

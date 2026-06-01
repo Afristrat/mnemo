@@ -211,7 +211,19 @@
         "secretProRls": "🔒 Verrouillage accès par RLS Postgres (champ « circle »), chaque dossier client = un circle distinct",
         "secretProAuditTrail": "✍ Audit trail signé append-only (PL/pgSQL triggers)",
         "secretProAnonymization": "👤 Anonymisation k-anonymity k=5 minimum sur tout export hors périmètre dossier",
-        "banProprietaryMemory": "🚫 Bannir la mémoire propriétaire des éditeurs (Memory ChatGPT/Claude) pour toute décision structurante"
+        "banProprietaryMemory": "🚫 Bannir la mémoire propriétaire des éditeurs (Memory ChatGPT/Claude) pour toute décision structurante",
+        "lgpdDpo": "🇧🇷 Désigner un encarregado (DPO) — point de contact de l’ANPD et des titulaires (LGPD Art. 41)",
+        "lgpdRights": "📞 Opérationnaliser les droits du titulaire : confirmation, accès, correction, anonymisation, suppression, portabilité (LGPD Art. 18)",
+        "lgpdRecords": "📚 Tenir le registre des opérations de traitement (catégories, finalités, bases légales, destinataires, rétention — LGPD Art. 37)",
+        "lgpdRipd": "📄 Élaborer un RIPD (Relatório de Impacto à Proteção de Dados) pour les traitements à risque ou portant sur des données sensibles (LGPD Art. 38)",
+        "lgpdTransfer": "🌐 Encadrer les transferts internationaux : pays à niveau de protection adéquat ou clauses contractuelles spécifiques (LGPD Art. 33)",
+        "lgpdIncident": "🚨 Mettre en place la communication d’incident de sécurité à l’ANPD et aux titulaires en cas de risque pertinent (LGPD Art. 48)",
+        "appiPurpose": "🇯🇵 Spécifier et notifier la finalité d’utilisation ; limiter l’usage à la finalité déclarée (APPI, PPC)",
+        "appiSecurity": "🔐 Mettre en place des mesures de contrôle de sécurité (organisationnelles, humaines, physiques, techniques) (APPI, PPC)",
+        "appiThirdParty": "🤝 Encadrer la fourniture de données à des tiers (consentement préalable ; opt-out interdit pour les données sensibles) (APPI, PPC)",
+        "appiRights": "📞 Répondre aux demandes des personnes : divulgation, correction, suppression, cessation d’usage et d’envoi à des tiers (APPI, PPC)",
+        "appiIncident": "🚨 Notifier la PPC et les personnes concernées en cas de fuite de données (obligatoire depuis l’amendement 2022) (APPI, PPC)",
+        "appiCrossBorder": "🌐 Encadrer les transferts transfrontaliers : informer la personne du pays destinataire et des mesures de protection (APPI, PPC)"
       },
       "risks": {
         "noTechHard": "⚠️ Preset HARD avec compétences non-techniques : nécessite un partenaire DevOps, ou redimensionner en MEDIUM managé.",
@@ -1314,6 +1326,10 @@
       "hipaa": "HIPAA",
       "hipaaHint": "Santé (US)",
       "secret-pro": "Secret professionnel",
+      "lgpd": "LGPD (Brésil)",
+      "lgpdHint": "Loi générale de protection des données (Lei 13.709/2018)",
+      "appi": "APPI (Japon)",
+      "appiHint": "Loi sur la protection des informations personnelles",
       "none": "Aucun"
     },
     "sensitivity": {

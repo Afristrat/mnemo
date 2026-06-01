@@ -31,16 +31,19 @@ describe("regimesSeedFor (S-077, seed sourcé)", () => {
     expect(total).toBeGreaterThanOrEqual(15); // couverture multi-continent
   });
 
-  it("mappe les régimes UE/Maroc/US sur l'énum moteur, laisse les autres en libre (null)", () => {
+  it("mappe les régimes modélisés sur l'énum moteur, laisse les autres en libre (null)", () => {
     const ue = regimesSeedFor("union-europeenne");
     expect(ue.map((x) => x.code)).toEqual(expect.arrayContaining(["rgpd", "aiact"]));
     expect(regimesSeedFor("maroc").some((x) => x.code === "cndp")).toBe(true);
     expect(regimesSeedFor("etats-unis").some((x) => x.code === "hipaa")).toBe(true);
-    // Régime hors-énum (Brésil LGPD) → code null mais sourcé.
+    // Régimes phares hors-UE modélisés (S-077, T5) → code mappé + sourcé.
     const br = regimesSeedFor("bresil");
     expect(br).toHaveLength(1);
-    expect(br[0].code).toBeNull();
+    expect(br[0].code).toBe("lgpd");
     expect(br[0].name).toContain("LGPD");
+    expect(regimesSeedFor("japon").some((x) => x.code === "appi")).toBe(true);
+    // Régime non modélisé (POPIA, Afrique du Sud) → reste libre (null), affichage-seul.
+    expect(regimesSeedFor("afrique-sud").every((x) => x.code === null)).toBe(true);
   });
 
   it("couvre les continents hors Europe (Afrique/LATAM/APAC/Moyen-Orient)", () => {

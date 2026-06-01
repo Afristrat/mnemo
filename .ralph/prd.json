@@ -1219,6 +1219,22 @@
         "zone juridique derivee du pays ; moteur/legal inchanges ; profils legacy reconcilies",
         "typecheck 0 / lint 0-0 / tests verts / build OK ; i18n fr/en/ar parite"
       ]
+    },
+    {
+      "id": "S-077",
+      "title": "Regimes reglementaires dynamiques (veille par pays + residence clients, regimes phares modelises)",
+      "feature": "residency",
+      "passes": true,
+      "completedAt": "2026-06-01",
+      "deps": ["S-073", "S-076", "S-036", "S-062"],
+      "note": "Spec docs/superpowers/specs/2026-05-31-s077-regimes-dynamiques-design.md (VALIDEE, 3 decisions Amine : entrees = pays cible + residence clients ; regimes = modeliser les phares hors-UE AVEC actions sourcees + afficher le reste source-seul ; persister audit RLS). Livre en 5 tranches. T1 (864d4be) lib/legal/regime-seed.ts : type RegimeSuggestion (code mappable | null, scope, pays, source, confiance, provenance) + seed 16 juridictions, sources OFFICIELLES verifiees web 2026-06-01. T2 regime-discovery.ts (pur, I/O injectee, calque residency/discovery) : web->LLM->regimes sources, anti-hallucination d'URL, mapRegimeCode, dedup, confiance live=low, [] si I/O KO. T3 (5cfcf3a) regime-feed.ts (assemblage SearXNG/Crawl4AI+LiteLLM + fusion PURE mergeRegimes seed=reference + cache TTL 6h) + route POST /api/legal/regimes + persistance audit : migration RLS regime_observations (pivot circle, jumeau transfer_status_observations) APPLIQUEE PROD (RLS=on verifie) + persistRegimeObservations (live seulement, jamais bloquant) + prompt regime-veille (registry). VERIF LIVE PROD : POST {maroc, residences:[bresil]} -> source=mixed, 7 regimes, audit=5 lignes live. T4 (293e6a2) Profile.clientResidence? (additif, zero cascade moteur, round-trip share) + RegimeDetector.tsx (multi-input residence + bouton Detecter pour {pays} -> pre-coche mappables via addRegulations + liste sourcee ; cases manuelles MAITRES) + useWizardProfile.addRegulations/toggleClientResidence + useOptions.allCountries + i18n Wizard.regimeDetector x3. T5 (cette session) regimes phares hors-UE MODELISES : enum REGULATIONS += lgpd (Bresil, Lei 13.709/2018) + appi (Japon) ; seed code mappe (bresil->lgpd, japon->appi) ; mapRegimeCode LGPD/APPI ; REGULATION_OPTIONS += lgpd/appi (+hints) ; computeCompliance branches lgpd (Art. 41 encarregado, 18 droits, 37 registre, 38 RIPD, 33 transferts, 48 incident -- sources ANPD/Planalto verifiees) + appi (finalite, securite, tiers, droits, fuite oblig. 2022, transfrontalier -- source PPC) ; scores conf +1 par regime data-protection ; i18n Engine.diagnostics.compliance.* + Options.regulation.* x3 (parite). Tout autre regime decouvert reste affichage-seul (DEFCON 1). Tests : diagnostics.test (5), regime-discovery (mapRegimeCode LGPD/APPI), regime-seed (code mappe BR/JP + POPIA reste libre), regime-detector (pre-coche lgpd+appi), e2e regimes.spec (LGPD/APPI selectionnables + detecteur present). 611 tests.",
+      "acceptance": [
+        "le configurateur suggere dynamiquement les regimes sources selon pays cible + residence clients (veille crawl4ai + repli seed garanti)",
+        "DEFCON 1 : aucun regime/qualification invente -- chaque suggestion sourcee + datee ; incertitude marquee a confirmer par un conseil",
+        "regimes phares hors-UE (LGPD Bresil, APPI Japon) MODELISES dans computeCompliance avec actions de conformite sourcees (articles ANPD/Planalto, obligations PPC) ; tout regime non modelise reste affichage-seul",
+        "la contrainte S-072 (la veille respecte les choix utilisateur) est preservee ; persistance audit RLS (regime_observations)",
+        "typecheck 0 / lint 0-0 / tests verts / build OK ; i18n fr/en/ar parite"
+      ]
     }
   ]
 }

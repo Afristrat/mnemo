@@ -44,6 +44,8 @@ export function mapRegimeCode(name: string): Regulation | null {
   if (n.includes("ai act") || n.includes("artificial intelligence act")) return "aiact";
   if (n.includes("hipaa")) return "hipaa";
   if (n.includes("cndp") || n.includes("09-08")) return "cndp";
+  if (n.includes("lgpd") || n.includes("13.709") || n.includes("13709")) return "lgpd"; // Brésil (S-077, T5)
+  if (n.includes("appi")) return "appi"; // Japon (S-077, T5)
   if (n.includes("rgpd") || n.includes("gdpr")) return "rgpd"; // UK GDPR inclus volontairement (régime équivalent)
   return null;
 }

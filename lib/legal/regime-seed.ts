@@ -6,8 +6,9 @@
 // est le repli garanti quand la veille live (`regime-discovery`) échoue. La veille live le complète/
 // rafraîchit (suite S-073/S-076 : la veille respecte les choix utilisateur, S-072).
 //
-// `code` est rempli UNIQUEMENT si le régime est mappable sur l'énum moteur (`Regulation`) — sinon `null`
-// (régime « libre », porté comme donnée, n'altère pas le chiffrage déterministe, DÉFCON 1). Sources
+// `code` est rempli UNIQUEMENT si le régime est mappable sur l'énum moteur (`Regulation` :
+// rgpd/cndp/aiact/hipaa/lgpd/appi) — sinon `null` (régime « libre », porté comme donnée, n'altère pas
+// le chiffrage déterministe, DÉFCON 1). LGPD/APPI sont modélisés depuis S-077 T5 (actions sourcées). Sources
 // vérifiées sur pages officielles le 2026-06-01 (agences/textes de loi) ; confiance `medium` quand le
 // régime est patchwork (US) ou en montée en charge progressive (Inde).
 
@@ -22,7 +23,7 @@ export type RegimeProvenance = "seed" | "live";
 
 /**
  * Suggestion de régime applicable à un pays. `code` mappable sur l'énum moteur (`rgpd`/`cndp`/`aiact`/
- * `hipaa`) ⇒ le régime peut alimenter `profile.regulations` ; sinon `null` (régime libre, sourcé,
+ * `hipaa`/`lgpd`/`appi`) ⇒ le régime peut alimenter `profile.regulations` ; sinon `null` (régime libre, sourcé,
  * affiché mais sans effet sur le chiffrage déterministe — DÉFCON 1).
  */
 export type RegimeSuggestion = {
@@ -86,13 +87,13 @@ const SEED: Record<string, RegimeSuggestion[]> = {
     r("afrique-sud", null, "POPIA", "data-protection", "Information Regulator South Africa", "https://inforegulator.org.za/"),
   ],
   bresil: [
-    r("bresil", null, "LGPD (Lei 13.709/2018)", "data-protection", "ANPD Brésil", "https://www.gov.br/anpd/pt-br"),
+    r("bresil", "lgpd", "LGPD (Lei 13.709/2018)", "data-protection", "ANPD Brésil", "https://www.gov.br/anpd/pt-br"),
   ],
   mexique: [
     r("mexique", null, "LFPDPPP", "data-protection", "Cámara de Diputados — LFPDPPP", "https://www.diputados.gob.mx/LeyesBiblio/ref/lfpdppp.htm", "medium"),
   ],
   japon: [
-    r("japon", null, "APPI", "data-protection", "Personal Information Protection Commission (PPC) Japan", "https://www.ppc.go.jp/en/"),
+    r("japon", "appi", "APPI", "data-protection", "Personal Information Protection Commission (PPC) Japan", "https://www.ppc.go.jp/en/"),
   ],
   "coree-sud": [
     r("coree-sud", null, "PIPA", "data-protection", "Personal Information Protection Commission (PIPC) Korea", "https://www.pipc.go.kr/eng/"),

@@ -68,6 +68,38 @@ describe("RegimeDetector (S-077)", () => {
     expect(screen.getByText("LGPD")).toBeInTheDocument();
   });
 
+  it("pré-coche les régimes phares hors-UE modélisés (lgpd + appi), S-077 T5", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          source: "mixed",
+          regimes: [
+            { code: "lgpd", name: "LGPD (Lei 13.709/2018)", scope: "data-protection", country: "bresil", confidence: "high", provenance: "seed", source: { label: "ANPD", url: "https://www.gov.br/anpd/pt-br", checkedAt: "2026-06-01" } },
+            { code: "appi", name: "APPI", scope: "data-protection", country: "japon", confidence: "high", provenance: "seed", source: { label: "PPC", url: "https://www.ppc.go.jp/en/", checkedAt: "2026-06-01" } },
+            { code: null, name: "POPIA", scope: "data-protection", country: "afrique-sud", confidence: "low", provenance: "live", source: { label: "Info Regulator", url: "https://inforegulator.org.za/", checkedAt: "2026-06-01" } },
+          ],
+        }),
+      }),
+    );
+    const onDetected = vi.fn();
+    render(
+      <RegimeDetector
+        targetCountry="bresil"
+        targetCountryLabel="Brésil"
+        clientResidence={["japon", "afrique-sud"]}
+        residenceOptions={RESIDENCE}
+        onToggleResidence={() => {}}
+        onDetected={onDetected}
+      />,
+    );
+    fireEvent.click(screen.getByText(/Détecter pour Brésil/));
+    // Seuls les régimes mappables (lgpd, appi) sont pré-cochés ; POPIA (libre) reste affichage-seul.
+    await waitFor(() => expect(onDetected).toHaveBeenCalledWith(["lgpd", "appi"]));
+    expect(await screen.findByText("POPIA")).toBeInTheDocument();
+  });
+
   it("erreur réseau → message de repli (saisie manuelle), pas de pré-cochage", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("réseau")));
     const onDetected = vi.fn();
