@@ -19,6 +19,7 @@ import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
+import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { SharePanel } from "@/components/results/SharePanel";
 import { VerdictView } from "@/components/results/VerdictView";
 import { NumberStepper } from "@/components/wizard/NumberStepper";
@@ -465,6 +466,9 @@ export function ResultsView(): ReactElement {
 
       {/* Redondance multi-continent (S-073) : découverte de fournisseurs par pays cible + topologie. */}
       <RedundancyPanel profile={activeProfile} />
+
+      {/* Monitoring (F12, S-081) : Infra Health Score + guide de déviation MEL (santé dérivée de la reco). */}
+      <MonitoringPanel result={activeResult} profile={activeProfile} />
 
       {/* Prix d'infra extraits en direct + garde-fou vs baseline (S-025) */}
       <LivePriceStatus />

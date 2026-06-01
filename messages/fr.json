@@ -1,4 +1,13 @@
 {
+  "Monitoring": {
+    "title": "Santé de l’infra",
+    "subtitle": "Estimée depuis la recommandation. Les signaux d’exploitation réels (disponibilité, coût réel mesuré) se branchent au déploiement.",
+    "coverage": "{measured}/{total} dimensions mesurées",
+    "notMeasured": "Non mesuré",
+    "melTitle": "Conduite à tenir (mode dégradé)",
+    "correctiveLabel": "Correctif :",
+    "allClear": "Aucune conduite dégradée — état {status}."
+  },
   "Engine": {
     "scores": {
       "conf": {
@@ -281,7 +290,7 @@
         "alert": "{status, select, critical {🔴 Critique} warn {🟠 À surveiller} other {⚠️ À vérifier}} : {dimension, select, availability {Disponibilité} resilience {Résilience} compliance {Conformité} budget {Budget} freshness {Fraîcheur des sources} drift {Dérive de configuration} other {Dimension}}"
       },
       "mel": {
-        "dispatch": "{dispatch, select, no-go {⛔ Mode protégé (no-go)} go-if {⚠️ Exploitation sous condition (go-if)} other {?}}",
+        "dispatch": "{dispatch, select, noGo {⛔ Mode protégé (no-go)} goIf {⚠️ Exploitation sous condition (go-if)} other {?}}",
         "guidance": {
           "availability": "Basculer en lecture seule depuis la dernière sauvegarde valide ; suspendre les nouvelles écritures jusqu’au rétablissement.",
           "resilience": "Geler les écritures critiques tant qu’aucune sauvegarde valide et testée n’est confirmée.",

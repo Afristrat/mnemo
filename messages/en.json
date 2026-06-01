@@ -1,4 +1,13 @@
 {
+  "Monitoring": {
+    "title": "Infrastructure health",
+    "subtitle": "Estimated from the recommendation. Real operational signals (availability, measured real cost) connect at deployment.",
+    "coverage": "{measured}/{total} dimensions measured",
+    "notMeasured": "Not measured",
+    "melTitle": "What to do (degraded mode)",
+    "correctiveLabel": "Fix:",
+    "allClear": "No degraded action — status {status}."
+  },
   "Engine": {
     "scores": {
       "conf": {
@@ -281,7 +290,7 @@
         "alert": "{status, select, critical {🔴 Critical} warn {🟠 Watch} other {⚠️ Check}}: {dimension, select, availability {Availability} resilience {Resilience} compliance {Compliance} budget {Budget} freshness {Source freshness} drift {Configuration drift} other {Dimension}}"
       },
       "mel": {
-        "dispatch": "{dispatch, select, no-go {⛔ Protected mode (no-go)} go-if {⚠️ Conditional operation (go-if)} other {?}}",
+        "dispatch": "{dispatch, select, noGo {⛔ Protected mode (no-go)} goIf {⚠️ Conditional operation (go-if)} other {?}}",
         "guidance": {
           "availability": "Switch to read-only from the last valid backup; suspend new writes until service is restored.",
           "resilience": "Freeze critical writes until a valid, tested backup is confirmed.",

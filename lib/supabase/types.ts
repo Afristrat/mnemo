@@ -201,6 +201,19 @@ export type RegimeObservationInsert = {
   note: string | null;
 };
 
+// Snapshots d'Infra Health Score (S-081, F12). `subscores` = JSON [{dimension, score, status}].
+export type HealthMetricInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  score: number | null;
+  status: string;
+  measured: number;
+  total: number;
+  subscores: { dimension: string; score: number | null; status: string }[];
+  checked_at: string;
+};
+export type HealthMetricRow = HealthMetricInsert & { id: string; created_at: string };
+
 // Partage de la recommandation par lien court (S-067) : profil encodé derrière un id imprévisible.
 export type SharedRecoRow = {
   id: string;
@@ -343,6 +356,7 @@ export type Database = {
       catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
       transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
       regime_observations: TableShape<RegimeObservationRow, RegimeObservationInsert>;
+      health_metrics: TableShape<HealthMetricRow, HealthMetricInsert>;
       super_admins: TableShape<SuperAdminRow, SuperAdminRow>;
       prompts: TableShape<PromptRow, PromptInsert>;
       shared_reco: TableShape<SharedRecoRow, SharedRecoInsert>;
