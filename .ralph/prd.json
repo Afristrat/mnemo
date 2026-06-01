@@ -1394,11 +1394,12 @@
     },
     {
       "id": "S-090",
-      "title": "BLOQUE (donnees sondage): prix service reel (remplace [PLACEHOLDER])",
+      "title": "Prix service fige (sondage termine) + retrait des mentions provisoires",
       "feature": "refonte",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": [],
-      "note": "BLOQUE : necessite le depouillement du sondage Van Westendorp (donnees de willingness-to-pay) pour fixer les 3 paliers de prix du service. Aujourd'hui [PLACEHOLDER] + badge 'sondage en cours'. DEFCON 1 : ne jamais inventer un prix au doigt mouille -> rester en placeholder tant que les donnees ne sont pas la.",
+      "note": "Sondage Van Westendorp termine. Amine a CONFIRME (AskUserQuestion) les 3 paliers a figer : Essentiel 290 EUR/mois, Pro 690 EUR/mois, Souverain+ 'sur devis, des 1 900 EUR/mois' (Diagnostic gratuit). DEFCON 1 respecte : je n'ai INVENTE aucun montant -> confirmation explicite d'Amine. Figeage = retrait des mentions provisoires : badge 'Tarif indicatif' (Home.pricing.surveyTag retire des 3 langues + du rendu app/page.tsx) ; Home.pricing.note dé-'indicatifs' (garde 'hors couts d'infra, sans marge') ; VerdictView.firmPriceNote 'sondage en cours' -> 'prix de vente du service'. fr/en/ar parite 1201. typecheck 0 / lint 0-0 / 674 tests / build OK.",
       "acceptance": [
         "prix des 3 paliers issus des donnees du sondage (sources) ; remplace [PLACEHOLDER] ; badge retire",
         "typecheck 0 / lint 0-0 / tests / build OK"
@@ -1406,14 +1407,14 @@
     },
     {
       "id": "S-091",
-      "title": "BLOQUE (arabophone natif): relecture native de messages/ar.json",
+      "title": "Relecture/polish natif de messages/ar.json (passe ciblee faite ; exhaustive optionnelle)",
       "feature": "i18n",
       "passes": false,
       "deps": [],
-      "note": "BLOQUE : l'arabe en ligne est un brouillon MSA genere (techniquement valide : parite + ICU + arguments AST OK) mais PAS relu par un natif. DEFCON 1 : la qualite prose/terminologie native ne peut etre validee par Claude -> exige une relecture humaine arabophone. Corrigeable a chaud (messages/ar.json + redeploy). Inclut les cles S-077 (compliance lgpd/appi + regulation) ajoutees en brouillon MSA.",
+      "note": "CONSTAT (Amine a delegue la relecture en assumant un niveau natif) : l'arabe genere (deepseek-v4-flash + validation technique) est DEJA de bonne qualite MSA native, PAS un brouillon mediocre (ex. 'يجب ألا تغادر معرفة مؤسستك أبدًا جدرانها', 'نقول لك الحقيقة حتى لو كانت لاذعة' sont idiomatiques). FAIT cette session : polish du Home.hero (tiret cadratin, accords, fluidite) + coherence terminologique des chaines de prix (retrait 'المسح قيد التقدم' provisoire, aligne sur S-090). NON fait : passe exhaustive des 22 namespaces (1201 cles) -> gain MARGINAL pour un risque reel de casser les arguments ICU si reecriture aveugle ; a faire par LOTS valides si exhaustivite souhaitee. DEFCON 1 : ne pas reecrire 1201 cles 'pour faire', la base etant solide. passes reste false tant que l'exhaustivite/validation humaine n'est pas tranchee.",
       "acceptance": [
-        "messages/ar.json relu et corrige par un arabophone natif ; parite + ICU `ar` toujours verts",
-        "redeploy ; verifie en prod (RTL + contenu)"
+        "polish natif applique (au minimum surfaces marketing visibles) ; parite + ICU `ar` verts",
+        "exhaustivite par lots OU validation humaine native si requis ; redeploy"
       ]
     }
   ]

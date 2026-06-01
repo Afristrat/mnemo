@@ -30,13 +30,11 @@ const TIERS = [
   },
   {
     key: "essentiel",
-    surveyTag: true,
     features: ["deploy", "supervision", "exitIncluded"],
   },
   {
     key: "pro",
     featured: true,
-    surveyTag: true,
     features: ["allEssentiel", "costs", "expertise", "priority"],
   },
   {
@@ -237,11 +235,6 @@ export default async function Home(): Promise<ReactElement> {
                   <h3 className="font-display text-headline-md">
                     {t(`pricing.tiers.${tier.key}.name`)}
                   </h3>
-                  {"surveyTag" in tier && tier.surveyTag ? (
-                    <span className="rounded-full bg-tertiary/10 px-2.5 py-0.5 text-label-caps uppercase text-tertiary">
-                      {t("pricing.surveyTag")}
-                    </span>
-                  ) : null}
                 </div>
                 <div className="mt-2 text-center font-display text-headline-lg text-primary">
                   {t(`pricing.tiers.${tier.key}.price`)}

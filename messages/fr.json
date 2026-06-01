@@ -992,7 +992,7 @@
     "risk": "Le risque sans rien faire",
     "gain": "Le gain",
     "firmPrice": "Service Strate (prix ferme)",
-    "firmPriceNote": "prix de vente, sondage en cours",
+    "firmPriceNote": "prix de vente du service",
     "infraCost": "Coût d'infrastructure (payé aux fournisseurs)",
     "infraCostNote": "±30 %, transparent, sourcé",
     "setup": "Mise en route (une fois)",
@@ -1589,8 +1589,7 @@
       "eyebrow": "Tarifs",
       "title": "Le diagnostic est gratuit. Vous ne payez que la cuisine.",
       "subtitle": "Le coût de l'infra reste transparent, payé à vos fournisseurs, on ne marge pas dessus.",
-      "surveyTag": "Tarif indicatif",
-      "note": "Prix indicatifs, hors coûts d’infrastructure — ceux-ci sont réglés directement à vos fournisseurs, sans marge de notre part.",
+      "note": "Hors coûts d’infrastructure — ceux-ci sont réglés directement à vos fournisseurs, sans marge de notre part.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
