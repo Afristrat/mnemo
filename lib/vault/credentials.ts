@@ -1,7 +1,8 @@
 // lib/vault/credentials.ts
 // Helpers CÔTÉ SERVEUR du coffre : chiffrent via la KEK env et écrivent l'audit. Le client passé est
 // un client admin (service_role) OU un faux client de test exposant `.from(table).insert(row)`.
-// (server-only assuré par l'usage exclusif depuis les server actions ; cf. note de Task 2.)
+// (server-only durci en S-078 : import ci-dessous → échec build si un Client Component l'importe.)
+import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { encryptWithEnvKek, currentKeyVersion } from "./server";
 import type {

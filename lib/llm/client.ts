@@ -3,7 +3,10 @@
 // Sécurité : `LITELLM_API_KEY` / `LITELLM_BASE_URL` lus côté serveur uniquement (jamais NEXT_PUBLIC,
 // jamais dans le bundle client) ; la clé n'est jamais retournée ni journalisée. Le proxy est
 // OpenAI-compatible (`POST /v1/chat/completions` → `choices[0].message.content`).
+// Garde-fou `server-only` (S-078) : échec build si un Client Component l'importe en valeur ; en
+// test Node, aliasé vers un stub vide (vitest.config.ts).
 
+import "server-only";
 import type { LlmCallOptions, LlmMessage, LlmResult } from "./types";
 
 const DEFAULT_MODEL = "deepseek-v4-flash"; // alias exposé par proxy.ai-mpower.com (override : LITELLM_MODEL)
