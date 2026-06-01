@@ -1199,6 +1199,11 @@
         }
       }
     },
+    "network": {
+      "alert": {
+        "summary": "{direction, select, increase {↑ ارتفاع} decrease {↓ انخفاض} other {تغيّر}} — {vendor} {item}: {oldPrice} → {newPrice} {currency} ({deltaPct}٪)"
+      }
+    },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {نسخ صوتي} audio_generate {توليف كلامي} video_ingest {تحليل فيديو} video_generate {توليد فيديو} images_ingest {OCR/رؤية الصور} images_generate {توليد صور} other {حمل عمل}} ≈ {qty} {modality, select, audio {دقيقة/شهر} video {دقيقة/شهر} images {صورة/شهر} other {/شهر}} ({mode, select, sovereign {سيادي} api {API} other {}})"
     },

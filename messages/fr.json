@@ -325,6 +325,11 @@
         }
       }
     },
+    "network": {
+      "alert": {
+        "summary": "{direction, select, increase {↑ Hausse} decrease {↓ Baisse} other {Variation}} — {vendor} {item} : {oldPrice} → {newPrice} {currency} ({deltaPct} %)"
+      }
+    },
     "sizing": {
       "estimate": "{vkey, select, audio_ingest {transcription audio} audio_generate {synthèse vocale} video_ingest {analyse vidéo} video_generate {génération vidéo} images_ingest {OCR/vision images} images_generate {génération d’images} other {charge}} ≈ {qty} {modality, select, audio {min/mois} video {min/mois} images {images/mois} other {/mois}} ({mode, select, sovereign {souverain} api {API} other {}})"
     },
