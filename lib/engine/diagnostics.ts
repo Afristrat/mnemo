@@ -37,6 +37,28 @@ export function computeCompliance(p: Profile): Message[] {
     add("secretProAuditTrail");
     add("secretProAnonymization");
   }
+  // LGPD (Brésil, Lei 13.709/2018) — régime phare hors-UE modélisé (S-077, T5). Actions sourcées sur
+  // les articles du texte (ANPD/Planalto) : Art. 41 (encarregado), 18 (droits), 37 (registre), 38
+  // (RIPD), 33 (transferts internationaux), 48 (communication d'incident).
+  if (p.regulations.includes("lgpd")) {
+    add("lgpdDpo");
+    add("lgpdRights");
+    add("lgpdRecords");
+    add("lgpdRipd");
+    add("lgpdTransfer");
+    add("lgpdIncident");
+  }
+  // APPI (Japon) — régime phare hors-UE modélisé (S-077, T5). Obligations sourcées sur la Personal
+  // Information Protection Commission (PPC) : finalité d'utilisation, mesures de sécurité, fourniture à
+  // des tiers, droits des personnes, notification de fuite (oblig. depuis l'amendement 2022), transferts.
+  if (p.regulations.includes("appi")) {
+    add("appiPurpose");
+    add("appiSecurity");
+    add("appiThirdParty");
+    add("appiRights");
+    add("appiIncident");
+    add("appiCrossBorder");
+  }
   if (p.sensitivity === "secret" || p.regulations.includes("secret-pro")) {
     add("banProprietaryMemory");
   }

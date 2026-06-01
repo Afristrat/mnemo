@@ -97,6 +97,8 @@ export const REGULATION_OPTIONS: OptionDef<Regulation>[] = [
   { value: "aiact", labelKey: "regulation.aiact", hintKey: "regulation.aiactHint" },
   { value: "hipaa", labelKey: "regulation.hipaa", hintKey: "regulation.hipaaHint" },
   { value: "secret-pro", labelKey: "regulation.secret-pro" },
+  { value: "lgpd", labelKey: "regulation.lgpd", hintKey: "regulation.lgpdHint" },
+  { value: "appi", labelKey: "regulation.appi", hintKey: "regulation.appiHint" },
   { value: "none", labelKey: "regulation.none" },
 ];
 

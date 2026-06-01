@@ -32,8 +32,9 @@ describe("mapRegimeCode", () => {
     expect(mapRegimeCode("EU AI Act")).toBe("aiact");
     expect(mapRegimeCode("HIPAA (health)")).toBe("hipaa");
     expect(mapRegimeCode("Loi 09-08 (CNDP)")).toBe("cndp");
-    expect(mapRegimeCode("LGPD")).toBeNull();
-    expect(mapRegimeCode("APPI")).toBeNull();
+    expect(mapRegimeCode("LGPD (Lei 13.709/2018)")).toBe("lgpd"); // Brésil modélisé (S-077, T5)
+    expect(mapRegimeCode("APPI")).toBe("appi"); // Japon modélisé (S-077, T5)
+    expect(mapRegimeCode("POPIA")).toBeNull(); // régime non modélisé → reste libre (affichage-seul)
   });
 });
 
@@ -47,7 +48,7 @@ describe("parseDiscoveredRegimes (anti-hallucination + mapping)", () => {
     });
     const out = parseDiscoveredRegimes(content, RESULTS, "bresil", "2026-06-01");
     expect(out).toHaveLength(2);
-    expect(out[0]).toMatchObject({ name: "LGPD", code: null, provenance: "live", confidence: "low" });
+    expect(out[0]).toMatchObject({ name: "LGPD", code: "lgpd", provenance: "live", confidence: "low" });
     expect(out[1].code).toBe("rgpd");
     expect(out.every((x) => x.source.checkedAt === "2026-06-01")).toBe(true);
   });

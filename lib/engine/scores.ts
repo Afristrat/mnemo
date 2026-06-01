@@ -74,6 +74,8 @@ export function computeScores(
   // 1. Conformité
   let conf = 6;
   if (p.regulations.includes("rgpd")) conf += 1;
+  if (p.regulations.includes("lgpd")) conf += 1; // régime data-protection structurant (S-077, T5)
+  if (p.regulations.includes("appi")) conf += 1; // régime data-protection structurant (S-077, T5)
   if (p.regulations.includes("aiact")) conf += 1;
   if (preset === "HARD") conf = 10;
   else if (preset === "MEDIUM") conf = Math.min(9, conf + 1);

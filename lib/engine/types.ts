@@ -12,7 +12,9 @@ export type Preset = (typeof PRESETS)[number];
 export const CONTENT_TYPES = ["text", "audio", "video", "images", "code", "structured"] as const;
 export type ContentType = (typeof CONTENT_TYPES)[number];
 
-export const REGULATIONS = ["rgpd", "cndp", "aiact", "hipaa", "secret-pro", "none"] as const;
+// `lgpd` (Brésil, Lei 13.709/2018) et `appi` (Japon) = régimes phares hors-UE MODÉLISÉS (S-077, T5) :
+// actions de conformité sourcées dans `computeCompliance`. Tout autre régime découvert reste affiché-seul.
+export const REGULATIONS = ["rgpd", "cndp", "aiact", "hipaa", "secret-pro", "lgpd", "appi", "none"] as const;
 export type Regulation = (typeof REGULATIONS)[number];
 
 /** Bucket juridique (analyse des transferts, lib/legal). DÉRIVÉ du pays choisi (S-076). */
