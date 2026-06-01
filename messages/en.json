@@ -386,7 +386,7 @@
         "lever3": "Active-passive within the region at a second sovereign provider."
       },
       "interSite": {
-        "selfHostedNote": "{securedSites} linked sites: encrypted gateway per site (WireGuard/IPsec + mTLS, open-source, €0 license). Supervision + initial hardening = OPEX / in-house labor to quote (not a vendor price).",
+        "selfHostedNote": "{securedSites} linked sites: encrypted gateway per site (WireGuard/IPsec + mTLS, open-source, €0 licence). Supervision + initial hardening = OPEX / in-house labour to quote (not a vendor price).",
         "managedNote": "Managed alternative (mesh/SASE) for {billableUsers} user(s): operation included, no gateway VM or in-house hardening to run."
       }
     },
@@ -470,7 +470,7 @@
         "voices": "multi-voice (+{points})",
         "growth": "high growth (+{points})",
         "budget": "substantial budget (+{points})",
-        "activity": "organizational use (+{points})",
+        "activity": "organisational use (+{points})",
         "lightDefault": "low volume, personal use, few constraints",
         "sovereign": "sovereignty/open-source preference (+1 level)"
       }
@@ -975,8 +975,8 @@
   "Intake": {
     "label": "Or describe your need in one sentence",
     "placeholder": "E.g.: law firm, 10 people, confidential client files, hosted in France, budget ≈ €300/month…",
-    "analyze": "Analyze and pre-fill",
-    "analyzing": "Analyzing…",
+    "analyze": "Analyse and pre-fill",
+    "analyzing": "Analysing…",
     "dictate": "Dictate by voice",
     "listening": "● Listening… (stop)",
     "error": "Analysis unavailable right now. You can fill in the configurator manually — that's always possible.",
@@ -1020,7 +1020,7 @@
       "activityPlaceholder": "E.g. agricultural cooperative, local authority, NGO…",
       "zoneLabel": "Specify the hosting zone",
       "zonePlaceholder": "E.g. Switzerland, Canada, United Kingdom…",
-      "regionLabel": "Specify the «Other» region(s)",
+      "regionLabel": "Specify the “Other” region(s)",
       "regionPlaceholder": "E.g. Switzerland, UAE, Singapore…",
       "help": "This detail is carried into the recap and the explanation of your recommendation. It does not change any cost directly (the pricing stays conservative by default)."
     },
@@ -1043,11 +1043,11 @@
       },
       "memoire": {
         "title": "Memory usage",
-        "description": "Who this memory serves, what to memorize, and advanced uses."
+        "description": "Who this memory serves, what to memorise, and advanced uses."
       },
       "medias": {
         "title": "Media",
-        "description": "Audio / video / image needs, to memorize and/or to create."
+        "description": "Audio / video / image needs, to memorise and/or to create."
       }
     },
     "fields": {
@@ -1064,7 +1064,7 @@
       "latency": "Tolerated latency",
       "growth": "Expected growth",
       "voices": "Who does this memory serve?",
-      "contentTypes": "What to memorize? (at least one)",
+      "contentTypes": "What to memorise? (at least one)",
       "audit": "Audit (signed traceability)",
       "bitemporal": "Bitemporality (who knew what, when)",
       "advancedUses": "Advanced uses (optional)",
@@ -1138,7 +1138,7 @@
       "activity": "activity",
       "zone": "zone",
       "users": "users",
-      "contentTypes": "content to memorize",
+      "contentTypes": "content to memorise",
       "volume": "volume",
       "growth": "growth",
       "regulations": "regimes",
@@ -1278,7 +1278,7 @@
       "previewDisclaimer": "Variable costs ±30%, dated sources on the results page. Engineering guidance, not legal advice."
     },
     "media": {
-      "intro": "Per modality: what you need to <strong>memorize</strong> (process the existing) and what your infrastructure must <strong>create</strong>, sovereign 🟢 or via API 💳. Without audio/video/image needs, leave everything on “None”.",
+      "intro": "Per modality: what you need to <strong>memorise</strong> (process the existing) and what your infrastructure must <strong>create</strong>, sovereign 🟢 or via API 💳. Without audio/video/image needs, leave everything on “None”.",
       "modeAria": "Execution mode",
       "modeSovereign": "🟢 Sovereign",
       "modeApi": "💳 API",
@@ -1293,7 +1293,7 @@
       "modalityImages": "Images",
       "unitMin": "min",
       "unitImages": "images",
-      "ingest": "To memorize",
+      "ingest": "To memorise",
       "generate": "To create / generate",
       "backlog": "Existing backlog to ingest once ({unit})",
       "previewAdds": "These needs add ≈ ",
@@ -1522,7 +1522,7 @@
   "Home": {
     "hero": {
       "eyebrow": "Sovereign AI memory infrastructure",
-      "title": "Your organization's knowledge should <mark>never</mark> leave your walls.",
+      "title": "Your organisation's knowledge should <mark>never</mark> leave your walls.",
       "subtitle": "Strate turns your documents, decisions and conversations into a queryable memory, hosted on your premises or in the EU — never with foreign giants. You keep everything. You depend on no one.",
       "ctaPrimary": "Run my diagnostic — 90 s, free",
       "ctaSecondary": "See how it works",
@@ -1540,7 +1540,7 @@
         },
         "efficient": {
           "title": "↑ More efficient",
-          "body": "No more hours lost hunting for «where is that document, who decided what». We give that time back to you.",
+          "body": "No more hours lost hunting for “where is that document, who decided what”. We give that time back to you.",
           "proof": "To be measured at your site (search time)"
         },
         "costs": {
@@ -1616,7 +1616,7 @@
           "cta": "Start the diagnostic",
           "features": {
             "allEssentiel": "Everything in Essential, plus:",
-            "costs": "Continuous cost optimization",
+            "costs": "Continuous cost optimisation",
             "expertise": "Expertise & mistake avoidance",
             "priority": "Component/price monitoring & priority support"
           }
