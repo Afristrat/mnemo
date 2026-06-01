@@ -1332,7 +1332,8 @@
       "id": "S-085",
       "title": "Lot 3 F14: Guaranteed Migration / In-Switch (double-run + rollback)",
       "feature": "lot3",
-      "passes": false,
+      "passes": true,
+      "completedAt": "2026-06-01",
       "deps": ["S-010"],
       "note": "Lot 3. Jumeau de l'Exit Escrow (S-010) : genere un bundle de MIGRATION/IN-SWITCH = plan double-run (ancienne + nouvelle stack en parallele), criteres de bascule, et garantie de ROLLBACK (runbook + scripts). lib/migration/ (pur) + zip fflate. DEFCON 1 : artefacts reproductibles coherents avec la reco, jamais d'execution reelle (l'utilisateur execute).",
       "acceptance": [

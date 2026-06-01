@@ -11,6 +11,7 @@ import { CatalogProvenance } from "@/components/results/CatalogProvenance";
 import { CostMap, type MediaBreakdown } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
+import { MigrationBundle } from "@/components/results/MigrationBundle";
 import { ExportButtons } from "@/components/results/ExportButtons";
 import { LayerStack } from "@/components/results/LayerStack";
 import { LeadGate } from "@/components/results/LeadGate";
@@ -526,6 +527,9 @@ export function ResultsView(): ReactElement {
 
       {/* Exit Escrow, bundle reproductible (F7, moat ①) */}
       <ExitEscrow profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
+
+      {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
+      <MigrationBundle profile={activeProfile} recommendation={activeResult} />
 
       {/* Assistant Q&A contextuel (S-040) : ne cite que les faits de la reco affichée + web sourcé.
           Les précisions « Autre » (S-064) sont greffées aux FAITS comme CONTEXTE qualitatif seulement. */}

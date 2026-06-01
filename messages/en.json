@@ -736,6 +736,12 @@
       "download": "Download the bundle (.zip)",
       "generating": "Generating the bundle…",
       "charter": "Fiduciary charter, zero hidden commission"
+    },
+    "migrationBundle": {
+      "title": "Guaranteed migration (In-Switch)",
+      "desc": "Download a migration plan to this stack: double-run (old ∥ new), objective cutover criteria and guaranteed rollback (runbook + scripts). You switch only when everything is green, and you can always roll back.",
+      "download": "Download the migration plan (.zip)",
+      "generating": "Generating the plan…"
     }
   },
   "Assistant": {
