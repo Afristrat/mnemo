@@ -1416,6 +1416,19 @@
         "polish natif applique (au minimum surfaces marketing visibles) ; parite + ICU `ar` verts",
         "exhaustivite par lots OU validation humaine native si requis ; redeploy"
       ]
+    },
+    {
+      "id": "S-092",
+      "title": "Decision Record opposable (moat chaine de preuve, vague 2 #1)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-04",
+      "deps": [],
+      "note": "Direction 'A' choisie par Amine (apres moat-hunt vague 2). Fige a chaque reco un dossier OPPOSABLE : decision retenue (preset+raison+cout+scores) + ALTERNATIVES ECARTEES (membres de l'ensemble que le moteur calculait deja mais jetait) + TENSIONS (accord ensemble, risques, conflit residence) + SOURCES datees. Horodate, hache SHA-256 (integrite auto-verifiable, lib/decision/integrity Web Crypto isomorphe), rejouable (profil encode via encodeProfileToParam). DEFCON 1 : pure agregation, zero donnee fabriquee. lib/decision/{record(PUR),integrity,render(PUR)} + components/results/DecisionRecordPanel (apercu + telechargement MD fige au clic) monte dans ResultsView apres EnsembleView. i18n Results.decisionRecord fr/en/ar (parite 1244x3). Tests +8. typecheck 0 / lint 0-0 / 702 tests / build OK ; deploye (health 200). RESTE optionnel (T2) : signature authentifiee (HMAC/Ed25519 serveur) + persistance serveur (archive de reference). Suite vague 2 : Restore Drill certifie (#2), Preuve de residence continue (#3).",
+      "acceptance": [
+        "dossier fige (decision + alternatives ecartees + tensions + sources) horodate + hache SHA-256 + rejouable",
+        "i18n x3 ; tests ; typecheck 0 / lint 0-0 / build OK ; deploye"
+      ]
     }
   ]
 }

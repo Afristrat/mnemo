@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { CONTINENTS, type Continent, type Profile } from "@/lib/engine";
+import { CONTINENTS, type Continent } from "@/lib/engine";
 import { getProvidersForCountryCached } from "@/lib/residency/discovery-cache";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
+import { profileFromUnknown } from "@/lib/share";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Découverte de fournisseurs par PAYS CIBLE (S-073, T3) : POST { profile, country, continent } →
 // liste de fournisseurs sourcés, conformes aux contraintes utilisateur (S-072, ABSOLUES), repli annuaire
@@ -18,6 +20,8 @@ function asContinent(value: unknown): Continent | null {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "providers", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();
@@ -36,8 +40,9 @@ export async function POST(req: Request): Promise<Response> {
   if (country === null) {
     return NextResponse.json({ error: "country requis (pays cible)" }, { status: 400 });
   }
-  const profileRaw = typeof body.profile === "object" && body.profile !== null && !Array.isArray(body.profile) ? body.profile : {};
-  const profile: Profile = { ...DEFAULT_PROFILE, ...profileRaw };
+  // Validation stricte (unions bornées) : un profil malformé/hostile ne se propage pas dans la veille
+  // (anti-injection) — repli prudent sur le profil par défaut.
+  const profile = profileFromUnknown(body.profile) ?? DEFAULT_PROFILE;
 
   const result = await getProvidersForCountryCached(country, continent, profile, {
     apiKey: process.env.CRAWL4AI_API_TOKEN,

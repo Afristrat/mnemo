@@ -3,7 +3,8 @@ import { getLiveCatalogCached } from "@/lib/catalog/cache";
 import { persistCatalogObservations } from "@/lib/catalog/persist";
 import { loadActivePrompt } from "@/lib/prompts/store";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
-import type { Profile } from "@/lib/engine";
+import { profileFromUnknown } from "@/lib/share";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Veille temps réel du catalogue (S-036) : POST profil → Catalog (un candidat sourcé par couche,
 // repli seed garanti). Recherche web Firecrawl + synthèse LiteLLM côté SERVEUR : ni la clé Firecrawl
@@ -12,6 +13,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "catalog", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();
@@ -21,8 +24,9 @@ export async function POST(req: Request): Promise<Response> {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     return NextResponse.json({ error: "Profil requis (objet)" }, { status: 400 });
   }
-  // Profil reconstruit sur les défauts (champs manquants comblés), comme la reprise localStorage.
-  const profile: Profile = { ...DEFAULT_PROFILE, ...raw };
+  // Validation stricte (unions bornées) : un profil malformé/hostile ne se propage JAMAIS dans les
+  // requêtes web/LLM de la veille (anti-injection) — repli prudent sur le profil par défaut.
+  const profile = profileFromUnknown(raw) ?? DEFAULT_PROFILE;
   // Prompt de veille éditable par le super-admin (S-053) ; repli sur le gabarit par défaut si store vide.
   const systemPrompt = (await loadActivePrompt("catalog-veille")) ?? undefined;
   const catalog = await getLiveCatalogCached(profile, { apiKey: process.env.FIRECRAWL_API_KEY, systemPrompt });

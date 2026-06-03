@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getRegimesForCountriesCached } from "@/lib/legal/regime-feed";
 import { persistRegimeObservations } from "@/lib/legal/regime-persist";
 import { loadActivePrompt } from "@/lib/prompts/store";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Veille des régimes réglementaires par pays (S-077) : POST { country, residences[] } → régimes
 // applicables sourcés (seed∪live, repli seed garanti). Un régime suit souvent la résidence des personnes,
@@ -17,6 +18,8 @@ function stringList(value: unknown): string[] {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "regimes", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();

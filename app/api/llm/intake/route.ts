@@ -3,6 +3,7 @@ import { callLLM } from "@/lib/llm/client";
 import { buildIntakeMessages, coerceProfile, parseIntakeProfile } from "@/lib/llm/intake";
 import { loadActivePrompt } from "@/lib/prompts/store";
 import { DEFAULT_PROFILE } from "@/lib/wizard/defaultProfile";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Intake libre → Profile (S-038/S-052). POST { text, base? } → le LLM EXTRAIT des paramètres (côté
 // serveur, clé LITELLM jamais exposée) → `parseIntakeProfile` les VALIDE/BORNE contre les unions du
@@ -19,6 +20,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "intake", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();
