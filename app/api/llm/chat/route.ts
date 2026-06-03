@@ -4,6 +4,7 @@ import { buildChatMessages, type ChatTurn } from "@/lib/llm/assistant";
 import { callLLM } from "@/lib/llm/client";
 import { searchWeb, type WebSearchResult } from "@/lib/pricing/scraper";
 import { loadActivePrompt } from "@/lib/prompts/store";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Assistant Q&A contextuel (S-040). POST { question, history?, recoFacts? } → recherche web Firecrawl
 // (sourcée) + appel LLM (clés SERVEUR uniquement) → { ok, answer, sources }. DÉFCON 1 : seuls les FAITS
@@ -36,6 +37,8 @@ function parseHistory(value: unknown): ChatTurn[] {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "chat", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();

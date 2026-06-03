@@ -3,6 +3,7 @@ import { defaultLocale, isLocale, promptLanguageNames } from "@/i18n/config";
 import { callLLM } from "@/lib/llm/client";
 import { buildNarrateMessages, parseNarration, type NarrationContext, type NarrationTexts } from "@/lib/llm/narrate";
 import { loadActivePrompt } from "@/lib/prompts/store";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Narration LLM (S-039). POST { contexte profil + textes de base } → le LLM réécrit les textes
 // narratifs (côté serveur, clé jamais exposée) → `parseNarration` valide (rejette toute réintroduction
@@ -39,6 +40,8 @@ function parseStringArray(value: unknown): string[] | undefined {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "narrate", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();
