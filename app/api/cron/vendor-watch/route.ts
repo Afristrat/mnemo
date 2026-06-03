@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { getLivePricesCached } from "@/lib/pricing/live-feed";
-import { priceChangesFromLiveItems } from "@/lib/pricing/price-watch";
-import { buildVendorAlerts } from "@/lib/network/alerts";
-import { persistVendorAlerts } from "@/lib/network/vendor-alerts-persist";
+import { runVendorWatch } from "@/lib/network/vendor-watch";
 import { checkCronAuth } from "@/lib/utils/cron-auth";
 
-// Veille vendor PLANIFIÉE (F13, S-084) : déclencheur cron (scheduled task Coolify, toutes les ~6 h
-// alignées sur le TTL du feed) qui rafraîchit la veille prix, détecte les variations vs baseline datée
-// et PERSISTE le broadcast d'alertes (audit, dédup par cercle/vendor/poste/date). Rend le « réseau actif »
-// réellement actif, sans visite. Protégé par CRON_SECRET (header Authorization: Bearer …) : secret non
-// configuré → 503 (désactivé), header absent/incorrect → 401. DÉFCON 1 : alerte = fait chiffré et sourcé.
+// Veille vendor PLANIFIÉE (F13, S-084) — déclenchement MANUEL/EXTERNE (le cycle automatique est armé par
+// le scheduler intégré, cf. instrumentation.ts + lib/network/vendor-watch). Un cycle = veille prix →
+// variations vs baseline datée → alertes sourcées → persistance d'audit (dédup). Protégé par CRON_SECRET
+// (header Authorization: Bearer …) : secret non configuré → 503, header absent/incorrect → 401.
+// DÉFCON 1 : alerte = fait chiffré et sourcé.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -21,13 +18,6 @@ export async function POST(req: Request): Promise<NextResponse> {
   if (verdict === "unauthorized") {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
-  try {
-    const feed = await getLivePricesCached({ apiKey: process.env.FIRECRAWL_API_KEY });
-    const changes = priceChangesFromLiveItems(feed.items);
-    const alerts = buildVendorAlerts(changes);
-    const persisted = await persistVendorAlerts(alerts);
-    return NextResponse.json({ detected: alerts.length, persisted, generatedAt: feed.generatedAt });
-  } catch {
-    return NextResponse.json({ detected: 0, persisted: 0 });
-  }
+  const result = await runVendorWatch();
+  return NextResponse.json(result);
 }
