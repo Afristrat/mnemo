@@ -1429,6 +1429,19 @@
         "dossier fige (decision + alternatives ecartees + tensions + sources) horodate + hache SHA-256 + rejouable",
         "i18n x3 ; tests ; typecheck 0 / lint 0-0 / build OK ; deploye"
       ]
+    },
+    {
+      "id": "S-093",
+      "title": "Durcissement avant ouverture (suite audit) : validation profil + rate-limiting + e2e gardes",
+      "feature": "infra",
+      "passes": true,
+      "completedAt": "2026-06-04",
+      "deps": [],
+      "note": "Direction 'B' choisie par Amine. Suite de l'audit de durcissement (sous-agent). FAIT : (1) validation stricte du profil dans catalog/live + residency/providers (spread brut '{...DEFAULT_PROFILE,...raw}' caste -> profileFromUnknown(raw) ?? DEFAULT_PROFILE : unions bornees, anti-injection dans les requetes web/LLM de veille). (2) rate-limiting des 6 routes anonymes couteuses (catalog/live, residency/providers, legal/regimes, llm/intake|narrate|chat ; 30 req/min/IP) : lib/utils/rate-limit.ts (PUR, now injecte, fenetre fixe, purge opportuniste) + lib/api/rate-limit-guard.ts (429+Retry-After, IP via x-forwarded-for). (3) e2e/auth-guards.spec.ts (3 tests verts vs prod) : /compte sans session -> 307 /connexion ; /admin -> login only (champ password present, pas de bouton deconnexion) ; POST /api/admin/prompts sans super-admin -> 403. server-only ajoute a 4 modules (catalog/legal/regime-persist, prompts/store) en session precedente. 705 tests, typecheck 0/lint 0-0/build OK, deploye. RESTE (audit, a decider Amine) : parcours AUTHENTIFIES non couverts e2e (coffre credentials, edition admin) = BLOQUES S-089 (auth SMTP+OAuth) ; P2 consentement real_cost vs network_consents ; P3 sondage token en query string (-> header Authorization) + RPC get_simulation_by_token select* (-> projection colonnes).",
+      "acceptance": [
+        "validation profil bornee (anti-injection) ; rate-limit sur routes anonymes couteuses ; e2e gardes d'acces verts",
+        "typecheck 0 / lint 0-0 / tests / build OK ; deploye"
+      ]
     }
   ]
 }
