@@ -47,8 +47,14 @@ let schedulerStarted = false;
 export function startVendorWatchScheduler(): void {
   if (schedulerStarted) return;
   schedulerStarted = true;
+  // Observabilité : un job de fond doit être traçable (logs conteneur) pour être opéré.
+  console.info("[vendor-watch] scheduler armé — 1er cycle dans 60 s, puis toutes les 6 h");
+  const cycle = async (): Promise<void> => {
+    const r = await runVendorWatch();
+    console.info(`[vendor-watch] cycle — détectées=${r.detected}, persistées=${r.persisted}`);
+  };
   setTimeout(() => {
-    void runVendorWatch();
-    setInterval(() => void runVendorWatch(), SIX_HOURS_MS);
+    void cycle();
+    setInterval(() => void cycle(), SIX_HOURS_MS);
   }, INITIAL_DELAY_MS);
 }
