@@ -10,6 +10,7 @@ import { AssistantPanel } from "@/components/assistant/AssistantPanel";
 import { CatalogProvenance } from "@/components/results/CatalogProvenance";
 import { CostMap, type MediaBreakdown } from "@/components/results/CostMap";
 import { EnsembleView } from "@/components/results/EnsembleView";
+import { DecisionRecordPanel } from "@/components/results/DecisionRecordPanel";
 import { ExitEscrow } from "@/components/results/ExitEscrow";
 import { MigrationBundle } from "@/components/results/MigrationBundle";
 import { ProvisioningPanel } from "@/components/provisioning/ProvisioningPanel";
@@ -416,6 +417,9 @@ export function ResultsView(): ReactElement {
 
       {/* Ensemble multi-configuration (incertitude) — bascule la page entière */}
       <EnsembleView ensemble={ensemble} activeId={activeVariant} onSelect={setActiveVariant} />
+
+      {/* Dossier de décision opposable (moat « chaîne de preuve ») — fige décision + alternatives écartées + tensions, horodaté + haché */}
+      {ensemble !== null && projected !== null ? <DecisionRecordPanel profile={projected} ensemble={ensemble} /> : null}
 
       {/* Radar + scores */}
       <div className="grid gap-6 lg:grid-cols-2">
