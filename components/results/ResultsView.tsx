@@ -21,6 +21,7 @@ import { LivePriceStatus } from "@/components/results/LivePriceStatus";
 import { PriceFreshness } from "@/components/results/PriceFreshness";
 import { RadarChart } from "@/components/results/RadarChart";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
+import { ResidencyContinuityPanel } from "@/components/results/ResidencyContinuityPanel";
 import { RestoreDrillPanel } from "@/components/results/RestoreDrillPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
@@ -472,6 +473,9 @@ export function ResultsView(): ReactElement {
 
       {/* Résidence & transferts (S-048) : topologie régions + conformité des flux + RTO + conflit. */}
       <ResidencyPanel plan={activeResult.residency} />
+
+      {/* Preuve de résidence continue (moat « chaîne de preuve », vague 2 #3) : résidence par couche + drapeaux + evidence pack. */}
+      <ResidencyContinuityPanel recommendation={activeResult} />
 
       {/* Redondance multi-continent (S-073) : découverte de fournisseurs par pays cible + topologie. */}
       <RedundancyPanel profile={activeProfile} />

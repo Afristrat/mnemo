@@ -377,6 +377,13 @@
         "autoBackup": "Vector backup is cheaper than re-embedding over the horizon."
       }
     },
+    "residencyContinuity": {
+      "dataPrimary": "Primary data & self-hosted layers",
+      "replica": "Replica / flow to {region}",
+      "backupOffsite": "Off-site backup",
+      "backupLocal": "Backup in primary region",
+      "monitoring": "Supervision / monitoring"
+    },
     "residency": {
       "conflict": {
         "none": "No residency × DR conflict.",
@@ -769,6 +776,18 @@
       "severity_notable": "Notable",
       "severity_major": "Major",
       "source": "Source verified on {date}"
+    },
+    "residencyContinuity": {
+      "title": "Continuous residency proof",
+      "intro": "Does your data stay in the promised zone, across every layer, over time? This report flags each component that may leave it, with a dated legal basis, and seals an opposable proof.",
+      "summary": "{out} component(s) out of zone · {unverified} to confirm.",
+      "flagInZone": "in zone",
+      "flagRestricted": "restricted",
+      "flagOutOfZone": "out of zone",
+      "flagUnverified": "to confirm",
+      "downloadEvidence": "Download the proof (timestamped + hashed)",
+      "generating": "Generating…",
+      "disclaimer": "Engineering guidance, NOT legal advice — to be validated by counsel."
     },
     "restoreDrill": {
       "title": "Restore Drill — the restoration test",
