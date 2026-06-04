@@ -1153,7 +1153,9 @@
       "feature": "llm",
       "passes": true,
       "completedAt": "2026-05-31",
-      "deps": ["S-036"],
+      "deps": [
+        "S-036"
+      ],
       "note": "Directive Amine : la recherche crawl4ai doit OBLIGATOIREMENT respecter les choix utilisateurs. lib/catalog/constraints.ts = source unique (requete + prompt RULES + reconcile) ; preferSovereign (toggle) etait IGNORE -> desormais exige la souverainete (rejet API tierce, repli seed flagged) ; secret/secret-pro/hipaa idem. Non-overreach : RGPD seul + interne n'interdit pas une API tierce (transferts encadres) -> la zone oriente la recherche, pas un rejet dur. +4 tests, 506 total. Prerequis de S-073.",
       "acceptance": [
         "preferSovereign + secret/secret-pro/hipaa => aucune API tierce retenue (requete + prompt + reconcile)",
@@ -1167,7 +1169,10 @@
       "feature": "residency",
       "passes": true,
       "completedAt": "2026-05-31",
-      "deps": ["S-043", "S-072"],
+      "deps": [
+        "S-043",
+        "S-072"
+      ],
       "tranches": "T1 FAITE (2026-05-31) : annuaire fournisseurs souverains PAR CONTINENT sourcé (lib/engine/providers.ts contrat pur Continent/SovereignProvider + lib/pricing/sovereign-providers-seed.ts, 16 fournisseurs, 6 continents couverts) + docs/pricing/sovereign-providers-sources.md + tests providers.test.ts (6). DÉFCON 1 : existence/pays/souveraineté + source datée, AUCUN prix egress fabriqué, statut légal inchangé (conservateur). T2 FAITE (2026-05-31) : EgressVector étendu (continent?/country? additifs) + 7 vecteurs egress sourcés annotés (UE×5, north-america×2) + helper vectorsForContinent + tests residency-continent.test.ts (4) ; comportement coût inchangé (champs optionnels). T3 FAITE (2026-05-31) : veille de DÉCOUVERTE par pays cible (lib/residency/discovery.ts pur + discovery-cache.ts câblage SearXNG/LiteLLM + repli annuaire seed + cache, route POST /api/residency/providers). Contrainte S-072 ABSOLUE : oriente la requête + règle dure du prompt + re-filtre la sortie (providerViolatesConstraints : souveraineté exigée ⇒ rejet hyperscaler) ; anti-hallucination d'URL ; AUCUN prix fabriqué ; statut légal géré par lib/legal. Tests discovery.test.ts (12). T4 FAITE (2026-05-31) : UI RedundancyPanel (components/results) — sélecteur continent + pays cible → POST /api/residency/providers → liste sourcée (badge souveraineté + provenance live/seed + lien source daté), sélection de N fournisseurs → topologie redondante résumée (N fournisseurs / M localisations + message redondance). i18n fr/en/ar (Results.redundancyPanel, ar = brouillon MSA), rendu dans ResultsView. Tests redundancy-panel.test.tsx (3). T5 FAITE (2026-05-31) : caveats sur la topologie composée — légal conservateur (≥2 juridictions distinctes → « à valider, voir Résidence & transferts », réutilise la doctrine lib/legal S-044, jamais un avis) + coûts=devis (egress chiffré UE/Amérique du Nord, ailleurs à confirmer). i18n fr/en/ar (legalCaveat/costCaveat). S-073 COMPLET (T1→T5).",
       "note": "Vision Amine : pour mieux servir, etre present sur TOUS les continents ; pour chaque continent, proposer de TROUVER des fournisseurs dans le(s) pays cible(s), surtout pour les utilisateurs voulant PLUSIEURS solutions infra REDONDANTES (securite). S'appuie sur le modele residency multi-segment (S-043, EgressVector) + la veille contrainte (S-072). EPIC : (a) etendre le modele region->continent/pays ; (b) seed fournisseurs sourcés par continent/pays ; (c) veille live de decouverte de fournisseurs par pays (respectant S-072) ; (d) UI : choisir N fournisseurs redondants + visualiser la topologie multi-region ; (e) cout + transferts inter-region deja modelises (S-044). A decouper en sous-stories.",
       "acceptance": [
@@ -1183,7 +1188,9 @@
       "feature": "pricing",
       "passes": true,
       "completedAt": "2026-05-31",
-      "deps": ["S-041"],
+      "deps": [
+        "S-041"
+      ],
       "note": "Le cout d'inference LLM a l'usage etait flagge « a chiffrer en devis » (non coute, S-033/S-041). Amine : tarifer au 1M de tokens in ET out. EPIC : (a) seed prix sources par modele (par 1M input + output, devises natives + FX runtime, repli date + garde-fou — doctrine prix-live) ; (b) estimateur d'usage pur (tokens/mois depuis reqPerDay x hypotheses in/out +-30%) ; (c) integrer dans C6 (remplace la note « non chiffre »), ligne CostMap dediee ; (d) tests proprietes + sources DEFCON 1.",
       "acceptance": [
         "prix tokens LLM sources (par 1M in + out), seed date + repli + garde-fou (jamais hardcode fige)",
@@ -1211,7 +1218,9 @@
       "feature": "residency",
       "passes": true,
       "completedAt": "2026-05-31",
-      "deps": ["S-073"],
+      "deps": [
+        "S-073"
+      ],
       "note": "Retour Amine : « je ne vois toujours pas de continents en dehors d'Europe, Etats-Unis c'est un pays comme Maroc ». Le modele historique melait les niveaux (zone = ue/maroc/us/other : un bloc + 2 pays + fourre-tout, aucun continent hors Europe) et le multi-continent (S-073) etait relegue aux resultats. Refonte (decision Amine = « Continent + pays ») : modele homogene CONTINENT -> PAYS dans le parcours principal. lib/engine/geography.ts (catalogue JURISDICTIONS : 6 continents, 22 pays/juridictions ; deriveZone(pays) -> bucket juridique ; geographyFromZone pour profils legacy). Profile gagne continent + country (requis) ; zone DERIVEE du pays (le moteur + lib/legal restent INTACTS). Wizard : selecteur Continent (6) + Pays (dependant), setGeography pose continent+pays+zone. useOptions.countriesFor(continent). Recap : ligne « continent · pays » (precise) au lieu du bucket zone. RedundancyPanel s'ouvre sur le continent choisi. i18n fr/en/ar (Options.continent 6, Options.country 22, Wizard.fields/info, recap.label.geography). DEFCON 1 : AUCUN statut juridique par pays fabrique (legal precis UE/Maroc/US uniquement, sinon bucket 'other' conservateur). Profils legacy reconcilies a l'hydratation.",
       "acceptance": [
         "les 6 continents sont selectionnables dans le configurateur (pas seulement l'Europe)",
@@ -1226,7 +1235,12 @@
       "feature": "residency",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-073", "S-076", "S-036", "S-062"],
+      "deps": [
+        "S-073",
+        "S-076",
+        "S-036",
+        "S-062"
+      ],
       "note": "Spec docs/superpowers/specs/2026-05-31-s077-regimes-dynamiques-design.md (VALIDEE, 3 decisions Amine : entrees = pays cible + residence clients ; regimes = modeliser les phares hors-UE AVEC actions sourcees + afficher le reste source-seul ; persister audit RLS). Livre en 5 tranches. T1 (864d4be) lib/legal/regime-seed.ts : type RegimeSuggestion (code mappable | null, scope, pays, source, confiance, provenance) + seed 16 juridictions, sources OFFICIELLES verifiees web 2026-06-01. T2 regime-discovery.ts (pur, I/O injectee, calque residency/discovery) : web->LLM->regimes sources, anti-hallucination d'URL, mapRegimeCode, dedup, confiance live=low, [] si I/O KO. T3 (5cfcf3a) regime-feed.ts (assemblage SearXNG/Crawl4AI+LiteLLM + fusion PURE mergeRegimes seed=reference + cache TTL 6h) + route POST /api/legal/regimes + persistance audit : migration RLS regime_observations (pivot circle, jumeau transfer_status_observations) APPLIQUEE PROD (RLS=on verifie) + persistRegimeObservations (live seulement, jamais bloquant) + prompt regime-veille (registry). VERIF LIVE PROD : POST {maroc, residences:[bresil]} -> source=mixed, 7 regimes, audit=5 lignes live. T4 (293e6a2) Profile.clientResidence? (additif, zero cascade moteur, round-trip share) + RegimeDetector.tsx (multi-input residence + bouton Detecter pour {pays} -> pre-coche mappables via addRegulations + liste sourcee ; cases manuelles MAITRES) + useWizardProfile.addRegulations/toggleClientResidence + useOptions.allCountries + i18n Wizard.regimeDetector x3. T5 (cette session) regimes phares hors-UE MODELISES : enum REGULATIONS += lgpd (Bresil, Lei 13.709/2018) + appi (Japon) ; seed code mappe (bresil->lgpd, japon->appi) ; mapRegimeCode LGPD/APPI ; REGULATION_OPTIONS += lgpd/appi (+hints) ; computeCompliance branches lgpd (Art. 41 encarregado, 18 droits, 37 registre, 38 RIPD, 33 transferts, 48 incident -- sources ANPD/Planalto verifiees) + appi (finalite, securite, tiers, droits, fuite oblig. 2022, transfrontalier -- source PPC) ; scores conf +1 par regime data-protection ; i18n Engine.diagnostics.compliance.* + Options.regulation.* x3 (parite). Tout autre regime decouvert reste affichage-seul (DEFCON 1). Tests : diagnostics.test (5), regime-discovery (mapRegimeCode LGPD/APPI), regime-seed (code mappe BR/JP + POPIA reste libre), regime-detector (pre-coche lgpd+appi), e2e regimes.spec (LGPD/APPI selectionnables + detecteur present). 611 tests.",
       "acceptance": [
         "le configurateur suggere dynamiquement les regimes sources selon pays cible + residence clients (veille crawl4ai + repli seed garanti)",
@@ -1269,7 +1283,9 @@
       "feature": "monitoring",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-079"],
+      "deps": [
+        "S-079"
+      ],
       "note": "Lot 2 C. lib/monitoring/mel.ts PUR (logique facon Minimum Equipment List aviation) : pour chaque composant degrade/indisponible, l'operation degradee AUTORISEE + condition + limite de temps + action corrective. Jumeau du moteur diagnostics. Descripteurs Message i18n. DEFCON 1 : regles d'exploitation documentees, pas inventees.",
       "acceptance": [
         "deriveDeviationGuide(healthSignals/components) pur -> liste d'items MEL (composant, etat, operation degradee permise, condition, delai, correctif)",
@@ -1282,7 +1298,10 @@
       "feature": "monitoring",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-079", "S-080"],
+      "deps": [
+        "S-079",
+        "S-080"
+      ],
       "note": "Lot 2 C. Page/section monitoring : jauge IHS + sous-scores + items MEL + historique. Migration Supabase health_metrics (RLS, pivot circle) + builder pur d'audit + persistance service-role non bloquante (jumeau *_observations). i18n fr/en/ar parite. Saisie/collecte des signaux reels = via la collecte cout reel (S-082) + signaux derives du profil/reco en attendant les vraies metriques d'exploitation (marquees 'estimation').",
       "acceptance": [
         "UI rend IHS + sous-scores + MEL (accents FR, garde i18n) ; migration health_metrics RLS=on",
@@ -1295,7 +1314,9 @@
       "feature": "network",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-023"],
+      "deps": [
+        "S-023"
+      ],
       "note": "Lot 2 D. L'utilisateur (consentement opt-in F9) saisit/importe son cout reel par poste -> comparaison vs estime du moteur -> ecart + fraicheur. Reutilise le schema conversion_data (S-023) + consentement (network). lib/network/real-cost.ts PUR (diff estime/reel, ecart %, flag hors tolerance). Migration real_cost_entries RLS si besoin (pivot circle). DEFCON 1 : l'ecart est factuel, jamais un jugement.",
       "acceptance": [
         "saisie cout reel par poste (UI) -> persiste (RLS, consentement) ; diff estime/reel pur + ecart% + tolerance",
@@ -1308,7 +1329,9 @@
       "feature": "network",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-082"],
+      "deps": [
+        "S-082"
+      ],
       "note": "Lot 2 D, moat 3 'actif'. Le cout reel agrege ANONYMISE (consentement) recalibre les baselines/facteurs du moteur. lib/network/recalibrate.ts PUR : agrege les ecarts -> propose un ajustement de baseline AVEC garde-fou DEFCON 1 (jamais ecraser une source datee sans seuil de confiance + n d'observations minimal ; proposition tracee, jamais silencieuse). Reste une PROPOSITION (validation), pas une mutation auto du seed.",
       "acceptance": [
         "agregation anonymisee des ecarts (k-min observations) -> ajustement propose, trace, jamais auto-applique au seed sans seuil",
@@ -1321,7 +1344,10 @@
       "feature": "network",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-082", "S-025"],
+      "deps": [
+        "S-082",
+        "S-025"
+      ],
       "note": "Lot 2 D. Le price feed (S-025) detecte un changement (empreinte) -> alerte partagee aux membres consentants du reseau. lib/network/alerts.ts PUR (construit l'alerte a partir d'une variation detectee, dedup, severite par ampleur). Persistance RLS si diffusion. DEFCON 1 : alerte = fait source (ancien->nouveau prix + date + URL), jamais une reco d'achat. SESSION 14 : PIPELINE COMPLET de bout en bout livre (demande Amine 'broadcast reel'). Source du delta = baseline datee -> live promu (status 'live' de getLivePrices ; pas besoin d'historique en base). LivePriceItem enrichi (vendor + baselineEur). lib/pricing/price-watch.ts PUR (priceChangesFromLiveItems, plancher anti-bruit 1%, status live only, source obligatoire). lib/network/vendor-alerts-observation.ts (builder inserts) + vendor-alerts-persist.ts (server-only, non bloquant). Migration vendor_alerts.sql (RLS pivot circle ; circle_id null = broadcast global de faits PUBLICS, select anon/auth ; insert service-role). Route GET /api/network/vendor-alerts (veille -> changes -> buildVendorAlerts -> persist -> renvoi). UI components/results/VendorAlertsPanel.tsx (fetch au montage, summary via useEngineText, badge severite, source datee) montee dans ResultsView apres RealCostPanel. i18n Results.vendorAlertsPanel fr/en/ar (parite 1210x3). Tests +10 (price-watch 7, observation 3). typecheck 0 / lint 0-0 / 684 tests / build OK. RESTE optionnel : declencheur planifie (cron) + alertes de cercle ciblees (aujourd'hui broadcast global a la demande). ATTENTION : migration vendor_alerts a APPLIQUER MANUELLEMENT (4e migration en attente, hors-LAN).",
       "acceptance": [
         "variation de prix detectee -> alerte sourcee (ancien/nouveau/date/URL) diffusable aux consentants ; dedup + severite",
@@ -1334,7 +1360,9 @@
       "feature": "lot3",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-010"],
+      "deps": [
+        "S-010"
+      ],
       "note": "Lot 3. Jumeau de l'Exit Escrow (S-010) : genere un bundle de MIGRATION/IN-SWITCH = plan double-run (ancienne + nouvelle stack en parallele), criteres de bascule, et garantie de ROLLBACK (runbook + scripts). lib/migration/ (pur) + zip fflate. DEFCON 1 : artefacts reproductibles coherents avec la reco, jamais d'execution reelle (l'utilisateur execute).",
       "acceptance": [
         "buildMigrationBundle(reco) -> runbook double-run + criteres bascule + rollback scripte + manifest ; zip telechargeable",
@@ -1347,7 +1375,9 @@
       "feature": "lot3",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-082"],
+      "deps": [
+        "S-082"
+      ],
       "note": "Lot 3. Detecte quand une re-optimisation ferait economiser plus qu'un seuil (cout reel S-082 + price feed live vs config actuelle) -> PROPOSE une migration sur VALIDATION HUMAINE (jamais auto). lib/optimize/reoptimize.ts PUR : compare config actuelle vs alternative moins chere a iso-contraintes (souverainete/conformite preservees, S-072) -> gain estime + diff. DEFCON 1 : proposition sourcee, contraintes respectees, l'humain tranche.",
       "acceptance": [
         "proposeReoptimization(current, signals) pur -> alternatives iso-contraintes avec gain estime > seuil, sinon rien",
@@ -1360,7 +1390,9 @@
       "feature": "provisioning",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-035"],
+      "deps": [
+        "S-035"
+      ],
       "note": "Lot 2 B (human-in-the-loop par design). Pour chaque composant de la reco (catalogue S-035), genere la PROCEDURE guidee : lien officiel d'inscription + etapes que l'UTILISATEUR realise lui-meme (compte + carte) + ce qu'il faut noter (cles/URLs). lib/provisioning/procedures.ts PUR (derive du catalogue retenu) + UI checklist. DEFCON 1 : Strate n'automatise AUCUNE inscription ni saisie de carte (CGU). Liens/etapes sources, jamais inventes.",
       "acceptance": [
         "deriveProvisioningProcedures(reco/catalog) pur -> par composant : lien officiel + etapes utilisateur + champs a relever",
@@ -1373,7 +1405,9 @@
       "feature": "provisioning",
       "passes": true,
       "completedAt": "2026-06-01",
-      "deps": ["S-087"],
+      "deps": [
+        "S-087"
+      ],
       "note": "Lot 2 B. Apres que l'utilisateur a cree les comptes (S-087), l'agent prend le relais sur la CONFIGURATION/optimisation via OAuth/MCP/API officiels SUR LE COMPTE AUTORISE. Cette story livre le CADRE verifiable : type ProvisioningPlan (taches d'optimisation par couche, statut, garde-fous), moteur pur de derivation + squelette d'execution MCP/OAuth avec garde-fou DUR (jamais creer de compte, jamais saisir de carte, jamais d'engagement financier). NOTE: l'execution reelle bout-en-bout necessite des comptes vendor + apps OAuth (input externe) -> testee par mocks ; le branchement live reste a activer quand les creds existent.",
       "acceptance": [
         "type ProvisioningPlan + deriveProvisioningPlan(reco) pur (taches par couche, statut) ; garde-fou dur teste (refus creation compte/carte)",
@@ -1385,7 +1419,9 @@
       "title": "BLOQUE (input Amine): dette auth complete (SMTP reel + apps OAuth Google/GitHub)",
       "feature": "infra",
       "passes": false,
-      "deps": ["S-078"],
+      "deps": [
+        "S-078"
+      ],
       "note": "BLOQUE : necessite des inputs qu'Amine seul peut fournir -> serveur SMTP reel (magic-link), apps OAuth Google + GitHub (client id/secret), redirection https://db.ai-mpower.com/auth/v1/callback. Cote code : repasser AUTOCONFIRM->false, activer magic-link + OAuth (aujourd'hui visibles mais non fonctionnels, decision Amine), smoke-test navigateur du stockage credential sur /compte. NE PAS marquer fait tant que les creds ne sont pas fournis et le flux verifie end-to-end (DEFCON 1).",
       "acceptance": [
         "SMTP + apps OAuth fournis par Amine ; AUTOCONFIRM=false ; magic-link + OAuth fonctionnels verifies end-to-end en prod",
@@ -1442,6 +1478,15 @@
         "validation profil bornee (anti-injection) ; rate-limit sur routes anonymes couteuses ; e2e gardes d'acces verts",
         "typecheck 0 / lint 0-0 / tests / build OK ; deploye"
       ]
+    },
+    {
+      "id": "S-094",
+      "title": "Restore Drill certifié (moat chaîne de preuve, vague 2 #2)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-04",
+      "deps": [],
+      "note": "La sortie Exit Escrow devient TESTABLE (pas seulement générée). DÉFCON 1 : Strate ne fabrique JAMAIS de RTO — elle fournit le kit et VÉRIFIE le certificat produit. Deux modes offerts à l utilisateur (décision Amine) : A=drill local sur données réelles (RTO réel), B=répétition à blanc automatisée en CI jetable sur données synthétiques (RTO non représentatif, limite dite). lib/restore-drill/{certificate(PUR, parse+verify SHA-256 isomorphe),kit(PUR: restore-drill.sh+CI workflow+DRILL.md+seed synthétique+schema),render(PUR)}. Kit fusionné dans buildExitBundle (EXPECTED_FILES mis à jour). components/results/RestoreDrillPanel (2 modes expliqués + collage/vérif certificat in-app). i18n Results.restoreDrill fr/en/ar. +13 tests. typecheck 0/lint 0-0/718 tests/build OK. Sandbox côté Strate + signature HMAC = hors périmètre (vague 3)."
     }
   ]
 }
