@@ -564,20 +564,27 @@ git commit -m "[S-094] Restore Drill : rendu Markdown du certificat vérifié (p
 - Modify: `lib/exit/bundle.ts` (fonction `buildExitBundle`, autour de la l.522-542)
 - Test: `lib/exit/__tests__/bundle.test.ts` (ajouter un cas)
 
-- [ ] **Step 1 : Ajouter le test qui échoue**
+- [ ] **Step 1 : Mettre à jour `EXPECTED_FILES` + ajouter le test**
 
-Dans `lib/exit/__tests__/bundle.test.ts`, ajouter :
+⚠ `lib/exit/__tests__/bundle.test.ts` asserte l'ensemble **EXACT** des fichiers (l.45 et l.237 : `expect(Object.keys(bundle.files).sort()).toEqual([...EXPECTED_FILES].sort())`). Ajouter au tableau `EXPECTED_FILES` (l.29-40) les 5 fichiers du kit :
+
+```ts
+  "DRILL.md",
+  "restore-drill.sh",
+  ".github/workflows/restore-drill.yml",
+  "restore-certificate.schema.json",
+  "drill/seed/atom-001.md",
+```
+
+Puis ajouter un test ciblé (le `PROFILE` local existe déjà en tête de fichier, `recommend` est importé) :
 
 ```ts
 it("inclut le kit de Restore Drill dans le bundle", () => {
-  const reco = recommend({ ...DEFAULT_PROFILE });
-  const bundle = buildExitBundle({ ...DEFAULT_PROFILE }, reco);
+  const bundle = buildExitBundle(PROFILE, recommend(PROFILE));
   expect(Object.keys(bundle.files)).toContain("DRILL.md");
   expect(Object.keys(bundle.files)).toContain("restore-drill.sh");
 });
 ```
-
-(Si `recommend`/`DEFAULT_PROFILE` ne sont pas déjà importés en tête du fichier, les ajouter.)
 
 - [ ] **Step 2 : Lancer le test → échec attendu**
 
