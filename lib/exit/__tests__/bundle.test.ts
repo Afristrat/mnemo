@@ -37,6 +37,12 @@ const EXPECTED_FILES = [
   "runbook.md",
   "scripts/re-embed.sh",
   "scripts/backup.sh",
+  // Kit de Restore Drill (S-094) : la sortie devient testable (mode A local + mode B CI jetable).
+  "restore-drill.sh",
+  ".github/workflows/restore-drill.yml",
+  "DRILL.md",
+  "restore-certificate.schema.json",
+  "drill/seed/atom-001.md",
 ];
 
 describe("buildExitBundle", () => {
@@ -44,6 +50,12 @@ describe("buildExitBundle", () => {
     const bundle = buildExitBundle(PROFILE, recommend(PROFILE), new Date("2026-05-25T00:00:00Z"));
     expect(Object.keys(bundle.files).sort()).toEqual([...EXPECTED_FILES].sort());
     expect(bundle.manifest.generatedAt).toBe("2026-05-25");
+  });
+
+  it("inclut le kit de Restore Drill dans le bundle", () => {
+    const bundle = buildExitBundle(PROFILE, recommend(PROFILE));
+    expect(Object.keys(bundle.files)).toContain("DRILL.md");
+    expect(Object.keys(bundle.files)).toContain("restore-drill.sh");
   });
 
   it("le manifeste est cohérent avec la recommandation (couches, coût, preset)", () => {
