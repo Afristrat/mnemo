@@ -9,6 +9,7 @@
 import type { BackupPlan, EngineResolver, Layer, Preset, Profile, Recommendation, ResidencyPlan, Zone } from "@/lib/engine";
 import type { Catalog, Provenance, SlotId } from "@/lib/catalog";
 import { LAYER_PRICING } from "@/lib/pricing/sources";
+import { buildRestoreDrillKit } from "@/lib/restore-drill/kit";
 
 export type BundleManifestLayer = {
   id: number;
@@ -531,6 +532,8 @@ export function buildExitBundle(
     "scripts/re-embed.sh": reEmbedScript(reco),
     "scripts/backup.sh": backupScript(reco),
   };
+  // Kit de Restore Drill (vague 2 #2) : la sortie devient TESTABLE (mode A local + mode B CI jetable).
+  Object.assign(files, buildRestoreDrillKit(reco, manifest));
   // IaC multi-région générée seulement si le plan DR dimensionne des réplicas (cohérence manifest↔plan).
   if (reco.residency.regions.some((r) => r.role !== "primary")) {
     files["terraform/dr.tf"] = drTerraform(reco.residency);
