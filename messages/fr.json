@@ -377,6 +377,13 @@
         "autoBackup": "Sauvegarde des vecteurs moins chère que le ré-embed sur l’horizon."
       }
     },
+    "residencyContinuity": {
+      "dataPrimary": "Données primaires & couches auto-hébergées",
+      "replica": "Réplica / flux vers {region}",
+      "backupOffsite": "Sauvegarde hors-site",
+      "backupLocal": "Sauvegarde en région primaire",
+      "monitoring": "Supervision / monitoring"
+    },
     "residency": {
       "conflict": {
         "none": "Aucun conflit résidence × DR.",
@@ -769,6 +776,18 @@
       "severity_notable": "Notable",
       "severity_major": "Majeure",
       "source": "Source vérifiée le {date}"
+    },
+    "residencyContinuity": {
+      "title": "Preuve de résidence continue",
+      "intro": "Vos données restent-elles dans la zone promise, sur toutes les couches, dans le temps ? Ce relevé drapeau chaque composant qui peut en sortir, base légale datée à l’appui, et fige une preuve opposable.",
+      "summary": "{out} composant(s) hors zone · {unverified} à confirmer.",
+      "flagInZone": "en zone",
+      "flagRestricted": "restreint",
+      "flagOutOfZone": "hors zone",
+      "flagUnverified": "à confirmer",
+      "downloadEvidence": "Télécharger la preuve (horodatée + hachée)",
+      "generating": "Génération…",
+      "disclaimer": "Orientation d’ingénierie, PAS un avis juridique — à valider par un conseil."
     },
     "restoreDrill": {
       "title": "Restore Drill — l’épreuve de restauration",
