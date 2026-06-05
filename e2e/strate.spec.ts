@@ -99,10 +99,16 @@ test("profil régulé multi-région → ligne réplication + transfert encadré 
 
 test("intake libre : décrire son besoin pré-remplit le configurateur", async ({ page }) => {
   await page.goto("/");
-  await page.getByLabel(/décrivez votre besoin/i).fill(
-    "cabinet d'avocats, 8 personnes, dossiers clients confidentiels, hébergement en France",
-  );
-  await page.getByRole("button", { name: /Analyser et pré-remplir/ }).click();
+  const field = page.getByLabel(/décrivez votre besoin/i);
+  const analyse = page.getByRole("button", { name: /Analyser et pré-remplir/ });
+  // Robuste à l'hydratation (le bouton est gaté par l'état React `text`) : un `fill` arrivé AVANT que
+  // React n'attache `onChange` est perdu → le bouton reste `disabled`. On (re)remplit jusqu'à ce que la
+  // saisie soit prise en compte (bouton activé), au lieu de courir l'hydratation (cause de flake e2e).
+  await expect(async () => {
+    await field.fill("cabinet d'avocats, 8 personnes, dossiers clients confidentiels, hébergement en France");
+    await expect(analyse).toBeEnabled({ timeout: 1000 });
+  }).toPass({ timeout: 20000 });
+  await analyse.click();
   // Repli garanti (profil par défaut si LLM indispo) → la navigation vers le configurateur a lieu.
   await expect(page).toHaveURL(/\/configurateur/, { timeout: 35000 });
   await expect(page.getByRole("heading", { name: /Quelle infrastructure/ })).toBeVisible();
