@@ -37,12 +37,16 @@ test("export du livrable : Markdown, PDF et bundle Exit Escrow", async ({ page }
   await page.goto("/resultats");
   await expect(page.getByText(/^Preset :/)).toBeVisible();
 
+  // Scopé à la carte « Emporter ce plan » : d'autres cartes proposent désormais un export Markdown
+  // (MBOM, S-097) → on cible les boutons du livrable pour rester non ambigu.
+  const exportCard = page.getByRole("heading", { name: "Emporter ce plan" }).locator("xpath=ancestor::div[1]");
+
   const markdown = page.waitForEvent("download");
-  await page.getByRole("button", { name: /Markdown/ }).click();
+  await exportCard.getByRole("button", { name: /Markdown/ }).click();
   expect((await markdown).suggestedFilename()).toMatch(/\.md$/);
 
   const pdf = page.waitForEvent("download");
-  await page.getByRole("button", { name: /PDF/ }).click();
+  await exportCard.getByRole("button", { name: /PDF/ }).click();
   expect((await pdf).suggestedFilename()).toMatch(/\.pdf$/);
 
   const zip = page.waitForEvent("download");

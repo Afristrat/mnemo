@@ -89,7 +89,10 @@ test("profil régulé multi-région → ligne réplication + transfert encadré 
   // Panneau Résidence & transferts : flux UE → US « Encadré » avec base légale.
   await expect(page.getByRole("heading", { name: "Résidence & transferts" })).toBeVisible();
   await expect(page.getByText(/Encadré/)).toBeVisible();
-  await expect(page.getByText(/RGPD chap\. V/)).toBeVisible();
+  // Scopé au panneau Résidence & transferts : la base légale apparaît aussi dans le panneau de
+  // preuve de résidence continue (S-095) → on cible ce panneau-ci pour rester non ambigu.
+  const residencyCard = page.getByRole("heading", { name: "Résidence & transferts" }).locator("xpath=ancestor::div[1]");
+  await expect(residencyCard.getByText(/RGPD chap\. V/).first()).toBeVisible();
   // Radar à 10 axes (résilience + géo-souveraineté).
   await expect(page.getByRole("img", { name: /Radar des 10 dimensions/ })).toBeVisible();
 });
