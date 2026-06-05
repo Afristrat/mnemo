@@ -23,6 +23,7 @@ import { RadarChart } from "@/components/results/RadarChart";
 import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { ResidencyContinuityPanel } from "@/components/results/ResidencyContinuityPanel";
 import { RestoreDrillPanel } from "@/components/results/RestoreDrillPanel";
+import { ExitCostPanel } from "@/components/results/ExitCostPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
@@ -544,6 +545,9 @@ export function ResultsView(): ReactElement {
 
       {/* Restore Drill certifié (moat « chaîne de preuve », vague 2 #2) : la sortie Exit Escrow devient TESTABLE. */}
       <RestoreDrillPanel profile={activeProfile} recommendation={activeResult} />
+
+      {/* Lock-in / Exit-Cost Meter (moat « chaîne de preuve », vague 2 #4) : chiffre le coût de SORTIE (egress sourcé). */}
+      <ExitCostPanel profile={activeProfile} recommendation={activeResult} />
 
       {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
       <MigrationBundle profile={activeProfile} recommendation={activeResult} />

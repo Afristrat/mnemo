@@ -1496,6 +1496,15 @@
       "completedAt": "2026-06-04",
       "deps": [],
       "note": "Prouve que les promesses de residence tiennent sur les composants a empreinte geographique connue, dans le temps. DEFCON 1 : aucune juridiction fabriquee (composant sans region pinnee = unverified a confirmer). lib/residency/{continuity(PUR: audit par composant, flag in-zone/restricted/out-of-zone/unverified, base legale datee via lib/legal/transfers deja calculee par le moteur),evidence(PUR: MD+JSON+SHA-256 isomorphe, maillon opposable),continuity-observation(builder PUR),continuity-persist(server-only, non bloquant)}. Migration residency_continuity_observations (RLS pivot circle, jumelle transfer_status_observations) A APPLIQUER MANUELLEMENT en prod (hors-LAN). Route POST /api/legal/residency-continuity (re-hash serveur + persist, rate-limitee S-093). UI components/results/ResidencyContinuityPanel (carte par composant + drapeaux + evidence pack horodate+hache), monte apres ResidencyPanel. i18n Results.residencyContinuity + Engine.residencyContinuity fr/en/ar. +9 tests. typecheck 0/lint 0-0/727 tests/build OK. La feature marche SANS la migration (audit live + evidence pack) ; la persistance ajoute la tracabilite de derive."
+    },
+    {
+      "id": "S-096",
+      "title": "Lock-in / Exit-Cost Meter (moat chaine de preuve, vague 2 #4)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-05",
+      "deps": [],
+      "note": "Chiffre le COUT DE SORTIE a cote du cout mensuel (asymetrie que les plateformes masquent ; moat defensif). DEFCON 1 : egress de rapatriement chiffre UNIQUEMENT depuis un vecteur source+date (le meme que le moteur residence, selectEgressVector x hostingClassForProfile) = reco.sizing.storageGb x egressPerGb ; frais d API de sortie + duree d engagement = unknown -> a confirmer au contrat vendor, jamais fabriques. lib/exit-cost/meter.ts (PUR, computeExitCost -> ExitCost{storageGb,egressPerGb,egressSourced,egressSource date,exitEgressCost,monthlyCost,monthsEquivalent,apiFees/minCommitment unknown}). components/results/ExitCostPanel.tsx (egress chiffre+source datee OU non sour ce ; ~N mois de service ; a confirmer ; disclaimer i18n). Monte apres RestoreDrillPanel. i18n Results.exitCost fr/en/ar. +5 tests. typecheck 0/lint 0-0/build OK. Egress gratuit (OVH) = bon signal anti-lock-in affiche tel quel."
     }
   ]
 }
