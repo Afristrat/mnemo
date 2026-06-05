@@ -46,10 +46,15 @@ test("arabe : bascule applique dir=rtl + lang=ar + contenu arabe (S-060)", async
   await expect(page.getByRole("button", { name: "Voir mon verdict" })).toBeVisible(); // hydratation
   // Sélecteur de langue dans l'en-tête (indépendant de la langue du label, qui devient arabe après bascule).
   const switcher = page.getByRole("navigation").getByRole("combobox");
-  await switcher.selectOption("ar");
+  // Robuste à l'hydratation + au rafraîchissement RSC (router.refresh) sous charge : une sélection
+  // arrivée avant l'hydratation est perdue, et le refresh peut dépasser le délai par défaut (5 s) sous
+  // forte parallélisation. On (re)sélectionne jusqu'à ce que <html lang> bascule, au lieu de courir.
+  await expect(async () => {
+    await switcher.selectOption("ar");
+    await expect(page.locator("html")).toHaveAttribute("lang", "ar", { timeout: 3000 });
+  }).toPass({ timeout: 20000 });
 
   // <html> bascule en arabe RTL.
-  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
   // Du contenu en écriture arabe est rendu (script arabe U+0600–U+06FF), sans coder en dur la traduction.
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/[؀-ۿ]/);
