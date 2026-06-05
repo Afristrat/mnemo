@@ -777,6 +777,19 @@
       "severity_major": "Majeure",
       "source": "Source vérifiée le {date}"
     },
+    "exitCost": {
+      "title": "Coût de sortie (anti-lock-in)",
+      "intro": "Combien coûte de PARTIR ? On chiffre l’egress de rapatriement de vos données, à côté du coût mensuel — l’asymétrie de sortie que les plateformes ne montrent pas.",
+      "egressTitle": "Egress de rapatriement",
+      "egressValue": "≈ {cost} € pour sortir {gb} Go",
+      "egressUnsourced": "Egress non sourcé pour cette zone — à chiffrer sur devis.",
+      "monthsEquivalent": "≈ {months} mois de service.",
+      "toConfirmTitle": "À confirmer au contrat vendor",
+      "apiFees": "Frais d’API de sortie",
+      "minCommitment": "Durée d’engagement minimale",
+      "source": "Source egress :",
+      "disclaimer": "Egress chiffré ±30 % depuis une source datée ; frais d’API de sortie et durée d’engagement à confirmer au contrat vendor."
+    },
     "residencyContinuity": {
       "title": "Preuve de résidence continue",
       "intro": "Vos données restent-elles dans la zone promise, sur toutes les couches, dans le temps ? Ce relevé drapeau chaque composant qui peut en sortir, base légale datée à l’appui, et fige une preuve opposable.",

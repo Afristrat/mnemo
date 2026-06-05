@@ -777,6 +777,19 @@
       "severity_major": "Major",
       "source": "Source verified on {date}"
     },
+    "exitCost": {
+      "title": "Exit cost (anti-lock-in)",
+      "intro": "How much does it cost to LEAVE? We price the egress to repatriate your data, next to the monthly cost — the exit asymmetry platforms don't show.",
+      "egressTitle": "Repatriation egress",
+      "egressValue": "≈ €{cost} to move out {gb} GB",
+      "egressUnsourced": "Egress not sourced for this zone — to be quoted.",
+      "monthsEquivalent": "≈ {months} months of service.",
+      "toConfirmTitle": "To confirm in the vendor contract",
+      "apiFees": "Exit API fees",
+      "minCommitment": "Minimum commitment term",
+      "source": "Egress source:",
+      "disclaimer": "Egress priced ±30% from a dated source; exit API fees and commitment term to be confirmed in the vendor contract."
+    },
     "residencyContinuity": {
       "title": "Continuous residency proof",
       "intro": "Does your data stay in the promised zone, across every layer, over time? This report flags each component that may leave it, with a dated legal basis, and seals an opposable proof.",
