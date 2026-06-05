@@ -24,6 +24,7 @@ import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { ResidencyContinuityPanel } from "@/components/results/ResidencyContinuityPanel";
 import { RestoreDrillPanel } from "@/components/results/RestoreDrillPanel";
 import { ExitCostPanel } from "@/components/results/ExitCostPanel";
+import { MbomPanel } from "@/components/results/MbomPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
@@ -548,6 +549,9 @@ export function ResultsView(): ReactElement {
 
       {/* Lock-in / Exit-Cost Meter (moat « chaîne de preuve », vague 2 #4) : chiffre le coût de SORTIE (egress sourcé). */}
       <ExitCostPanel profile={activeProfile} recommendation={activeResult} />
+
+      {/* MBOM (moat « chaîne de preuve », vague 2 #6) : manifeste signé des ingrédients (checksums SHA-256). */}
+      <MbomPanel profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
 
       {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
       <MigrationBundle profile={activeProfile} recommendation={activeResult} />
