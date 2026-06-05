@@ -1505,6 +1505,15 @@
       "completedAt": "2026-06-05",
       "deps": [],
       "note": "Chiffre le COUT DE SORTIE a cote du cout mensuel (asymetrie que les plateformes masquent ; moat defensif). DEFCON 1 : egress de rapatriement chiffre UNIQUEMENT depuis un vecteur source+date (le meme que le moteur residence, selectEgressVector x hostingClassForProfile) = reco.sizing.storageGb x egressPerGb ; frais d API de sortie + duree d engagement = unknown -> a confirmer au contrat vendor, jamais fabriques. lib/exit-cost/meter.ts (PUR, computeExitCost -> ExitCost{storageGb,egressPerGb,egressSourced,egressSource date,exitEgressCost,monthlyCost,monthsEquivalent,apiFees/minCommitment unknown}). components/results/ExitCostPanel.tsx (egress chiffre+source datee OU non sour ce ; ~N mois de service ; a confirmer ; disclaimer i18n). Monte apres RestoreDrillPanel. i18n Results.exitCost fr/en/ar. +5 tests. typecheck 0/lint 0-0/build OK. Egress gratuit (OVH) = bon signal anti-lock-in affiche tel quel."
+    },
+    {
+      "id": "S-097",
+      "title": "MBOM Memory-Base Bill of Materials (moat chaine de preuve, vague 2 #6)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-05",
+      "deps": [],
+      "note": "Manifeste signe type SBOM des ingredients de la base memorielle. DEFCON 1 : checksums SHA-256 CALCULES par fichier (jamais simules) ; licences/versions non confirmees = null/a confirmer (jamais fabriquees). lib/mbom/manifest.ts (buildMbom(bundle) ASYNC : composants derives du manifeste Exit Escrow (couches + catalogue source provenance/sourceUrl), checksum sha256Hex par fichier, empreinte globale canonicalJson+sha256 ; reutilise lib/decision/integrity) + render.ts (PUR, MD : tableaux composants+checksums+empreinte). Choix archi : HORS buildExitBundle (synchrone) -> artefact CLIENT async (comme Decision Record/certificat drill) -> ZERO regression Exit Escrow + EXPECTED_FILES inchange. components/results/MbomPanel.tsx (apercu async n composants/fichiers+empreinte, telechargement MD+JSON), monte apres ExitEscrow. i18n Results.mbom fr/en/ar (panneau + cles du rendu). +7 tests. typecheck 0/lint 0-0/739 tests/build OK. Signature HMAC/Ed25519 + versions exactes = hors perimetre (empreinte SHA-256 auto-verifiable suffit)."
     }
   ]
 }
