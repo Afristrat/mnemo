@@ -551,7 +551,7 @@
   },
   "Results": {
     "metaTitle": "Recommendation, Strate",
-    "metaDescription": "Your recommended sovereign memory-base stack: 7 layers, a 10-dimension radar and a sourced cost map.",
+    "metaDescription": "Your recommended sovereign stack: 7 layers, a 10-dimension radar and a sourced cost map.",
     "pageEyebrow": "Recommendation",
     "pageTitle": "Your sovereign infrastructure",
     "perMonth": "{cost} €/mo",
@@ -924,7 +924,7 @@
   },
   "Configurateur": {
     "metaTitle": "Configurator, Strate",
-    "metaDescription": "Profile your need in a few steps to get a recommended sovereign memory-base stack.",
+    "metaDescription": "Profile your need in a few steps: Strate recommends a sovereign 7-layer stack, with projected cost and verifiable sources.",
     "eyebrow": "Configurator",
     "title": "What infrastructure for your organisational memory?",
     "subtitle": "A few questions, and Strate recommends a sovereign 7-layer stack — projected cost included, every source verifiable."
@@ -1033,8 +1033,8 @@
     "notSuperAdmin": "Account {email} is not a platform super-administrator."
   },
   "Metadata": {
-    "title": "Strate, sovereign memory-base infrastructure",
-    "description": "Choose, deploy and run your sovereign AI memory base — no migration, no lock-in, no hidden costs."
+    "title": "Strate — sovereign, queryable organisational memory",
+    "description": "Turn your organisation’s knowledge into a sovereign, queryable memory — hosted on your premises or in the EU, with no migration, no lock-in and no hidden costs."
   },
   "Account": {
     "signIn": "Sign in",
@@ -1793,6 +1793,6 @@
       "body": "Start with the free diagnostic. In 90 seconds, you will know your risk, your gain and the way forward.",
       "cta": "Run my free diagnostic"
     },
-    "footer": "© 2026 Strate, Sovereign AI memory infrastructure · Hosted in EU / Morocco · CNDP & GDPR compliant"
+    "footer": "© 2026 Strate — Sovereign organisational memory · Hosted EU / Morocco · CNDP & GDPR compliant"
   }
 }
