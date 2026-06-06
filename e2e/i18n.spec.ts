@@ -8,17 +8,17 @@ import { test, expect } from "@playwright/test";
 test("accueil : bascule fr→en→fr (cookie + <html lang> + chrome bilingue)", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "fr");
-  await expect(page.getByText("Infrastructure de mémoire IA souveraine", { exact: true })).toBeVisible();
+  await expect(page.getByText("Mémoire d’organisation souveraine", { exact: true })).toBeVisible();
 
   // FR → EN : le sélecteur (étiqueté « Langue ») pose le cookie et rafraîchit l'arbre RSC.
   await page.getByLabel("Langue").selectOption("en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.getByText("Sovereign AI memory infrastructure", { exact: true })).toBeVisible();
+  await expect(page.getByText("Sovereign organisational memory", { exact: true })).toBeVisible();
 
   // EN → FR : le sélecteur est désormais étiqueté « Language ».
   await page.getByLabel("Language").selectOption("fr");
   await expect(page.locator("html")).toHaveAttribute("lang", "fr");
-  await expect(page.getByText("Infrastructure de mémoire IA souveraine", { exact: true })).toBeVisible();
+  await expect(page.getByText("Mémoire d’organisation souveraine", { exact: true })).toBeVisible();
 });
 
 test("verdict rendu en anglais (i18n MOTEUR : verdict via descripteurs Message)", async ({ page }) => {

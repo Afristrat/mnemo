@@ -926,15 +926,15 @@
     "metaTitle": "Configurator, Strate",
     "metaDescription": "Profile your need in a few steps to get a recommended sovereign memory-base stack.",
     "eyebrow": "Configurator",
-    "title": "Which infrastructure for your memory base?",
-    "subtitle": "Answer a few questions: Strate recommends a sovereign 7-layer stack, with a projected cost and verifiable sources."
+    "title": "What infrastructure for your organisational memory?",
+    "subtitle": "A few questions, and Strate recommends a sovereign 7-layer stack — projected cost included, every source verifiable."
   },
   "Fiduciaire": {
     "metaTitle": "Fiduciary charter, Strate",
     "metaDescription": "Strate acts in your sole interest: zero hidden vendor commission, open recipe, sourced prices, sovereignty first.",
     "eyebrow": "Disclosure",
     "title": "Strate fiduciary charter",
-    "intro": "Strate acts solely in your interest. Our recommendations are never steered by vendor compensation. This document is public and binding.",
+    "intro": "Strate acts in your interest alone. Our recommendations are never swayed by a vendor’s payment. This document is public, dated and binding.",
     "revenueModel": "We charge for advice and deployment — the “cooking”. The recipe stays open. We take no commission, no referral fee and no kickback from the vendors we recommend.",
     "commitment": {
       "noCommission": {
@@ -1103,17 +1103,17 @@
     },
     "refine": "Refine in detail (configurator)",
     "verdict": "See my verdict",
-    "disclaimer": "Indicative answers, adjustable later. AI can be wrong: every cost is sourced and dated."
+    "disclaimer": "Indicative answers, adjustable afterwards. An AI can be wrong: every cost is sourced and dated."
   },
   "Intake": {
     "label": "Or describe your need in one sentence",
-    "placeholder": "E.g.: law firm, 10 people, confidential client files, hosted in France, budget ≈ €300/month…",
+    "placeholder": "e.g. law firm, 10 people, confidential client files, hosting in France, budget ≈ €300/month…",
     "analyze": "Analyse and pre-fill",
     "analyzing": "Analysing…",
     "dictate": "Dictate by voice",
     "listening": "● Listening… (stop)",
     "error": "Analysis unavailable right now. You can fill in the configurator manually — that's always possible.",
-    "disclaimer": "An AI reads your description and pre-fills the configurator (bounded values, no invented cost). You adjust everything afterwards. AI can be wrong — check the proposed profile."
+    "disclaimer": "An AI reads your description and pre-fills the configurator — bounded values, no invented cost. You adjust everything afterwards. An AI can be wrong: check the proposed profile."
   },
   "VerdictView": {
     "presetRetained": "Preset chosen: {preset}",
@@ -1130,8 +1130,8 @@
     "infraCostNote": "±30%, transparent, sourced",
     "setup": "Setup (one-off)",
     "setupNote": "backlog ingestion and first full backup",
-    "nextStep": "Next step",
-    "disclaimer": "Variable costs ±30% depending on volume and vendor — request a quote before go. AI can be wrong: every cost is sourced and dated in the detail.",
+    "nextStep": "Your next step",
+    "disclaimer": "Variable costs ±30% depending on volume and vendor — request a quote before going live. An AI can be wrong: every cost is sourced and dated in the detail.",
     "refine": "Refine my profile (configurator)",
     "expert": "See detail (expert)"
   },
@@ -1654,47 +1654,47 @@
   },
   "Home": {
     "hero": {
-      "eyebrow": "Sovereign AI memory infrastructure",
-      "title": "Your organisation's knowledge should <mark>never</mark> leave your walls.",
-      "subtitle": "Strate turns your documents, decisions and conversations into a queryable memory, hosted on your premises or in the EU — never with foreign giants. You keep everything. You depend on no one.",
-      "ctaPrimary": "Run my diagnostic — 90 s, free",
+      "eyebrow": "Sovereign organisational memory",
+      "title": "Everything your organisation knows should <mark>never</mark> end up with a foreign giant.",
+      "subtitle": "Law firm, industrial SME, public institution: Strate turns your documents, decisions and exchanges into a memory that answers — hosted on your premises or in the EU, never anywhere else. You keep everything, you depend on no one, you leave whenever you want.",
+      "ctaPrimary": "My diagnostic — 90s, free",
       "ctaSecondary": "See how it works",
-      "trust": "Hosted in EU / Morocco · CNDP & GDPR compliant · Zero lock-in — leave with everything, whenever you want"
+      "trust": "Hosted EU / Morocco · CNDP & GDPR compliant · Zero lock-in: leave with your entire stack, whenever you want"
     },
     "why": {
       "eyebrow": "Why Strate",
-      "title": "Four promises. Only one already proven, the others measured at your own site.",
-      "subtitle": "We don't promise you the moon without proof. Here is what we stand for, and how honestly.",
+      "title": "Four promises. What is proven, we prove; the rest, we measure at your site.",
+      "subtitle": "No empty promises. For every benefit, we tell you exactly what proof backs it.",
       "promises": {
         "profits": {
-          "title": "↑ More profit",
-          "body": "Better decisions, faster: your memory answers instead of sleeping in folders. The right knowledge, at the right time, to the right role.",
+          "title": "↑ Better decisions",
+          "body": "Your memory answers instead of sleeping in folders: the right precedent, the right contract, the right call — at the right moment, for the right role.",
           "proof": "To be measured at your site (before / after)"
         },
         "efficient": {
-          "title": "↑ More efficient",
-          "body": "No more hours lost hunting for “where is that document, who decided what”. We give that time back to you.",
+          "title": "↑ Hours given back",
+          "body": "No more “where is that document, who decided what, in which version”. The answer in one question, not half a day.",
           "proof": "To be measured at your site (search time)"
         },
         "costs": {
           "title": "↓ Lower costs",
-          "body": "Right-sizing, sourced and dated prices, and the hunt for hidden overruns. Never a surprise bill.",
-          "proof": "Sourced cost map + continuous price watch"
+          "body": "Right-sizing, dated and sourced prices, and the exit cost priced for every vendor. Never a surprise bill.",
+          "proof": "★ Tooled: sourced cost map + exit-cost meter"
         },
         "risks": {
-          "title": "↓ Lower risk",
-          "body": "Zero lock-in (leave with your whole stack in one click), compliance by design, and the expertise that spares you the costly mistake.",
-          "proof": "★ Proven — Exit Escrow + fiduciary mode"
+          "title": "↓ Fewer risks",
+          "body": "Leave with your whole stack in one click — and we test it: redeployable exit, residency monitored layer by layer, signed manifest. Compliance by design, not by promise.",
+          "proof": "★ Proven: tested Exit Escrow + proof chain + fiduciary mode"
         }
       }
     },
     "difference": {
-      "eyebrow": "What sets us apart",
+      "eyebrow": "Our difference",
       "title": "We tell you the truth, even when it stings.",
-      "body": "If an open-source solution is enough, we tell you. If only a paid tool will do, we tell you that too. If your constraints contradict each other (tight budget + maximum sovereignty), we point it out — we won't sell you the impossible. And we take no hidden commission from the vendors we recommend.",
+      "body": "If open source is enough, we say so. If only a paid tool will do, we say that too. If your constraints contradict each other — tight budget and maximum sovereignty — we flag it rather than sell you the impossible. And we take no hidden commission from the vendors we recommend: it is written, dated and binding.",
       "tags": {
-        "openSource": "🟢 Open-source when it's better",
-        "paid": "💳 Paid when it's necessary",
+        "openSource": "🟢 Open source when it is better",
+        "paid": "💳 Paid when it is necessary",
         "noCommission": "⚖️ Zero hidden commission",
         "noLockin": "🔓 Zero lock-in"
       },
@@ -1705,24 +1705,24 @@
       "title": "From pain to decision, in 90 seconds.",
       "steps": {
         "diagnostic": {
-          "title": "Free diagnostic",
-          "body": "Tell us what hurts (in your own words or guided). We give you your risk, your gain and a firm price."
+          "title": "1 · Free diagnostic",
+          "body": "Tell us what is hurting — in your words or guided. We give you your risk, your gain and a firm price. No sign-up."
         },
         "plan": {
-          "title": "Sourced & shareable plan",
-          "body": "A clear recommendation, every cost linked to its source, exportable and shareable with your leadership."
+          "title": "2 · Sourced & shareable plan",
+          "body": "A clear 7-layer recommendation, each cost tied to its dated source. Exportable and shareable to your leadership in one link."
         },
         "deploy": {
-          "title": "Agent-driven deployment",
-          "body": "Our agents deploy and operate it, with no need for you to hire or relearn everything."
+          "title": "3 · Agent-led deployment",
+          "body": "Our agents deploy and run your memory — without you having to hire a team or relearn everything."
         }
       }
     },
     "pricing": {
       "eyebrow": "Pricing",
       "title": "The diagnostic is free. You only pay for the cooking.",
-      "subtitle": "Infrastructure cost stays transparent, paid to your own vendors — we take no markup on it.",
-      "note": "Excluding infrastructure costs — those are paid directly to your providers, with no markup on our side.",
+      "subtitle": "The infrastructure cost stays transparent and paid directly to your vendors — we never mark it up.",
+      "note": "Excluding infrastructure costs: paid directly to your vendors, with no margin on our side.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
@@ -1785,12 +1785,12 @@
     "diagnostic": {
       "eyebrow": "Free diagnostic",
       "title": "Your verdict in 90 seconds.",
-      "subtitle": "Four questions. A quantified, sourced verdict: your risk, your gain, a firm price and the path forward.",
+      "subtitle": "Four questions, a costed and sourced verdict: your risk, your gain, a firm price and the way forward. No sign-up.",
       "orNaturalLanguage": "or in plain language"
     },
     "ctaFinal": {
-      "title": "Your memory belongs to you. Take it back.",
-      "body": "Start with the free diagnostic. In 90 seconds you'll know your risk, your gain, and the path forward.",
+      "title": "Your memory is yours. Take it back.",
+      "body": "Start with the free diagnostic. In 90 seconds, you will know your risk, your gain and the way forward.",
       "cta": "Run my free diagnostic"
     },
     "footer": "© 2026 Strate, Sovereign AI memory infrastructure · Hosted in EU / Morocco · CNDP & GDPR compliant"
