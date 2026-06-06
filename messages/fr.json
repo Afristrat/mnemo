@@ -926,16 +926,16 @@
     "metaTitle": "Configurateur, Strate",
     "metaDescription": "Profilez votre besoin en quelques étapes pour obtenir une stack de base mémorielle souveraine recommandée.",
     "eyebrow": "Configurateur",
-    "title": "Quelle infrastructure pour votre base mémorielle ?",
-    "subtitle": "Répondez à quelques questions : Strate recommande une stack souveraine sur 7 couches, avec un coût projeté et des sources vérifiables."
+    "title": "Quelle infrastructure pour votre mémoire d’organisation ?",
+    "subtitle": "Quelques questions, et Strate recommande une stack souveraine sur 7 couches — coût projeté à l’appui, chaque source vérifiable."
   },
   "Fiduciaire": {
     "metaTitle": "Charte fiduciaire, Strate",
     "metaDescription": "Strate agit dans votre seul intérêt : zéro commission vendor cachée, recette ouverte, prix sourcés, souveraineté d'abord.",
     "eyebrow": "Divulgation",
     "title": "Charte fiduciaire Strate",
-    "intro": "Strate agit dans votre seul intérêt. Nos recommandations ne sont jamais orientées par une rémunération de fournisseur. Ce document est public et opposable.",
-    "revenueModel": "Nous facturons le conseil et le déploiement, la « cuisine ». La recette, elle, reste ouverte. Nous ne percevons aucune commission, aucun apport d'affaires ni aucune rétrocommission des fournisseurs que nous recommandons.",
+    "intro": "Strate agit dans votre seul intérêt. Nos recommandations ne sont jamais orientées par la rémunération d’un fournisseur. Ce document est public, daté et opposable.",
+    "revenueModel": "Nous facturons le conseil et le déploiement — la « cuisine ». La recette, elle, reste ouverte. Nous ne percevons aucune commission, aucun apport d’affaires ni aucune rétrocommission des fournisseurs que nous recommandons.",
     "commitment": {
       "noCommission": {
         "title": "Zéro commission cachée",
@@ -1113,7 +1113,7 @@
     "dictate": "Dicter à la voix",
     "listening": "● Écoute… (arrêter)",
     "error": "Analyse indisponible pour le moment. Vous pouvez remplir le configurateur manuellement, c’est toujours possible.",
-    "disclaimer": "Une IA lit votre description et pré-remplit le configurateur (valeurs bornées, aucun coût inventé). Vous ajustez tout ensuite. Une IA peut se tromper, vérifiez le profil proposé."
+    "disclaimer": "Une IA lit votre description et pré-remplit le configurateur — valeurs bornées, aucun coût inventé. Vous ajustez tout ensuite. Une IA peut se tromper : vérifiez le profil proposé."
   },
   "VerdictView": {
     "presetRetained": "Preset retenu : {preset}",
@@ -1122,7 +1122,7 @@
     "title": "Votre verdict",
     "constraintsLabel": "Contraintes prises en compte",
     "pain": "Le besoin",
-    "risk": "Le risque sans rien faire",
+    "risk": "Le risque si vous ne faites rien",
     "gain": "Le gain",
     "firmPrice": "Service Strate (prix ferme)",
     "firmPriceNote": "prix de vente du service",
@@ -1130,8 +1130,8 @@
     "infraCostNote": "±30 %, transparent, sourcé",
     "setup": "Mise en route (une fois)",
     "setupNote": "ingestion du backlog et premier full de sauvegarde",
-    "nextStep": "Prochaine étape",
-    "disclaimer": "Coûts variables ±30 % selon volume et fournisseur, demandez un devis avant le go. Une IA peut se tromper : chaque coût est sourcé et daté dans le détail.",
+    "nextStep": "Votre prochaine étape",
+    "disclaimer": "Coûts variables ±30 % selon le volume et le fournisseur — demandez un devis avant le go. Une IA peut se tromper : chaque coût est sourcé et daté dans le détail.",
     "refine": "Affiner mon profil (configurateur)",
     "expert": "Voir le détail (expert)"
   },
@@ -1654,75 +1654,75 @@
   },
   "Home": {
     "hero": {
-      "eyebrow": "Infrastructure de mémoire IA souveraine",
-      "title": "Le savoir de votre organisation ne devrait <mark>jamais</mark> quitter vos murs.",
-      "subtitle": "Strate transforme vos documents, décisions et échanges en une mémoire interrogeable, hébergée chez vous ou en UE, jamais chez des géants étrangers. Vous gardez tout. Vous ne dépendez de personne.",
-      "ctaPrimary": "Faire mon diagnostic, 90 s, gratuit",
+      "eyebrow": "Mémoire d’organisation souveraine",
+      "title": "Tout ce que votre organisation sait ne devrait <mark>jamais</mark> finir chez un géant étranger.",
+      "subtitle": "Cabinet d’avocats, PME industrielle, institution publique : Strate transforme vos documents, décisions et échanges en une mémoire qui répond — hébergée chez vous ou en UE, jamais ailleurs. Vous gardez tout, vous ne dépendez de personne, vous repartez quand vous voulez.",
+      "ctaPrimary": "Mon diagnostic — 90 s, gratuit",
       "ctaSecondary": "Voir comment ça marche",
-      "trust": "Hébergé UE / Maroc · Conforme CNDP & RGPD · Zéro verrouillage, repartez avec tout, quand vous voulez"
+      "trust": "Hébergé UE / Maroc · Conforme CNDP & RGPD · Zéro verrouillage : repartez avec toute votre stack, quand vous voulez"
     },
     "why": {
       "eyebrow": "Pourquoi Strate",
-      "title": "Quatre promesses. Une seule déjà prouvée, les autres, mesurées chez vous.",
-      "subtitle": "On ne vous promet pas la lune sans preuve. Voici ce qu'on défend, et avec quelle honnêteté.",
+      "title": "Quatre promesses. Ce qui est prouvé, on le prouve ; le reste, on le mesure chez vous.",
+      "subtitle": "Pas de promesse en l’air. Pour chaque bénéfice, on vous dit exactement avec quelle preuve on le tient.",
       "promises": {
         "profits": {
-          "title": "↑ Plus de profits",
-          "body": "De meilleures décisions, plus vite : votre mémoire répond au lieu de dormir dans des dossiers. Le bon savoir, au bon moment, au bon rôle.",
+          "title": "↑ De meilleures décisions",
+          "body": "Votre mémoire répond au lieu de dormir dans des dossiers : le bon précédent, le bon contrat, la bonne décision — au bon moment, au bon rôle.",
           "proof": "À mesurer chez vous (avant / après)"
         },
         "efficient": {
-          "title": "↑ Plus efficace",
-          "body": "Fini les heures perdues à chercher « où est ce document, qui a décidé quoi ». On vous rend ce temps.",
+          "title": "↑ Des heures rendues",
+          "body": "Fini « où est ce document, qui a tranché quoi, dans quelle version ». La réponse en une question, pas en une demi-journée.",
           "proof": "À mesurer chez vous (temps de recherche)"
         },
         "costs": {
           "title": "↓ Moins de coûts",
-          "body": "Le juste dimensionnement, des prix sourcés et datés, et la traque des surcoûts cachés. Jamais de facture surprise.",
-          "proof": "Carte de coûts sourcée + veille prix continue"
+          "body": "Le juste dimensionnement, des prix sourcés et datés, et le coût de sortie chiffré pour chaque fournisseur. Jamais de facture surprise.",
+          "proof": "★ Outillé : carte de coûts sourcée + compteur de coût de sortie"
         },
         "risks": {
           "title": "↓ Moins de risques",
-          "body": "Zéro verrouillage (repartez avec toute votre stack en un clic), conformité par conception, et l'expertise qui vous évite l'erreur qui coûte cher.",
-          "proof": "★ Prouvé, Exit Escrow + mode fiduciaire"
+          "body": "Repartez avec toute votre stack en un clic — et nous la testons : sortie redéployable, résidence surveillée couche par couche, manifeste signé. La conformité par conception, pas par promesse.",
+          "proof": "★ Prouvé : Exit Escrow testé + chaîne de preuve + mode fiduciaire"
         }
       }
     },
     "difference": {
       "eyebrow": "Notre différence",
       "title": "On vous dit la vérité, même quand elle dérange.",
-      "body": "Si une solution open-source suffit, on vous le dit. Si seul un outil payant tient la route, on vous le dit aussi. Si vos contraintes se contredisent (petit budget + souveraineté maximale), on le pointe, on ne vous vend pas l'impossible. Et on ne touche aucune commission cachée des fournisseurs qu'on recommande.",
+      "body": "Si l’open-source suffit, on vous le dit. Si seul un outil payant tient la route, on vous le dit aussi. Si vos contraintes se contredisent — petit budget et souveraineté maximale —, on le pointe au lieu de vous vendre l’impossible. Et nous ne touchons aucune commission cachée des fournisseurs que nous recommandons : c’est écrit, daté, opposable.",
       "tags": {
-        "openSource": "🟢 Open-source quand c'est mieux",
-        "paid": "💳 Payant quand c'est nécessaire",
+        "openSource": "🟢 Open-source quand c’est mieux",
+        "paid": "💳 Payant quand c’est nécessaire",
         "noCommission": "⚖️ Zéro commission cachée",
         "noLockin": "🔓 Zéro verrouillage"
       },
-      "link": "Lire la charte fiduciaire, zéro commission cachée"
+      "link": "Lire la charte fiduciaire — zéro commission cachée"
     },
     "how": {
       "eyebrow": "Comment ça marche",
       "title": "De la douleur à la décision, en 90 secondes.",
       "steps": {
         "diagnostic": {
-          "title": "Diagnostic gratuit",
-          "body": "Dites ce qui coince (en vos mots ou guidé). On vous donne votre risque, votre gain et un prix ferme."
+          "title": "1 · Diagnostic gratuit",
+          "body": "Dites ce qui coince — en vos mots ou guidé. On vous rend votre risque, votre gain et un prix ferme. Sans inscription."
         },
         "plan": {
-          "title": "Plan sourcé & partageable",
-          "body": "Une reco claire, chaque coût lié à sa source, exportable et partageable à votre direction."
+          "title": "2 · Plan sourcé & partageable",
+          "body": "Une reco claire sur 7 couches, chaque coût lié à sa source datée. Exportable et partageable à votre direction en un lien."
         },
         "deploy": {
-          "title": "Déploiement par agents",
-          "body": "Nos agents déploient et opèrent, sans que vous ayez à recruter ni à tout réapprendre."
+          "title": "3 · Déploiement par agents",
+          "body": "Nos agents déploient et opèrent votre mémoire — sans que vous ayez à recruter une équipe ni à tout réapprendre."
         }
       }
     },
     "pricing": {
       "eyebrow": "Tarifs",
       "title": "Le diagnostic est gratuit. Vous ne payez que la cuisine.",
-      "subtitle": "Le coût de l'infra reste transparent, payé à vos fournisseurs, on ne marge pas dessus.",
-      "note": "Hors coûts d’infrastructure — ceux-ci sont réglés directement à vos fournisseurs, sans marge de notre part.",
+      "subtitle": "Le coût de l’infrastructure reste transparent et payé directement à vos fournisseurs — nous ne margeons jamais dessus.",
+      "note": "Hors coûts d’infrastructure : réglés directement à vos fournisseurs, sans marge de notre part.",
       "tiers": {
         "diagnostic": {
           "name": "Diagnostic",
@@ -1785,12 +1785,12 @@
     "diagnostic": {
       "eyebrow": "Diagnostic gratuit",
       "title": "Votre verdict en 90 secondes.",
-      "subtitle": "Quatre questions. Un verdict chiffré et sourcé : votre risque, votre gain, un prix ferme et la marche à suivre.",
+      "subtitle": "Quatre questions, un verdict chiffré et sourcé : votre risque, votre gain, un prix ferme et la marche à suivre. Sans inscription.",
       "orNaturalLanguage": "ou en langage naturel"
     },
     "ctaFinal": {
       "title": "Votre mémoire vous appartient. Reprenez-la.",
-      "body": "Commencez par le diagnostic gratuit. En 90 secondes, vous saurez votre risque, votre gain, et la marche à suivre.",
+      "body": "Commencez par le diagnostic gratuit. En 90 secondes, vous saurez votre risque, votre gain et la marche à suivre.",
       "cta": "Faire mon diagnostic gratuit"
     },
     "footer": "© 2026 Strate, Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme CNDP & RGPD"
