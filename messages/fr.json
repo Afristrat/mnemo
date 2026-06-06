@@ -551,7 +551,7 @@
   },
   "Results": {
     "metaTitle": "Recommandation, Strate",
-    "metaDescription": "Votre stack de base mémorielle souveraine recommandée : 7 couches, radar 10 dimensions et carte de coûts sourcée.",
+    "metaDescription": "Votre stack souveraine recommandée : 7 couches, radar 10 dimensions et carte de coûts sourcée.",
     "pageEyebrow": "Recommandation",
     "pageTitle": "Votre infrastructure souveraine",
     "perMonth": "{cost} €/mois",
@@ -924,7 +924,7 @@
   },
   "Configurateur": {
     "metaTitle": "Configurateur, Strate",
-    "metaDescription": "Profilez votre besoin en quelques étapes pour obtenir une stack de base mémorielle souveraine recommandée.",
+    "metaDescription": "Profilez votre besoin en quelques étapes : Strate recommande une stack souveraine sur 7 couches, coût projeté et sources vérifiables.",
     "eyebrow": "Configurateur",
     "title": "Quelle infrastructure pour votre mémoire d’organisation ?",
     "subtitle": "Quelques questions, et Strate recommande une stack souveraine sur 7 couches — coût projeté à l’appui, chaque source vérifiable."
@@ -1033,8 +1033,8 @@
     "notSuperAdmin": "Le compte {email} n’est pas super-administrateur de la plateforme."
   },
   "Metadata": {
-    "title": "Strate, infrastructure de base mémorielle souveraine",
-    "description": "Choisissez, déployez et exploitez votre base mémorielle IA souveraine, sans migration, sans verrouillage, sans coûts cachés."
+    "title": "Strate — mémoire d’organisation souveraine et interrogeable",
+    "description": "Transformez le savoir de votre organisation en une mémoire souveraine et interrogeable — hébergée chez vous ou en UE, sans migration, sans verrouillage, sans coûts cachés."
   },
   "Account": {
     "signIn": "Se connecter",
@@ -1793,6 +1793,6 @@
       "body": "Commencez par le diagnostic gratuit. En 90 secondes, vous saurez votre risque, votre gain et la marche à suivre.",
       "cta": "Faire mon diagnostic gratuit"
     },
-    "footer": "© 2026 Strate, Infrastructure de mémoire IA souveraine · Hébergé UE / Maroc · Conforme CNDP & RGPD"
+    "footer": "© 2026 Strate — Mémoire d’organisation souveraine · Hébergé UE / Maroc · Conforme CNDP & RGPD"
   }
 }
