@@ -9,7 +9,7 @@
 import "server-only";
 import type { LlmCallOptions, LlmMessage, LlmResult } from "./types";
 
-const DEFAULT_MODEL = "deepseek-v4-flash"; // alias exposé par proxy.ai-mpower.com (override : LITELLM_MODEL)
+const DEFAULT_MODEL = "kimi-k2.6"; // clé LiteLLM dédiée Strate scopée famille kimi/moonshot (override : LITELLM_MODEL)
 const DEFAULT_TIMEOUT_MS = 30_000;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
