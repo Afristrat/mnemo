@@ -11,10 +11,13 @@ import type { ResidencyContinuityReport } from "@/lib/residency/continuity";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
 function isReport(v: unknown): v is ResidencyContinuityReport {
-  if (typeof v !== "object" || v === null || Array.isArray(v)) return false;
-  const r = v as Record<string, unknown>;
-  return typeof r.primaryRegion === "string" && Array.isArray(r.components) && typeof r.generatedAt === "string";
+  if (!isRecord(v)) return false;
+  return typeof v.primaryRegion === "string" && Array.isArray(v.components) && typeof v.generatedAt === "string";
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -26,7 +29,7 @@ export async function POST(req: Request): Promise<Response> {
   } catch {
     return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
-  const report = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>).report : null;
+  const report = isRecord(raw) ? raw.report : null;
   if (!isReport(report)) return NextResponse.json({ error: "report invalide" }, { status: 400 });
   // Re-hash serveur (jamais confiance au hash client) puis persistance non bloquante.
   const integrityHash = await computeIntegrityHash(report);

@@ -53,7 +53,7 @@ describe("computeExitCost", () => {
     const p = profile();
     const reco = recommend(p);
     const cost = computeExitCost(reco, p, getResidencyPrices());
-    if (cost.monthlyCost > 0) {
+    if (cost.monthlyCost > 0 && cost.storageGb > 0) {
       expect(cost.monthsEquivalent).toBe(Math.round((cost.exitEgressCost / cost.monthlyCost) * 10) / 10);
     } else {
       expect(cost.monthsEquivalent).toBeNull();

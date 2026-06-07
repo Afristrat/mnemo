@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { decodeProfileFromParam } from "@/lib/share";
 import { createClient } from "@/lib/supabase/server";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Partage par lien court (S-067). POST { encoded } → valide la chaîne encodée (doit décoder en un vrai
 // Profile, DÉFCON 1 : on ne stocke pas n'importe quel texte), insère une ligne `shared_reco` (RLS : anon
@@ -17,6 +18,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "share", 30, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();

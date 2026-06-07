@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { Pool } from "pg";
 
 // Collecte des réponses du sondage de prix (Van Westendorp + conjoint).
@@ -31,18 +32,31 @@ async function ensureTable(): Promise<void> {
   tableReady = true;
 }
 
-type SurveyBody = { kind?: string; market?: string; payload?: unknown; meta?: unknown };
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+/** Comparaison à temps constant (anti timing-attack) du token d'export. */
+function tokenMatches(provided: string | null, expected: string): boolean {
+  if (provided === null) return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.SURVEY_DATABASE_URL) {
     return NextResponse.json({ error: "Collecte non configurée." }, { status: 503 });
   }
 
-  let body: SurveyBody;
+  let body: unknown;
   try {
-    body = (await request.json()) as SurveyBody;
+    body = await request.json();
   } catch {
     return NextResponse.json({ error: "JSON invalide." }, { status: 400 });
+  }
+  if (!isRecord(body)) {
+    return NextResponse.json({ error: "Corps requis (objet)." }, { status: 400 });
   }
 
   if (body.kind !== "van_westendorp" && body.kind !== "conjoint") {
@@ -70,11 +84,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   return NextResponse.json({ ok: true });
 }
 
-// Export protégé par token : GET /api/sondage?token=...  → renvoie les réponses (JSON).
+// Export protégé par token : GET /api/sondage  avec en-tête `Authorization: Bearer <SURVEY_EXPORT_TOKEN>`
+// → renvoie les réponses (JSON). Le token N'EST PLUS en query string (évite logs/historique/referer) et la
+// comparaison est à temps constant (anti timing-attack).
 export async function GET(request: Request): Promise<NextResponse> {
   const token = process.env.SURVEY_EXPORT_TOKEN;
-  const provided = new URL(request.url).searchParams.get("token");
-  if (!token || provided !== token) {
+  const header = request.headers.get("authorization");
+  const provided = header !== null && header.startsWith("Bearer ") ? header.slice(7) : null;
+  if (!token || !tokenMatches(provided, token)) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
   if (!process.env.SURVEY_DATABASE_URL) {

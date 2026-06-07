@@ -12,9 +12,20 @@ import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const MAX_COUNTRY = 100;
+const MAX_RESIDENCES = 10;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Liste de pays bornée (anti-amplification de coût LLM) : ≤ MAX_RESIDENCES, chacun ≤ MAX_COUNTRY car. */
 function stringList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((v): v is string => typeof v === "string" && v.trim() !== "").map((v) => v.trim());
+  return value
+    .filter((v): v is string => typeof v === "string" && v.trim() !== "")
+    .slice(0, MAX_RESIDENCES)
+    .map((v) => v.trim().slice(0, MAX_COUNTRY));
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -26,11 +37,11 @@ export async function POST(req: Request): Promise<Response> {
   } catch {
     return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
-  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+  if (!isRecord(raw)) {
     return NextResponse.json({ error: "Corps requis (objet)" }, { status: 400 });
   }
-  const body = raw as Record<string, unknown>;
-  const country = typeof body.country === "string" ? body.country.trim() : "";
+  const body = raw;
+  const country = typeof body.country === "string" ? body.country.trim().slice(0, MAX_COUNTRY) : "";
   if (country === "") {
     return NextResponse.json({ error: "Pays cible requis (country)" }, { status: 400 });
   }
