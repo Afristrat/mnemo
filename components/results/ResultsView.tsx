@@ -25,6 +25,7 @@ import { ResidencyContinuityPanel } from "@/components/results/ResidencyContinui
 import { RestoreDrillPanel } from "@/components/results/RestoreDrillPanel";
 import { ExitCostPanel } from "@/components/results/ExitCostPanel";
 import { MbomPanel } from "@/components/results/MbomPanel";
+import { DriftMonitorPanel } from "@/components/results/DriftMonitorPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
@@ -552,6 +553,9 @@ export function ResultsView(): ReactElement {
 
       {/* MBOM (moat « chaîne de preuve », vague 2 #6) : manifeste signé des ingrédients (checksums SHA-256). */}
       <MbomPanel profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />
+
+      {/* Drift Monitor (moat « chaîne de preuve », vague 2 #7) : le déployé correspond-il toujours à la reco signée ? */}
+      <DriftMonitorPanel profile={activeProfile} recommendation={activeResult} />
 
       {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
       <MigrationBundle profile={activeProfile} recommendation={activeResult} />

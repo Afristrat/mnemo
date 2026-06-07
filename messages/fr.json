@@ -800,6 +800,26 @@
       "checksumsTitle": "Checksums (SHA-256 par fichier)",
       "colFile": "Fichier"
     },
+    "driftMonitor": {
+      "title": "Drift Monitor — conformité du déploiement",
+      "intro": "Ce qui tourne est-il toujours la reco que vous avez signée ? Strate réconcilie le manifeste signé avec l’état vivant que vous rapportez, et fige une preuve. Strate ne lit jamais votre infra.",
+      "probeTitle": "Rapporter l’état vivant",
+      "probeHint": "Sur votre serveur, listez vos couches déployées (id + choix) et vos régions au format live-state.json :",
+      "probeCommand": "docker compose ps --format json   # puis renseignez vos couches (id, choix) et régions dans live-state.json",
+      "verifyTitle": "Coller le live-state.json",
+      "verifyPlaceholder": "Collez ici votre live-state.json…",
+      "verifyButton": "Vérifier la conformité",
+      "resultInSync": "Conforme — le déploiement correspond à la reco signée.",
+      "resultDrift": "Dérive détectée.",
+      "resultLine": "{aligned} couche(s) alignée(s) · {drift} écart(s) · {violations} violation(s) de contrainte.",
+      "statusAligned": "aligné",
+      "statusDrifted": "dérive",
+      "statusMissing": "absent",
+      "statusUnexpected": "inattendu",
+      "generating": "Génération…",
+      "downloadEvidence": "Télécharger la preuve (horodatée + hachée)",
+      "disclaimer": "Orientation d’ingénierie — Strate réconcilie deux artefacts déclarés, elle ne lit pas votre infra. Une IA peut se tromper."
+    },
     "exitCost": {
       "title": "Coût de sortie (anti-lock-in)",
       "intro": "Combien coûte de PARTIR ? On chiffre l’egress de rapatriement de vos données, à côté du coût mensuel — l’asymétrie de sortie que les plateformes ne montrent pas.",

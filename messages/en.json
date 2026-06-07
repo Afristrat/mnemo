@@ -800,6 +800,26 @@
       "checksumsTitle": "Checksums (SHA-256 per file)",
       "colFile": "File"
     },
+    "driftMonitor": {
+      "title": "Drift Monitor — deployment conformity",
+      "intro": "Is what’s running still the recommendation you signed? Strate reconciles the signed manifest with the live state you report, and seals a proof. Strate never reads your infrastructure.",
+      "probeTitle": "Report the live state",
+      "probeHint": "On your server, list your deployed layers (id + choice) and regions as live-state.json:",
+      "probeCommand": "docker compose ps --format json   # then fill your layers (id, choice) and regions into live-state.json",
+      "verifyTitle": "Paste the live-state.json",
+      "verifyPlaceholder": "Paste your live-state.json here…",
+      "verifyButton": "Check conformity",
+      "resultInSync": "Conformant — the deployment matches the signed recommendation.",
+      "resultDrift": "Drift detected.",
+      "resultLine": "{aligned} aligned layer(s) · {drift} deviation(s) · {violations} constraint violation(s).",
+      "statusAligned": "aligned",
+      "statusDrifted": "drift",
+      "statusMissing": "missing",
+      "statusUnexpected": "unexpected",
+      "generating": "Generating…",
+      "downloadEvidence": "Download the proof (timestamped + hashed)",
+      "disclaimer": "Engineering guidance — Strate reconciles two declared artefacts, it does not read your infrastructure. An AI can be wrong."
+    },
     "exitCost": {
       "title": "Exit cost (anti-lock-in)",
       "intro": "How much does it cost to LEAVE? We price the egress to repatriate your data, next to the monthly cost — the exit asymmetry platforms don't show.",
