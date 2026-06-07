@@ -36,7 +36,7 @@ export async function POST(req: Request): Promise<Response> {
   if (continent === null) {
     return NextResponse.json({ error: "continent requis (europe|north-america|latam|africa|middle-east|apac)" }, { status: 400 });
   }
-  const country = typeof body.country === "string" && body.country.trim() !== "" ? body.country.trim() : null;
+  const country = typeof body.country === "string" && body.country.trim() !== "" ? body.country.trim().slice(0, 100) : null;
   if (country === null) {
     return NextResponse.json({ error: "country requis (pays cible)" }, { status: 400 });
   }

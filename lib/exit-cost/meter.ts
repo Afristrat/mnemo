@@ -47,7 +47,7 @@ export function computeExitCost(reco: Recommendation, profile: Profile, residenc
   const egressPerGb = vector.interRegionEgress.amount;
   const egressSource = vector.interRegionEgress.source;
   const storageGb = reco.sizing.storageGb;
-  const exitEgressCost = round(storageGb * egressPerGb);
+  const exitEgressCost = storageGb > 0 ? round(storageGb * egressPerGb) : 0;
   const monthlyCost = reco.totalCost;
   return {
     storageGb,
@@ -56,7 +56,8 @@ export function computeExitCost(reco: Recommendation, profile: Profile, residenc
     egressSource,
     exitEgressCost,
     monthlyCost,
-    monthsEquivalent: monthlyCost > 0 ? round1(exitEgressCost / monthlyCost) : null,
+    // `monthsEquivalent` n'a de sens que si des données sont dimensionnées ET un coût mensuel existe.
+    monthsEquivalent: monthlyCost > 0 && storageGb > 0 ? round1(exitEgressCost / monthlyCost) : null,
     apiFees: "unknown",
     minCommitment: "unknown",
     disclaimer: DISCLAIMER,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { HEALTH_DIMENSIONS, type HealthSnapshot, type HealthStatus, type HealthDimension } from "@/lib/monitoring/health";
 import { persistHealthMetric } from "@/lib/monitoring/persist";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Monitoring (F12, S-081) : POST d'un snapshot d'Infra Health Score → persistance de l'audit
 // (health_metrics, RLS). Le snapshot est calculé côté client (moteurs purs S-079/S-080) ; on logue le
@@ -37,6 +38,8 @@ function parseSnapshot(raw: unknown): HealthSnapshot | null {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "monitoring", 60, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();

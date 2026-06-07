@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildLead, isValidEmail, isValidName } from "@/lib/conversion/log";
 import { createClient } from "@/lib/supabase/server";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Lead gate (S-068). POST { name, email, preset? } → valide nom + e-mail (DÉFCON 1 : on ne stocke
 // pas n'importe quel texte), insère une ligne `leads` (RLS : anon peut INSERT) → renvoie { ok: true }.
@@ -14,6 +15,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "lead", 15, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();

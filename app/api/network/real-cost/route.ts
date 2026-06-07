@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { compareRealVsEstimated, type RealCostEntry } from "@/lib/network/real-cost";
 import { persistRealCostEntries } from "@/lib/network/real-cost-persist";
+import { enforceRateLimit } from "@/lib/api/rate-limit-guard";
 
 // Network actif (F13, S-082) : POST { entries:[{poste,estimated,real}], consent } → comparaison
 // estimé/réel (moteur pur) + persistance de l'audit SI consentement (opt-in F9). Persistance non
@@ -22,7 +23,11 @@ function parseEntry(v: unknown): RealCostEntry | null {
   return { poste, estimated: v.estimated, real: v.real };
 }
 
+const MAX_ENTRIES = 50;
+
 export async function POST(req: Request): Promise<Response> {
+  const limited = enforceRateLimit(req, "real-cost", 60, 60_000);
+  if (limited !== null) return limited;
   let raw: unknown;
   try {
     raw = await req.json();
@@ -33,7 +38,7 @@ export async function POST(req: Request): Promise<Response> {
     return NextResponse.json({ error: "Corps requis : { entries: [...] }" }, { status: 400 });
   }
   const entries: RealCostEntry[] = [];
-  for (const e of raw.entries) {
+  for (const e of raw.entries.slice(0, MAX_ENTRIES)) {
     const parsed = parseEntry(e);
     if (parsed !== null) entries.push(parsed);
   }
