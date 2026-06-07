@@ -64,6 +64,23 @@ describe("buildRestoreDrillKit", () => {
     expect(sh).toMatch(/rtoMinutes/);
   });
 
+  it("le JSON du certificat généré est valide (booléen bash nu, pas d'apostrophes parasites)", () => {
+    const sh = kit()["restore-drill.sh"];
+    // booléen bash nu : `"passed": $PASS_servicesUp` (pas `'"$PASS_..."'` qui produirait du JSON invalide)
+    expect(sh).toMatch(/"passed": \$PASS_servicesUp\}/);
+    expect(sh).not.toMatch(/'"\$PASS_/);
+    // simule la substitution bash (true/false) et vérifie que le bloc certificat parse en JSON
+    const block = sh.slice(sh.indexOf("cat > restore-certificate.json"));
+    const json = block
+      .slice(block.indexOf("{"), block.indexOf("\nJSON"))
+      .replace(/\$\(date[^)]*\)/g, "2026-06-07T00:00:00.000Z")
+      .replace(/\$PASS_\w+/g, "true")
+      .replace(/\$MODE/g, "local")
+      .replace(/\$DATASET/g, "real")
+      .replace(/\$RTO/g, "12");
+    expect(() => JSON.parse(json)).not.toThrow();
+  });
+
   it("le schéma JSON est un JSON valide décrivant le certificat", () => {
     const schema: unknown = JSON.parse(kit()["restore-certificate.schema.json"]);
     expect(schema).toHaveProperty("properties");

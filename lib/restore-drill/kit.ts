@@ -43,7 +43,7 @@ cat > restore-certificate.json <<JSON
   "mode": "\$MODE",
   "dataset": "\$DATASET",
   "checklist": [
-${CHECKLIST_IDS.map((id) => `    {"id": "${id}", "passed": '"\$PASS_${id}"'}`).join(",\n")}
+${CHECKLIST_IDS.map((id) => `    {"id": "${id}", "passed": \$PASS_${id}}`).join(",\n")}
   ],
   "rtoMinutes": \$RTO
 }

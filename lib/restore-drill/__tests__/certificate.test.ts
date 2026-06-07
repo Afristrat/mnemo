@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CHECKLIST_IDS, type RestoreCertificate, verifyCertificate } from "../certificate";
+import { CHECKLIST_IDS, type RestoreCertificate, verifyCertificate, sealCertificate } from "../certificate";
 import { computeIntegrityHash } from "@/lib/decision/integrity";
 
 async function stamp(cert: Omit<RestoreCertificate, "integrityHash">): Promise<RestoreCertificate> {
@@ -59,5 +59,32 @@ describe("verifyCertificate", () => {
     const v = await verifyCertificate(await stamp({ ...baseCert(), mode: "ci", dataset: "synthetic" }));
     expect(v.dataset).toBe("synthetic");
     expect(v.valid).toBe(true);
+  });
+
+  it("signale « non scellé » (≠ altéré) un certificat de drill sans empreinte", async () => {
+    const v = await verifyCertificate(baseCert()); // pas d'integrityHash
+    expect(v.integrityOk).toBe(false);
+    expect(v.valid).toBe(false);
+    expect(v.issues.some((i) => /non scell/i.test(i))).toBe(true);
+  });
+});
+
+describe("sealCertificate", () => {
+  it("scelle un certificat de drill non scellé → JSON scellé re-vérifiable + valide", async () => {
+    const { sealedJson, verdict } = await sealCertificate(baseCert());
+    expect(sealedJson).not.toBeNull();
+    expect(verdict.valid).toBe(true);
+    expect(verdict.integrityOk).toBe(true);
+    // le certificat scellé re-passe la vérification (empreinte cohérente)
+    const reparsed: unknown = JSON.parse(sealedJson ?? "{}");
+    const v = await verifyCertificate(reparsed);
+    expect(v.valid).toBe(true);
+    expect(v.integrityOk).toBe(true);
+  });
+
+  it("ne scelle pas un JSON invalide", async () => {
+    const { sealedJson, verdict } = await sealCertificate({ nope: 1 });
+    expect(sealedJson).toBeNull();
+    expect(verdict.valid).toBe(false);
   });
 });
