@@ -79,34 +79,27 @@ function parseCertificate(raw: unknown): { cert: RestoreCertificate | null; issu
   };
 }
 
-/** Recalcule le hash canonique du certificat (clé `integrityHash` exclue) et le compare à l'empreinte publiée. */
-async function checkIntegrity(cert: RestoreCertificate): Promise<boolean> {
-  if (cert.integrityHash === undefined) return false;
+/** Hash canonique du corps du certificat (clé `integrityHash` exclue) — base du scellement et de la vérif. */
+function bodyHash(cert: RestoreCertificate): Promise<string> {
   const { integrityHash: _omit, ...body } = cert;
-  const recomputed = await computeIntegrityHash(body);
-  return recomputed === cert.integrityHash;
+  return computeIntegrityHash(body);
 }
 
-/** Vérifie un certificat inconnu (intégrité + checklist complète). Total, ne lève jamais. */
-export async function verifyCertificate(raw: unknown): Promise<RestoreVerdict> {
-  const { cert, issues } = parseCertificate(raw);
-  if (cert === null) {
-    return {
-      valid: false,
-      integrityOk: false,
-      allPassed: false,
-      rtoMinutes: null,
-      dataset: null,
-      mode: null,
-      passedCount: 0,
-      totalCount: CHECKLIST_IDS.length,
-      issues,
-    };
-  }
-  const integrityOk = await checkIntegrity(cert);
+const INVALID_VERDICT = (issues: string[]): RestoreVerdict => ({
+  valid: false,
+  integrityOk: false,
+  allPassed: false,
+  rtoMinutes: null,
+  dataset: null,
+  mode: null,
+  passedCount: 0,
+  totalCount: CHECKLIST_IDS.length,
+  issues,
+});
+
+function checklistVerdict(cert: RestoreCertificate, integrityOk: boolean, issues: string[]): RestoreVerdict {
   const passedCount = cert.checklist.filter((c) => c.passed).length;
   const allPassed = CHECKLIST_IDS.every((id) => cert.checklist.find((c) => c.id === id)?.passed === true);
-  if (!integrityOk) issues.push("empreinte d'intégrité invalide (certificat altéré ou non scellé)");
   if (!allPassed) issues.push("checklist incomplète (au moins une étape de restauration a échoué)");
   return {
     valid: integrityOk && allPassed,
@@ -119,4 +112,34 @@ export async function verifyCertificate(raw: unknown): Promise<RestoreVerdict> {
     totalCount: CHECKLIST_IDS.length,
     issues,
   };
+}
+
+/**
+ * Vérifie un certificat DÉJÀ SCELLÉ (re-calcule l'empreinte canonique et la compare). Total, ne lève jamais.
+ * Un certificat sans empreinte est signalé « non scellé » (≠ altéré) — utilisez `sealCertificate` d'abord.
+ */
+export async function verifyCertificate(raw: unknown): Promise<RestoreVerdict> {
+  const { cert, issues } = parseCertificate(raw);
+  if (cert === null) return INVALID_VERDICT(issues);
+  if (cert.integrityHash === undefined) {
+    issues.push("certificat non scellé (aucune empreinte) — scellez-le d'abord via le panneau.");
+    return checklistVerdict(cert, false, issues);
+  }
+  const integrityOk = (await bodyHash(cert)) === cert.integrityHash;
+  if (!integrityOk) issues.push("empreinte d'intégrité invalide (certificat altéré).");
+  return checklistVerdict(cert, integrityOk, issues);
+}
+
+/**
+ * Scelle un certificat de drill (issu de `restore-drill.sh`, sans empreinte) : calcule l'empreinte canonique
+ * SHA-256 et la grave → artefact opposable, révérifiable par un tiers. Renvoie le JSON scellé (à archiver)
+ * + le verdict (validité = checklist complète, intégrité acquise par construction). Total, ne lève jamais.
+ */
+export async function sealCertificate(raw: unknown): Promise<{ sealedJson: string | null; verdict: RestoreVerdict }> {
+  const { cert, issues } = parseCertificate(raw);
+  if (cert === null) return { sealedJson: null, verdict: INVALID_VERDICT(issues) };
+  const integrityHash = await bodyHash(cert);
+  const sealed: RestoreCertificate = { ...cert, integrityHash };
+  const verdict = checklistVerdict(sealed, true, issues);
+  return { sealedJson: JSON.stringify(sealed, null, 2) + "\n", verdict };
 }

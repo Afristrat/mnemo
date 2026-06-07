@@ -20,6 +20,7 @@ export function RestoreDrillPanel({ profile, recommendation }: RestoreDrillPanel
   const [busy, setBusy] = useState(false);
   const [raw, setRaw] = useState("");
   const [verdict, setVerdict] = useState<RestoreVerdict | null>(null);
+  const [sealedJson, setSealedJson] = useState<string | null>(null);
 
   const downloadKit = async (): Promise<void> => {
     setBusy(true);
@@ -43,6 +44,8 @@ export function RestoreDrillPanel({ profile, recommendation }: RestoreDrillPanel
     }
   };
 
+  // Un certificat de drill arrive SANS empreinte → on le SCELLE (calcul SHA-256 → artefact opposable
+  // téléchargeable). Un certificat déjà scellé (avec empreinte) → on le VÉRIFIE (re-hash + comparaison).
   const verify = async (): Promise<void> => {
     let parsed: unknown = null;
     try {
@@ -50,7 +53,27 @@ export function RestoreDrillPanel({ profile, recommendation }: RestoreDrillPanel
     } catch {
       parsed = null;
     }
-    setVerdict(await verifyCertificate(parsed));
+    const alreadySealed = typeof parsed === "object" && parsed !== null && typeof (parsed as { integrityHash?: unknown }).integrityHash === "string";
+    if (alreadySealed) {
+      setSealedJson(null);
+      setVerdict(await verifyCertificate(parsed));
+    } else {
+      const { sealCertificate } = await import("@/lib/restore-drill/certificate");
+      const { sealedJson: sealed, verdict: v } = await sealCertificate(parsed);
+      setSealedJson(sealed);
+      setVerdict(v);
+    }
+  };
+
+  const downloadSealed = (): void => {
+    if (sealedJson === null) return;
+    const blob = new Blob([sealedJson], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "restore-certificate.sealed.json";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -115,6 +138,14 @@ export function RestoreDrillPanel({ profile, recommendation }: RestoreDrillPanel
                 <li key={i}>{i}</li>
               ))}
             </ul>
+          ) : null}
+          {sealedJson !== null ? (
+            <div className="mt-3">
+              <p className="text-on-surface-variant/80">{t("sealedNote")}</p>
+              <Button variant="secondary" onClick={downloadSealed} className="mt-2">
+                {t("downloadSealed")}
+              </Button>
+            </div>
           ) : null}
         </div>
       ) : null}
