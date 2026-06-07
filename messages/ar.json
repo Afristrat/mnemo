@@ -1646,6 +1646,26 @@
       "checksumsTitle": "البصمات (SHA-256 لكل ملف)",
       "colFile": "الملف"
     },
+    "driftMonitor": {
+      "title": "مراقب الانحراف — مطابقة النشر",
+      "intro": "هل ما يعمل لا يزال هو التوصية التي وقّعتها؟ تُطابق سترات البيان الموقّع مع الحالة الحيّة التي تُبلّغ عنها، وتختم دليلًا. لا تقرأ سترات بنيتك التحتية أبدًا.",
+      "probeTitle": "أبلغ عن الحالة الحيّة",
+      "probeHint": "على خادمك، اسرد طبقاتك المنشورة (المعرّف + الخيار) ومناطقك بصيغة live-state.json:",
+      "probeCommand": "docker compose ps --format json   # ثم أدرج طبقاتك (id، choice) ومناطقك في live-state.json",
+      "verifyTitle": "الصق ملف live-state.json",
+      "verifyPlaceholder": "الصق هنا ملف live-state.json…",
+      "verifyButton": "التحقّق من المطابقة",
+      "resultInSync": "مطابق — النشر يوافق التوصية الموقّعة.",
+      "resultDrift": "تمّ رصد انحراف.",
+      "resultLine": "{aligned} طبقة مُطابِقة · {drift} انحراف · {violations} مخالفة قيد.",
+      "statusAligned": "مُطابِق",
+      "statusDrifted": "انحراف",
+      "statusMissing": "غائب",
+      "statusUnexpected": "غير متوقَّع",
+      "generating": "جارٍ الإنشاء…",
+      "downloadEvidence": "تنزيل الدليل (مؤرَّخ + مبصوم)",
+      "disclaimer": "توجيه هندسي — تُطابق سترات بيانَين مُصرَّحَين، ولا تقرأ بنيتك التحتية. قد يخطئ الذكاء الاصطناعي."
+    },
     "exitCost": {
       "title": "تكلفة الخروج (مقاومة الاحتجاز)",
       "intro": "كم يكلّف الرحيل؟ نحسب تكلفة نقل بياناتك خارجًا، إلى جانب التكلفة الشهرية — تفاوت الخروج الذي لا تُظهره المنصّات.",

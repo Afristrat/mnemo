@@ -1514,6 +1514,15 @@
       "completedAt": "2026-06-05",
       "deps": [],
       "note": "Manifeste signe type SBOM des ingredients de la base memorielle. DEFCON 1 : checksums SHA-256 CALCULES par fichier (jamais simules) ; licences/versions non confirmees = null/a confirmer (jamais fabriquees). lib/mbom/manifest.ts (buildMbom(bundle) ASYNC : composants derives du manifeste Exit Escrow (couches + catalogue source provenance/sourceUrl), checksum sha256Hex par fichier, empreinte globale canonicalJson+sha256 ; reutilise lib/decision/integrity) + render.ts (PUR, MD : tableaux composants+checksums+empreinte). Choix archi : HORS buildExitBundle (synchrone) -> artefact CLIENT async (comme Decision Record/certificat drill) -> ZERO regression Exit Escrow + EXPECTED_FILES inchange. components/results/MbomPanel.tsx (apercu async n composants/fichiers+empreinte, telechargement MD+JSON), monte apres ExitEscrow. i18n Results.mbom fr/en/ar (panneau + cles du rendu). +7 tests. typecheck 0/lint 0-0/739 tests/build OK. Signature HMAC/Ed25519 + versions exactes = hors perimetre (empreinte SHA-256 auto-verifiable suffit)."
+    },
+    {
+      "id": "S-098",
+      "title": "Drift Monitor (moat chaine de preuve, vague 2 #7)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-07",
+      "deps": [],
+      "note": "Dernier maillon de la chaine de preuve. L infra deployee est-elle TOUJOURS la reco signee ? DEFCON 1 : Strate ne lit PAS l infra vivante -> reconcilie deux artefacts DECLARES (manifeste Exit Escrow signe vs live-state.json rapporte par le client via une commande d introspection fournie). lib/drift/reconcile.ts (PUR : par couche aligned/drifted/missing/unexpected + iso-contraintes region hors ensemble signe ; entree live bornee anti-injection, ne leve jamais) + evidence.ts (PUR : MD/JSON + SHA-256 isomorphe, maillon opposable). components/results/DriftMonitorPanel.tsx (commande introspection + collage live-state -> verdict + telechargement preuve), monte apres MbomPanel. i18n Results.driftMonitor fr/en/ar (placeholder/probeCommand SANS accolade litterale -> piege ICU evite). +10 tests. typecheck 0/lint 0-0/749 tests/build OK/e2e 41-41. VERIFIE NAVIGATEUR (collage drift -> verdict 7 ecarts + violation us). CHAINE DE PREUVE COMPLETE (7 artefacts) : Decision Record S-092 -> Exit Escrow -> Restore Drill S-094 -> Residence continue S-095 -> Exit-Cost Meter S-096 -> MBOM S-097 -> Drift Monitor S-098. Vague 2 moat TERMINEE."
     }
   ]
 }
