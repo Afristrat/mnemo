@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import {
   parseStatuspageIncidents,
   parseGcpIncidents,
+  parseRssIncidents,
   fetchProviderStatus,
   type ProviderStatus,
 } from "@/lib/sla/status-feed";
@@ -99,6 +100,23 @@ describe("parseGcpIncidents (SLA #5 observé)", () => {
   });
 });
 
+// Fixture RSS (AWS/Azure) — forme réelle (RSS 2.0, items horodatés).
+const RSS = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>
+  <item><title><![CDATA[Increased API error rates [Resolved]]]></title><pubDate>Sat, 07 Jun 2026 10:00:00 GMT</pubDate><link>https://status.aws.amazon.com/i/1</link></item>
+  <item><title>Network connectivity in eu-west-1</title><pubDate>Fri, 06 Jun 2026 08:00:00 GMT</pubDate><link>https://status.aws.amazon.com/i/2</link></item>
+</channel></rss>`;
+
+describe("parseRssIncidents (AWS/Azure)", () => {
+  it("extrait les items (titre CDATA, date, lien), opérationnel = null (non dérivable)", () => {
+    const r = parseRssIncidents(RSS, { now: NOW, sinceDays: 90 });
+    expect(r.operational).toBeNull();
+    expect(r.recentIncidents).toHaveLength(2);
+    expect(r.recentIncidents[0].title).toBe("Increased API error rates [Resolved]");
+    expect(r.recentIncidents[0].startedAt).toBe("2026-06-07T10:00:00.000Z");
+    expect(r.recentIncidents[0].url).toBe("https://status.aws.amazon.com/i/1");
+  });
+});
+
 describe("fetchProviderStatus (live + repli)", () => {
   const source: StatusSource = {
     id: "scaleway",
@@ -108,19 +126,35 @@ describe("fetchProviderStatus (live + repli)", () => {
     endpoint: "https://status.scaleway.com/api/v2/incidents.json",
     pageUrl: "https://status.scaleway.com/",
   };
+  const rssSource: StatusSource = {
+    id: "aws",
+    name: "AWS",
+    scope: "hyperscaler",
+    kind: "rss",
+    endpoint: "https://status.aws.amazon.com/rss/all.rss",
+    pageUrl: "https://health.aws.amazon.com/health/status",
+  };
   const seed: ProviderStatus = seedStatusFor(source, "2026-06-01");
 
-  it("live : parse l'endpoint et marque provenance=live", async () => {
-    const fetchJson = vi.fn().mockResolvedValue(STATUSPAGE);
-    const s = await fetchProviderStatus(source, { fetchJson, now: NOW, seed });
+  it("live (statuspage) : parse le texte JSON et marque provenance=live", async () => {
+    const fetchText = vi.fn().mockResolvedValue(JSON.stringify(STATUSPAGE));
+    const s = await fetchProviderStatus(source, { fetchText, now: NOW, seed });
     expect(s.provenance).toBe("live");
     expect(s.operational).toBe(false);
     expect(s.checkedAt).toBe("2026-06-08");
   });
 
-  it("repli : si le fetch lève, renvoie le seed daté (provenance=seed), sans throw", async () => {
-    const fetchJson = vi.fn().mockRejectedValue(new Error("network"));
-    const s = await fetchProviderStatus(source, { fetchJson, now: NOW, seed });
+  it("live (rss) : parse le XML et liste les incidents (operational null)", async () => {
+    const fetchText = vi.fn().mockResolvedValue(RSS);
+    const s = await fetchProviderStatus(rssSource, { fetchText, now: NOW, seed: seedStatusFor(rssSource, "2026-06-01") });
+    expect(s.provenance).toBe("live");
+    expect(s.operational).toBeNull();
+    expect(s.recentIncidents.length).toBe(2);
+  });
+
+  it("repli : un JSON invalide bascule sur le seed daté (provenance=seed), sans throw", async () => {
+    const fetchText = vi.fn().mockResolvedValue("pas du json");
+    const s = await fetchProviderStatus(source, { fetchText, now: NOW, seed });
     expect(s.provenance).toBe("seed");
     expect(s.operational).toBeNull();
     expect(s.sourceUrl).toBe(source.pageUrl);

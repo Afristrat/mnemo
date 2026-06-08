@@ -116,21 +116,17 @@ export function SlaPanel({ profile, recommendation }: SlaPanelProps): ReactEleme
               <li key={s.providerId} className="rounded-card bg-surface-container p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-on-surface">{s.providerName}</span>
-                  <span
-                    className={`text-label-caps uppercase ${
-                      s.operational === false
-                        ? "text-error"
-                        : s.operational === true
-                          ? "text-tertiary"
-                          : "text-on-surface-variant"
-                    }`}
-                  >
-                    {s.operational === false
-                      ? t("statusIncident")
-                      : s.operational === true
-                        ? t("statusOk")
-                        : t("statusUnknown")}
-                  </span>
+                  {/* État affiché seulement s'il est connu ; en repli seed (live KO) → « non récupéré ».
+                      Source RSS (operational null en live) → pas de badge, les incidents listés parlent. */}
+                  {s.operational !== null ? (
+                    <span
+                      className={`text-label-caps uppercase ${s.operational ? "text-tertiary" : "text-error"}`}
+                    >
+                      {s.operational ? t("statusOk") : t("statusIncident")}
+                    </span>
+                  ) : s.provenance === "seed" ? (
+                    <span className="text-label-caps uppercase text-on-surface-variant">{t("statusUnknown")}</span>
+                  ) : null}
                   <span className="text-body-sm text-on-surface-variant/80">
                     · {t(s.provenance === "live" ? "provLive" : "provSeed")}
                   </span>
