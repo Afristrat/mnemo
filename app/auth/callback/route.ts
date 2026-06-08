@@ -9,24 +9,20 @@ import { createClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/**
- * Origine PUBLIQUE de la requête. Derrière le proxy (Coolify/traefik), `req.url` porte l'adresse de bind
- * interne (`http://0.0.0.0:3000`) — rediriger dessus enverrait l'utilisateur sur une URL injoignable. On
- * reconstruit donc depuis `x-forwarded-host`/`x-forwarded-proto` (repli : Host, puis l'origine de req.url).
- */
-function publicOrigin(req: Request, url: URL): string {
-  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
-  if (host === null || host === "") return url.origin;
-  // Proto : `x-forwarded-proto` si fourni ; sinon un hôte PUBLIC est servi en https (seul le dev local
-  // est en http) — évite de rediriger l'auth en http quand le proxy n'émet pas l'en-tête.
-  const isLocal = /^(localhost|127\.|0\.0\.0\.0|\[::1\])(:|$)/u.test(host);
-  const proto = req.headers.get("x-forwarded-proto") ?? (isLocal ? "http" : "https");
-  return `${proto}://${host}`;
+// Origine canonique configurée (publique, stable, non secrète). On NE dérive JAMAIS l'origine de redirection
+// d'un en-tête client (`Host`/`x-forwarded-host` sont usurpables → open-redirect). En prod on redirige
+// toujours sur cette origine ; en dev local, l'origine de la requête. `url.hostname` provient du bind
+// serveur (fixé par Next, pas du client) → décision dev/prod non usurpable.
+const CANONICAL_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL ?? "https://infra.ai-mpower.com";
+
+function publicOrigin(url: URL): string {
+  const isLocalServer = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  return isLocalServer ? url.origin : CANONICAL_ORIGIN;
 }
 
 export async function GET(req: Request): Promise<Response> {
   const url = new URL(req.url);
-  const origin = publicOrigin(req, url);
+  const origin = publicOrigin(url);
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") ?? "/compte";
   // N'accepter qu'un chemin relatif interne (pas `//host` ni une URL absolue) → anti open-redirect.
