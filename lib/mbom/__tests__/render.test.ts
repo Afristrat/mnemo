@@ -31,4 +31,24 @@ describe("renderMbomMarkdown", () => {
     const md = renderMbomMarkdown(mbom, t);
     expect(md).toMatch(/toConfirm/);
   });
+
+  it("ajoute le bloc signature quand une signature est fournie (vague 3 T2)", () => {
+    const md = renderMbomMarkdown(mbom, t, {
+      algo: "Ed25519",
+      version: 1,
+      publicKey: "PUBKEYb64",
+      message: "strate-mbom-v1:" + "b".repeat(64),
+      value: "SIGb64",
+      signedAt: "2026-06-08T12:00:00.000Z",
+    });
+    expect(md).toMatch(/signatureTitle/);
+    expect(md).toMatch(/Ed25519/);
+    expect(md).toMatch(/PUBKEYb64/);
+    expect(md).toMatch(/SIGb64/);
+    expect(md).toMatch(/sigVerifyHint/);
+  });
+
+  it("n'ajoute PAS de bloc signature en l'absence de signature", () => {
+    expect(renderMbomMarkdown(mbom, t)).not.toMatch(/signatureTitle/);
+  });
 });
