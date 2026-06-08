@@ -22,11 +22,14 @@ export default async function ComptePage(): Promise<ReactElement> {
   const t = await getTranslations("Account");
   const supabase = await createClient();
 
-  // Méthode de connexion (provider) — issue des métadonnées d'authentification.
+  // Méthodes de connexion LIÉES au compte (Supabase fusionne les identités de même e-mail) :
+  // on liste toutes les méthodes (`providers`), pas seulement le fournisseur d'origine (`provider`).
   const { data: authData } = await supabase.auth.getUser();
   const provider = authData.user?.app_metadata?.provider ?? "email";
-  const providerLabel =
-    provider === "google" ? t("providerGoogle") : provider === "github" ? t("providerGithub") : t("providerEmail");
+  const providers = authData.user?.app_metadata?.providers ?? [provider];
+  const labelFor = (p: string): string =>
+    p === "google" ? t("providerGoogle") : p === "github" ? t("providerGithub") : t("providerEmail");
+  const providerLabel = Array.from(new Set(providers.map(labelFor))).join(", ");
 
   // Cercle de l'utilisateur (premier membership).
   const { data: mem } = await supabase.from("memberships").select("circle_id").limit(1).maybeSingle();

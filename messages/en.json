@@ -1156,7 +1156,7 @@
     "revoked": "revoked",
     "noCredentials": "No credentials saved.",
     "identityTitle": "Identity",
-    "loginMethodLabel": "Sign-in method",
+    "loginMethodLabel": "Sign-in methods",
     "providerGoogle": "Google",
     "providerGithub": "GitHub",
     "providerEmail": "Email / password",

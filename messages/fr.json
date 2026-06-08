@@ -1156,7 +1156,7 @@
     "revoked": "révoqué",
     "noCredentials": "Aucun accès enregistré.",
     "identityTitle": "Identité",
-    "loginMethodLabel": "Méthode de connexion",
+    "loginMethodLabel": "Méthodes de connexion",
     "providerGoogle": "Google",
     "providerGithub": "GitHub",
     "providerEmail": "E-mail / mot de passe",
