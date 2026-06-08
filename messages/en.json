@@ -1154,7 +1154,23 @@
     "store": "Save",
     "revoke": "Revoke",
     "revoked": "revoked",
-    "noCredentials": "No credentials saved."
+    "noCredentials": "No credentials saved.",
+    "identityTitle": "Identity",
+    "loginMethodLabel": "Sign-in method",
+    "providerGoogle": "Google",
+    "providerGithub": "GitHub",
+    "providerEmail": "Email / password",
+    "plansTitle": "My saved plans",
+    "plansIntro": "The recommendations saved in your circle.",
+    "plansEmpty": "No saved plan yet.",
+    "plansCta": "Configure my memory base",
+    "planResume": "Resume",
+    "networkTitle": "Network & consent",
+    "networkIntro": "Share (or not) your real costs with the intelligence network — anonymously and revocable at any time.",
+    "consentActive": "Real-cost sharing: enabled.",
+    "consentInactive": "Real-cost sharing: disabled.",
+    "consentEnable": "Enable sharing",
+    "consentDisable": "Disable sharing"
   },
   "LocaleSwitcher": {
     "label": "Language"

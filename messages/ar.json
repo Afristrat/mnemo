@@ -174,7 +174,23 @@
     "store": "حفظ",
     "revoke": "إبطال",
     "revoked": "مُبطَل",
-    "noCredentials": "لا توجد بيانات اعتماد محفوظة."
+    "noCredentials": "لا توجد بيانات اعتماد محفوظة.",
+    "identityTitle": "الهوية",
+    "loginMethodLabel": "طريقة تسجيل الدخول",
+    "providerGoogle": "Google",
+    "providerGithub": "GitHub",
+    "providerEmail": "البريد الإلكتروني / كلمة المرور",
+    "plansTitle": "خططي المحفوظة",
+    "plansIntro": "التوصيات المحفوظة في دائرتك.",
+    "plansEmpty": "لا توجد خطة محفوظة بعد.",
+    "plansCta": "إعداد قاعدتي الذاكرية",
+    "planResume": "استئناف",
+    "networkTitle": "الشبكة والموافقة",
+    "networkIntro": "شارك (أو لا) تكاليفك الفعلية مع شبكة الذكاء، بشكل مجهول وقابل للإلغاء في أي وقت.",
+    "consentActive": "مشاركة التكلفة الفعلية: مُفعَّلة.",
+    "consentInactive": "مشاركة التكلفة الفعلية: مُعطَّلة.",
+    "consentEnable": "تفعيل المشاركة",
+    "consentDisable": "تعطيل المشاركة"
   },
   "LocaleSwitcher": {
     "label": "اللغة"
