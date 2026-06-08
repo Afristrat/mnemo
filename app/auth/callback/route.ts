@@ -17,7 +17,10 @@ export const dynamic = "force-dynamic";
 function publicOrigin(req: Request, url: URL): string {
   const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
   if (host === null || host === "") return url.origin;
-  const proto = req.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "");
+  // Proto : `x-forwarded-proto` si fourni ; sinon un hôte PUBLIC est servi en https (seul le dev local
+  // est en http) — évite de rediriger l'auth en http quand le proxy n'émet pas l'en-tête.
+  const isLocal = /^(localhost|127\.|0\.0\.0\.0|\[::1\])(:|$)/u.test(host);
+  const proto = req.headers.get("x-forwarded-proto") ?? (isLocal ? "http" : "https");
   return `${proto}://${host}`;
 }
 
