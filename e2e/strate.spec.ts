@@ -40,6 +40,19 @@ test("lead gate : le verdict est libre ; le détail expert ne s'ouvre qu'après 
   await expect(page.getByRole("heading", { name: "Carte de coûts" })).toBeVisible();
 });
 
+test("MBOM signé : la vérification rejette un collage invalide (vague 3, authenticité)", async ({ page }) => {
+  await unlockExpert(page);
+  await page.goto("/resultats");
+  // Le panneau MBOM charge ses modules en import dynamique (chunks) : sur un serveur standalone à froid,
+  // attendre que le manifeste soit construit (bouton de téléchargement actif) avant d'interagir.
+  await expect(page.getByRole("button", { name: "Télécharger le MBOM (Markdown)" })).toBeEnabled({
+    timeout: 20000,
+  });
+  await page.getByPlaceholder(/Collez ici le contenu JSON/).fill("ceci n'est pas un MBOM signé");
+  await page.getByRole("button", { name: "Vérifier l'authenticité" }).click();
+  await expect(page.getByText(/Format non reconnu/)).toBeVisible({ timeout: 15000 });
+});
+
 test("bloc Médias : génération vidéo souveraine → budget rouge + levier", async ({ page }) => {
   await page.goto("/configurateur");
   // Aller au bloc ④ Médias (3 « Suivant »).
