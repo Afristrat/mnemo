@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useMemo, type ReactElement } from "react";
+import { useEffect, useMemo, useState, type ReactElement } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { computeSlaAssessment, type ProviderSla } from "@/lib/sla/compose";
 import { renderSlaMarkdown } from "@/lib/sla/render";
+import type { ProviderStatus } from "@/lib/sla/status-feed";
 import type { Profile, Recommendation } from "@/lib/engine";
 
 // SLA paramétrique (moat « chaîne de preuve », vague 3 — #5). Strate ne PROMET pas une disponibilité : il
@@ -20,6 +21,26 @@ export function SlaPanel({ profile, recommendation }: SlaPanelProps): ReactEleme
   const a = useMemo(() => computeSlaAssessment(profile, recommendation), [profile, recommendation]);
   const list = a.selfHosted ? a.reference : a.providers;
   const classLabel = t(`hostingClass.${a.hostingClass}`);
+
+  // Disponibilité OBSERVÉE : statut live des pages publiques des fournisseurs (incidents réels datés).
+  // Non bloquant : un échec laisse la section vide, le SLA publié reste affiché.
+  const [observed, setObserved] = useState<ProviderStatus[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`/api/sla/status?class=${encodeURIComponent(a.hostingClass)}`);
+        if (!res.ok) return;
+        const data: { statuses?: ProviderStatus[] } = await res.json();
+        if (!cancelled && Array.isArray(data.statuses)) setObserved(data.statuses);
+      } catch {
+        /* repli silencieux : la section observée reste masquée */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [a.hostingClass]);
 
   const download = (): void => {
     const content = renderSlaMarkdown(a, (k, v) => t(k, v), classLabel);
@@ -84,6 +105,62 @@ export function SlaPanel({ profile, recommendation }: SlaPanelProps): ReactEleme
 
       {a.coLocatedLayers.length > 0 ? (
         <p className="mt-4 text-body-sm text-on-surface-variant">{t("coLocatedNote")}</p>
+      ) : null}
+
+      {observed !== null && observed.length > 0 ? (
+        <div className="mt-6 border-t border-outline-variant pt-4">
+          <h3 className="font-display text-title-md text-on-surface">{t("observedTitle")}</h3>
+          <p className="mt-1 max-w-2xl text-body-sm text-on-surface-variant">{t("observedIntro")}</p>
+          <ul className="mt-3 space-y-3">
+            {observed.map((s) => (
+              <li key={s.providerId} className="rounded-card bg-surface-container p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-on-surface">{s.providerName}</span>
+                  <span
+                    className={`text-label-caps uppercase ${
+                      s.operational === false
+                        ? "text-error"
+                        : s.operational === true
+                          ? "text-tertiary"
+                          : "text-on-surface-variant"
+                    }`}
+                  >
+                    {s.operational === false
+                      ? t("statusIncident")
+                      : s.operational === true
+                        ? t("statusOk")
+                        : t("statusUnknown")}
+                  </span>
+                  <span className="text-body-sm text-on-surface-variant/80">
+                    · {t(s.provenance === "live" ? "provLive" : "provSeed")}
+                  </span>
+                </div>
+                <p className="mt-1 text-body-sm text-on-surface-variant">
+                  {s.recentIncidents.length === 0
+                    ? t("noneLast90")
+                    : t("incidentsLast90", { count: s.recentIncidents.length })}
+                </p>
+                {s.recentIncidents.length > 0 ? (
+                  <p className="mt-1 text-body-sm text-on-surface">
+                    {t("latestIncident", {
+                      title: s.recentIncidents[0].title,
+                      date: s.recentIncidents[0].startedAt.slice(0, 10),
+                    })}
+                  </p>
+                ) : null}
+                <a
+                  href={s.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1 inline-block text-body-sm text-secondary underline decoration-dotted"
+                >
+                  {t("observedSource")} <span className="font-mono text-on-surface-variant/80">({s.checkedAt})</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-body-sm text-on-surface-variant/80">{t("observedDisclaimer")}</p>
+        </div>
       ) : null}
 
       <div className="mt-4">

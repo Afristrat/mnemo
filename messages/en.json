@@ -856,7 +856,19 @@
       "coLocatedTitle": "Co-located components",
       "coLocatedNote": "Your layers run on the same infrastructure: they share its availability. Multiplying SLAs ‘in series’ would overstate downtime — the realistic floor is the IaaS SLA.",
       "download": "Download the SLA (Markdown)",
-      "disclaimer": "THEORETICAL availability derived from providers' published SLAs (dated, re-verifiable); it does not guarantee actual availability, which depends on operations. SLAs typically exclude force majeure, attacks and maintenance; a service credit is not an availability guarantee."
+      "disclaimer": "THEORETICAL availability derived from providers' published SLAs (dated, re-verifiable); it does not guarantee actual availability, which depends on operations. SLAs typically exclude force majeure, attacks and maintenance; a service credit is not an availability guarantee.",
+      "observedTitle": "Observed availability (provider transparency)",
+      "observedIntro": "Incidents actually published by providers on their status pages (dated facts, verifiable source) — beyond the contractual commitment.",
+      "statusOk": "Operational",
+      "statusIncident": "Ongoing incident",
+      "statusUnknown": "Status not retrieved",
+      "provLive": "fetched live",
+      "provSeed": "fallback (see page)",
+      "noneLast90": "No incident published in the last 90 days.",
+      "incidentsLast90": "{count} incident(s) published in the last 90 days.",
+      "latestIncident": "Latest: {title} ({date}).",
+      "observedSource": "Official status page",
+      "observedDisclaimer": "Facts from the providers' public status pages; they reflect what providers declare, as of the retrieval date. This is not an independent measurement by Strate."
     },
     "driftMonitor": {
       "title": "Drift Monitor — deployment conformity",
