@@ -1154,7 +1154,23 @@
     "store": "Enregistrer",
     "revoke": "Révoquer",
     "revoked": "révoqué",
-    "noCredentials": "Aucun accès enregistré."
+    "noCredentials": "Aucun accès enregistré.",
+    "identityTitle": "Identité",
+    "loginMethodLabel": "Méthode de connexion",
+    "providerGoogle": "Google",
+    "providerGithub": "GitHub",
+    "providerEmail": "E-mail / mot de passe",
+    "plansTitle": "Mes plans sauvegardés",
+    "plansIntro": "Les recommandations enregistrées dans votre cercle.",
+    "plansEmpty": "Aucun plan sauvegardé pour l'instant.",
+    "plansCta": "Configurer ma base mémorielle",
+    "planResume": "Reprendre",
+    "networkTitle": "Réseau & consentement",
+    "networkIntro": "Partagez (ou non) vos coûts réels au réseau d'intelligence, de façon anonyme et révocable à tout moment.",
+    "consentActive": "Partage du coût réel : activé.",
+    "consentInactive": "Partage du coût réel : désactivé.",
+    "consentEnable": "Activer le partage",
+    "consentDisable": "Désactiver le partage"
   },
   "LocaleSwitcher": {
     "label": "Langue"

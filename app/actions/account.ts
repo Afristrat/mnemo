@@ -6,6 +6,7 @@
 import { getAuthUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { persistConsent } from "@/lib/network/consent-persist";
 import {
   storeVendorCredentialRecord,
   buildAdminInserter,
@@ -69,6 +70,23 @@ export async function migrateAnonymousProfile(
 // ---------------------------------------------------------------------------
 // Action : stockage d'un credential vendeur
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Action : consentement réseau (opt-in coût réel) — F9
+// ---------------------------------------------------------------------------
+
+/** Active/désactive le consentement de partage du coût réel pour le cercle (trace RGPD horodatée). */
+export async function setNetworkConsent(consented: boolean): Promise<{ ok: boolean }> {
+  const user = await getAuthUser();
+  if (user === null) return { ok: false };
+
+  const circleId = await currentCircleId();
+  if (circleId === null) return { ok: false };
+
+  const supabase = await createClient();
+  const ok = await persistConsent(supabase, { circleId, userId: user.id, consented });
+  return { ok };
+}
 
 /** Chiffre et stocke un credential vendeur dans le coffre du cercle. */
 export async function storeVendorCredential(input: {
