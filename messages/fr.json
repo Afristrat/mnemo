@@ -856,7 +856,19 @@
       "coLocatedTitle": "Composants co-localisés",
       "coLocatedNote": "Vos couches tournent sur la même infrastructure : elles partagent sa disponibilité. Multiplier des SLA « en série » surestimerait l'indisponibilité — le plancher réaliste est le SLA de l'IaaS.",
       "download": "Télécharger le SLA (Markdown)",
-      "disclaimer": "Disponibilité THÉORIQUE dérivée des SLA publiés des fournisseurs (datés, re-vérifiables) ; ne garantit pas la disponibilité réelle, qui dépend de l'exploitation. Les SLA excluent généralement force majeure, attaques et maintenance ; un crédit de service n'est pas une garantie de disponibilité."
+      "disclaimer": "Disponibilité THÉORIQUE dérivée des SLA publiés des fournisseurs (datés, re-vérifiables) ; ne garantit pas la disponibilité réelle, qui dépend de l'exploitation. Les SLA excluent généralement force majeure, attaques et maintenance ; un crédit de service n'est pas une garantie de disponibilité.",
+      "observedTitle": "Disponibilité observée (transparence fournisseur)",
+      "observedIntro": "Incidents réellement publiés par les fournisseurs sur leurs pages de statut (faits datés, source vérifiable) — au-delà de l'engagement contractuel.",
+      "statusOk": "Opérationnel",
+      "statusIncident": "Incident en cours",
+      "statusUnknown": "Statut non récupéré",
+      "provLive": "relevé en direct",
+      "provSeed": "repli (voir la page)",
+      "noneLast90": "Aucun incident publié sur les 90 derniers jours.",
+      "incidentsLast90": "{count} incident(s) publié(s) sur les 90 derniers jours.",
+      "latestIncident": "Dernier : {title} ({date}).",
+      "observedSource": "Page de statut officielle",
+      "observedDisclaimer": "Faits issus des pages de statut publiques des fournisseurs ; ils reflètent ce qu'ils déclarent, à la date du relevé. Ce n'est pas une mesure indépendante de Strate."
     },
     "driftMonitor": {
       "title": "Drift Monitor — conformité du déploiement",
