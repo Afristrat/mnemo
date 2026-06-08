@@ -28,15 +28,16 @@ export async function GET(req: Request): Promise<Response> {
 
   const now = new Date();
   const checkedAt = now.toISOString().slice(0, 10);
-  const fetchJson = async (u: string): Promise<unknown> => {
-    const res = await fetchWithTimeout(u, { headers: { accept: "application/json" } }, 8000);
+  // Corps brut (JSON Statuspage/GCP OU XML RSS) ; le parseur adéquat est choisi selon le `kind` de la source.
+  const fetchText = async (u: string): Promise<string> => {
+    const res = await fetchWithTimeout(u, {}, 8000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
+    return res.text();
   };
 
   const sources = sourcesForClass(cls);
   const statuses = await Promise.all(
-    sources.map((s) => fetchProviderStatus(s, { fetchJson, now, seed: seedStatusFor(s, checkedAt) })),
+    sources.map((s) => fetchProviderStatus(s, { fetchText, now, seed: seedStatusFor(s, checkedAt) })),
   );
   return NextResponse.json({ statuses, checkedAt });
 }

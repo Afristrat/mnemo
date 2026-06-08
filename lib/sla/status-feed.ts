@@ -27,7 +27,8 @@ export type ProviderStatus = {
 };
 
 type ParseOpts = { now: Date; limit?: number; sinceDays?: number };
-type Parsed = { operational: boolean; recentIncidents: ProviderIncident[] };
+// operational null = état non dérivable de la source (cas RSS : flux d'événements, pas d'indicateur global).
+type Parsed = { operational: boolean | null; recentIncidents: ProviderIncident[] };
 
 const DEFAULT_LIMIT = 5;
 const DEFAULT_SINCE_DAYS = 90;
@@ -81,7 +82,7 @@ function withinWindow(iso: string, now: Date, windowMs: number): boolean {
   return delta <= windowMs && delta >= -86_400_000;
 }
 
-function finalize(incidents: ProviderIncident[], operational: boolean, opts: ParseOpts): Parsed {
+function finalize(incidents: ProviderIncident[], operational: boolean | null, opts: ParseOpts): Parsed {
   const windowMs = (opts.sinceDays ?? DEFAULT_SINCE_DAYS) * 86_400_000;
   const recent = incidents
     .filter((i) => withinWindow(i.startedAt, opts.now, windowMs))
@@ -137,13 +138,57 @@ export function parseGcpIncidents(raw: unknown, opts: ParseOpts): Parsed {
   return finalize(incidents, operational, opts);
 }
 
+// ── RSS (AWS / Azure : flux d'événements, pas d'API JSON) ─────────────────────────────────────────
+function decodeXml(s: string): string {
+  return s
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+function extractTag(block: string, tag: string): string | null {
+  const m = new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)</${tag}>`, "i").exec(block);
+  if (m === null) return null;
+  let v = m[1].trim();
+  const cdata = /^<!\[CDATA\[([\s\S]*?)\]\]>$/.exec(v);
+  if (cdata !== null) v = cdata[1].trim();
+  return v === "" ? null : v;
+}
+function toIso(s: string): string {
+  const t = Date.parse(s);
+  return Number.isNaN(t) ? s : new Date(t).toISOString();
+}
+
+/** Flux RSS d'incidents (AWS/Azure). Pur, ne lève jamais. `operational` = null (non dérivable d'un flux). */
+export function parseRssIncidents(xml: string, opts: ParseOpts): Parsed {
+  const incidents: ProviderIncident[] = [];
+  const itemRe = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
+  let m: RegExpExecArray | null = itemRe.exec(xml);
+  while (m !== null) {
+    const block = m[1];
+    const pub = extractTag(block, "pubDate") ?? extractTag(block, "published") ?? extractTag(block, "updated");
+    if (pub !== null) {
+      incidents.push({
+        title: decodeXml(extractTag(block, "title") ?? "(incident)"),
+        impact: "unknown",
+        startedAt: toIso(pub),
+        resolvedAt: null,
+        url: extractTag(block, "link"),
+      });
+    }
+    m = itemRe.exec(xml);
+  }
+  return finalize(incidents, null, opts);
+}
+
 function parseByKind(kind: StatusKind, raw: unknown, opts: ParseOpts): Parsed {
   return kind === "gcp" ? parseGcpIncidents(raw, opts) : parseStatuspageIncidents(raw, opts);
 }
 
 export type StatusFeedDeps = {
-  /** Récupère le JSON de l'endpoint (borné/timeout côté appelant). Doit RÉSOUDRE même en erreur n'est pas exigé : peut lever. */
-  fetchJson: (url: string) => Promise<unknown>;
+  /** Récupère le corps brut (texte) de l'endpoint (borné/timeout côté appelant) ; peut lever (→ repli). */
+  fetchText: (url: string) => Promise<string>;
   now: Date;
   /** Repli daté si le live échoue (filet « tout vivant + seed »). */
   seed: ProviderStatus;
@@ -154,8 +199,10 @@ export type StatusFeedDeps = {
 /** Récupère le statut LIVE d'un fournisseur ; repli sur le seed daté en cas d'échec. Ne lève jamais. */
 export async function fetchProviderStatus(source: StatusSource, deps: StatusFeedDeps): Promise<ProviderStatus> {
   try {
-    const raw = await deps.fetchJson(source.endpoint);
-    const parsed = parseByKind(source.kind, raw, { now: deps.now, limit: deps.limit, sinceDays: deps.sinceDays });
+    const body = await deps.fetchText(source.endpoint);
+    const opts = { now: deps.now, limit: deps.limit, sinceDays: deps.sinceDays };
+    // RSS = XML brut ; statuspage/gcp = JSON (parse ici → un format invalide bascule en repli via le catch).
+    const parsed = source.kind === "rss" ? parseRssIncidents(body, opts) : parseByKind(source.kind, JSON.parse(body), opts);
     return {
       providerId: source.id,
       providerName: source.name,

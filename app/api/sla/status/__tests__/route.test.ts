@@ -36,7 +36,7 @@ describe("GET /api/sla/status (SLA #5 observé)", () => {
   });
 
   it("souverain UE : agrège les statuts live des fournisseurs Statuspage", async () => {
-    fetchMock.mockResolvedValue({ ok: true, json: async () => STATUSPAGE });
+    fetchMock.mockResolvedValue({ ok: true, text: async () => JSON.stringify(STATUSPAGE) });
     const res = await GET(req("sovereign-eu"));
     expect(res.status).toBe(200);
     const body = await res.json();

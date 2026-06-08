@@ -6,7 +6,7 @@
 import type { HostingClass } from "@/lib/engine";
 
 /** Format machine de la page de statut. */
-export type StatusKind = "statuspage" | "gcp";
+export type StatusKind = "statuspage" | "gcp" | "rss";
 
 export type StatusSource = {
   id: string;
@@ -20,10 +20,18 @@ export type StatusSource = {
   pageUrl: string;
 };
 
-// Sources à endpoint machine VÉRIFIÉ (2026-06-08). Atlassian Statuspage expose /api/v2/incidents.json ;
-// Google Cloud expose incidents.json. Les fournisseurs RSS-only (AWS/Azure/OVH) seront ajoutés via un
-// adaptateur RSS dédié — en attendant, leur page humaine reste liée par le SLA publié (pas d'invention).
+// Sources à endpoint machine VÉRIFIÉ (2026-06-08). Atlassian Statuspage expose /api/v2/incidents.json
+// (Scaleway, Outscale, Anthropic ET OVH Public Cloud) ; Google Cloud expose incidents.json ; AWS et Azure
+// publient un flux RSS d'incidents. Couverture complète des classes d'hébergement + fournisseurs LLM.
 export const STATUS_SOURCES: readonly StatusSource[] = [
+  {
+    id: "ovh",
+    name: "OVHcloud (Public Cloud)",
+    scope: "sovereign-eu",
+    kind: "statuspage",
+    endpoint: "https://public-cloud.status-ovhcloud.com/api/v2/incidents.json",
+    pageUrl: "https://public-cloud.status-ovhcloud.com/",
+  },
   {
     id: "scaleway",
     name: "Scaleway",
@@ -47,6 +55,22 @@ export const STATUS_SOURCES: readonly StatusSource[] = [
     kind: "gcp",
     endpoint: "https://status.cloud.google.com/incidents.json",
     pageUrl: "https://status.cloud.google.com/",
+  },
+  {
+    id: "aws",
+    name: "AWS",
+    scope: "hyperscaler",
+    kind: "rss",
+    endpoint: "https://status.aws.amazon.com/rss/all.rss",
+    pageUrl: "https://health.aws.amazon.com/health/status",
+  },
+  {
+    id: "azure",
+    name: "Microsoft Azure",
+    scope: "hyperscaler",
+    kind: "rss",
+    endpoint: "https://status.azure.com/en-us/status/feed/",
+    pageUrl: "https://azure.status.microsoft/en-us/status/",
   },
   {
     id: "anthropic",
