@@ -24,6 +24,7 @@ import { ResidencyPanel } from "@/components/results/ResidencyPanel";
 import { ResidencyContinuityPanel } from "@/components/results/ResidencyContinuityPanel";
 import { RestoreDrillPanel } from "@/components/results/RestoreDrillPanel";
 import { ExitCostPanel } from "@/components/results/ExitCostPanel";
+import { SlaPanel } from "@/components/results/SlaPanel";
 import { MbomPanel } from "@/components/results/MbomPanel";
 import { DriftMonitorPanel } from "@/components/results/DriftMonitorPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
@@ -550,6 +551,9 @@ export function ResultsView(): ReactElement {
 
       {/* Lock-in / Exit-Cost Meter (moat « chaîne de preuve », vague 2 #4) : chiffre le coût de SORTIE (egress sourcé). */}
       <ExitCostPanel profile={activeProfile} recommendation={activeResult} />
+
+      {/* SLA paramétrique (moat « chaîne de preuve », vague 3 #5) : disponibilité publiée des IaaS, sourcée, sans promesse. */}
+      <SlaPanel profile={activeProfile} recommendation={activeResult} />
 
       {/* MBOM (moat « chaîne de preuve », vague 2 #6) : manifeste signé des ingrédients (checksums SHA-256). */}
       <MbomPanel profile={activeProfile} recommendation={activeResult} catalog={exportCatalog} />

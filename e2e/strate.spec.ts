@@ -53,6 +53,17 @@ test("MBOM signé : la vérification rejette un collage invalide (vague 3, authe
   await expect(page.getByText(/Format non reconnu/)).toBeVisible({ timeout: 15000 });
 });
 
+test("SLA paramétrique : la disponibilité publiée des fournisseurs est affichée et sourcée (vague 3 #5)", async ({ page }) => {
+  await unlockExpert(page);
+  await page.goto("/resultats");
+  const slaHeading = page.getByRole("heading", { name: "SLA paramétrique — disponibilité publiée" });
+  await slaHeading.scrollIntoViewIfNeeded();
+  await expect(slaHeading).toBeVisible();
+  // Profil souverain par défaut (zone UE) → spectre OVHcloud / Scaleway, sourcé (on cible la cellule du tableau SLA).
+  await expect(page.getByRole("cell", { name: "OVHcloud", exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: /min\/mois/ }).first()).toBeVisible();
+});
+
 test("bloc Médias : génération vidéo souveraine → budget rouge + levier", async ({ page }) => {
   await page.goto("/configurateur");
   // Aller au bloc ④ Médias (3 « Suivant »).
