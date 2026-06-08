@@ -51,4 +51,13 @@ describe("GET /auth/callback (S-089 — échange PKCE)", () => {
     const res = await GET(reqWith("?code=bad"));
     expect(location(res)).toMatch(/\/connexion\?error=auth$/);
   });
+
+  it("derrière proxy : redirige sur l'ORIGINE PUBLIQUE (x-forwarded-host), pas l'adresse interne", async () => {
+    createClientMock.mockResolvedValue(clientWith(vi.fn().mockResolvedValue({ error: null })));
+    const req = new Request("http://0.0.0.0:3000/auth/callback?code=abc", {
+      headers: { "x-forwarded-host": "infra.ai-mpower.com", "x-forwarded-proto": "https" },
+    });
+    const res = await GET(req);
+    expect(location(res)).toBe("https://infra.ai-mpower.com/compte");
+  });
 });
