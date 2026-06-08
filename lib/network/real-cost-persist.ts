@@ -1,9 +1,10 @@
 // Persistance de la collecte du coût réel (F13, S-082) — SERVEUR UNIQUEMENT.
 // Construit (pur) puis insère une ligne par poste comparé dans `real_cost_entries` (RLS, pivot circle).
 // Jamais bloquant, jamais throw. Le builder est exporté à part (testable sans I/O).
+// Durcissement (reliquat S-15) : insertion via le CLIENT DE SESSION fourni par l'appelant (RLS
+// appliquée — plus de bypass service-role) ; le `client` est donc requis (moindre privilège explicite).
 
 import "server-only";
-import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, RealCostEntryInsert } from "@/lib/supabase/types";
 import type { CostComparison } from "./real-cost";
@@ -28,7 +29,7 @@ export function buildRealCostRows(args: {
 }
 
 type Deps = {
-  client?: SupabaseClient<Database> | null;
+  client: SupabaseClient<Database>;
   circleId?: string | null;
   createdBy?: string | null;
   checkedAt: string;
@@ -37,11 +38,9 @@ type Deps = {
 /** Persiste la comparaison (une ligne par poste). Renvoie le nb de lignes écrites (0 si repli). Ne lève jamais. */
 export async function persistRealCostEntries(comparison: CostComparison, deps: Deps): Promise<number> {
   if (comparison.posts.length === 0) return 0;
-  const client = deps.client ?? createAdminClient();
-  if (client === null) return 0;
   const rows = buildRealCostRows({ comparison, checkedAt: deps.checkedAt, circleId: deps.circleId, createdBy: deps.createdBy });
   try {
-    const { error } = await client.from("real_cost_entries").insert(rows);
+    const { error } = await deps.client.from("real_cost_entries").insert(rows);
     return error === null ? rows.length : 0;
   } catch {
     return 0;

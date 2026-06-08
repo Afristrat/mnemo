@@ -70,6 +70,18 @@ export type SimulationLogRow = {
   setup_cost: number | null;
   created_at: string;
 };
+// Projection publique du rapport partageable (RPC get_simulation_by_token) — durcissement reliquat S-15 :
+// expose le CONTENU du rapport (preset/profil/verdict/coûts) mais JAMAIS les métadonnées d'identité
+// (share_token, circle_id, created_by) ni `select *` (défense contre l'ajout futur de colonnes sensibles).
+export type SimulationReportRow = {
+  id: string;
+  preset: string | null;
+  profile: unknown;
+  verdict: unknown;
+  total_cost: number | null;
+  setup_cost: number | null;
+  created_at: string;
+};
 export type SimulationLogInsert = {
   circle_id: string | null;
   created_by: string | null;
@@ -427,8 +439,8 @@ export type Database = {
       };
     };
     Functions: {
-      get_simulation_by_token: { Args: { token: string }; Returns: SimulationLogRow[] };
-      get_shared_reco: { Args: { reco_id: string }; Returns: SharedRecoRow[] };
+      get_simulation_by_token: { Args: { token: string }; Returns: SimulationReportRow[] };
+      get_shared_reco: { Args: { reco_id: string }; Returns: { encoded: string }[] };
       is_super_admin: { Args: Record<string, never>; Returns: boolean };
     };
   };
