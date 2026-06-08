@@ -60,4 +60,12 @@ describe("GET /auth/callback (S-089 — échange PKCE)", () => {
     const res = await GET(req);
     expect(location(res)).toBe("https://infra.ai-mpower.com/compte");
   });
+
+  it("hôte public sans x-forwarded-proto → https par défaut (jamais d'auth en http)", async () => {
+    createClientMock.mockResolvedValue(clientWith(vi.fn().mockResolvedValue({ error: null })));
+    const req = new Request("http://0.0.0.0:3000/auth/callback?code=abc", {
+      headers: { "x-forwarded-host": "infra.ai-mpower.com" },
+    });
+    expect(location(await GET(req))).toBe("https://infra.ai-mpower.com/compte");
+  });
 });
