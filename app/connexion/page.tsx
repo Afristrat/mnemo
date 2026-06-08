@@ -28,11 +28,14 @@ export default function ConnexionPage(): ReactElement {
     window.location.assign("/compte");
   }
 
+  // Magic-link et OAuth passent par /auth/callback (échange du code PKCE contre une session) puis /compte.
+  const callback = `${origin}/auth/callback?next=/compte`;
+
   async function handleMagicLink(): Promise<void> {
     setError(false);
     const res = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${origin}/compte` },
+      options: { emailRedirectTo: callback },
     });
     if (res.error !== null) {
       setError(true);
@@ -44,7 +47,7 @@ export default function ConnexionPage(): ReactElement {
   async function handleOauth(provider: "google" | "github"): Promise<void> {
     await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${origin}/compte` },
+      options: { redirectTo: callback },
     });
   }
 
