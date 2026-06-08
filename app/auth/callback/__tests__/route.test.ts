@@ -52,20 +52,19 @@ describe("GET /auth/callback (S-089 — échange PKCE)", () => {
     expect(location(res)).toMatch(/\/connexion\?error=auth$/);
   });
 
-  it("derrière proxy : redirige sur l'ORIGINE PUBLIQUE (x-forwarded-host), pas l'adresse interne", async () => {
+  it("derrière proxy (bind interne) : redirige sur l'origine canonique, pas l'adresse interne", async () => {
     createClientMock.mockResolvedValue(clientWith(vi.fn().mockResolvedValue({ error: null })));
-    const req = new Request("http://0.0.0.0:3000/auth/callback?code=abc", {
-      headers: { "x-forwarded-host": "infra.ai-mpower.com", "x-forwarded-proto": "https" },
-    });
-    const res = await GET(req);
+    const res = await GET(new Request("http://0.0.0.0:3000/auth/callback?code=abc"));
     expect(location(res)).toBe("https://infra.ai-mpower.com/compte");
   });
 
-  it("hôte public sans x-forwarded-proto → https par défaut (jamais d'auth en http)", async () => {
+  it("sécurité : un x-forwarded-host USURPÉ est IGNORÉ (pas d'open-redirect), origine canonique conservée", async () => {
     createClientMock.mockResolvedValue(clientWith(vi.fn().mockResolvedValue({ error: null })));
     const req = new Request("http://0.0.0.0:3000/auth/callback?code=abc", {
-      headers: { "x-forwarded-host": "infra.ai-mpower.com" },
+      headers: { "x-forwarded-host": "evil.attacker.com", host: "evil.attacker.com" },
     });
-    expect(location(await GET(req))).toBe("https://infra.ai-mpower.com/compte");
+    const res = await GET(req);
+    expect(location(res)).toBe("https://infra.ai-mpower.com/compte");
+    expect(location(res)).not.toMatch(/evil/);
   });
 });
