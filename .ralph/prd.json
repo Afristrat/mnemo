@@ -1523,6 +1523,39 @@
       "completedAt": "2026-06-07",
       "deps": [],
       "note": "Dernier maillon de la chaine de preuve. L infra deployee est-elle TOUJOURS la reco signee ? DEFCON 1 : Strate ne lit PAS l infra vivante -> reconcilie deux artefacts DECLARES (manifeste Exit Escrow signe vs live-state.json rapporte par le client via une commande d introspection fournie). lib/drift/reconcile.ts (PUR : par couche aligned/drifted/missing/unexpected + iso-contraintes region hors ensemble signe ; entree live bornee anti-injection, ne leve jamais) + evidence.ts (PUR : MD/JSON + SHA-256 isomorphe, maillon opposable). components/results/DriftMonitorPanel.tsx (commande introspection + collage live-state -> verdict + telechargement preuve), monte apres MbomPanel. i18n Results.driftMonitor fr/en/ar (placeholder/probeCommand SANS accolade litterale -> piege ICU evite). +10 tests. typecheck 0/lint 0-0/749 tests/build OK/e2e 41-41. VERIFIE NAVIGATEUR (collage drift -> verdict 7 ecarts + violation us). CHAINE DE PREUVE COMPLETE (7 artefacts) : Decision Record S-092 -> Exit Escrow -> Restore Drill S-094 -> Residence continue S-095 -> Exit-Cost Meter S-096 -> MBOM S-097 -> Drift Monitor S-098. Vague 2 moat TERMINEE."
+    },
+    {
+      "id": "S-099",
+      "title": "Preuve sourcee SearXNG - brique + citations (A)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-10",
+      "deps": [
+        "S-098"
+      ],
+      "note": "Brique commune lib/evidence/ (PUR, I/O injectee) : types + gather (SearXNG searchWeb + LLM kimi borne, anti-hallucination d URL, verdict contraint par kind, retrievedAt injecte, ne leve jamais -> repli seed) + seed (conservateur, zero source fabriquee) + pack (MD/JSON + SHA-256, calque drift/evidence) + observation/persist (live-only, RLS, non bloquant) + migration evidence_observations (RLS, pivot circle, JUMEAU regime_observations). Feature A : citations.ts (mapping reco->claims sur 4 familles dures cout/juridique/SLA/provider) + route POST /api/evidence/citations (rate-limit, profileFromUnknown, audit) + EvidenceCitationsPanel + i18n Results.evidenceCitations fr/en/ar. Backend = searxng-strate (Strate garde son instance dediee ; nouvelle instance Coolify reservee aux 2 plateformes Hermes+autre). typecheck 0/lint 0-0/834 tests/build OK/e2e desktop+mobile. VERIFIE PROD end-to-end (cross-check 200, sources OVH reelles). MIGRATION PROD EN ATTENTE (hors-LAN)."
+    },
+    {
+      "id": "S-100",
+      "title": "Preuve sourcee SearXNG - drift externe (B)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-10",
+      "deps": [
+        "S-099"
+      ],
+      "note": "Feature B : external-drift.ts (PUR ; buildExternalDriftClaims depuis le BundleManifest signe + asOf=date signature ; runExternalDrift -> ExternalDriftReport stable/changed/unknown, jumeau EXTERNE de drift/reconcile qui compare au live rapporte) + route POST /api/evidence/external-drift (manifeste rebati serveur via buildExitBundle resolve par defaut, audit) + ExternalDriftPanel + i18n Results.externalDrift fr/en/ar. Surveille le MONDE : changement materiel d un composant signe depuis la signature (juridiction, incident SLA, depreciation, rachat). A LA DEMANDE (scheduler 6h = extension future hors lot). DEFCON 1 : faits sourcees seulement."
+    },
+    {
+      "id": "S-101",
+      "title": "Preuve sourcee SearXNG - verif authenticite (C)",
+      "feature": "moat",
+      "passes": true,
+      "completedAt": "2026-06-10",
+      "deps": [
+        "S-099"
+      ],
+      "note": "Feature C : cross-check.ts (PUR ; extractClaim borne l artefact CLIENT colle anti-injection + runCrossCheck -> match/mismatch/unverifiable, mismatch = incoherence avec sources publiques JAMAIS accusation de fraude) + route POST /api/evidence/cross-check (type borne, rate-limit, audit) + CrossCheckPanel (select type + textarea + verdict) + i18n Results.crossCheck fr/en/ar. Artefact colle (certif provider/page statut/mention legale ; pas d upload dans ce lot). VERIFIE PROD : OVH Gravelines -> match, sources reelles. Spec docs/superpowers/specs/2026-06-10-evidence-sourcee-searxng-design.md, plan .../plans/2026-06-10-evidence-sourcee-searxng.md."
     }
   ]
 }
