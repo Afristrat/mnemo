@@ -29,6 +29,7 @@ import { MbomPanel } from "@/components/results/MbomPanel";
 import { DriftMonitorPanel } from "@/components/results/DriftMonitorPanel";
 import { EvidenceCitationsPanel } from "@/components/results/EvidenceCitationsPanel";
 import { ExternalDriftPanel } from "@/components/results/ExternalDriftPanel";
+import { CrossCheckPanel } from "@/components/results/CrossCheckPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
@@ -568,6 +569,9 @@ export function ResultsView(): ReactElement {
 
       {/* Drift externe (preuve sourcée B) : veille en ligne des changements matériels depuis la signature. */}
       <ExternalDriftPanel profile={activeProfile} recommendation={activeResult} />
+
+      {/* Vérif d'authenticité (preuve sourcée C) : artefact client collé confronté aux sources publiques. */}
+      <CrossCheckPanel />
 
       {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
       <MigrationBundle profile={activeProfile} recommendation={activeResult} />
