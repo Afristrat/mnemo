@@ -904,6 +904,18 @@
       "integrity": "Intégrité : sha256:{hash}",
       "disclaimer": "Preuve sourcée par recherche web + IA. Une IA peut se tromper : vérifiez les sources citées avant tout usage opposable."
     },
+    "externalDrift": {
+      "title": "Veille de dérive externe",
+      "intro": "Pour chaque composant de votre reco signée, on cherche en ligne un changement matériel depuis la signature : juridiction, incident de SLA, dépréciation, rachat.",
+      "runButton": "Lancer la veille",
+      "running": "Veille en cours…",
+      "verdictChanged": "changement",
+      "verdictUnknown": "inconnu",
+      "resultInSync": "✅ Aucun changement externe détecté",
+      "resultDrift": "⚠️ Changement(s) externe(s) détecté(s)",
+      "resultLine": "{changed} changement(s) · {unknown} inconnu(s)",
+      "disclaimer": "Veille par recherche web + IA. Une IA peut se tromper : vérifiez les sources avant d’agir."
+    },
     "exitCost": {
       "title": "Coût de sortie (anti-lock-in)",
       "intro": "Combien coûte de PARTIR ? On chiffre l’egress de rapatriement de vos données, à côté du coût mensuel — l’asymétrie de sortie que les plateformes ne montrent pas.",
