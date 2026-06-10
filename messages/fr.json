@@ -890,6 +890,20 @@
       "downloadEvidence": "Télécharger la preuve (horodatée + hachée)",
       "disclaimer": "Orientation d’ingénierie — Strate réconcilie deux artefacts déclarés, elle ne lit pas votre infra. Une IA peut se tromper."
     },
+    "evidenceCitations": {
+      "title": "Sources & preuves",
+      "intro": "Chaque affirmation dure (coût, statut juridique, SLA, existence d’un fournisseur) est confrontée aux sources publiques trouvées en ligne, horodatées. Confiance « faible » par prudence ; rien trouvé = affiché honnêtement.",
+      "runButton": "Sourcer les affirmations",
+      "running": "Recherche en cours…",
+      "verdictAttested": "attesté",
+      "verdictUnattested": "non attesté",
+      "confidence": "confiance {level}",
+      "noSources": "Aucune source publique au relevé.",
+      "downloadEvidence": "Télécharger la preuve (.md)",
+      "generating": "Génération…",
+      "integrity": "Intégrité : sha256:{hash}",
+      "disclaimer": "Preuve sourcée par recherche web + IA. Une IA peut se tromper : vérifiez les sources citées avant tout usage opposable."
+    },
     "exitCost": {
       "title": "Coût de sortie (anti-lock-in)",
       "intro": "Combien coûte de PARTIR ? On chiffre l’egress de rapatriement de vos données, à côté du coût mensuel — l’asymétrie de sortie que les plateformes ne montrent pas.",
