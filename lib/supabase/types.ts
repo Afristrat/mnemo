@@ -213,6 +213,35 @@ export type RegimeObservationInsert = {
   note: string | null;
 };
 
+// Audit trail de la preuve sourcée (brique lib/evidence). sources = JSON [{url,title,snippet,retrievedAt}].
+// Unions (kind/confidence/provenance) garanties par les CHECK SQL ; `string` côté TS (le builder injecte le typé).
+export type EvidenceObservationRow = {
+  id: string;
+  circle_id: string | null;
+  created_by: string | null;
+  kind: string;
+  subject: string;
+  verdict: string;
+  confidence: string;
+  provenance: string;
+  sources: unknown;
+  integrity_hash: string | null;
+  generated_at: string;
+  created_at: string;
+};
+export type EvidenceObservationInsert = {
+  circle_id: string | null;
+  created_by: string | null;
+  kind: string;
+  subject: string;
+  verdict: string;
+  confidence: string;
+  provenance: string;
+  sources: unknown;
+  integrity_hash: string | null;
+  generated_at: string;
+};
+
 // Preuve de résidence continue (S-095, vague 2 #3) : audit trail des relevés de continuité de résidence.
 // `components` = JSON [{id, region, flag, legalBasis}] ; `integrity_hash` = SHA-256 du rapport canonique.
 // Unions (primary_region/flag) garanties par les CHECK SQL ; `string` côté TS (le builder injecte les valeurs typées).
@@ -418,6 +447,7 @@ export type Database = {
       catalog_observations: TableShape<CatalogObservationRow, CatalogObservationInsert>;
       transfer_status_observations: TableShape<TransferObservationRow, TransferObservationInsert>;
       regime_observations: TableShape<RegimeObservationRow, RegimeObservationInsert>;
+      evidence_observations: TableShape<EvidenceObservationRow, EvidenceObservationInsert>;
       residency_continuity_observations: TableShape<ResidencyContinuityObservationRow, ResidencyContinuityObservationInsert>;
       health_metrics: TableShape<HealthMetricRow, HealthMetricInsert>;
       real_cost_entries: TableShape<RealCostEntryRow, RealCostEntryInsert>;
