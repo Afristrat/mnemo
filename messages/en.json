@@ -890,6 +890,20 @@
       "downloadEvidence": "Download the proof (timestamped + hashed)",
       "disclaimer": "Engineering guidance — Strate reconciles two declared artefacts, it does not read your infrastructure. An AI can be wrong."
     },
+    "evidenceCitations": {
+      "title": "Sources & evidence",
+      "intro": "Every hard claim (cost, legal status, SLA, provider existence) is checked against public sources found online, timestamped. Confidence is kept ‘low’ out of caution; nothing found is shown honestly.",
+      "runButton": "Source the claims",
+      "running": "Searching…",
+      "verdictAttested": "attested",
+      "verdictUnattested": "unattested",
+      "confidence": "confidence {level}",
+      "noSources": "No public source at the time of check.",
+      "downloadEvidence": "Download evidence (.md)",
+      "generating": "Generating…",
+      "integrity": "Integrity: sha256:{hash}",
+      "disclaimer": "Evidence sourced via web search + AI. AI can be wrong: verify the cited sources before any binding use."
+    },
     "exitCost": {
       "title": "Exit cost (anti-lock-in)",
       "intro": "How much does it cost to LEAVE? We price the egress to repatriate your data, next to the monthly cost — the exit asymmetry platforms don't show.",
