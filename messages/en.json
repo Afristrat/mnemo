@@ -916,6 +916,22 @@
       "resultLine": "{changed} change(s) · {unknown} unknown",
       "disclaimer": "Watch via web search + AI. AI can be wrong: verify the sources before acting."
     },
+    "crossCheck": {
+      "title": "Authenticity check",
+      "intro": "Paste an artefact (provider certificate, status page, legal notice). We cross-check it against public sources found online.",
+      "typeLabel": "Artefact type",
+      "typeProviderCert": "Provider certificate",
+      "typeStatusPage": "Status page",
+      "typeLegalMention": "Legal notice",
+      "pastePlaceholder": "Paste the content to verify here…",
+      "runButton": "Verify",
+      "running": "Verifying…",
+      "verdictMatch": "✅ Consistent with public sources",
+      "verdictMismatch": "⚠️ Inconsistent with public sources — to investigate",
+      "verdictUnverifiable": "◻️ Unverifiable online",
+      "noSources": "No public source at the time of check.",
+      "disclaimer": "‘Inconsistent’ is not a fraud accusation. Verification via web search + AI, fallible: cross-check yourself."
+    },
     "exitCost": {
       "title": "Exit cost (anti-lock-in)",
       "intro": "How much does it cost to LEAVE? We price the egress to repatriate your data, next to the monthly cost — the exit asymmetry platforms don't show.",

@@ -916,6 +916,22 @@
       "resultLine": "{changed} changement(s) · {unknown} inconnu(s)",
       "disclaimer": "Veille par recherche web + IA. Une IA peut se tromper : vérifiez les sources avant d’agir."
     },
+    "crossCheck": {
+      "title": "Vérification d’authenticité",
+      "intro": "Collez un artefact (certificat fournisseur, page de statut, mention légale). On le confronte aux sources publiques trouvées en ligne.",
+      "typeLabel": "Type d’artefact",
+      "typeProviderCert": "Certificat fournisseur",
+      "typeStatusPage": "Page de statut",
+      "typeLegalMention": "Mention légale",
+      "pastePlaceholder": "Collez ici le contenu à vérifier…",
+      "runButton": "Vérifier",
+      "running": "Vérification en cours…",
+      "verdictMatch": "✅ Cohérent avec les sources publiques",
+      "verdictMismatch": "⚠️ Incohérence avec les sources publiques — à investiguer",
+      "verdictUnverifiable": "◻️ Invérifiable en ligne",
+      "noSources": "Aucune source publique au relevé.",
+      "disclaimer": "« Incohérence » n’est pas une accusation de fraude. Vérification par recherche web + IA, faillible : recoupez vous-même."
+    },
     "exitCost": {
       "title": "Coût de sortie (anti-lock-in)",
       "intro": "Combien coûte de PARTIR ? On chiffre l’egress de rapatriement de vos données, à côté du coût mensuel — l’asymétrie de sortie que les plateformes ne montrent pas.",
