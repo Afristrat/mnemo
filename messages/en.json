@@ -904,6 +904,18 @@
       "integrity": "Integrity: sha256:{hash}",
       "disclaimer": "Evidence sourced via web search + AI. AI can be wrong: verify the cited sources before any binding use."
     },
+    "externalDrift": {
+      "title": "External drift watch",
+      "intro": "For each component of your signed recommendation, we search online for a material change since signature: jurisdiction, SLA incident, deprecation, acquisition.",
+      "runButton": "Run the watch",
+      "running": "Watching…",
+      "verdictChanged": "changed",
+      "verdictUnknown": "unknown",
+      "resultInSync": "✅ No external change detected",
+      "resultDrift": "⚠️ External change(s) detected",
+      "resultLine": "{changed} change(s) · {unknown} unknown",
+      "disclaimer": "Watch via web search + AI. AI can be wrong: verify the sources before acting."
+    },
     "exitCost": {
       "title": "Exit cost (anti-lock-in)",
       "intro": "How much does it cost to LEAVE? We price the egress to repatriate your data, next to the monthly cost — the exit asymmetry platforms don't show.",

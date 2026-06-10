@@ -28,6 +28,7 @@ import { SlaPanel } from "@/components/results/SlaPanel";
 import { MbomPanel } from "@/components/results/MbomPanel";
 import { DriftMonitorPanel } from "@/components/results/DriftMonitorPanel";
 import { EvidenceCitationsPanel } from "@/components/results/EvidenceCitationsPanel";
+import { ExternalDriftPanel } from "@/components/results/ExternalDriftPanel";
 import { RedundancyPanel } from "@/components/results/RedundancyPanel";
 import { MonitoringPanel } from "@/components/monitoring/MonitoringPanel";
 import { RealCostPanel } from "@/components/network/RealCostPanel";
@@ -564,6 +565,9 @@ export function ResultsView(): ReactElement {
 
       {/* Citations sourcées (preuve sourcée A) : affirmations dures confrontées aux sources publiques (SearXNG). */}
       <EvidenceCitationsPanel profile={activeProfile} recommendation={activeResult} />
+
+      {/* Drift externe (preuve sourcée B) : veille en ligne des changements matériels depuis la signature. */}
+      <ExternalDriftPanel profile={activeProfile} recommendation={activeResult} />
 
       {/* Migration garantie / In-Switch (Lot 3, F14, S-085) : double-run + critères de bascule + rollback. */}
       <MigrationBundle profile={activeProfile} recommendation={activeResult} />
