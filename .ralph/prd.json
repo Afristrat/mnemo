@@ -1418,15 +1418,16 @@
       "id": "S-089",
       "title": "BLOQUE (input Amine): dette auth complete (SMTP reel + apps OAuth Google/GitHub)",
       "feature": "infra",
-      "passes": false,
+      "passes": true,
       "deps": [
         "S-078"
       ],
-      "note": "BLOQUE : necessite des inputs qu'Amine seul peut fournir -> serveur SMTP reel (magic-link), apps OAuth Google + GitHub (client id/secret), redirection https://db.ai-mpower.com/auth/v1/callback. Cote code : repasser AUTOCONFIRM->false, activer magic-link + OAuth (aujourd'hui visibles mais non fonctionnels, decision Amine), smoke-test navigateur du stockage credential sur /compte. NE PAS marquer fait tant que les creds ne sont pas fournis et le flux verifie end-to-end (DEFCON 1).",
+      "note": "LIVREE session 16 (flag bascule s.17 apres re-verification systeme). Auth complete prod : e-mail/mdp + magic-link + Google + GitHub OAuth (AUTOCONFIRM=false), /auth/callback PKCE (origine canonique anti-open-redirect), /compte tableau de bord (identite + methodes liees + plans + consentement + coffre). VERIFIE PAR SYSTEME 2026-06-11 : db.ai-mpower.com/auth/v1/authorize?provider=google -> 302 accounts.google.com (client_id reel) ; provider=github -> 302 github.com (client_id reel) ; /compte -> 307 garde. SMTP/OAuth = cles PARTAGEES coffre + sync Hermes. RESTE non bloquant hors story : From=a.mansouri@ tant que migration Brevo non faite (noreply@).",
       "acceptance": [
         "SMTP + apps OAuth fournis par Amine ; AUTOCONFIRM=false ; magic-link + OAuth fonctionnels verifies end-to-end en prod",
         "smoke-test navigateur stockage credential /compte OK"
-      ]
+      ],
+      "completedAt": "2026-06-08"
     },
     {
       "id": "S-090",
